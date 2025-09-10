@@ -1,0 +1,20 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_task_linked,project.task.linked,model_project_task_linked,,1,1,1,1
+access_project_task_assignment,project.task.assignment,model_project_task_assignment,,1,1,1,1
+access_project_task_baseline,project.task.baseline,model_project_task_baseline,,1,1,1,1
+access_project_task_segment,project.task.segment,model_project_task_segment,,1,1,1,1
+
+access_project_project_jefe,Project (Jefe),project.model_project_project,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_project_stage_jefe,Project Stage (Jefe),project.model_project_project_stage,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_task_type_jefe,Task Type (Jefe),project.model_project_task_type,bryntum_gantt.group_project_jefe,1,1,1,1
+access_mail_activity_type_project_jefe,Mail Activity (Jefe),mail.model_mail_activity_type,bryntum_gantt.group_project_jefe,1,1,1,1
+access_account_analytic_account_jefe,Analytic Account (Jefe),analytic.model_account_analytic_account,bryntum_gantt.group_project_jefe,1,1,1,1
+access_account_analytic_line_project_jefe,Analytic Line (Jefe),analytic.model_account_analytic_line,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_task_type_delete_wizard_jefe,Task Type Delete Wizard (Jefe),project.model_project_task_type_delete_wizard,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_update_project_jefe,Project Update (Jefe),project.model_project_update,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_milestone_project_jefe,Project Milestone (Jefe),project.model_project_milestone,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_collaborator_jefe,Collaborator (Jefe),project.model_project_collaborator,bryntum_gantt.group_project_jefe,1,1,1,1
+access_project_share_manager_jefe,Share Wizard (Jefe),project.model_project_share_wizard,bryntum_gantt.group_project_jefe,1,1,1,0
+project.access_project_task_burndown_chart_report_jefe,Burndown Chart (Jefe),project.model_project_task_burndown_chart_report,bryntum_gantt.group_project_jefe,1,1,1,1
+
+access_import_mpp_wizard_user,access.import.mpp.wizard,model_import_mpp_wizard,bryntum_gantt.group_project_jefe,1,1,1,0

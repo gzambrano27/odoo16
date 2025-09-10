@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Formato para el reporte -->
+        <record id="report_docs_format_quality_control_fallas" model="report.paperformat">
+            <field name="name">Formato Control de Fallas</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">10</field>
+        </record>
+
+        <!-- Acción de reporte utilizando el nuevo formato -->
+        <record id="report_quality_control_fallas" model="ir.actions.report">
+            <field name="name">Reporte de Fallas</field>
+            <field name="model">quality.control.fallas</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">quality_control_fallas.report_quality_control_fallas_template</field>
+            <field name="print_report_name">'Reporte de Fallas - %s' % (object.name)</field>
+            <field name="paperformat_id" ref="report_docs_format_quality_control_fallas" />
+        </record>
+
+        <!-- Plantilla del reporte con diseño profesional y organizado -->
+        <template id="report_quality_control_fallas_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout">
+                        <div class="page" style="font-family: Verdana; font-size: 15px;">
+
+                            <!-- HEADER -->
+                            <div class="mb-5">
+                                <table style="border: 2px solid #444; width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <!-- Logo (25%) -->
+                                        <td
+                                            style="width: 25%; text-align: center; vertical-align: middle; padding: 5px;">
+                                            <t t-if="doc.env.company.logo">
+                                                <img t-att-src="image_data_uri(doc.env.company.logo)" class="img-fluid"
+                                                    style="max-height:80px;" alt="Logo" />
+                                            </t>
+                                        </td>
+                                        <!-- Títulos (50%) -->
+                                        <td
+                                            style="width: 50%; text-align: center; vertical-align: middle; padding: 5px;">
+                                            <span style="font-size:17px; font-weight: bold;">SISTEMA CONTROL DE
+                                                CALIDAD</span>
+                                            <br />
+                                            <span style="font-size:15px;">Reporte de Fallas - Garantías</span>
+                                        </td>
+                                        <!-- Código y Fecha (25%) -->
+                                        <td
+                                            style="width: 25%; text-align: center; vertical-align: middle; padding: 5px;">
+                                            <strong t-esc="doc.codigo" />
+                                            <br />
+                                            Fecha Reporte:<br />
+                                            <span t-esc="doc.fecha_fabricacion" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- DATOS GENERALES -->
+                            <div class="mb-5">
+                                <table style="border: 2px solid #444; width: 100%; border-collapse: collapse;">
+                                    <thead style="background-color: #6c757d; color: #fff;">
+                                        <tr>
+                                            <th colspan="4" class="text-center">
+                                                <strong>Datos Generales</strong>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Equipo
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.equipo_id.name"/>
+                                        </td>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Cliente
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.cliente_id.name"/>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Marca
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.marca"/>
+                                        </td>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Finca
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.finca"/>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Modelo
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.modelo"/>
+                                        </td>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Código Proyecto
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.codigo_proyecto.name"/>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Serial
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.serie"/>
+                                        </td>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Reportado por
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.reportado_por.name"/>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Fecha de Fabricación
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.fecha_fabricacion"/>
+                                        </td>
+                                        <th class="text-left" style="width:15%; border: 1px solid rgba(0,0,0,0.1);">
+                                          Fecha de la Falla
+                                        </th>
+                                        <td style="width:35%; border: 1px solid rgba(0,0,0,0.1);">
+                                          <span t-esc="doc.fecha_falla"/>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- DESCRIPCIÓN DE LA FALLA -->
+                            <div class="mb-5">
+                                <table style="width: 100%; border: 2px solid #444; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="background-color: #6c757d; color: #fff;">
+                                                Descripción de la Falla
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding: 15px;">
+                                                <p t-esc="doc.descripcion_falla" style="text-align: justify; margin: 0;"></p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- FOTOS (CUADRÍCULA 2x2) -->
+                            <div class="mb-5">
+                                <table style="border: 2px solid #444; width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" class="text-center"
+                                                style="background-color: #6c757d; color: #fff;">
+                                                FOTOS
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <!-- Foto 1 -->
+                                            <td
+                                                style="width: 50%; height: 400px; text-align: center; vertical-align: middle; padding: 5px;">
+                                                <t t-if="len(doc.foto_ids) &gt; 0">
+                                                    <img t-att-src="image_data_uri(doc.foto_ids[0].imagen)"
+                                                        class="img-fluid" style="max-height:350px; object-fit:contain;"
+                                                        alt="Foto 1" />
+                                                    <t t-if="doc.foto_ids[0].descripcion">
+                                                        <div style="margin-top:5px; font-size:12px;">
+                                                            <span t-esc="doc.foto_ids[0].descripcion" />
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                            <!-- Foto 2 -->
+                                            <td
+                                                style="width: 50%; height: 400px; text-align: center; vertical-align: middle; padding: 5px;">
+                                                <t t-if="len(doc.foto_ids) &gt; 1">
+                                                    <img t-att-src="image_data_uri(doc.foto_ids[1].imagen)"
+                                                        class="img-fluid" style="max-height:350px; object-fit:contain;"
+                                                        alt="Foto 2" />
+                                                    <t t-if="doc.foto_ids[1].descripcion">
+                                                        <div style="margin-top:5px; font-size:12px;">
+                                                            <span t-esc="doc.foto_ids[1].descripcion" />
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- Foto 3 -->
+                                            <td
+                                                style="width: 50%; height: 400px; text-align: center; vertical-align: middle; padding: 5px;">
+                                                <t t-if="len(doc.foto_ids) &gt; 2">
+                                                    <img t-att-src="image_data_uri(doc.foto_ids[2].imagen)"
+                                                        class="img-fluid" style="max-height:350px; object-fit:contain;"
+                                                        alt="Foto 3" />
+                                                    <t t-if="doc.foto_ids[2].descripcion">
+                                                        <div style="margin-top:5px; font-size:12px;">
+                                                            <span t-esc="doc.foto_ids[2].descripcion" />
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                            <!-- Foto 4 -->
+                                            <td
+                                                style="width: 50%; height: 400px; text-align: center; vertical-align: middle; padding: 5px;">
+                                                <t t-if="len(doc.foto_ids) &gt; 3">
+                                                    <img t-att-src="image_data_uri(doc.foto_ids[3].imagen)"
+                                                        class="img-fluid" style="max-height:350px; object-fit:contain;"
+                                                        alt="Foto 4" />
+                                                    <t t-if="doc.foto_ids[3].descripcion">
+                                                        <div style="margin-top:5px; font-size:12px;">
+                                                            <span t-esc="doc.foto_ids[3].descripcion" />
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- SECCIÓN DE FIRMA -->
+                            <div class="mb-5">
+                                <table style="border: 2px solid #444; width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <!-- Celda del texto "FIRMA" -->
+                                        <td
+                                            style="width: 20%; border-right: 2px solid #444; text-align: center; vertical-align: middle; padding: 5px;">
+                                            <strong>FIRMA</strong>
+                                        </td>
+                                        <!-- Celda para firma -->
+                                        <td style="width: 80%; height: 45px; padding: 5px;">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div class="mb-5">
+                                <table style="border: 2px solid #444; width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="background-color: #6c757d; color: #fff;">
+                                                Notas
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-size: 13px;">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li>El equipo con falla debe ser enviado a planta.</li>
+                                                    <li>Para procesar los reclamos es indispensable recibir este
+                                                        reporte.</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

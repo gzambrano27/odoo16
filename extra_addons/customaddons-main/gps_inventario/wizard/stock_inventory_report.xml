@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+	
+		<record
+			id="stock_inventory_report_reports_view_form"
+			model="ir.ui.view">
+			<field name="name">stock.inventory.report.reports.form</field>
+			<field name="model">stock.inventory.report</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+					
+					<field name="company_id" required="1"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+		<field name="warehouse_ids" required="1" widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"
+domain="[('company_id','=',company_id)]"
+
+						/>
+
+						<field name="enable_parent_location" />
+
+	<field name="location_ids" required="1" widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"
+	domain="[('usage','!=','view'),('warehouse_id','in',warehouse_ids)]"
+	/>
+
+							<field name="product_id" required="1"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+						<field name="type_report"  required="1" readonly="1"/>
+						  <field name="date_from" attrs="{'required':[('type_report','=','kardex')],'invisible':[('type_report','!=','kardex')]}"  />
+			<field name="date_to"  attrs="{'required':[('type_report','=','date_inventory')],'invisible':[('type_report','!=','date_inventory')]}" />
+
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+							/>
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record
+			id="stock_inventory_report_kardex_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Kardex</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">stock.inventory.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="stock_inventory_report_reports_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'kardex','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+
+		<!-- -->
+
+		<record
+			id="stock_inventory_report_inventory_view_form"
+			model="ir.ui.view">
+			<field name="name">stock.inventory.report.inventory.form</field>
+			<field name="model">stock.inventory.report</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes"
+					version="16.0">
+					<header> </header>
+					<group colspan="2" cols="1">
+
+					<field name="company_id" required="1"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+<field name="by_company" colspan="2"/>
+
+
+
+						<field name="warehouse_ids"   widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"
+domain="[('company_id','=',company_id)]"
+							   attrs="{'required':[('by_company','!=',True)],'invisible':[('by_company','=',True)]}"
+						/>
+
+						<field name="enable_parent_location"
+							     attrs="{'invisible':[('by_company','=',True)]}"
+							   invisible="context.get('default_type','')=='all_movement'"/>
+
+	<field name="location_ids"  widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"
+		   	domain="[('usage','!=','view'),('warehouse_id','in',warehouse_ids)]"
+		     attrs="{'required':[('by_company','!=',True)],'invisible':[('by_company','=',True)]}"
+
+	/>
+
+							<field name="product_ids"   placeholder="SI ESTA VACIO ,TODOS LOS PRODUCTOS"
+								   widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+						<field name="type_report"  required="1" readonly="1"/>
+						  <field name="date_from" placeholder="SI ESTA VACIO,DESDE EL INICIO DEL USO DEL SISTEMA" attrs="{'required':[('type_report','in',('all_movement'))],'invisible':[('type_report','not in',('all_movement'))]}"  />
+			<field name="date_to" placeholder="SI ESTA VACIO,HASTA LA FECHA ACTUAL" attrs="{'invisible':[('type_report','not in',('date_inventory','all_movement'))]}" />
+
+						</group>
+					<newline/>
+					<footer>
+						<button name="process_report" type="object" string="Procesar" icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir" colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record
+			id="stock_inventory_report_all_movement_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Movimientos</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">stock.inventory.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="stock_inventory_report_inventory_view_form" />
+		 <field name="context">{'is_report':True,'default_type_report':'all_movement','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+
+		<record
+			id="stock_inventory_report_date_inventory_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Inventario a la fecha</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">stock.inventory.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="stock_inventory_report_inventory_view_form" />
+	<field name="context">{'is_report':True,'default_type_report':'date_inventory','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+<!-- -->
+
+				<record
+			id="stock_inventory_report_adjust_reports_view_form"
+			model="ir.ui.view">
+			<field name="name">stock.inventory.report.adjust.reports.form</field>
+			<field name="model">stock.inventory.report</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+					<field name="company_id" required="1"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+
+						<field name="warehouse_ids" required="1" widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"
+domain="[('company_id','=',company_id)]"
+						/>
+
+								<field name="type_report"  required="1" readonly="1"/>
+						  <field name="date_from" required="1" />
+			<field name="date_to"  required="1" />
+
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+							/>
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+		<record
+			id="stock_inventory_report_adjust_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Ajustes</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">stock.inventory.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="stock_inventory_report_adjust_reports_view_form" />
+	<field name="context">{'is_report':True,'default_type_report':'adjust','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+		
+	</data>
+</odoo>

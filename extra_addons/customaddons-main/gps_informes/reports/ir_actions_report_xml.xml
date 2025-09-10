@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  	
+    	
+    <record id="report_cuentas_pagar_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cuentas por Pagar</field>
+        <field name="model">l10n_ec.account.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_informes.report_cuentas_pagar_xlsx</field>
+        <field name="report_file">Reporte de Cuentas por Pagar</field>
+    </record>
+
+    <record id="report_vencidos_pagar_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Vencidos por Pagar</field>
+        <field name="model">l10n_ec.account.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_informes.report_vencidos_pagar_xlsx</field>
+        <field name="report_file">Reporte de Vencidos por Pagar</field>
+    </record>
+
+    	<record id="report_flujo_caja_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Flujo de Caja</field>
+        <field name="model">l10n_ec.account.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_informes.report_flujo_caja_xlsx</field>
+        <field name="report_file">Reporte de Flujo de Caja</field>
+    </record>
+
+
+        <record id="report_pagos_anticipados_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Pagos Anticipados</field>
+        <field name="model">l10n_ec.account.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_informes.report_pagos_anticipados_xlsx</field>
+        <field name="report_file">Reporte de Pagos Anticipados</field>
+    </record>
+
+    <record id="report_cobros_anticipados_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cobros Anticipados</field>
+        <field name="model">l10n_ec.account.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_informes.report_cobros_anticipados_xlsx</field>
+        <field name="report_file">Reporte de Cobros Anticipados</field>
+    </record>
+
+    
+</odoo>
+        

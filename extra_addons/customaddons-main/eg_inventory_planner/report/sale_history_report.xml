@@ -1,0 +1,83 @@
+<odoo>
+    <template id="sale_history_report_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=lang)"/>
+            <div class="mt-4">
+                <h1>Sale History Report</h1>
+            </div>
+            <div class="page">
+                <div class="oe_structure"/>
+                <div>
+                    <table class="table table-sm" name="stock_transport_table">
+                        <thead>
+                            <tr>
+                                <th name="th_from_date">
+                                    <strong>From Date</strong>
+                                </th>
+                                <th name="th_to_date">
+                                    <strong>To Date</strong>
+                                </th>
+                                <th name="th_day">
+                                    <strong>Duration of Days</strong>
+                                </th>
+                                <th name="th_product">
+                                    <strong>Product</strong>
+                                </th>
+                                <th name="th_qty">
+                                    <strong>Quantity</strong>
+                                </th>
+                                <th name="th_sale_order">
+                                    <strong>Sale Order</strong>
+                                </th>
+                                <th name="th_avg_daily_sale">
+                                    <strong>Average Daily Sale</strong>
+                                </th>
+                                <th name="th_max_daily_sale_qty">
+                                    <strong>Maximum Daily Sale Quantity</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="stock_tbody">
+                            <tr t-foreach="doc.product_sale_history_ids" t-as="line">
+                                <td>
+                                    <span t-field="line.from_date"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.to_date"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.duration_in_day"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_id"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.quantity"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.total_sale_order"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.average_daily_sale"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.maximum_daily_sale_qty"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+
+    <template id="sale_history_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="eg_inventory_planner.sale_history_report_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

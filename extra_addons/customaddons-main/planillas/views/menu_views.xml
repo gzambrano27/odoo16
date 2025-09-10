@@ -1,0 +1,10 @@
+<odoo>
+    <menuitem id="menu_planillas_root" name="Planillas" sequence="10"/>
+
+    <menuitem id="menu_planillas_configuracion" name="Configuración" parent="menu_planillas_root" sequence="10"/>
+    <menuitem id="menu_planillas_secciones" name="Secciones" parent="menu_planillas_configuracion" action="action_planillas_secciones"/>
+    <menuitem id="menu_planillas_categorias" name="Categorías" parent="menu_planillas_configuracion" action="action_planillas_categorias"/>
+    <menuitem id="menu_planillas_rubros" name="Rubros" parent="menu_planillas_configuracion" action="action_planillas_rubros"/>
+
+    <menuitem id="menu_planillas" name="Planillas" parent="menu_planillas_root" action="action_planillas_planillas"/>
+</odoo>

@@ -1,0 +1,33 @@
+<odoo>    
+    <record id="purchase_order_form_inherit_control_presupuesto" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.control.presupuesto</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <header>
+                <button name="button_confirm" type="object" string="CONFIRMAR ORDEN"
+                        states="control_presupuesto" class="btn-success"/>
+                <xpath expr="/form/header/button[@name='button_cancel']" position="replace">
+                    <button name="button_cancel"
+                        string="Cancelar"
+                        type="object"
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', 'not in', ['draft', 'to approve', 'sent', 'purchase', 'control_presupuesto'])]}"/>
+                </xpath>
+                
+            </header>
+
+             <field name="fiscal_position_id" position="after">
+                <field name="mostrar_excepcion_confirmacion" invisible="1" />
+                <field name="excepcion_confirmacion"
+                       groups="account_payment_purchase.group_comite_compra"
+                       attrs="{'invisible':[('mostrar_excepcion_confirmacion','!=',True)]}" />
+                <field name="excepcion_confirmacion_comments"
+                       groups="account_payment_purchase.group_comite_compra"
+                       attrs="{'invisible':[('mostrar_excepcion_confirmacion','!=',True)]}" />
+
+ </field>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+	<record id="workflow_history_view_filter" model="ir.ui.view">
+		<field name="name">workflow.history.filter</field>
+		<field name="model">workflow.history</field>
+		<field name="arch" type="xml">
+			<search string="Historial">
+				<group expand="0" string="Filtrar por ...">
+				</group>
+				<group expand="0" string="Agrupar por...">
+						<filter string="Estado" name="grp_state" context="{'group_by':'state'}"></filter>
+						<filter string="Usuario" name="grp_create_uid" context="{'group_by':'create_uid'}"></filter>
+				</group>
+				<field name="create_uid" string="Usuario" />
+			</search>
+		</field>
+	</record>
+
+	<record id="workflow_history_view_tree" model="ir.ui.view">
+		<field name="name">workflow.history.tree</field>
+		<field name="model">workflow.history</field>
+		<field name="type">tree</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<tree editable="bottom" string="Historial" edit="false" create="false"
+				delete="false"				
+				decoration-muted="(color_flag=='muted')"
+				decoration-danger="(color_flag=='danger')"
+				decoration-success="(color_flag=='success')"
+				decoration-primary="(color_flag=='primary')"
+				decoration-info="(color_flag=='info')"
+				decoration-warning="(color_flag=='warning')"
+				decoration-bf="(bold_flag==True)"
+				decoration-it="(it_flag==True)"
+				>
+				<field name="create_uid" readonly="1" string="Usuario"
+					options="{'no_open':True,'no_create':True}" />
+				<field name="create_date" readonly="1"
+					string="Fecha de Creación" />
+				<field name="comments" readonly="1" />
+				<field name="state" readonly="1" />
+				<field name="bold_flag" invisible="1" />
+				<field name="it_flag" invisible="1" />
+				<field name="color_flag" invisible="1" />
+			</tree>
+		</field>
+	</record>
+
+
+	<record id="workflow_history_view_form" model="ir.ui.view">
+		<field name="name">workflow.history.form</field>
+		<field name="model">workflow.history</field>
+		<field name="type">form</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<form string="Historial" version="16.0" create="false"
+				delete="false" edit="false">
+				<header>
+					<field name="state" widget="statusbar" />
+				</header>
+				<sheet>
+					<group>
+						<group>
+							<field name="create_uid" readonly="1" string="Usuario"
+								options="{'no_open':True,'no_create':True}" />
+							<field name="create_date" readonly="1"
+								string="Fecha de Creación" />
+						</group>
+						<group>
+							<field name="file_name" readonly="1"
+								attrs="{'invisible':[('file','=',False)]}" colspan="2" />
+							<field name="file" colspan="2" filename="file_name"
+								readonly="1" attrs="{'invisible':[('file_name','=',False)]}" />
+							<field name="comments" readonly="1" />
+						</group>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+
+</odoo>

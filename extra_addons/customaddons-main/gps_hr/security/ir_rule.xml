@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+
+
+<record id="hr_payroll.ir_rule_hr_payroll_structure_multi_company" model="ir.rule">
+        <field name="name">HR Payroll Structure: Multi Company</field>
+        <field name="model_id" ref="hr_payroll.model_hr_payroll_structure"/>
+        <field name="domain_force">['|', ('country_id', '=', False), ('country_id', 'in', user.env.companies.mapped('country_id').ids)]</field>
+    <field name="active" eval="0" />
+    </record>
+
+    <record id="hr_payroll.ir_rule_hr_payslip_input_type_multi_company" model="ir.rule">
+        <field name="name">HR Payslip Input Type: Multi Company</field>
+        <field name="model_id" ref="hr_payroll.model_hr_payslip_input_type"/>
+        <field name="domain_force">['|', ('country_id', '=', False), ('country_id', 'in', user.env.companies.mapped('country_id').ids)]</field>
+         <field name="active" eval="0" />
+    </record>
+
+    <record id="hr_payroll.ir_rule_hr_payroll_paramater_multi_company" model="ir.rule">
+        <field name="name">HR Rule Parameter: Multi Company</field>
+        <field name="model_id" ref="hr_payroll.model_hr_rule_parameter"/>
+        <field name="domain_force">['|', ('country_id', '=', False), ('country_id', 'in', user.env.companies.mapped('country_id').ids)]</field>
+         <field name="active" eval="0" />
+    </record>
+
+    <record id="hr_payroll.ir_rule_hr_payroll_paramater_value_multi_company" model="ir.rule">
+        <field name="name">HR Rule Parameter Value: Multi Company</field>
+        <field name="model_id" ref="hr_payroll.model_hr_rule_parameter_value"/>
+        <field name="domain_force">['|', ('country_id', '=', False), ('country_id', 'in', user.env.companies.mapped('country_id').ids)]</field>
+         <field name="active" eval="0" />
+    </record>
+
+
+    <!-- -->
+
+
+
+
+</data>
+
+</odoo>

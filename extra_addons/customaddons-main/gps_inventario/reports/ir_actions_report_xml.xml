@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="report_inventory_document_template_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Plantilla de Ajuste de Inventario</field>
+        <field name="model">stock.inventory.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_inventario.report_inventory_document_template_xlsx</field>
+        <field name="report_file">Plantilla de Ajuste de Inventario</field>
+    </record>
+    	
+    <record id="report_kardex_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Kardex</field>
+        <field name="model">stock.inventory.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_inventario.report_kardex_xlsx</field>
+        <field name="report_file">Reportes de Kardex</field>
+    </record>
+
+
+        <record id="report_date_inventory_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Inventario a la fecha</field>
+        <field name="model">stock.inventory.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_inventario.report_date_inventory_xlsx</field>
+        <field name="report_file">Reporte de Inventario a la fecha</field>
+    </record>
+
+    <record id="report_all_movement_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Movimientos de Inventario</field>
+        <field name="model">stock.inventory.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_inventario.report_all_movement_xlsx</field>
+        <field name="report_file">Reporte de Movimientos de Inventario</field>
+    </record>
+
+    <record id="report_adjust_inventory_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Ajustes de Inventarios</field>
+        <field name="model">stock.inventory.report</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_inventario.report_adjust_inventory_xlsx</field>
+        <field name="report_file">Reporte de Ajustes de Inventarios</field>
+    </record>
+    
+</odoo>
+        

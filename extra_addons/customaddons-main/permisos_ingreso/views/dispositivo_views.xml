@@ -1,0 +1,48 @@
+<odoo>
+    <!-- Definición de la vista de formulario para el modelo 'Dispositivo' -->
+    <record id="view_form_dispositivo" model="ir.ui.view">
+        <!-- Nombre interno de la vista en Odoo -->
+        <field name="name">dispositivo.form</field>
+        <!-- Especifica que esta vista corresponde al modelo 'permisos_ingreso.dispositivo' -->
+        <field name="model">permisos_ingreso.dispositivo</field>
+        <!-- Estructura XML que define la vista de formulario -->
+        <field name="arch" type="xml">
+            <form string="Dispositivo">
+                <!-- Grupo de campos para organizarlos dentro del formulario -->
+                <group>
+                    <!-- Campo para seleccionar el tipo de dispositivo -->
+                    <field name="tipo"/>
+                    <!-- Campo para ingresar el modelo del dispositivo -->
+                    <field name="modelo"/>
+                    <!-- Campo para ingresar el número de serie del dispositivo -->
+                    <field name="serie"/>
+                    <!-- Campo para ingresar el color del dispositivo -->
+                    <field name="color"/>
+                    <!-- Campo de relación para seleccionar el personal asociado al dispositivo -->
+                    <field name="personal_id"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Definición de la vista de lista (árbol) para el modelo 'Dispositivo' -->
+    <record id="view_tree_dispositivo" model="ir.ui.view">
+        <!-- Nombre interno de la vista de lista en Odoo -->
+        <field name="name">dispositivo.tree</field>
+        <!-- Especifica que esta vista corresponde al modelo 'permisos_ingreso.dispositivo' -->
+        <field name="model">permisos_ingreso.dispositivo</field>
+        <!-- Estructura XML que define la vista de lista -->
+        <field name="arch" type="xml">
+            <tree string="Dispositivos">
+                <!-- Campo que muestra el tipo del dispositivo en la lista -->
+                <field name="tipo"/>
+                <!-- Campo que muestra el modelo del dispositivo en la lista -->
+                <field name="modelo"/>
+                <!-- Campo que muestra el número de serie en la lista -->
+                <field name="serie"/>
+                <!-- Campo que muestra el color del dispositivo en la lista -->
+                <field name="color"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

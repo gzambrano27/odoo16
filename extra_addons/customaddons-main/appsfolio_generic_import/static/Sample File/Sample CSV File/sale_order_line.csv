@@ -1,0 +1,2 @@
+PRODUCT,QUANTITY,UOM,DESCRIPTION,PRICE,TAX,DISCOUNT,partner_id@name,x_partner_ids@name,x_color,x_bool
+Storm Bottle,2,Units,iPad,50000,GST 5%,15,Douglas Fletcher,"Addison Olson,Lorraine Douglas",dark black,1

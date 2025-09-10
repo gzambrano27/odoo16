@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+               <record model="ir.ui.view"
+                id="hr_employee_payment_view_inherit">
+            <field name="name">hr.employee.payment.form.inherit</field>
+            <field name="model">hr.employee.payment</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="gps_hr.hr_employee_payment_view_form"/>
+            <field name="arch" type="xml">
+
+                <button name="action_draft" position="attributes">
+                  <attribute name="groups">gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos</attribute>
+                </button>
+
+                <button name="action_approved" position="attributes">
+                  <attribute name="groups">gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos</attribute>
+                </button>
+
+                <button name="genera_archivo" position="attributes">
+                  <attribute name="groups">gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos</attribute>
+                </button>
+
+
+
+            </field>
+        </record>
+
+
+
+    </data>
+
+
+</odoo>

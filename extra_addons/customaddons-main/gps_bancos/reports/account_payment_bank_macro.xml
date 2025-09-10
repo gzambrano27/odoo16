@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<data>
+      <template id="gps_bancos.report_payment_bank_macro">
+       <t t-name="gps_bancos.report_payment_bank_macro">
+    <t t-call="web.basic_layout">
+        <t t-foreach="docs" t-as="doc">
+             <t t-set="doc" t-value="doc.sudo()"/>
+            <div style="font-family: Verdana, sans-serif; font-size: 15px;">
+                <div class="card-body">
+ <div class="row mb-4">
+                    <div class="col-4 text-center">
+                                        <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)"
+                                            style="max-height: 100px; max-width: 100%;" />
+                                    </div>
+                    <div class="col-8 text-center">
+                        <h4>Comprobante de Pago # <span t-esc="doc.name"/> </h4>
+                        <p class="mb-0"><strong><span t-esc="doc.company_id.name"/></strong> </p>
+                    </div>
+ </div>                        <div class="row mb-4">
+                            <div class="col-6 border-right">
+                                <p class="mb-2"><strong>Forma de Pago:</strong> <span t-esc="doc.get_mode_payment_dscr()"/></p>
+                                <p class="mb-2"><strong>Diario:</strong> <span t-esc="doc.journal_id.name"/></p>
+                                <p class="mb-2"><strong>Comentarios:</strong> <span t-esc="doc.comments or ''"/></p>
+                                <p class="mb-2"><strong>Referencia:</strong> <span t-esc="doc.ref"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-2"><strong>Fecha de Solicitud:</strong> <span t-esc="doc.date_request"/></p>
+                                <p class="mb-2"><strong>Fecha de Pago:</strong> <span t-esc="doc.date_payment"/></p>
+                                <p class="mb-2">
+                                    <strong>Pagado:</strong>
+                                    <span t-esc="doc.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.company_id.currency_id}"/>
+                                </p>
+                                <p class="mb-2"><strong>Estado:</strong> <span t-esc="doc.get_dsr_states()"/></p>
+                            </div>
+                        </div>
+                        <h4 class="mb-3 text-center">Detalle de Pagos</h4>
+
+
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped table-hover">
+
+                                    <tr class="text-center">
+                                        <th>ID # Beneficiario</th>
+                                        <th>Beneficiario</th>
+<t t-if="doc.default_mode_payment=='bank'">
+                                        <th>Cuenta de Banco</th>
+</t>
+                                        <th>Valor</th>
+                                        <th>Glosa</th>
+                                    </tr>
+
+                                        <t t-foreach="doc.line_ids.filtered(lambda x:x.apply)" t-as="line">
+                                        <tr class="text-center" style="font-size: 12px;">
+                                            <td t-esc="line.partner_id.vat"/>
+                                            <td t-esc="line.partner_id.name"/>
+                                            <t t-if="doc.default_mode_payment=='bank'">
+                                                <td t-esc="(line.bank_account_id.full_name[:30]) if line.bank_account_id and len(line.bank_account_id.full_name) > 30 else (line.bank_account_id.full_name if line.bank_account_id else '') "/>
+                                            </t>
+                                            <td class="text-align:right" t-esc="line.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.company_id.currency_id}"/>
+                                            <td t-esc="line.comments if line.comments else ''"/>
+                                        </tr>
+                                    </t>
+
+                            </table>
+                        </div>
+
+
+                         <h4 class="mb-3 text-center">Resumen</h4>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped table-hover">
+
+                                    <tr class="text-center">
+                                        <th>ID # Beneficiario</th>
+                                        <th>Beneficiario</th>
+                                       <t t-if="doc.default_mode_payment=='bank'">
+                                        <th>Cuenta de Banco</th>
+                                        </t>
+                                        <th>Valor</th>
+                                        <th>Glosa</th>
+                                        <th>Motivo A.</th>
+                                    </tr>
+
+                                    <t t-foreach="doc.summary_ids" t-as="summary">
+                                        <tr class="text-center" style="font-size: 12px;">
+                                            <td t-esc="summary.partner_id.vat"/>
+                                            <td t-esc="summary.partner_id.name"/>
+                                           <t t-if="doc.default_mode_payment=='bank'">
+                                            <td t-esc="(summary.bank_account_id.full_name[:30]) if summary.bank_account_id and len(summary.bank_account_id.full_name) > 30 else (summary.bank_account_id.full_name if summary.bank_account_id else '') "/>
+                                            </t>
+                                            <td class="text-align:right" t-esc="summary.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.company_id.currency_id}"/>
+                                            <td t-esc="summary.comments if summary.comments else ''"/>
+                                             <td t-esc="(summary.reversed_motive_id.name+','+summary.reversed_comments or '') if summary.reversed_motive_id else ''"/>
+                                        </tr>
+                                    </t>
+
+                            </table>
+                        </div>
+
+
+                </div>
+            </div>
+        </t>
+    </t>
+</t>
+        </template>
+    </data>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</odoo>

@@ -1,0 +1,2 @@
+id,sequence,code,name,report_name,internal_type,doc_code_prefix,country_id/id,active,l10n_ec_check_format
+ec_dt_06,999,06,Guia de Remision,Guia de Remision,guia,Guia,base.ec,1,1

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_powerbi_dashboard_form" model="ir.ui.view">
+        <field name="name">powerbi.dashboard.form</field>
+        <field name="model">powerbi.dashboard.gen</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard Power BI">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="embed_url"/>
+                    </group>
+                    <!-- <group string="Vista previa del informe">
+                        <field name="report_html" widget="html"/>
+                    </group> -->
+                    <notebook>
+                        <page string="Vista Previa">
+                            <group>
+                                <field name="report_html" widget="html"/>
+                            </group>
+                        </page>
+
+                        <page string="Código Python">
+                            <group>
+                                <field name="custom_code" widget="text" placeholder="Usa 'category', 'embed_url' y asigna a 'result'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

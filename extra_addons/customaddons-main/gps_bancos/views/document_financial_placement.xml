@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+<record id="view_document_financial_placement_search" model="ir.ui.view">
+    <field name="name">document.financial.placement.search</field>
+    <field name="model">document.financial.placement</field>
+    <field name="arch" type="xml">
+        <search>
+            <!-- Filtros -->
+            <filter name="filter_type_emission" string="Tipo Emisión" domain="[]" context="{'group_by': 'type_emission'}"/>
+            <filter name="filter_type_class" string="Clase" domain="[]" context="{'group_by': 'type_class'}"/>
+
+            <!-- Agrupadores -->
+            <group expand="0" string="Agrupar por">
+                <filter name="group_document_line" string="Línea Documento" context="{'group_by': 'document_line_id'}"/>
+                <filter name="group_start_date" string="Fecha Inicio" context="{'group_by': 'start_date'}"/>
+                <filter name="group_due_date" string="Fecha Vencimiento" context="{'group_by': 'due_date'}"/>
+                <filter name="group_liquidation" string="Liquidación" context="{'group_by': 'liquidation_id'}"/>
+            </group>
+
+             <field name="document_line_id"
+          />
+           <field name="start_date"  />
+        <field name="due_date"  />
+           <field name="liquidation_id"
+          />
+
+        </search>
+    </field>
+</record>
+
+
+
+<record id="view_document_financial_placement_tree" model="ir.ui.view">
+    <field name="name">document.financial.placement.tree</field>
+    <field name="model">document.financial.placement</field>
+    <field name="arch" type="xml">
+      <tree editable="bottom">
+          <field name="document_line_id" invisible="context.get('hide_quota',False)" required="1"
+          domain="[('document_id','=',document_id),('document_id','!=',False)]"
+                     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+          />
+        <field name="quota" readonly="1" force_save="0" optional="hide"/>
+        <field name="start_date" required="1"/>
+        <field name="due_date" required="1"/>
+        <field name="interest_rate" required="1"/>
+        <field name="interest_amount" required="1" sum="total"/>
+        <field name="principal_amount" required="1" sum="total"/>
+        <field name="total" required="1" sum="total"/>
+      <field name="remaining_balance" optional="hide"/>
+        <field name="placed_amount" optional="hide"/>
+        <field name="liquidation_id" required="1" placeholder="# LIQUIDACION" domain="[('document_id','=',document_id),('document_id','!=',False)]"
+                     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+        invisible="context.get('hide_liquidation',False)"
+          />
+
+          <field name="type_emission" readonly="1" widget="radio" optional="hide"/>
+        <field name="type_class" readonly="1" widget="radio" optional="hide"/>
+
+        <field name="currency_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="document_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+          <field name="company_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+      </tree>
+    </field>
+  </record>
+
+
+
+        <record id="view_document_financial_placement_tree_liq" model="ir.ui.view">
+    <field name="name">document.financial.placement.tree.liq</field>
+    <field name="model">document.financial.placement</field>
+            <field name="priority">9999999</field>
+    <field name="arch" type="xml">
+      <tree editable="bottom" create="false" delete="false" >
+          <field name="document_line_id" invisible="1" required="1"
+          domain="[('document_id','=',document_id),('document_id','!=',False)]"
+                     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+          />
+        <field name="quota" readonly="1" force_save="0" optional="show"/>
+        <field name="start_date" required="1"/>
+        <field name="due_date" required="1"/>
+        <field name="interest_rate" required="1"/>
+        <field name="interest_amount" required="1" sum="total"/>
+        <field name="principal_amount" required="1" sum="total"/>
+        <field name="total" required="1" sum="total"/>
+
+
+            <field name="remaining_balance" optional="hide"/>
+        <field name="placed_amount" optional="hide"/>
+
+        <field name="liquidation_id" required="1" placeholder="# LIQUIDACION" domain="[('document_id','=',document_id),('document_id','!=',False)]"
+                     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+        invisible="1"
+          />
+
+          <field name="type_emission"  invisible="1" readonly="1" widget="radio" optional="hide"/>
+        <field name="type_class"  invisible="1" readonly="1" widget="radio" optional="hide"/>
+
+        <field name="currency_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="document_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+          <field name="company_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+      </tree>
+    </field>
+  </record>
+
+    </data>
+
+
+</odoo>

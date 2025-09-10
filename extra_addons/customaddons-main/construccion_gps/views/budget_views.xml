@@ -1,0 +1,72 @@
+<odoo>
+    <!-- Budget Views -->
+    <record id="view_budget_form" model="ir.ui.view">
+        <field name="name">Formulario de Presupuesto</field>
+        <field name="model">budget.apu</field>
+        <field name="arch" type="xml">
+            <form string="Presupuesto">
+                <header>
+                    <!-- Widget de estado para mostrar diferentes etapas -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancelled"/>
+
+                    <!-- Botones para cambiar de estado -->
+                    <button name="confirm_budget" type="object" string="Confirmar" states="draft" class="btn-primary"/>
+                    <button name="finalize_budget" type="object" string="Finalizar" states="confirmed" class="btn-primary"/>
+                    <button name="cancel_budget" type="object" string="Cancelar" states="draft,confirmed" class="btn-primary"/>
+                    <button name="reset_to_draft" type="object" string="Reestablecer a Borrador" states="cancelled,confirmed,done" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="total_cost" readonly="1"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                    <notebook>
+                        <page string="Líneas de Presupuesto">
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="analytic_account_id"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="total_cost" readonly="1"/>
+                                    <field name="apu_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_budget_tree" model="ir.ui.view">
+        <field name="name">Árbol de Presupuestos</field>
+        <field name="model">budget.apu</field>
+        <field name="arch" type="xml">
+            <tree string="Presupuestos">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="total_cost" readonly="1"/>
+                <field name="state" widget="badge" string="Estado" optional="show"
+                   decoration-muted="state == 'draft'"
+                   decoration-info="state == 'confirmed'"
+                   decoration-success="state == 'done'"
+                   decoration-danger="state == 'cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_budget" model="ir.actions.act_window">
+        <field name="name">Presupuestos</field>
+        <field name="res_model">budget.apu</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

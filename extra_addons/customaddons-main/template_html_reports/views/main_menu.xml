@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <menuitem
+        id="menu_html_reports"
+        name="Menus HTML Reports"
+        parent="base.menu_custom"
+        sequence="60"
+        groups="base.group_system"
+    />
+  
+  </data>
+</odoo>

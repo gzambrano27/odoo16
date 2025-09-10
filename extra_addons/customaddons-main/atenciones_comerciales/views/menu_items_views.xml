@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú raíz -->
+    <menuitem id="menu_solicitud_aprobacion_root" name="Solicitudes Comerciales" sequence="10" web_icon="atenciones_comerciales,static/description/logo.png"/>
+
+    <!-- Menú para Acceder a Solicitudes de Atenciones Comerciales -->
+    <menuitem id="menu_solicitud_aprobacion_atenciones"
+              parent="menu_solicitud_aprobacion_root"
+              name="Atenciones Comerciales"
+              action="action_solicitud_aprobacion_atenciones"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_eg" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.eg</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@data-string='Inventory']" position="inside">
+                <h2>Inventory Plan Settings</h2>
+                <div class="row mt16 o_settings_container" id="velocity_settings">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <span class="o_form_label">Yellow Sales Out Days</span>
+                            <div class="text-muted">
+                                <field name="warn_sales_out"/>
+                            </div>
+                            <span class="o_form_label">Red Sales Out Days</span>
+                            <div class="text-muted">
+                                <field name="error_sales_out"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <span class="o_form_label">Default Velocity Days</span>
+                            <div class="text-muted">
+                                <field name="velocity_days"/>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

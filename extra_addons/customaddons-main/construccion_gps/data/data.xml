@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Registros del modelo APU -->
+    <record id="apu_1" model="apu.apu">
+        <field name="name">APU Ejemplo 1</field>
+        <field name="state">draft</field>
+        <field name="description">Análisis de precios unitarios 1</field>
+        <field name="total_cost">1500.0</field>
+    </record>
+    <record id="apu_2" model="apu.apu">
+        <field name="name">APU Ejemplo 2</field>
+        <field name="state">confirmed</field>
+        <field name="description">Análisis de precios unitarios 2</field>
+        <field name="total_cost">2300.0</field>
+    </record>
+    <record id="apu_3" model="apu.apu">
+        <field name="name">APU Ejemplo 3</field>
+        <field name="state">done</field>
+        <field name="description">Análisis de precios unitarios 3</field>
+        <field name="total_cost">1800.0</field>
+    </record>
+    <record id="apu_4" model="apu.apu">
+        <field name="name">APU Ejemplo 4</field>
+        <field name="state">cancelled</field>
+        <field name="description">Análisis de precios unitarios 4</field>
+        <field name="total_cost">2000.0</field>
+    </record>
+    <record id="apu_5" model="apu.apu">
+        <field name="name">APU Ejemplo 5</field>
+        <field name="state">draft</field>
+        <field name="description">Análisis de precios unitarios 5</field>
+        <field name="total_cost">1700.0</field>
+    </record>
+    <record id="apu_6" model="apu.apu">
+        <field name="name">APU Ejemplo 6</field>
+        <field name="state">confirmed</field>
+        <field name="description">Análisis de precios unitarios 6</field>
+        <field name="total_cost">2100.0</field>
+    </record>
+    <record id="apu_7" model="apu.apu">
+        <field name="name">APU Ejemplo 7</field>
+        <field name="state">done</field>
+        <field name="description">Análisis de precios unitarios 7</field>
+        <field name="total_cost">2400.0</field>
+    </record>
+    <record id="apu_8" model="apu.apu">
+        <field name="name">APU Ejemplo 8</field>
+        <field name="state">cancelled</field>
+        <field name="description">Análisis de precios unitarios 8</field>
+        <field name="total_cost">1900.0</field>
+    </record>
+    <record id="apu_9" model="apu.apu">
+        <field name="name">APU Ejemplo 9</field>
+        <field name="state">draft</field>
+        <field name="description">Análisis de precios unitarios 9</field>
+        <field name="total_cost">2500.0</field>
+    </record>
+    <record id="apu_10" model="apu.apu">
+        <field name="name">APU Ejemplo 10</field>
+        <field name="state">confirmed</field>
+        <field name="description">Análisis de precios unitarios 10</field>
+        <field name="total_cost">2600.0</field>
+    </record>
+    <record id="apu_11" model="apu.apu">
+        <field name="name">APU Ejemplo 11</field>
+        <field name="state">done</field>
+        <field name="description">Análisis de precios unitarios 11</field>
+        <field name="total_cost">2700.0</field>
+    </record>
+    <record id="apu_12" model="apu.apu">
+        <field name="name">APU Ejemplo 12</field>
+        <field name="state">cancelled</field>
+        <field name="description">Análisis de precios unitarios 12</field>
+        <field name="total_cost">2200.0</field>
+    </record>
+    <record id="apu_13" model="apu.apu">
+        <field name="name">APU Ejemplo 13</field>
+        <field name="state">draft</field>
+        <field name="description">Análisis de precios unitarios 13</field>
+        <field name="total_cost">2800.0</field>
+    </record>
+    <record id="apu_14" model="apu.apu">
+        <field name="name">APU Ejemplo 14</field>
+        <field name="state">confirmed</field>
+        <field name="description">Análisis de precios unitarios 14</field>
+        <field name="total_cost">3000.0</field>
+    </record>
+    <record id="apu_15" model="apu.apu">
+        <field name="name">APU Ejemplo 15</field>
+        <field name="state">done</field>
+        <field name="description">Análisis de precios unitarios 15</field>
+        <field name="total_cost">3100.0</field>
+    </record>
+    <!-- Registros del modelo APULine -->
+    <record id="apu_line_1" model="apu.line">
+        <field name="name">Cemento</field>
+        <field name="type">Material</field>
+        <field name="quantity">50</field>
+        <field name="unit_price">100.0</field>
+        <field name="total_cost">5000.0</field>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Material de construcción</field>
+    </record>
+    <record id="apu_line_2" model="apu.line">
+        <field name="name">Arena</field>
+        <field name="type">Material</field>
+        <field name="quantity">30</field>
+        <field name="unit_price">50.0</field>
+        <field name="total_cost">1500.0</field>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Material granular para concreto</field>
+    </record>
+
+    <!-- Registros del modelo APULine -->
+    <record id="apu_line_1" model="apu.line">
+        <field name="name">Cemento</field>
+        <field name="type">Material</field>
+        <field name="quantity">50</field>
+        <field name="unit_price">100.0</field>
+        <field name="total_cost">5000.0</field>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Material de construcción</field>
+    </record>
+    <record id="apu_line_2" model="apu.line">
+        <field name="name">Arena</field>
+        <field name="type">Material</field>
+        <field name="quantity">30</field>
+        <field name="unit_price">50.0</field>
+        <field name="total_cost">1500.0</field>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Material granular para concreto</field>
+    </record>
+    <record id="apu_line_3" model="apu.line">
+        <field name="name">Grava</field>
+        <field name="type">Material</field>
+        <field name="quantity">40</field>
+        <field name="unit_price">70.0</field>
+        <field name="total_cost">2800.0</field>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Piedra triturada para concreto</field>
+    </record>
+    <record id="apu_line_4" model="apu.line">
+        <field name="name">Varilla</field>
+        <field name="type">Material</field>
+        <field name="quantity">20</field>
+        <field name="unit_price">150.0</field>
+        <field name="total_cost">3000.0</field>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Material de refuerzo</field>
+    </record>
+    <record id="apu_line_5" model="apu.line">
+        <field name="name">Agua</field>
+        <field name="type">Material</field>
+        <field name="quantity">100</field>
+        <field name="unit_price">10.0</field>
+        <field name="total_cost">1000.0</field>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Recurso para mezclas</field>
+    </record>
+    <record id="apu_line_6" model="apu.line">
+        <field name="name">Acero</field>
+        <field name="type">Material</field>
+        <field name="quantity">25</field>
+        <field name="unit_price">200.0</field>
+        <field name="total_cost">5000.0</field>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Material de refuerzo estructural</field>
+    </record>
+    <record id="apu_line_7" model="apu.line">
+        <field name="name">Grava</field>
+        <field name="type">Material</field>
+        <field name="quantity">40</field>
+        <field name="unit_price">60.0</field>
+        <field name="total_cost">2400.0</field>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Material granular grueso</field>
+    </record>
+    <record id="apu_line_8" model="apu.line">
+        <field name="name">Mano de Obra</field>
+        <field name="type">Labor</field>
+        <field name="quantity">15</field>
+        <field name="unit_price">300.0</field>
+        <field name="total_cost">4500.0</field>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Costo de trabajadores especializados</field>
+    </record>
+    <record id="apu_line_9" model="apu.line">
+        <field name="name">Alquiler de Maquinaria</field>
+        <field name="type">Equipo</field>
+        <field name="quantity">10</field>
+        <field name="unit_price">400.0</field>
+        <field name="total_cost">4000.0</field>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Costo de renta de maquinaria pesada</field>
+    </record>
+    <record id="apu_line_10" model="apu.line">
+        <field name="name">Mortero</field>
+        <field name="type">Material</field>
+        <field name="quantity">35</field>
+        <field name="unit_price">120.0</field>
+        <field name="total_cost">4200.0</field>
+        <field name="apu_id" ref="apu_4"/>
+        <field name="description">Mezcla de cemento y arena</field>
+    </record>
+    <record id="apu_line_11" model="apu.line">
+        <field name="name">Madera</field>
+        <field name="type">Material</field>
+        <field name="quantity">20</field>
+        <field name="unit_price">80.0</field>
+        <field name="total_cost">1600.0</field>
+        <field name="apu_id" ref="apu_4"/>
+        <field name="description">Material para encofrado</field>
+    </record>
+    <record id="apu_line_12" model="apu.line">
+        <field name="name">Pintura</field>
+        <field name="type">Material</field>
+        <field name="quantity">10</field>
+        <field name="unit_price">150.0</field>
+        <field name="total_cost">1500.0</field>
+        <field name="apu_id" ref="apu_5"/>
+        <field name="description">Material para acabados</field>
+    </record>
+    <record id="apu_line_13" model="apu.line">
+        <field name="name">Adhesivo</field>
+        <field name="type">Material</field>
+        <field name="quantity">5</field>
+        <field name="unit_price">250.0</field>
+        <field name="total_cost">1250.0</field>
+        <field name="apu_id" ref="apu_5"/>
+        <field name="description">Material de unión</field>
+    </record>
+    <record id="apu_line_14" model="apu.line">
+        <field name="name">Yeso</field>
+        <field name="type">Material</field>
+        <field name="quantity">50</field>
+        <field name="unit_price">70.0</field>
+        <field name="total_cost">3500.0</field>
+        <field name="apu_id" ref="apu_6"/>
+        <field name="description">Material para acabados interiores</field>
+    </record>
+    <record id="apu_line_15" model="apu.line">
+        <field name="name">Tablaroca</field>
+        <field name="type">Material</field>
+        <field name="quantity">15</field>
+        <field name="unit_price">300.0</field>
+        <field name="total_cost">4500.0</field>
+        <field name="apu_id" ref="apu_6"/>
+        <field name="description">Material para divisiones interiores</field>
+    </record>
+
+    <!-- Registros del modelo Budget -->
+    <record id="budget_1" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 1</field>
+        <field name="state">draft</field>
+        <field name="date_start">2025-01-01</field>
+        <field name="date_end">2025-01-15</field>
+        <field name="total_cost">4500.0</field>
+    </record>
+    <record id="budget_2" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 2</field>
+        <field name="state">confirmed</field>
+        <field name="date_start">2025-02-01</field>
+        <field name="date_end">2025-02-15</field>
+        <field name="total_cost">3200.0</field>
+    </record>
+    <record id="budget_3" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 3</field>
+        <field name="state">done</field>
+        <field name="date_start">2025-03-01</field>
+        <field name="date_end">2025-03-15</field>
+        <field name="total_cost">5200.0</field>
+    </record>
+    <record id="budget_4" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 4</field>
+        <field name="state">cancelled</field>
+        <field name="date_start">2025-04-01</field>
+        <field name="date_end">2025-04-15</field>
+        <field name="total_cost">2600.0</field>
+    </record>
+    <record id="budget_5" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 5</field>
+        <field name="state">draft</field>
+        <field name="date_start">2025-05-01</field>
+        <field name="date_end">2025-05-15</field>
+        <field name="total_cost">4100.0</field>
+    </record>
+    <record id="budget_6" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 6</field>
+        <field name="state">confirmed</field>
+        <field name="date_start">2025-06-01</field>
+        <field name="date_end">2025-06-15</field>
+        <field name="total_cost">3900.0</field>
+    </record>
+    <record id="budget_7" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 7</field>
+        <field name="state">done</field>
+        <field name="date_start">2025-07-01</field>
+        <field name="date_end">2025-07-15</field>
+        <field name="total_cost">4700.0</field>
+    </record>
+    <record id="budget_8" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 8</field>
+        <field name="state">cancelled</field>
+        <field name="date_start">2025-08-01</field>
+        <field name="date_end">2025-08-15</field>
+        <field name="total_cost">2800.0</field>
+    </record>
+    <record id="budget_9" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 9</field>
+        <field name="state">draft</field>
+        <field name="date_start">2025-09-01</field>
+        <field name="date_end">2025-09-15</field>
+        <field name="total_cost">4300.0</field>
+    </record>
+    <record id="budget_10" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 10</field>
+        <field name="state">confirmed</field>
+        <field name="date_start">2025-10-01</field>
+        <field name="date_end">2025-10-15</field>
+        <field name="total_cost">3400.0</field>
+    </record>
+    <record id="budget_11" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 11</field>
+        <field name="state">done</field>
+        <field name="date_start">2025-11-01</field>
+        <field name="date_end">2025-11-15</field>
+        <field name="total_cost">5600.0</field>
+    </record>
+    <record id="budget_12" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 12</field>
+        <field name="state">cancelled</field>
+        <field name="date_start">2025-12-01</field>
+        <field name="date_end">2025-12-15</field>
+        <field name="total_cost">2400.0</field>
+    </record>
+    <record id="budget_13" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 13</field>
+        <field name="state">draft</field>
+        <field name="date_start">2026-01-01</field>
+        <field name="date_end">2026-01-15</field>
+        <field name="total_cost">4800.0</field>
+    </record>
+    <record id="budget_14" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 14</field>
+        <field name="state">confirmed</field>
+        <field name="date_start">2026-02-01</field>
+        <field name="date_end">2026-02-15</field>
+        <field name="total_cost">3600.0</field>
+    </record>
+    <record id="budget_15" model="budget.apu">
+        <field name="name">Presupuesto Ejemplo 15</field>
+        <field name="state">done</field>
+        <field name="date_start">2026-03-01</field>
+        <field name="date_end">2026-03-15</field>
+        <field name="total_cost">5900.0</field>
+    </record>
+
+    <!-- Registros del modelo BudgetLine -->
+    <record id="budget_line_1" model="budget.line">
+        <field name="name">Mano de Obra</field>
+        <field name="quantity">40</field>
+        <field name="unit_price">80.0</field>
+        <field name="total_cost">3200.0</field>
+        <field name="budget_id" ref="budget_1"/>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Costo por operarios calificados</field>
+    </record>
+    <record id="budget_line_2" model="budget.line">
+        <field name="name">Equipo</field>
+        <field name="quantity">5</field>
+        <field name="unit_price">100.0</field>
+        <field name="total_cost">500.0</field>
+        <field name="budget_id" ref="budget_1"/>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Costo por uso de maquinaria</field>
+    </record>
+    <record id="budget_line_3" model="budget.line">
+        <field name="name">Concreto</field>
+        <field name="quantity">10</field>
+        <field name="unit_price">200.0</field>
+        <field name="total_cost">2000.0</field>
+        <field name="budget_id" ref="budget_1"/>
+        <field name="apu_id" ref="apu_1"/>
+        <field name="description">Costo del concreto premezclado</field>
+    </record>
+
+    <record id="budget_line_4" model="budget.line">
+        <field name="name">Transporte</field>
+        <field name="quantity">8</field>
+        <field name="unit_price">50.0</field>
+        <field name="total_cost">400.0</field>
+        <field name="budget_id" ref="budget_1"/>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Costo por transporte de materiales</field>
+    </record>
+
+    <record id="budget_line_5" model="budget.line">
+        <field name="name">Acero</field>
+        <field name="quantity">15</field>
+        <field name="unit_price">150.0</field>
+        <field name="total_cost">2250.0</field>
+        <field name="budget_id" ref="budget_2"/>
+        <field name="apu_id" ref="apu_2"/>
+        <field name="description">Costo de barras de acero</field>
+    </record>
+
+    <record id="budget_line_6" model="budget.line">
+        <field name="name">Pintura</field>
+        <field name="quantity">20</field>
+        <field name="unit_price">30.0</field>
+        <field name="total_cost">600.0</field>
+        <field name="budget_id" ref="budget_2"/>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Costo de pintura exterior</field>
+    </record>
+
+    <record id="budget_line_7" model="budget.line">
+        <field name="name">Ladrillos</field>
+        <field name="quantity">100</field>
+        <field name="unit_price">5.0</field>
+        <field name="total_cost">500.0</field>
+        <field name="budget_id" ref="budget_2"/>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Costo de ladrillos para muros</field>
+    </record>
+
+    <record id="budget_line_8" model="budget.line">
+        <field name="name">Yeso</field>
+        <field name="quantity">25</field>
+        <field name="unit_price">40.0</field>
+        <field name="total_cost">1000.0</field>
+        <field name="budget_id" ref="budget_3"/>
+        <field name="apu_id" ref="apu_3"/>
+        <field name="description">Costo de yeso para acabados</field>
+    </record>
+
+    <record id="budget_line_9" model="budget.line">
+        <field name="name">Cableado eléctrico</field>
+        <field name="quantity">50</field>
+        <field name="unit_price">10.0</field>
+        <field name="total_cost">500.0</field>
+        <field name="budget_id" ref="budget_3"/>
+        <field name="apu_id" ref="apu_4"/>
+        <field name="description">Costo de materiales eléctricos</field>
+    </record>
+
+    <record id="budget_line_10" model="budget.line">
+        <field name="name">Plomería</field>
+        <field name="quantity">10</field>
+        <field name="unit_price">80.0</field>
+        <field name="total_cost">800.0</field>
+        <field name="budget_id" ref="budget_3"/>
+        <field name="apu_id" ref="apu_4"/>
+        <field name="description">Costo de instalación de tuberías</field>
+    </record>
+
+    <record id="budget_line_11" model="budget.line">
+        <field name="name">Cerámica</field>
+        <field name="quantity">30</field>
+        <field name="unit_price">120.0</field>
+        <field name="total_cost">3600.0</field>
+        <field name="budget_id" ref="budget_4"/>
+        <field name="apu_id" ref="apu_5"/>
+        <field name="description">Costo de cerámica para pisos</field>
+    </record>
+
+    <record id="budget_line_12" model="budget.line">
+        <field name="name">Vidrios</field>
+        <field name="quantity">15</field>
+        <field name="unit_price">200.0</field>
+        <field name="total_cost">3000.0</field>
+        <field name="budget_id" ref="budget_4"/>
+        <field name="apu_id" ref="apu_5"/>
+        <field name="description">Costo de ventanas y vidrios</field>
+    </record>
+
+    <record id="budget_line_13" model="budget.line">
+        <field name="name">Muebles</field>
+        <field name="quantity">10</field>
+        <field name="unit_price">500.0</field>
+        <field name="total_cost">5000.0</field>
+        <field name="budget_id" ref="budget_5"/>
+        <field name="apu_id" ref="apu_5"/>
+        <field name="description">Costo de muebles para interiores</field>
+    </record>
+
+    <record id="budget_line_14" model="budget.line">
+        <field name="name">Decoraciones</field>
+        <field name="quantity">12</field>
+        <field name="unit_price">150.0</field>
+        <field name="total_cost">1800.0</field>
+        <field name="budget_id" ref="budget_5"/>
+        <field name="apu_id" ref="apu_6"/>
+        <field name="description">Costo de decoraciones interiores</field>
+    </record>
+
+    <record id="budget_line_15" model="budget.line">
+        <field name="name">Iluminación</field>
+        <field name="quantity">20</field>
+        <field name="unit_price">75.0</field>
+        <field name="total_cost">1500.0</field>
+        <field name="budget_id" ref="budget_5"/>
+        <field name="apu_id" ref="apu_6"/>
+        <field name="description">Costo de lámparas y luces</field>
+    </record>
+</odoo>

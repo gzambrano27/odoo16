@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_production_responsible_form_inherit" model="ir.ui.view">
+        <field name="name">mrp.production.responsible.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="replace">
+                <field name="assembly_responsible"/>
+                <field name="equipment_responsible"/>
+                <field name="force_responsible"/>
+                <field name="control_responsible"/>
+            </xpath>
+            <!-- <xpath expr="//button[@name='button_mark_done']" position="after">
+                <button name="create_requisition_purchase" type="object" string="Create Requisition Purchase"
+                        attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_requisitions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-archive"
+                        string="Requisitions"
+                />
+            </xpath> -->
+<!--            <xpath expr="//notebook/page[@name='components']/field/tree/field[@name='operation_id']"-->
+<!--                   position="attributes">-->
+<!--                <attribute name="invisible">0</attribute>-->
+<!--            </xpath>-->
+<!--            <xpath expr="//notebook/page[@name='components']/field/tree" position="attributes">-->
+<!--                <attribute name="limit">200</attribute>-->
+<!--            </xpath>-->
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_generate_adjustment_lines" model="ir.actions.server">
+        <field name="name">Generar líneas de ajuste</field>
+        <field name="model_id" ref="model_inventory_document_adjust_line"/>
+        <field name="binding_model_id" ref="gps_inventario.model_inventory_document_adjust_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                records.generate_adjustment_lines()
+                action = {'type': 'ir.actions.client', 'tag': 'reload'}
+            </field>
+    </record>
+    <record id="inventory_document_adjust_line_view_filter"
+            model="ir.ui.view">
+        <field name="name">inventory.document.adjust.line.filter</field>
+        <field name="model">inventory.document.adjust.line</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Ajustes de Inventario">
+
+                <group expand="0" string="Agrupar por...">
+
+                    <filter name="group_by_stock_location_id"
+                            string="Ubicacion"
+                            context="{'group_by':'stock_location_id'}"/>
+                    <filter name="group_by_product_id"
+                            string="Producto"
+                            context="{'group_by':'product_id'}"/>
+                </group>
+                <group expand="0" string="Filtrar por...">
+
+                    <filter name="filter_adjust_mayor0"
+                            string="Mayor al Stock"
+                            domain="[('adjust','&gt;',0)]"/>
+                    <filter name="filter_adjust_menor0"
+                            string="Menor al Stock"
+                            domain="[('adjust','&lt;',0)]"/>
+                    <filter name="filter_adjust_igual0"
+                            string="Igual al Stock"
+                            domain="[('adjust','=',0)]"/>
+                </group>
+                <field name="id" string="# ID"/>
+                <field name="stock_location_id"/>
+                <field name="product_id"/>
+                <field name="comments"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="inventory_document_adjust_line_view_tree_edit"
+            model="ir.ui.view">
+        <field name="name">inventory.document.adjust.line.tree</field>
+        <field name="model">inventory.document.adjust.line</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Detalle" editable="bottom"
+                  create="false" delete="false"
+                  decoration-muted="force_apply==True"
+                  decoration-it="origin!='original'">
+                
+                <field name="id" readonly="1" string="# ID" />
+                <field name="stock_location_id" readonly="1"
+                       options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="referencia_anterior"  readonly="1" optional="hide" />
+                <field name="product_id" readonly="1"
+                       options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="stock" sum="total" readonly="1"
+                       groups="gps_inventario.group_ajuste_inventario_manager, gps_inventario.group_ajuste_inventario_costo_manager"/>
+                <field name="quantity" sum="total"
+                       attrs="{'readonly':[('parent_state','in',('applied','annulled'))]}"/>
+                <field name="adjust" sum="total"
+                       readonly="1" force_save="1" decoration-danger="adjust&lt;0" decoration-warning="adjust&gt;0"
+                       decoration-success="adjust==0 or not adjust"
+                       groups="gps_inventario.group_ajuste_inventario_manager, gps_inventario.group_ajuste_inventario_costo_manager"/>
+                <field name="apply"
+                       widget="boolean_toggle"
+                       groups="gps_inventario.group_ajuste_inventario_manager, gps_inventario.group_ajuste_inventario_costo_manager"
+                       attrs="{'readonly':[('parent_state','in',('applied','annulled'))]}"
+                />
+
+                <field name="comments" attrs="{'readonly':[('parent_state','in',('applied','annulled'))]}"/>
+                <field name="force_apply" invisible="1"/>
+                <field name="origin" optional="hide" readonly="1"/>
+                <field name="parent_state" invisible="1"/>
+
+                <field name="standard_price"
+                       groups="gps_inventario.group_ajuste_inventario_costo_manager, gps_inventario.group_ajuste_inventario_costo_manager" readonly="1"
+                       force_save="1" optional="hide"
+                       sum="total"
+                />
+                <field name="total_cost"
+                       groups="gps_inventario.group_ajuste_inventario_costo_manager, gps_inventario.group_ajuste_inventario_costo_manager" readonly="1"
+                       force_save="1" optional="hide"
+                       sum="total"
+                />
+
+                <header>
+                    <button name="generate_adjustment_lines" type="object" string="Descargar Excel" class="btn-primary"/>
+                </header>
+
+            </tree>
+        </field>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="l10n_ec_ats_view_form"
+			model="ir.ui.view">
+			<field name="name">l10n.ec.ats.form</field>
+			<field name="model">l10n.ec.ats</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="SRI"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+					
+					<field name="company_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+                              	<field name="month_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+           <field name="year" />
+           
+             <field name="date_start"  readonly="1" force_save="1"/>
+               <field name="date_end" readonly="1" force_save="1"/>
+                               
+						</group>
+					<newline />
+					<footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		
+		<record
+			id="l10n_ec_ats_view_action"
+			model="ir.actions.act_window">
+			<field name="name">SRI</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_view_form" />
+			<field name="context">{'default_state':'annulled','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+		
+		<!-- reportes -->
+
+	
+		<record
+			id="l10n_ec_ats_reports_view_form"
+			model="ir.ui.view">
+			<field name="name">l10n.ec.ats.reports.form</field>
+			<field name="model">l10n.ec.ats</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+					
+					<field name="company_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+                              
+             <field name="date_start"  required="1"/>
+               <field name="date_end" required="1"/>
+                      <field name="type_info" widget="radio"
+							 required="not context.get('hide_detailed',False)"
+							 invisible="context.get('hide_detailed',False)" />
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs' 
+context="{'default_report':'gps_ats.report_compras_report_xlsx_act'}"
+invisible="not context.get('compras',False)" 
+							/>
+							
+							<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs' 
+context="{'default_report':'gps_ats.report_ventas_report_xlsx_act'}"
+invisible="not context.get('ventas',False)" 
+							/>
+							
+							<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs' 
+context="{'default_report':'gps_ats.report_impuestos_report_xlsx_act'}"
+invisible="not context.get('impuestos',False)" 
+							/>
+
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+context="{'default_report':'gps_ats.report_compras_acct_report_xlsx_act'}"
+invisible="not context.get('compras_acct',False)"
+							/>
+
+							
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record
+			id="l10n_ec_ats_reporte_purchases_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Compras</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_reports_view_form" />
+			<field name="context">{'is_report':True,'compras':True,'update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+
+			<record
+			id="l10n_ec_ats_reporte_sales_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Ventas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_reports_view_form" />
+			<field name="context">{'is_report':True,'ventas':True,'update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+	
+		
+		<record
+			id="l10n_ec_ats_reporte_taxes_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Impuestos</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_reports_view_form" />
+			<field name="context">{'hide_detailed':True,'is_report':True,'impuestos':True,'update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+
+		<record
+			id="l10n_ec_ats_reporte_purchases_account_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Compras por Cuentas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_reports_view_form" />
+			<field name="context">{'hide_detailed':True,'is_report':True,'compras_acct':True,'update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+		
+		
+	</data>
+</odoo>

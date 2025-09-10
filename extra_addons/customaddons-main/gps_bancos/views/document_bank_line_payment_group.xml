@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record id="document_bank_line_payment_group_view_tree_payment"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.payment.group.tree.payment</field>
+            <field name="model">document.bank.line.payment.group</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Detalle" decoration-it="migrated==True" decoration-muted="state=='no_validated'">
+                     <field name="name" readonly="1" optional="hide"/>
+                    <field name="ref" readonly="1"   />
+
+                     <field name="date_process" />
+
+                       <field name="payment_capital" sum="total"  optional="hide"/>
+                              <field name="payment_interest" sum="total" optional="hide"  />
+                              <field name="payment_overdue_interest" optional="hide" sum="total" colspan="2" />
+                              <field name="payment_other" optional="hide" sum="total"   />
+
+                    <field name="amount" sum="total" />
+                     <field name="payment_overdue_interest" sum="total" optional="hide"/>
+                    <field name="payment_id" optional="show"  attrs="{'invisible':[('migrated','=',True)]}" />
+                    <field name="migrated" optional="show"/>
+
+
+                        <button help="Anular"
+                                icon="fa-times"
+                                type="object"
+                                name="action_cancel"
+                                attrs="{'invisible':[('state','=','no_validated')]}"
+                                />
+                        <field name="state" optional="show"/>
+
+                </tree>
+            </field>
+        </record>
+
+         <record id="document_bank_line_payment_group_view_form_payment"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.payment.group.form.payment</field>
+            <field name="model">document.bank.line.payment.group</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Detalle"  >
+                    <header>
+                        <button string="Anular"
+                                icon="fa-times" type="object"
+                                name="action_cancel"
+                                attrs="{'invisible':[('state','=','no_validated')]}"
+                                />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <group>
+                         <group>
+                             <field name="name" readonly="1" colspan="2"/>
+                               <field name="ref" readonly="1" colspan="2"/>
+
+
+                     <field name="date_process" readonly="1" colspan="2"/>
+                             <field name="payment_id" readonly="1" colspan="2"
+                             attrs="{'invisible':[('migrated','=',True)]}"
+
+                             />
+
+                    </group>
+                         <group>
+
+                    <field name="payment_capital" readonly="1" colspan="2" attrs="{'invisible':[('payment_capital','&lt;=',0)]}"/>
+                              <field name="payment_interest" readonly="1" colspan="2" attrs="{'invisible':[('payment_interest','&lt;=',0)]}"/>
+                              <field name="payment_overdue_interest" readonly="1" colspan="2" attrs="{'invisible':[('payment_overdue_interest','&lt;=',0)]}"/>
+                              <field name="payment_other" readonly="1" colspan="2" attrs="{'invisible':[('payment_other','&lt;=',0)]}"/>
+
+                           <field name="amount" readonly="1" colspan="2" />
+                             <field name="payment_overdue_interest" readonly="1" colspan="2" attrs="{'invisible':[('payment_overdue_interest','&lt;=',0)]}" />
+                    <field name="migrated" readonly="1" colspan="2"/>
+                    </group>
+
+                    </group>
+
+
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+
+
+</odoo>

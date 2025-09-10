@@ -1,0 +1,79 @@
+<odoo>
+    <data>
+
+        <!-- Vista de Formulario para configurationio de Pagos -->
+        <record id="view_account_payment_request_type_form" model="ir.ui.view">
+            <field name="name">account.payment.request.type.form</field>
+            <field name="model">account.payment.request.type</field>
+            <field name="arch" type="xml">
+                <form string="Motivo">
+                    <sheet>
+                        <group>
+                             <group>
+                            <!-- Campo de Compañía -->
+                                 <field name="type" invisible="1" readonly="1" widget="radio" required="1" />
+
+                                 <field name="type_module"  widget="radio" required="1" />
+
+                        <field name="default_mode_payment"  widget="radio" required="1"
+
+                        />
+
+
+
+                            <field name="code" required="1" />
+                             </group>
+                            <group>
+                                <!-- Campo del Día -->
+                                <field name="name" required="1" />
+                                <field name="active"   />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+
+        </record>
+
+        <!-- Vista de Lista para configurationio de Pagos -->
+        <record id="view_account_payment_request_type_tree" model="ir.ui.view">
+            <field name="name">account.payment.request.type.tree</field>
+            <field name="model">account.payment.request.type</field>
+            <field name="arch" type="xml">
+                <tree string="Motivo">
+                    <field name="type" />
+                     <field name="type_module"
+                        />
+
+                       <field name="default_mode_payment"
+                        />
+                    <field name="code"  />
+                    <field name="name"  />
+                       <field name="active"  />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción para acceder a la vista -->
+            <record id="action_account_payment_request_anulacion_type" model="ir.actions.act_window">
+            <field name="name">Motivo de Anulacion</field>
+            <field name="res_model">account.payment.request.type</field>
+            <field name="view_mode">tree,form</field>
+                <field name="domain">[('type','=','anulacion')]</field>
+                    <field name="context">{'default_type':'anulacion'}</field>
+        </record>
+
+          <record id="action_account_payment_request_registro_type" model="ir.actions.act_window">
+            <field name="name">Motivo de Registro</field>
+            <field name="res_model">account.payment.request.type</field>
+            <field name="view_mode">tree,form</field>
+                <field name="domain">[('type','=','registro')]</field>
+              <field name="context">{'default_type':'registro'}</field>
+        </record>
+
+          <!-- Menú para acceder a la vista -->
+
+
+    </data>
+
+</odoo>

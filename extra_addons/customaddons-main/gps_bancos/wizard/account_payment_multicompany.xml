@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+<odoo>
+    <record id="view_account_payment_multicompany_wizard_form" model="ir.ui.view">
+        <field name="name">account.payment.multicompany.form</field>
+        <field name="model">account.payment.multicompany</field>
+        <field name="arch" type="xml">
+            <form string="Pago a Compañía">
+                <group>
+                     <group>
+                         <field name="company_id"  force_save="1" colspan="2"
+                                readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+       <field name="partner_id"  force_save="1" colspan="2" invisible="1"
+                                readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                       <field name="account_id" colspan="2"
+                              options="{'no_create':True,'no_edit':True,'no_open':True}"
+context="{'allowed_company_ids':[company_id]}"
+                       domain="[('company_id','=',company_id)]"
+                       />
+<field name="analytic_id"  options="{'no_create':True,'no_edit':True,'no_open':True}"
+context="{'allowed_company_ids':[company_id]}"
+                       domain="[('company_id','=',company_id)]"
+                       />
+
+                     </group>
+                     <group>
+                        <field name="amount" colspan="2"  force_save="1" readonly="1"/>
+                     </group>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirmar" icon="fa-cogs"
+                    context="{'allowed_company_ids':[company_id]}"
+                    />
+                    <button string="Cancelar" special="cancel" icon="fa-times"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_payment_multicompany" model="ir.actions.act_window">
+        <field name="name">Pago por Compañía</field>
+        <field name="res_model">account.payment.multicompany</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'active_model': 'account.payment.bank.macro.summary'}</field>
+    </record>
+</odoo>
+
+
+
+
+
+
+
+
+
+    </data>
+
+</odoo>

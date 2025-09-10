@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+dynamic_function_interface,dynamic_function_interface,model_dynamic_function_interface,base.group_system,1,1,1,1
+dynamic_function_property,dynamic_function_property,model_dynamic_function_property,base.group_system,1,1,1,1
+dynamic_function,dynamic_function,model_dynamic_function,base.group_system,1,1,1,1
+dynamic_function_test_wizard,dynamic_function_test_wizard,model_dynamic_function_test_wizard,base.group_system,1,1,1,1
+dynamic_function_interface2,dynamic_function_interface2,model_dynamic_function_interface,base.group_user,1,0,0,0
+dynamic_function_property2,dynamic_function_property2,model_dynamic_function_property,base.group_user,1,0,0,0
+dynamic_function2,dynamic_function2,model_dynamic_function,base.group_user,1,0,0,0
+dynamic_function_test_wizard2,dynamic_function_test_wizard2,model_dynamic_function_test_wizard,base.group_user,1,1,1,1
+dynamic_function_interface3,dynamic_function_interface3,model_dynamic_function_interface,fx.group_exec_programmer,1,1,1,1
+dynamic_function_property3,dynamic_function_property3,model_dynamic_function_property,fx.group_exec_programmer,1,1,1,1
+dynamic_function3,dynamic_function3,model_dynamic_function,fx.group_exec_programmer,1,1,1,1
+dynamic_function_test_wizard3,dynamic_function_test_wizard3,model_dynamic_function_test_wizard,fx.group_exec_programmer,1,1,1,1

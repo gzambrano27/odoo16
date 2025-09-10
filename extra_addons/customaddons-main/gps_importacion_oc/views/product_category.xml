@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_product_category_form_inherit_import" model="ir.ui.view">
+      <field name="name">product.category.form.import</field>
+      <field name="model">product.category</field>
+      <field name="inherit_id" ref="account.view_category_property_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group[@name='account_property']" position="inside">
+            <group string="Cuentas Transitorias de Importación">
+                <field name="import_account_transit_debit"/>
+                <field name="import_account_transit_credit"/>
+            </group>
+        </xpath>
+        
+      </field>
+    </record>
+</odoo>

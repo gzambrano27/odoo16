@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+
+  <template id="guia_template">
+  
+  
+             
+<guiaRemision id="comprobante" version="1.0.0">
+  <t t-set="street" t-value="journal.l10n_ec_emission_address_id.street"/>
+            <t t-set="address" t-value="street and clean_str(street) or ''"/>
+            <t t-set="in_production" t-value="company.l10n_ec_production_env"/>
+            <t t-set="test_name" t-value="'PRUEBAS SERVICIO DE RENTAS INTERNAS'"/>
+            
+      <infoTributaria>
+            <ambiente t-out="'2' if in_production else '1'"/>
+            <tipoEmision>1</tipoEmision>
+            <razonSocial t-out="clean_str(company.l10n_ec_legal_name)"/>
+            <nombreComercial t-out="clean_str(company.partner_id.name)"/>
+            <ruc t-out="company.partner_id.vat"/>
+            <claveAcceso t-out="move.l10n_ec_authorization_number"/>
+            <!-- NOTE: withholds don't have l10n_latam_document_type_id (WTH journals use separate sequence) -->
+            <codDoc>06</codDoc>
+            <estab t-out="journal.l10n_ec_entity"/>
+            <ptoEmi t-out="journal.l10n_ec_emission"/>
+            <secuencial t-out="sequential"/>
+            <dirMatriz t-out="address"/>
+            <agenteRetencion t-out="company.l10n_ec_withhold_agent_number"/>
+            <contribuyenteRimpe t-if="company.l10n_ec_regime == 'rimpe'" t-out="'CONTRIBUYENTE RÉGIMEN RIMPE'"/>
+                                    
+      </infoTributaria>
+      <infoGuiaRemision>
+        <dirEstablecimiento t-out="address"/>
+        <dirPartida t-out="clean_str(move.address_origin)"/>
+        <razonSocialTransportista t-out="clean_str(move.partner_carrier_id.name) or clean_str(move.razon_social_transportista)"/>
+        <tipoIdentificacionTransportista t-out="clean_str(partner_sri_code)"/>
+        <rucTransportista t-out="clean_str(move.partner_carrier_id.vat) or clean_str(move.ruc_transportista)"/>
+        <!-- NO incluir contribuyenteEspecial ni obligadoContabilidad -->
+        <fechaIniTransporte t-out="strftime(move.date_initial)"/>
+        <fechaFinTransporte t-out="strftime(move.date_end)"/>
+        <placa t-out="clean_str(move.vehicle_id.license_plate) or clean_str(move.placa_externo)"/>
+      </infoGuiaRemision>
+      <destinatarios>
+        <destinatario>
+          <identificacionDestinatario t-out="clean_str(move.partner_id.vat)"/>
+          <razonSocialDestinatario t-out="clean_str(move.partner_id.name)"/>
+          <dirDestinatario t-out="clean_str(move.address_destination)"/>
+          <motivoTraslado t-out="clean_str(move.reason_document_id.name)"/> 
+                
+          <ruta t-out="clean_str(move.address_origin)"/> 
+                
+              <detalles>
+                  <detalle t-as="referral_guide_detalle" t-foreach="line_guide_ids">
+                    <codigoInterno t-out="clean_str(referral_guide_detalle.code)"/> 
+                    <descripcion t-out="clean_str(referral_guide_detalle.name)"/> 
+                    <cantidad t-out="referral_guide_detalle.qty"/>  
+                  </detalle>
+              </detalles>
+                  
+        </destinatario>
+      </destinatarios>
+</guiaRemision>
+</template>
+
+    </data>
+</odoo>

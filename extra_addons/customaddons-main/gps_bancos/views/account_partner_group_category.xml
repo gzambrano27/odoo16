@@ -1,0 +1,55 @@
+<odoo>
+    <data>
+
+        <!-- Vista de Formulario para configurationio de Pagos -->
+        <record id="view_account_partner_group_category_form" model="ir.ui.view">
+            <field name="name">account.partner.group.category.form</field>
+            <field name="model">account.partner.group.category</field>
+            <field name="arch" type="xml">
+                <form string="Categoria de Clientes">
+                    <sheet>
+                        <group>
+                             <group>
+                            <!-- Campo de Compañía -->
+                            <field name="code" required="1" />
+                             </group>
+                            <group>
+                                <!-- Campo del Día -->
+                                <field name="name" required="1" />
+                            </group>
+                        </group>
+                        <newline/>
+                        <field name="partner_ids" widget="many2many_tags" colspan="4">
+
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+
+        </record>
+
+        <!-- Vista de Lista para configurationio de Pagos -->
+        <record id="view_account_partner_group_category_tree" model="ir.ui.view">
+            <field name="name">account.partner.group.category.tree</field>
+            <field name="model">account.partner.group.category</field>
+            <field name="arch" type="xml">
+                <tree string="Categoria de Clientes">
+                    <field name="code"  />
+                    <field name="name"  />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción para acceder a la vista -->
+            <record id="action_account_partner_group_category" model="ir.actions.act_window">
+            <field name="name">Categoria de Clientes</field>
+            <field name="res_model">account.partner.group.category</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+          <!-- Menú para acceder a la vista -->
+
+
+    </data>
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+		
+		<record id="param_promedios_ult_compras" model="ir.config_parameter">
+            <field name="key">param.promedios.ult.compras</field>
+            <field name="value">3</field>
+        </record>
+
+
+		<record id="param_validar_margen" model="ir.config_parameter">
+            <field name="key">param.validar.margen</field>
+            <field name="value">1</field>
+        </record>
+
+	
+	</data>
+	
+	</odoo>

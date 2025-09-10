@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_material_purchase_requisition_form_inherit_aprobar" model="ir.ui.view">
+        <field name="name">material.purchase.requisition.form.inherit.aprobar</field>
+        <field name="model">material.purchase.requisition</field>
+        <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='global_partner_id']" position="after">
+                <field name="permite_aprobar" groups="construccion_gps.group_apus_aprobador"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_form_inherit_aprobar" model="ir.ui.view">
+        <field name="name">purchase.request.form.inherit.aprobar</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='group_id']" position="after">
+                <field name="permite_aprobar" groups="construccion_gps.group_apus_aprobador"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

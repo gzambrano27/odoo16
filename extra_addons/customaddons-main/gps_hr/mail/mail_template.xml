@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+ <record id="email_template_hr_payslip" model="mail.template">
+            <field name="name">Rol de Pagos - Envio de Email</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">{{ object.description }}</field>
+            <field name="email_to">{{object.get_mail_to_send()}}</field>
+            <field name="model_id" ref="model_hr_mail_message"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[<div style="margin: 0px; padding: 0px;">
+    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">
+</p><p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">Estimad<t t-out="object.get_object_browse().employee_id.gender=='female' and 'a' or 'o' "></t>&nbsp; <t t-out="object.get_object_browse().employee_id.name"></t></p><p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">Se adjunta comprobante de pago de Nómina del período de <t t-out="object.get_object_browse().payslip_run_id.month_id.name"></t> del <t t-out="object.get_object_browse().payslip_run_id.year"></t>&nbsp;de la empresa <t t-out="object.company_id.name"></t><br><br><strong style="box-sizing:border-box;font-weight:bolder;">Saludos Cordiales&nbsp;</strong></p>
+ <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+</div>
+]]></field>
+        </record>
+        
+
+        
+        
+</odoo>

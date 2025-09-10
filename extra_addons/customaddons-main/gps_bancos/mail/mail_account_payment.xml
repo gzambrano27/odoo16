@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+ <record id="mail_template_payment_intercompany" model="mail.template">
+            <field name="name">Movimiento Intercompañía</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">Movimiento Intercompañía  de {{object.company_id.name}} a {{object.partner_id.sudo().name }}</field>
+            <field name="email_to">{{object.get_mail_intercompany_to_send()}}</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+ <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Se ha registrado un pago entre compañías relacionadas:</p>
+            <ul>
+             <li><strong>Compañía origen:</strong> <t t-out="object.company_id.name"/></li>
+<li><strong>Compañía destino:</strong> <t t-out="object.sudo().partner_id.sudo().name"/></li>
+<li><strong>Origen:</strong> <t t-out="object.sudo().journal_id.name"/></li>
+<t t-if="object.sudo().name_account">
+    <li><strong>Destino:</strong> <t t-out="object.sudo().name_account"/></li>
+</t>
+<li><strong>Monto:</strong> <t t-out="str(object.amount) + ' ' + object.currency_id.name"/></li>
+<li><strong>Referencia:</strong> <t t-out="object.ref or object.name"/></li>
+            </ul>
+          </body>
+        </html>
+        ]]></field>
+    </record>
+
+
+</odoo>

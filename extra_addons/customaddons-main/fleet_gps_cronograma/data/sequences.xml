@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="seq_fleet_cronograma" model="ir.sequence">
+    <field name="name">Cronograma de Maniobras</field>
+    <field name="code">fleet.cronograma</field>
+    <field name="implementation">no_gap</field>
+    <field name="padding">2</field>
+    <field name="prefix">GPS-%(week)s-%(month)s-%(y)s</field>
+  </record>
+</odoo>

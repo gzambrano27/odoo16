@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Tree View -->
+    <record id="view_employee_contract_info_tree" model="ir.ui.view">
+      <field name="name">employee.contract.info.view.tree</field>
+      <field name="model">employee.contract.info.view</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="identificador"/>
+          <field name="identificador_company"/>
+          <field name="nombre_empleado"/>
+          <field name="fecha_ingreso"/>
+          <field name="rol"/>
+          <field name='sueldo'/>
+          <field name='metodo_pago_quincenal'/>
+          <field name='valor'/>
+          <field name='estado'/>
+          <field name="inicio_contrato"/>
+          <field name="fin_contrato"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_employee_contract_info_form" model="ir.ui.view">
+      <field name="name">employee.contract.info.view.form</field>
+      <field name="model">employee.contract.info.view</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="identificador"/>
+                <field name="identificador_company"/>
+              </group>
+              <group>
+                <field name="nombre_empleado"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_employee_contract_info" model="ir.actions.act_window">
+      <field name="name">Employee Contract Info</field>
+      <field name="res_model">employee.contract.info.view</field>
+      <field name="view_mode">tree,form</field>
+      <!-- <field name="domain">[('id', '!=', False)]</field> -->
+      <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+    </record>
+
+    <!-- Menu Item -->
+    <!-- <menuitem id="menu_employee_contract_info" name="Employee Contract Info" parent="base.menu_hr_root" sequence="10"/>
+    <menuitem id="menu_employee_contract_info_tree" name="Employee Contract Info" parent="menu_employee_contract_info" action="action_employee_contract_info" sequence="10"/> -->
+  </data>
+</odoo>

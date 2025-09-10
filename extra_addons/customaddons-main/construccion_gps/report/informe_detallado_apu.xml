@@ -1,0 +1,223 @@
+<odoo>
+    <data>
+        <!-- Paper Format -->
+        <record id="report_apo_format" model="report.paperformat">
+            <field name="name">Formato APU Reporte</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+        </record>
+
+        <!-- Report Definition -->
+        <record id="report_inform_apu" model="ir.actions.report">
+            <field name="name">Reporte Detallado APU</field>
+            <field name="model">apu.apu</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">construccion_gps.report_apu_detail</field>
+            <field name="report_file">construccion_gps.report_apu_detail</field>
+            <field name="binding_model_id" ref="construccion_gps.model_apu_apu"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="report_apo_format"/>
+        </record>
+
+        <!-- QWeb Template for APU Detail Report -->
+        <template id="report_apu_detail">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout">
+                        <div class="page" style="font-family:verdana; font-size:14px;">
+                            <div class="oe_structure"/>
+
+                            <!-- Header -->
+                            <div class="row align-items-center mb-2">
+                                <div class="col-6">
+                                    <img t-if="doc.company_id.logo"
+                                         t-att-src="image_data_uri(doc.company_id.logo)"
+                                         style="max-height:125px; max-width:125%;"/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <h2 style="margin:0; font-weight:bold;">
+                                        <span>APU # </span>
+                                        <span t-field="doc.code"/>
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <!-- Información detallada en dos columnas -->
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <p style="margin:0;"><strong>Producto:</strong>
+                                        [<span t-field="doc.product_tmpl_id.default_code"/>]
+                                        <span t-field="doc.product_tmpl_id.name"/>
+                                    </p>
+                                    <p style="margin:0;"><strong>Precio Unitario:</strong>
+                                        <span t-field="doc.line_ids[0].precio_unit"
+                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                    </p>
+                                    <p style="margin:0;"><strong>Total APU Precio:</strong>
+                                        <span t-field="doc.total_apu_precio"
+                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                    </p>
+                                </div>
+                                <div class="col-6">
+                                    <p style="margin:0;"><strong>Unidad de Medida:</strong>
+                                        <span t-field="doc.product_uom_id.name"/>
+                                    </p>
+                                    <p style="margin:0;"><strong>Cantidad:</strong>
+                                        <span t-field="doc.line_ids[0].product_qty"/>
+                                    </p>
+                                    <p style="margin:0;"><strong>Cliente:</strong>
+                                        <span t-field="doc.cliente_id"/>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Tabla combinada de líneas APU y tareas -->
+                            <table class="table table-sm o_main_table" style="border:1px solid #ccc;">
+                                <thead style="display: table-row-group">
+                                    <tr style="background-color:#EAECEE;">
+                                        <th style="text-align:center; width:10%;">COD</th>
+                                        <th style="width:25%;">DESCRIPCIÓN</th>
+                                        <th style="width:5%;">U</th>
+                                        <th style="width:10%;">CANT</th>
+                                        <th style="width:10%;">P. UNIT</th>
+                                        <th style="width:10%;">P. GEN</th>
+                                        <th style="width:10%;">C. UNIT</th>
+                                        <th style="width:10%;">C. TOTAL</th>
+                                        <th style="width:10%;">MARGEN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.line_ids" t-as="line">
+                                        <!-- Si la línea tiene actividades -->
+                                        <t t-if="line.line_tarea_ids">
+                                            <tr>
+                                                <td colspan="9" style="padding:0;">
+                                                    <div style="border:2px dashed #2F75B5; padding:0px; margin-top:2px; background-color:#F4F6F7;">
+                                                        <!-- Fila principal de la línea dentro del borde -->
+                                                        <table class="table table-sm" style="border:none; width:100%; margin-bottom:8px;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="text-align:center; width:10%;">
+                                                                        <span t-field="line.codigo_componente"/>
+                                                                    </td>
+                                                                    <td style="width:25%;">
+                                                                        [<span t-field="line.product_id.product_tmpl_id.default_code"/>]
+                                                                        <span t-field="line.product_id.name"/>
+                                                                    </td>
+                                                                    <td style="width:5%;"><span t-field="line.product_uom_id.name"/></td>
+                                                                    <td style="text-align:right; width:10%;"><span t-field="line.product_qty"/></td>
+                                                                    <td style="text-align:right; width:10%;">
+                                                                        <span t-field="line.precio_unit"
+                                                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                    </td>
+                                                                    <td style="text-align:right; width:10%;">
+                                                                        <span t-field="line.precio_general"
+                                                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                    </td>
+                                                                    <td style="text-align:right; width:10%;">
+                                                                        <span t-field="line.cost"
+                                                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                    </td>
+                                                                    <td style="text-align:right; width:10%;">
+                                                                        <span t-field="line.subtotal"
+                                                                              t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                    </td>
+                                                                    <td style="text-align:right; width:10%;">
+                                                                        <span t-field="line.porc_margen_bruto"
+                                                                              t-options='{"widget":"float","precision":2}'/> %
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <!-- Tabla de actividades dentro del borde -->
+                                                        <table class="table table-sm" style="border:1px solid #ccc; width:100%;">
+                                                            <thead style="display: table-row-group">
+                                                                <tr style="background-color:#DCE6F1;">
+                                                                    <th>ACTIVIDAD</th>
+                                                                    <th>TIPO</th>
+                                                                    <th>U</th>
+                                                                    <th>CANT</th>
+                                                                    <th>C/H</th>
+                                                                    <th>C. HORA</th>
+                                                                    <th>REND.</th>
+                                                                    <th>C. FINAL</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <t t-foreach="line.line_tarea_ids" t-as="task">
+                                                                    <tr>
+                                                                        <td style="text-align:left;"><span t-esc="task.tarea_id.name"/></td>
+                                                                        <td style="text-align:left;"><span t-esc="task.tipo_actividad"/></td>
+                                                                        <td style="text-align:left;"><span t-esc="task.unidad.name"/></td>
+                                                                        <td style="text-align:right;"><span t-esc="task.cantidad"/></td>
+                                                                        <td style="text-align:right;">
+                                                                            <span t-esc="task.costo"
+                                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                        </td>
+                                                                        <td style="text-align:right;">
+                                                                            <span t-esc="task.costo_hora_actividad"
+                                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                        </td>
+                                                                        <td style="text-align:right;"><span t-esc="task.rendimiento"/></td>
+                                                                        <td style="text-align:right;">
+                                                                            <span t-esc="task.costo_final_actividad"
+                                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!-- Si la línea NO tiene actividades -->
+                                        <t t-else="">
+                                            <tr>
+                                                <td style="text-align:center;"><span t-field="line.codigo_componente"/></td>
+                                                <td>
+                                                    [<span t-field="line.product_id.product_tmpl_id.default_code"/>]
+                                                    <span t-field="line.product_id.name"/>
+                                                </td>
+                                                <td><span t-field="line.product_uom_id.name"/></td>
+                                                <td style="text-align:right;"><span t-field="line.product_qty"/></td>
+                                                <td style="text-align:right;">
+                                                    <span t-field="line.precio_unit"
+                                                          t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <span t-field="line.precio_general"
+                                                          t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <span t-field="line.cost"
+                                                          t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <span t-field="line.subtotal"
+                                                          t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <span t-field="line.porc_margen_bruto"
+                                                          t-options='{"widget":"float","precision":2}'/> %
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

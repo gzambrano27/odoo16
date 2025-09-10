@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+    <record id="view_document_bank_reconciliation_line_form" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.line.form</field>
+        <field name="model">document.bank.reconciliation.line</field>
+        <field name="arch" type="xml">
+                <form string="Detalle de Conciliación Bancaria" edit="true"  create="false" delete="false">
+                <header>
+
+                    </header>
+
+                <sheet>
+ <group>
+                    <group>
+
+                      <field name="sequence" readonly="1" force_save="1" />
+                              <field name="date" readonly="1" force_save="1"/>
+                              <field name="reference" readonly="1" force_save="1" />
+                              <field name="location" readonly="1" force_save="1" />
+                              <field name="transaction_type" readonly="1" force_save="1"/>
+    <field name="full_reconciled" readonly="1" force_save="1" />
+
+                    </group>
+      <group>
+   <field name="amount" readonly="1" force_save="1"/>
+                            <field name="signed_amount" readonly="1" force_save="1" />
+          <field name="available_balance" readonly="1" force_save="1"/>
+                              <field name="book_balance" readonly="1" force_save="1"/>
+                                     <field name="description" readonly="1" force_save="1"/>
+                            <field name="account_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+           <field name="journal_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+  <field name="company_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+
+               <field name="type_id"  options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+      </group>
+
+ </group>
+
+
+                        </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="view_document_bank_reconciliation_line_tree" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.line.tree</field>
+        <field name="model">document.bank.reconciliation.line</field>
+        <field name="arch" type="xml">
+               <tree string="Detalle"  create="false" delete="false" edit="false"
+
+  decoration-danger="transaction_type=='credit'"
+                              decoration-success="transaction_type!='credit'"
+decoration-it="not full_reconciled"
+                        >
+  <field name="sequence" optional="hide" readonly="1" force_save="1"/>
+                              <field name="date" readonly="1" force_save="1"/>
+                              <field name="reference" readonly="1" force_save="1"/>
+                              <field name="location" optional="hide" readonly="1" force_save="1"/>
+                              <field name="transaction_type" optional="hide" readonly="1" force_save="1"/>
+                           <field name="amount" readonly="1" force_save="1"
+
+                           />
+                            <field name="signed_amount" readonly="1" force_save="1" sum="total" optional="hide"/>
+
+
+
+                              <field name="available_balance" readonly="1" force_save="1"/>
+                              <field name="book_balance" readonly="1" force_save="1" optional="hide"/>
+                                     <field name="description" readonly="1" force_save="1"/>
+
+
+
+                            <field name="account_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+  <field name="company_id" invisible="1" />
+<field name="full_reconciled" optional="hide" />
+                      <field name="type_id" optional="hide"  options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+                 <field name="accountable_amount" optional="hide"  />
+                     <field name="accounted_amount" optional="hide"  />
+                        </tree>
+
+
+        </field>
+    </record>
+
+<record id="view_document_bank_reconciliation_line_search" model="ir.ui.view">
+    <field name="name">document.bank.reconciliation.line.search</field>
+    <field name="model">document.bank.reconciliation.line</field>
+    <field name="arch" type="xml">
+        <search string="Buscar líneas de conciliación bancaria">
+            <field name="reference"/>
+            <field name="description"/>
+            <field name="date"/>
+            <field name="transaction_type"/>
+            <field name="account_id"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+  <field name="type_id" />
+            <!-- Filtro por conciliación -->
+            <filter name="full_reconciled_yes" string="Conciliados" domain="[('full_reconciled', '=', True)]"/>
+            <filter name="full_reconciled_no" string="No conciliados" domain="[('full_reconciled', '=', False)]"/>
+
+            <group expand="0" string="Agrupar por">
+                <filter name="group_by_date" string="Fecha" context="{'group_by': 'date'}"/>
+                <filter name="group_by_account" string="Cuenta" context="{'group_by': 'account_id'}"/>
+                <filter name="group_by_type_id" string="Tipo" context="{'group_by': 'type_id'}"/>
+                <filter name="group_by_company" string="Compañía" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="action_open_update_type_wizard" model="ir.actions.server">
+    <field name="name">Actualizar Tipo de Movimiento</field>
+    <field name="model_id" ref="model_document_bank_reconciliation_line"/>
+    <field name="binding_model_id" ref="model_document_bank_reconciliation_line"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+        action = {
+            'type': 'ir.actions.act_window',
+            'res_model': 'update.reconciliation.type.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+             'views': [(self.env.ref('gps_bancos.view_update_reconciliation_type_wizard_form').id, 'form')],
+            'context': {             }
+        }
+    </field>
+</record>
+
+
+        <record id="action_payment_reconciliation_line_wizard" model="ir.actions.server">
+    <field name="name">Crear Pago/Cobro desde Conciliación</field>
+    <field name="model_id" ref="model_document_bank_reconciliation_line"/>
+    <field name="binding_model_id" ref="model_document_bank_reconciliation_line"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+        action = {
+            'type': 'ir.actions.act_window',
+            'res_model': 'update.reconciliation.type.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+             'views': [(self.env.ref('gps_bancos.payment_update_reconciliation_type_wizard_form').id, 'form')],
+            'context': {            }
+        }
+    </field>
+</record>
+
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_move_edit_taxes_all,account.move.edit.taxes.all,model_account_move_edit_taxes,,1,1,1,1
+access_account_move_taxes_all,account.move.taxes.all,model_account_move_taxes,base.group_user,1,1,1,1
+access_account_move_add_tax_user,account.move.add.tax.user,model_account_move_add_tax,base.group_user,1,1,1,1

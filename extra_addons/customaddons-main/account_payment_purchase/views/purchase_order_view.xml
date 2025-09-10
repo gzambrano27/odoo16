@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2024 - Washington GUijarro <wguijarro@gpsgroup.com.ec>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="action_import_purchase" model="ir.actions.act_window">
+        <field name="name">Importar Orden Compra</field>
+        <field name="res_model">purchase.order.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+    <!-- <record id="view_purchase_order_payment_form" model="ir.ui.view">
+        <field name="name">purchase.order.payment.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/header/button[@name='button_confirm']" position="after">
+                <button name="button_descargar" type="object" string="Descargar Orden Compra"
+                        class="btn-primary" 
+                        />
+                <button name="%(purchase_order_wizard_view_file_action)d" type="action"
+                                string="Importar Orden Compra"
+                                icon="fa-upload"  
+                        />
+            </xpath>
+            <field name="name" position="after">
+                <div class="oe_title">
+                    <span class="o_form_label">Orden Anterior </span>
+                    <h1 class="d-flex">
+                        <field name="orden_compra_anterior"/>
+                    </h1>
+                </div>
+                
+            </field>
+            <field name="picking_type_id" position="before">
+                <field name="fecha_llegada_inventario" required = '0' invisible='1'/>
+            </field>
+            <field name="partner_id" position="after"> 
+               <field name="es_admin" groups="base.group_no_one"/>
+               <field name="es_presidencia" groups="base.group_no_one"/>
+	           <field name="usuario_aprobacion_id" groups="base.group_no_one"/>
+	           <field name="requiere_aprobacion" groups="account_payment_purchase.group_account_financiero_app"/>
+	           <field name="show_approve_button" invisible="1"/>
+               <field name="sale_order_id"/>
+               <field name="referencia_analitica"/>
+	        </field>
+
+	        <field name="date_order" position="after">
+                <field name="solicitante" required = '1'/>
+	        	<field name="importacion"/>
+	        </field>
+	        <field name="incoterm_id" position="replace">
+	        	<field name="incoterm_id" attrs="{'required':[('importacion','=',True)]}"/>
+	        </field>
+            <field name="payment_term_id" position="replace">
+                <field name="is_developer" invisible="1"/>
+                <field name="payment_term_id"
+                    attrs="{'readonly': [('state', '!=', 'draft'), ('is_developer', '=', False)],
+                            'required': True}"/>
+            </field>
+            
+            <xpath expr="//field[@name='order_line']/tree//field[@name='qty_received']" position="replace">
+                <field name="qty_received" string='Recibido' readonly='0'/>
+            </xpath>
+            <field name="product_qty" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_editable_custom', '=', True)]}</attribute>
+            </field> 
+            <field name="price_unit" position="attributes">
+                <attribute name="attrs">{'readonly':  [('parent.state', '=', 'purchase')]}</attribute>
+            </field>
+            <field name="taxes_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('parent.state', '=', 'purchase')]}</attribute>
+            </field>
+            <field name="discount" position="attributes">
+                <attribute name="attrs">{'readonly':  [('parent.state', '=', 'purchase')]}</attribute>
+            </field>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="rubro" />
+                <field name="tipo_costo" invisible = '1' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="tipo_costo_id" options="{'no_create': True, 'no_open': True}" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="is_editable_reception" invisible='1'/>
+                <field name="is_editable_custom" invisible='1'/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_editable_custom', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="precio_venta" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
+                <group>
+                    <field name="rubro"/>
+                    <field name="tipo_costo" invisible = '1' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                    <field name="tipo_costo_id" options="{'no_create': True}" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                    <field name="analytic_account_names" invisible='1'/>
+                    <field name="precio_venta" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                </group>
+            </xpath>
+        </field>
+    </record> -->
+
+    <record id="view_purchase_order_payment_form" model="ir.ui.view">
+        <field name="name">purchase.order.payment.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="replace">
+                <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                                placeholder="Name, TIN, Email, or Reference"
+                                attrs="{'readonly': [('state','in', ('to approve', 'control_presupuesto','cancel','done','purchase'))]}"
+                            />
+            </field>
+            <field name="partner_id" position="before">
+                <field name="prioridad_orden" groups="account_payment_purchase.group_pgpp_cambiar"/>
+                <field name="prioridad_orden" groups="account_payment_purchase.group_pgpp_visualizar" readonly="1"/>
+            </field>
+            <field name="name" position="after">
+                <div class="oe_title">
+                    <span class="o_form_label">Orden Anterior </span>
+                    <h1 class="d-flex">
+                        <field name="orden_compra_anterior" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+                    </h1>
+                </div>
+                <field name="is_editable" invisible="1"/>
+            </field>
+            <xpath expr="/form/header/button[@name='button_confirm']" position="after">
+                <button name="button_descargar" type="object" string="Descargar Orden Compra"
+                        class="btn-primary" />
+                <button name="%(purchase_order_wizard_view_file_action)d" type="action"
+                        string="Importar Orden Compra" icon="fa-upload"
+                        />
+            </xpath>
+            
+            <field name="picking_type_id" position="replace">
+                <field name="picking_type_id" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </field>
+
+            <field name="picking_type_id" position="before">
+                <field name="fecha_llegada_inventario" required="0" invisible="1"/>
+            </field>
+
+            <field name="partner_id" position="after">
+                <field name="es_admin" groups="base.group_no_one"/>
+                <field name="es_presidencia" groups="base.group_no_one"/>
+                <field name="usuario_aprobacion_id" groups="base.group_no_one"/>
+                <field name="requiere_aprobacion" groups="account_payment_purchase.group_account_financiero_app"/>
+                <field name="show_approve_button" invisible="1"/>
+                <field name="sale_order_id" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+                <field name="referencia_analitica"/>
+            </field>
+            <field name="date_order" position="replace">
+                <field name="date_order" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </field>
+            
+            <field name="date_order" position="after">
+                <field name="solicitante" required="1" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+                <field name="importacion" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </field>
+
+            <field name="incoterm_id" position="replace">
+                <field name="incoterm_id" attrs="{'required':[('importacion','=',True)], 'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </field>
+
+            <field name="payment_term_id" position="replace">
+                <field name="is_developer" invisible="1"/>
+                <field name="payment_term_id"
+                    attrs="{'required':[(1,'=',1)],'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', 'in', ('to approve','control_presupuesto','cancel','done','purchase'))]}" options="{'no_create': True}"/>
+                <field name="lead_time" attrs="{'readonly': [('state', 'in', ['purchase', 'done', 'cancel'])],
+                            'required': True}"/>
+            </field>
+
+            <field name="effective_date" position="after">
+                <table class="table table-bordered"  groups="account_payment_purchase.group_analytic_user, account_payment_purchase.group_margen_compra_user, base.group_no_one">
+                    <thead class="text-center tw-bold">
+                        <tr>
+                            <th>Precio con Dscto</th>
+                            <th>Costo</th>
+                            <th>M. Bruto Sin Dscto</th>
+                            <th>M. Bruto con Dscto</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <td>
+                                <field name="base_precio_real" widget="monetary"
+                                    options="{'currency_field': 'currency_id'}" />
+                            </td>
+                            <td>
+                                <field name="costo_gen" widget="monetary"
+                                    options="{'currency_field': 'currency_id'}" />
+                            </td>
+                            
+                            <td>
+                                <field name="margen_bruto_sin_dscto" widget="percentage"/>
+                            </td>
+                            <td>
+                                <field name="margen_bruto_gen" widget="percentage"/>
+                            </td>
+                            
+                        </tr>
+                        
+                    </tbody>
+                </table>
+
+
+            </field>
+
+            <field name="product_uom" position="replace">
+                <field name="product_uom" invisible="1" />
+            </field>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom']" position="replace">
+                <field name="product_uom" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom_category_id']" position="replace">
+                <field name="product_uom_category_id" invisible="1" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="replace">
+                <field
+                        name="product_id"
+                        attrs="{
+                            'readonly': [('state', 'in', ('to approve','control_presupuesto', 'purchase', 'to approve','done', 'cancel'))],
+                            'required': [('display_type', '=', False)],
+                        }"
+                        options="{'no_create': True, 'no_create_edit': True}"
+                        context="{'partner_id':parent.partner_id, 'quantity':product_qty, 'company_id': parent.company_id}"
+                        force_save="1" domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='name']" position="replace">
+                <field name="name" widget="section_and_note_text" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='qty_received']" position="replace">
+                <field name="qty_received" string="Recibido" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_qty']" position="replace">
+                <field name="product_qty" attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"/>
+            </xpath>
+            <field name="price_unit" position="attributes">
+                <attribute name="attrs">{'readonly': [('parent.state', 'in', ('to approve','control_presupuesto','cancel','done','purchase'))]}</attribute>
+            </field>
+            <!-- <field name="taxes_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('parent.state', 'in', ('to approve','control_presupuesto','cancel','done','purchase'))]}</attribute>
+            </field> -->
+            <field name="discount" position="attributes">
+                <attribute name="attrs">{'readonly': [('parent.state', 'in', ('to approve','control_presupuesto','cancel','done','purchase'))]}</attribute>
+            </field>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="rubro"/>
+                <field name="tipo_costo" invisible="1" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="tipo_costo_id" optional='hidden' options="{'no_create': True, 'no_open': True}" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="is_editable_reception" invisible="1"/>
+                <field name="is_editable_custom" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="precio_venta" optional='hidden' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="margen" optional='hidden' widget='percentage' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="descuento_presupuesto" optional='hidden' widget='percentage' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="precio_real" optional='hidden' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                <field name="margen_con_dscto" widget='percentage' optional='hidden' groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
+                <group>
+                    <field name="rubro"/>
+                    <field name="tipo_costo" invisible="1" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                    <field name="tipo_costo_id" options="{'no_create': True}" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                    <field name="analytic_account_names" invisible="1"/>
+                    <field name="precio_venta" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='analytic_distribution']" position="replace">
+                <field name="analytic_distribution" widget="analytic_distribution"
+                                           optional="hide"
+                                           attrs="{'readonly': [('state','in', ('to approve','control_presupuesto','cancel','done','purchase'))]}"
+                                           groups="analytic.group_analytic_accounting"
+                                           options="{'product_field': 'product_id', 'business_domain': 'purchase_order'}"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_purchase_order_tree_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.tree.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="prioridad_color" invisible="1" />
+
+                <field name="prioridad_orden" force_save="1" 
+                    decoration-danger="prioridad_color=='rojo'"
+                    decoration-success="prioridad_color=='verde'"
+                    decoration-warning="prioridad_color=='naranja'" widget="badge" groups="account_payment_purchase.group_pgpp_cambiar"/>
+                <field name="prioridad_orden" force_save="1" 
+                    decoration-danger="prioridad_color=='rojo'"
+                    decoration-success="prioridad_color=='verde'"
+                    decoration-warning="prioridad_color=='naranja'" widget="badge" groups="account_payment_purchase.group_pgpp_visualizar" readonly="1"/>
+            </field>
+            <field name="date_planned" position="after">
+                <field name="date_order"/>
+                <field name="solicitante"/>
+                <field name="fecha_llegada_inventario"/>
+                <field name="payment_term_id"/>
+                <field name="notes" optional="hide"/>
+            </field>
+            <field name="amount_untaxed" position="after">
+                <field name="meta_descuento" groups="account_payment_purchase.group_purchase_sensitive_fields" optional="hide"/>
+                <field name="ahorro_meta" groups="account_payment_purchase.group_purchase_sensitive_fields" optional="hide" sum='Total Ahorro'/>
+            </field>
+        </field>
+    </record>
+    <!-- requisicion de materiales -->
+    <record id="view_material_request_form_inherit" model="ir.ui.view">
+        <field name="name">material.request.form.inherit</field>
+        <field name="model">material.purchase.requisition</field>
+        <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='global_partner_id']" position="replace">
+                <field name="global_partner_id" string="Proveedor" options="{'no_create': True}" required='1' />
+            </xpath>
+            <xpath expr="//field[@name='employee_id']" position="replace">
+                <field name="employee_id" string="Empleado" options="{'no_create': True}" />
+            </xpath>
+            <xpath expr="//field[@name='department_id']" position="replace">
+                <field name="department_id" string="Departamento" options="{'no_create': True}" />
+            </xpath>
+             <xpath expr="//field[@name='location_id']" position="after">
+                <field name="payment_term_id" required = '0' string="Plazos de Pago" options="{'no_create': True}" />
+                <field name="date_advance_payment"/>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="replace">
+                <field name="company_id" string="Compañía" options="{'no_create': True}" />
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="replace">
+                <field name="company_id" string="Compañía" options="{'no_create': True}" />
+            </xpath>
+            <xpath expr="//field[@name='requisiton_responsible_id']" position="replace">
+                <field name="requisiton_responsible_id" string="Responsable de requisición" options="{'no_create': True}" />
+            </xpath>
+             <xpath expr="//field[@name='location_id']" position="replace">
+                <field name="location_id" options="{'no_create': True}" />
+            </xpath>
+            <xpath expr="//field[@name='dest_location_id']" position="replace">
+                <field name="dest_location_id" options="{'no_create': True}" />
+            </xpath>
+            <xpath expr="//field[@name='dest_location_id']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <!-- <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='description']" position="after">
+                <field name="product_type" invisible='1'/>
+                <field name="rubro" string="Rubro" />
+                <field name="analytic_account_id" string="Cuenta Analitica" options="{'no_create': True}" attrs="{'required': [('product_type', '=', 'service')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='qty']" position="after">
+                <field name="price_unit" string="Precio"  attrs="{'required': [('product_type', '=', 'service')]}"/>
+                <field name="precio_venta" string="Precio Vta" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+            </xpath> -->
+
+            <xpath expr="//field[@name='requisition_line_ids']" position="replace">
+                <field name="requisition_line_ids"  mode="tree" widget="section_and_note_one2many">
+                    <tree editable="bottom">
+                        <control>
+                            <create name="add_product_control" string="Agregar un producto" />
+                            <create name="add_section_control" string="Agregar una seccion" context="{'default_display_type': 'line_section'}"/>
+                        </control>
+                        <field name="sequence" widget="handle"/>
+                        <field name="display_type" invisible="1"/> 
+                        <field name="product_type" invisible='1'/>
+                        <field name="requisition_type" 
+                            groups="material_purchase_requisitions.group_purchase_requisition_user,purchase.group_purchase_user,material_purchase_requisitions.group_purchase_requisition_manager,material_purchase_requisitions.group_purchase_requisition_department"/>
+                        <field name="product_id" options="{'no_create': True}" domain="[('detailed_type', '=', 'service')]"  attrs="{'required': [('display_type', '=', False)]}"/>
+                        <field name="product_tags" optional="hide"/>
+                        <field name="name" attrs="{'required': [('display_type', '=', False)]}"/>
+                        <field name="rubro" string="Rubro" />
+                        <field name="analytic_account_id" string="Cuenta Analitica" options="{'no_create': True}" attrs="{'required': [('product_type', '=', 'service')]}"/>                        
+                        <field name="qty" />
+                        <field name="price_unit" />
+                        <field name="precio_venta" string="Precio Vta" groups="account_payment_purchase.group_analytic_user, base.group_no_one"/>
+                        <field name="uom" attrs="{'required': [('display_type', '=', False)]}"/>
+                        <field name="partner_id"
+                            groups="material_purchase_requisitions.group_purchase_requisition_user,purchase.group_purchase_user,material_purchase_requisitions.group_purchase_requisition_manager,material_purchase_requisitions.group_purchase_requisition_department"
+                            attrs="{'readonly': [('requisition_type', '!=', 'purchase')]}"
+                            widget="many2many_tags"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

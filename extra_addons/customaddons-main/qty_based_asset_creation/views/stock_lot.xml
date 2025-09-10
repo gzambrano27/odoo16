@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="view_move_form_show_assets" model="ir.ui.view">
+        <field name="name">stock.production.lot.inherit.assets.form</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]/button" position="before">
+                <button class="oe_stat_button" name="action_view_asset"
+                        type="object" icon="fa-book" help="Linked assets"
+                        attrs="{'invisible': ['|', ('linked_asset_count', '=', 0), ('display_complete', '=', False)]}"
+                        groups="account.group_account_manager">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="linked_asset_count" widget="statinfo" nolabel="1" class="mr4" groups="account.group_account_manager"/>
+                        </span>
+                        <span class="o_stat_text">Assets</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

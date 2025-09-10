@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la plantilla original de la orden de compra -->
+        <template id="report_purchaseorder_document" inherit_id="purchase.report_purchaseorder_document">
+            <xpath expr="//div[@class='page']" position="attributes">
+                <attribute name="style">font-size: 12px;</attribute>
+            </xpath>
+            <xpath expr="//div[@class='mt-4']" position="replace">
+                <div class="mt-4"  style="font-size: 16px;">
+                    <h2 t-if="o.state in ['draft', 'sent', 'to approve']">Solicitud de Cotización #<span t-field="o.name"/></h2>
+                    <h2 t-if="o.state in ['purchase', 'done']">Orden de Compra #<span t-field="o.name"/></h2>
+                    <h2 t-if="o.state == 'cancel'">Pedido de Compra Cancelado #<span t-field="o.name"/></h2>
+                </div>
+                <div t-if="o.referencia_analitica" class="col-3 bm-2">
+                    <strong>Referencia Analítica:</strong>
+                    <p t-field="o.referencia_analitica" class="m-0"/>
+                </div>
+            </xpath>
+
+            <!-- Añadir el campo de Términos de Pago después del 4º div bajo la sección de información -->
+            <xpath expr="//div[@class='page']/div[@id='informations']/div[4]" position="after">
+                <div t-if="o.payment_term_id" class="col-3 bm-2">
+                    <strong>Términos de pago:</strong>
+                    <p t-field="o.payment_term_id.name" class="m-0"/>
+                </div>
+            </xpath>
+            
+            <xpath expr="//td[span[@t-field='line.name']]" position="replace">
+                <td>
+                    <span t-field="line.name"/>
+                    <div t-if="line.analytic_distribution">
+                        <strong>Cuenta Analítica:</strong>
+                        <div t-foreach="line.analytic_distribution" t-as="distribution">
+                            <t t-esc="line.env['account.analytic.account'].browse(int(distribution)).name"/>: <t
+                                t-esc="line.analytic_distribution.get(distribution)"/>
+                        </div>
+                    </div>
+                    <strong>Referencia Interna:</strong>
+                    <span t-field="line.product_id.default_code"/>
+                </td>
+            </xpath>
+
+            <!-- Reemplazar el encabezado para cuenta analítica -->
+            <xpath expr="//div[@class='page']/table/thead/tr/th[@name='th_date_req']" position="replace">
+                <!-- <th name="th_date_req" class="text-end"><strong>Cuenta Analítica</strong></th> -->
+            </xpath>
+            <xpath expr="//td[span[@t-field='line.date_planned']]" position="replace">
+            </xpath>
+            <xpath expr="//td[span[@t-field='line.price_unit']]" position="replace">
+                <td class="text-right" style="text-align: right;">
+                    <span t-esc="'{:.2f}'.format(line.price_unit)"/>
+                </td>
+            </xpath>
+            <xpath expr="//td[span[@t-field='line.discount']]" position="replace">
+                <td class="text-right" style="text-align: right;">
+                    <span t-esc="'{:.2f}'.format(line.discount)"/>%
+                </td>
+            </xpath>
+
+            <!-- Reemplazar las celdas del cuerpo para la distribución de cuenta analítica -->
+            <!-- <xpath expr="//td[span[@t-field='line.date_planned']]" position="replace">
+                <td class="text-right">
+                    <div t-foreach="line.analytic_distribution" t-as="distribution">
+                        <t t-esc="line.env['account.analytic.account'].browse(int(distribution)).name"/>: <t
+                            t-esc="line.analytic_distribution.get(distribution)"/>
+                    </div>
+                </td>
+            </xpath> -->
+        </template>
+    </data>
+</odoo>

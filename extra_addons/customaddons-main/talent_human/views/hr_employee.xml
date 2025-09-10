@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Vista personalizada que reemplaza a la vista original -->
+        <!-- <record id="custom_view_employee_form" model="ir.ui.view">
+            <field name="name">custom.hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <form string="Employee">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="image_1920" widget='image' class="oe_avatar" options="{'preview_image': 'image_1024'}"/>
+                            </group>
+                            <group>
+                                <field name="first_name" required="1"/>
+                                <field name="second_name"/>
+                                <field name="last_name" required="1"/>
+                                <field name="mother_last_name"/>
+                                <field name="user_id" string="Related User"/>
+                                <field name="partner_id" options="{'no_quick_create': True, 'no_create_edit': True}" domain="[('employee','=',True)]" context="{'default_employee':True}" required="0"/>
+                                <label for="inability"/>
+                                <div>
+                                    <field name="inability" style="width: 5%"/>
+                                    <field name="disability" style="width: 93%" attrs="{'invisible':[('inability','!=',True)],'required':[('inability','=',True)]}" placeholder="Discapacidad del Empleado"/>
+                                    <field name="percent_disability" style="width: 93%" attrs="{'invisible':[('inability','!=',True)], 'required':[('inability','=',True)]}" placeholder="Porcentaje Discapacidad del Empleado"/>
+                                </div>
+                                <field name="substitute"/>
+                                <field name="codigo_sectorial"/>
+                                <div colspan='2'>
+                                    <label for='servicios_prestados' string='Serv Prestados'/>
+                                    <field name="servicios_prestados"/>
+                                    <button name="create_contrato" type="object" string="Contrato" attrs="{'invisible':[('servicios_prestados','=', True)]}"/>
+                                </div>
+                                <field name="es_reemplazo" groups="base.group_no_one"/>
+                            </group>
+                        </group>
+                        <label for="category_ids" class="oe_edit_only" groups="base.group_hr_user"/>
+                        <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" groups="base.group_hr_user"/>
+                        <notebook>
+                            <page string="Información de Contactos">
+                                <field name="contact_ids" nolabel="1" colspan="4">
+                                    <tree string="Contactos">
+                                        <field name="name_contact"/>
+                                        <field name="parentesco"/>
+                                        <field name="direccion"/>
+                                        <field name="personal_email"/>
+                                        <field name="emergency_home_phone"/>
+                                        <field name="emergency_home_mobile"/>
+                                    </tree>
+                                    <form string="Contactos">
+                                        <group col="4">
+                                            <field name="name_contact" required='1'/>
+                                            <field name="parentesco" required='1'/>
+                                            <field name="direccion" colspan="2" invisible='1'/>
+                                            <field name="personal_email" colspan="2" invisible='1'/>
+                                            <field name="home_phone" invisible='1'/>
+                                            <field name="home_mobile" colspan="2" invisible='1'/>
+                                            <field name="emergency_home_phone"/>
+                                            <field name="emergency_home_mobile" required='1'/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Public Information">
+                                <group>
+                                    <group string="Información del Empleado">
+                                        <field name="address_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+                                    </group>
+                                    <group>
+                                        <field name="company_id" groups="base.group_multi_company"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+                            </page>
+
+                            <page string="Personal Information">
+                                <group>
+                                    <group string="Ciudadania y Otra Inf.">
+                                        <field name="country_id" options='{"no_open": True}' required='1'/>
+                                        <field name="identification_id" required='1'/>
+                                        <field name="passport_id"/>
+                                        <field name="address_home_id" readonly="1" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True, "no_open": True}' invisible="1"/>
+                                        <field name="tiene_beneficiario" attrs="{'invisible':[('servicios_prestados','=',False)]}"/>
+                                        <field name="bank_account_id" domain="[('partner_id','=',partner_id)]" context="{'default_partner_id':partner_id}" attrs="{'required':[('servicios_prestados','=',False)]}"/>
+                                        <field name="work_location" string="Dirección" required='1'/>
+                                        <label for="mobile_phone" string='Teléfono Celular'/>
+                                        <div>
+                                            <field name="mobile_phone" style="width: 20%" class="oe_inline" required='1'/>
+                                            <field name="operadora_emp" class="oe_inline" required='1'/>
+                                        </div>
+                                        <label for="work_phone"/>
+                                        <div>
+                                            <field name="work_phone" style="width: 20%" class="oe_inline"/>
+                                            <field name="operadora_work" class="oe_inline"/>
+                                        </div>
+                                        <field name="work_email" widget="email"/>
+                                    </group>
+                                    <group string="Status">
+                                        <field name="gender" required='1'/>
+                                        <field name="marital" required='1'/>
+                                    </group>
+                                    <group string="Birth">
+                                        <field name="birthday" required='1'/>
+                                        <field name="age"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Nivel de Educacion">
+                                <field name="education_ids" nolabel="1" colspan="4">
+                                    <tree string="Nivel de Educacion">
+                                        <field name="title"/>
+                                        <field name="institution"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+                                        <field name="level"/>
+                                        <field name="status"/>
+                                    </tree>
+                                    <form string="Education Level">
+                                        <label for="title"/>
+                                        <h2><field name="title"/></h2>
+                                        <group col="4">
+                                            <separator string="Location" colspan="4"/>
+                                            <field name="institution"/>
+                                            <field name="country_id" widget="selection"/>
+                                            <separator string="Period" colspan="4"/>
+                                            <field name="start_date" colspan="2"/>
+                                            <field name="end_date" colspan="2"/>
+                                            <separator string="Info" colspan="4"/>
+                                            <field name="level"/>
+                                            <field name="education_area_id" widget="selection" colspan="2"/>
+                                            <field name="status" required="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Cargas Familiares">
+                                <field name="family_burden_ids" nolabel="1" colspan="4">
+                                    <tree string="family burdens">
+                                        <field name="name" string='Apellidos y Nombres'/>
+                                        <field name="relationship"/>
+                                        <field name="age" string='Edad'/>
+                                        <field name="bonus" invisible='1'/>
+                                    </tree>
+                                    <form string="Cargas Familiares">
+                                        <group col="4">
+                                            <field name="name" string='Apellidos y Nombres' colspan="4"/>
+                                            <field name="relationship" required="1"/>
+                                            <field name="other_relationship" attrs="{'invisible':[('relationship','!=','other')],'required':[('relationship','=','other')]}"/>
+                                            <field name="working" invisible='1'/>
+                                            <field name="bonus" invisible='1'/>
+                                            <field name="genero" required="1"/>
+                                            <field name="discapacidad"/>
+                                            <field name="para_deduccion_gastos"/>
+                                            <field name="type_disability" style="width: 93%" attrs="{'invisible':[('discapacidad','!=',True)],'required':[('discapacidad','=',True)]}" placeholder="Discapacidad de la Carga"/>
+                                            <field name="percent_disability" style="width: 93%" attrs="{'invisible':[('discapacidad','!=',True)],'required':[('discapacidad','=',True)]}" placeholder="Discapacidad de la Carga"/>
+                                            <group string="Informacion de Cumpleanios" colspan="4" col="4">
+                                                <field name="birth_date" string='Fecha nacimiento'/>
+                                                <field name="age" string='Edad'/>
+                                            </group>
+                                            <group string="Aditional Info" attrs="{'invisible':[('working','!=',True)]}" colspan="4">
+                                                <field name="work_place"/>
+                                                <field name="email_personal" widget="email"/>
+                                                <field name="work_phone"/>
+                                                <field name="cell_phone"/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Familiar con Discapacidad" attrs="{'invisible':[('substitute','!=',True)]}">
+                                <field name="family_substitute_ids" nolabel="1" colspan="4">
+                                    <tree string="family Substitute">
+                                        <field name="name" string='Nombres y Apellidos'/>
+                                        <field name="relationship"/>
+                                        <field name="type_disability"/>
+                                        <field name="percent_disability"/>
+                                        <field name="age"/>
+                                    </tree>
+                                    <form string="family Substitute">
+                                        <group col="4">
+                                            <field name="name" string='Nombres y Apellidos' colspan="4"/>
+                                            <field name="relationship" required="1"/>
+                                            <field name="other_relationship" attrs="{'invisible':[('relationship','!=','other')],'required':[('relationship','=','other')]}"/>
+                                            <field name="type_disability"/>
+                                            <field name="percent_disability"/>
+                                            <group string="Birth Info" colspan="4" col="4">
+                                                <field name="birth_date"/>
+                                                <field name="age"/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Historial del Empleado">
+                                <separator string="Historial del Empleado" colspan="4"/>
+                                <field name="employee_history_id" colspan="4" nolabel="1">
+                                    <tree string="Historial de Notas del Empleado" colors="red:state=='open';blue:state=='pending';gray:state=='cancel'">
+                                        <field name="name" string='Asunto'/>
+                                        <field name="date" string='Fecha Cambio'/>
+                                        <field name="user_id" string='Usuario Responsable'/>
+                                        <field name="campo" string='Campo' options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                                        <field name="state" string='Estado' invisible='1'/>
+                                    </tree>
+                                    <form string="Employee History Notes">
+                                        <group col="4">
+                                            <field name="name" string='Asunto'/>
+                                            <field name="date" string='Fecha Cambio'/>
+                                            <field name="campo" string='Campo' options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                                            <field name="state" string='Estado' invisible='1'/>
+                                            <field name="user_id" string='Usuario Responsable'/>
+                                            <field name="message" string='Descripcion'/>
+                                        </group>
+                                    </form>
+                                </field>
+                                <separator string="Informacion de Salud" colspan="4"/>
+                                <field name="health_history_id" colspan="4" nolabel="1">
+                                    <tree string="Historial de Salud de Empleado">
+                                        <field name="name" string='Asunto'/>
+                                        <field name="date" string='Fecha'/>
+                                        <field name="user_id" string='Usuario Responsable'/>
+                                        <field name="doctor" string='Doctor'/>
+                                    </tree>
+                                    <form string="Historial de Salud de Empleado">
+                                        <group col="4">
+                                            <field name="name" string='Asunto'/>
+                                            <field name="date" string='Fecha'/>
+                                            <field name="doctor" string='Doctor'/>
+                                            <field name="user_id" string='Usuario Responsable'/>
+                                            <field name="message" string='Descripcion' colspan="4"/>
+                                        </group>
+                                    </form>
+                                </field>
+                                <separator string="Informacion de Acumulado Decimos/Vacaciones" colspan="4"/>
+                                <field name="decimo_history_id" colspan="4" nolabel="1">
+                                    <tree string="Historial de Decimo de Empleado">
+                                        <field name="tipo"/>
+                                        <field name="name" string='Asunto'/>
+                                        <field name="fecha_desde" string='Desde'/>
+                                        <field name="fecha_hasta" string='Hasta'/>
+                                        <field name="dias" string='Dias'/>
+                                        <field name="valor" string='Acumulado'/>
+                                    </tree>
+                                    <form string="Historial de Decimo de Empleado">
+                                        <group col="4">
+                                            <field name="tipo"/>
+                                            <field name="name" string='Asunto'/>
+                                            <field name="fecha_desde" string='Desde'/>
+                                            <field name="fecha_hasta" string='Hasta'/>
+                                            <field name="dias" string='Dias'/>
+                                            <field name="valor" string='Acumulado'/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Configuracion RRHH">
+                                <group>
+                                    <group string="Reembolso">
+                                        <field name="valor_reembolso"/>
+                                    </group>
+                                    <group string="Caja Chica">
+                                        <field name="valor_caja_chica"/>
+                                    </group>
+                                    <group string="Jefe">
+                                        <field name="jefe_id"/>
+                                    </group>
+                                    <group string="Active" name="active_group">
+                                        <field name="active"/>
+                                        <field name="fecha_renuncia" string='Fecha Salida' attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False), ('servicios_prestados','=',False)]}"/>
+                                        <field name="fecha_firma_renuncia" string='Fecha Firma' attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False), ('servicios_prestados','=',False)]}"/>
+                                        <field name="provincia_fin" options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}' attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False),('servicios_prestados','=',False)]}"/>
+                                        <field name="canton_fin" attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False),('servicios_prestados','=',False)]}"/>
+                                        <field name="ciudad_fin" attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False),('servicios_prestados','=',False)]}"/>
+                                        <field name="motivo_renuncia" attrs="{'invisible':[('active','!=',False)],'required':[('active','=',False),('servicios_prestados','=',False),('servicios_prestados','=',False)]}"/>
+                                        <button name="ejecutar_proceso_renuncia" string="Generar Renuncia" type="object" attrs="{'invisible':[('active','!=',False)]}"/>
+                                        <button name="ejecutar_proceso_finiquito" string="Generar Finiquito" type="object" attrs="{'invisible':[('active','!=',False)]}"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Datos para Contrato" name="contrato">
+                                        <field name="sueldo" required='1'/>
+                                        <field name="tipo_rol" string='Rol' required='1' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="condicion_rol" required='1'/>
+                                        <field name="tipo_contrato" string='Contrato' required='1' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="fecha_ingreso" required='1'/>
+                                        <field name="acumula_fondo_reserva" groups="hr_payroll.group_hr_payroll_manager"/>
+                                        <field name="provincia_inicio" required='1' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="canton_inicio" required='1'/>
+                                        <field name="ciudad_inicio" required='1'/>
+                                        <field name="unidad_administrativa" required='1' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="job_id_act" string='Cargo/Labor' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}' domain="[('state','!=','old')]" context="{'form_view_ref': 'hr.view_hr_job_employee_form'}"/>
+                                        <button name="ejecutar_proceso_acumula_fondo" string="Beneficios Sociales" type="object" attrs="{'invisible':[('acumula_fondo_reserva','=',True)]}"/>
+                                    </group>
+                                    <group string="Datos del Reemplazo">
+                                        <field name="unemployee" invisible='1'/>
+                                        <field name="reemplazo_activo"/>
+                                        <field name="coach_id" string='Nombre' attrs="{'invisible':[('reemplazo_activo','=',True)]}" domain="[('active','=',False),('es_reemplazo','=',False)]" options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="nombre_reemplazo_act_id" domain="[('es_reemplazo','=',False)]" string='Nombre' attrs="{'invisible':[('reemplazo_activo','!=',True)]}" options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="tipo_rol_salida" string='Rol' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="tipo_contrato_salida" string='Contrato' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                        <field name="job_id" string='Cargo' options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}' domain="[('state','!=','old')]" context="{'form_view_ref': 'hr.view_hr_job_employee_form'}"/>
+                                        <field name="fecha_salida" attrs="{'invisible':[('reemplazo_activo','=',True)]}"/>
+                                        <field name="unidad_administrativa_salida" options='{"always_reload": True,"no_quick_create": True, "no_create_edit": True}'/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record> -->
+
+		<record id="custom_view_employee_form" model="ir.ui.view">
+		  <field name="name">custom.hr.employee.form</field>
+          <field name="model">hr.employee</field>
+          <field name="inherit_id" ref="hr.view_employee_form"/>
+					<field name="arch" type="xml">
+						<xpath expr="//header/button[@name='%(hr.plan_wizard_action)d']" position="after">
+                            <button name="action_contact_create" string="Crear Contacto" type="object" class="btn-primary" groups="base.group_system"/>
+                            <button name="action_user_create" string="Crear Usuario" type="object" class="btn-primary" groups="base.group_system"/>
+                        </xpath>
+                        <xpath expr="//field[@name='mobile_phone']" position="before">
+							<field name="first_name" required="1" string='First Name'/>
+							<field name="last_name" required="1" string='Last Name'/>
+						</xpath>
+						<xpath expr="//field[@name='department_id']" position="before">
+							<field name="second_name" required="1" string='Second Name'/>
+							<field name="mother_last_name" required="1" string='Mother Last Name'/>
+						</xpath>
+						<xpath expr="//field[@name='work_email']" position="after">
+							<field name="inability" string='inability'/>
+							<field name="percent_disability" string='Porcentaje Discapacidad'/>
+							<field name="disability" string='Disability'
+							options="{'no_create':True,'no_edit':True,'no_open':True}"
+							/>
+							<field name="substitute" string='Substitute'/>
+						</xpath>
+						<xpath expr="//field[@name='coach_id']" position="after">
+							<field name="codigo_sectorial" string='Código Sectorial'/>
+                            <field name="analytic_account_id" string='Centro de Costo'/>
+						</xpath>
+						<xpath expr="//page[@name='hr_settings']" position="before">
+							<page string="Contactos" name="page_contactos">
+								<separator string="Contactos" />
+								<field name="contact_ids" nolabel="1" colspan="4" required='1'>
+									<tree string="Contactos" editable="bottom">
+										<field name="name_contact" required='1'/>
+										<field name="parentesco" required='1'/>
+										<field name="direccion" required='1'/>
+										<field name="personal_email"/>
+										<field name="emergency_home_phone"/>
+										<field name="emergency_home_mobile" required='1'/>
+									</tree>
+									<form string="Contactos">
+										<group col="4">
+											<field name="name_contact" required='1'/>
+											<field name="parentesco" required='1'/>
+											<field name="direccion" colspan="2" invisible='1'/>
+											<field name="personal_email" colspan="2" invisible='1'/>
+											<field name="home_phone" invisible='1'/>
+											<field name="home_mobile" colspan="2" invisible='1'/>
+											<field name="emergency_home_phone"/>
+											<field name="emergency_home_mobile" required='1'/>
+										</group>
+									</form>
+								</field>
+
+							</page>
+
+							<page string="Public Information" name="page_public_information">
+								<group>
+										<group string="Información del Empleado">
+												<field name="address_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+										</group>
+										<group>
+												<field name="company_id" groups="base.group_multi_company"/>
+										</group>
+								</group>
+								<field name="notes" placeholder="Other Information ..." colspan="4"/>
+							</page>
+
+							
+							<page string="Educación">
+								<field name="education_ids" nolabel="1" colspan="4">
+										<tree string="Nivel de Educacion" editable="bottom">
+												<field name="title" required="1"/>
+												<field name="institution" required="1"/>
+												<field name="start_date" required="1"/>
+												<field name="status" required="1"/>
+												<field name="end_date"
+												attrs="{'invisible':[('status','!=','graduated')],'required':[('status','=','graduated')]}"
+												/>
+												<field name="level"  required="1"/>
+
+										</tree>
+										<form string="Education Level">
+												<label for="title"/>
+												<h2><field name="title"/></h2>
+												<group col="4">
+														<separator string="Location" colspan="4"/>
+														<field name="institution"/>
+														<field name="country_id" widget="selection"/>
+														<separator string="Period" colspan="4"/>
+														<field name="start_date" colspan="2"/>
+														<field name="end_date" colspan="2"/>
+														<separator string="Info" colspan="4"/>
+														<field name="level"/>
+														<field name="education_area_id" widget="selection" colspan="2"/>
+														<field name="status" required="1"/>
+												</group>
+										</form>
+								</field>
+							</page>
+
+							<page string="Cargas Familiares" name="page_family_burden">
+								<field name="family_burden_ids" nolabel="1" colspan="4">
+										<tree string="family burdens" editable="bottom">
+												<field name="name" required="1" string='Apellidos y Nombres'/>
+												<field name="birth_date" required="1"/>
+												<field name="relationship" required="1"/>
+												<field name="age" string='Edad'/>
+												<field name="bonus" invisible='1'/>
+										</tree>
+										<form string="Cargas Familiares">
+												<group col="4">
+														<field name="name" string='Apellidos y Nombres' colspan="4"/>
+														<field name="relationship" required="1"/>
+														<field name="other_relationship" attrs="{'invisible':[('relationship','!=','other')],'required':[('relationship','=','other')]}"/>
+														<field name="working" invisible='1'/>
+														<field name="bonus" invisible='1'/>
+														<field name="genero" required="1"/>
+														<field name="discapacidad"/>
+														<field name="para_deduccion_gastos"/>
+														<field name="type_disability" style="width: 93%" attrs="{'invisible':[('discapacidad','!=',True)],'required':[('discapacidad','=',True)]}" placeholder="Discapacidad de la Carga"/>
+														<field name="percent_disability" style="width: 93%" attrs="{'invisible':[('discapacidad','!=',True)],'required':[('discapacidad','=',True)]}" placeholder="Discapacidad de la Carga"/>
+														<group string="Informacion de Cumpleaños" colspan="4" col="4">
+																<field name="birth_date" string='Fecha nacimiento'/>
+																<field name="age" string='Edad'/>
+														</group>
+														<group string="Aditional Info" attrs="{'invisible':[('working','!=',True)]}" colspan="4">
+																<field name="work_place"/>
+																<field name="email_personal" widget="email"/>
+																<field name="work_phone"/>
+																<field name="cell_phone"/>
+														</group>
+												</group>
+										</form>
+								</field>
+							</page>
+
+							<page string="Familiar con Discapacidad" attrs="{'invisible':[('substitute','!=',True)]}">
+								<field name="family_substitute_ids" nolabel="1" colspan="4">
+										<tree string="family Substitute" editable="bottom">
+												<field name="name" string='Nombres y Apellidos'/>
+												<field name="relationship"/>
+												<field name="type_disability"/>
+												<field name="percent_disability"/>
+												<field name="age"/>
+										</tree>
+										<form string="family Substitute">
+												<group col="4">
+														<field name="name" string='Nombres y Apellidos' colspan="4"/>
+														<field name="relationship" required="1"/>
+														<field name="other_relationship" attrs="{'invisible':[('relationship','!=','other')],'required':[('relationship','=','other')]}"/>
+														<field name="type_disability"/>
+														<field name="percent_disability"/>
+														<group string="Birth Info" colspan="4" col="4">
+																<field name="birth_date"/>
+																<field name="age"/>
+														</group>
+												</group>
+										</form>
+								</field>
+							</page>
+
+							<page string="Historial del Empleado"  name="page_historial">
+								<separator string="Historial del Empleado" colspan="4"/>
+								<field name="employee_history_id" colspan="4" nolabel="1">
+										<tree string="Historial de Notas del Empleado" colors="red:state=='open';blue:state=='pending';gray:state=='cancel'">
+												<field name="name" string='Asunto'/>
+												<field name="date" string='Fecha Cambio'/>
+												<field name="user_id" string='Usuario Responsable'/>
+												<field name="campo" string='Campo' options="{'no_quick_create': True, 'no_create_edit': True}"/>
+												<field name="state" string='Estado' invisible='1'/>
+										</tree>
+										<form string="Employee History Notes">
+												<group col="4">
+														<field name="name" string='Asunto'/>
+														<field name="date" string='Fecha Cambio'/>
+														<field name="campo" string='Campo' options="{'no_quick_create': True, 'no_create_edit': True}"/>
+														<field name="state" string='Estado' invisible='1'/>
+														<field name="user_id" string='Usuario Responsable'/>
+														<field name="message" string='Descripcion'/>
+												</group>
+										</form>
+								</field>
+								<separator string="Informacion de Salud" colspan="4"/>
+								<field name="health_history_id" colspan="4" nolabel="1">
+										<tree string="Historial de Salud de Empleado">
+												<field name="name" string='Asunto'/>
+												<field name="date" string='Fecha'/>
+												<field name="user_id" string='Usuario Responsable'/>
+												<field name="doctor" string='Doctor'/>
+										</tree>
+										<form string="Historial de Salud de Empleado">
+												<group col="4">
+														<field name="name" string='Asunto'/>
+														<field name="date" string='Fecha'/>
+														<field name="doctor" string='Doctor'/>
+														<field name="user_id" string='Usuario Responsable'/>
+														<field name="message" string='Descripcion' colspan="4"/>
+												</group>
+										</form>
+								</field>
+								<separator string="Informacion de Acumulado Decimos/Vacaciones" colspan="4" invisible="1"/>
+								<field name="decimo_history_id" colspan="4" nolabel="1" invisible="1">
+										<tree string="Historial de Decimo de Empleado">
+												<field name="tipo"/>
+												<field name="name" string='Asunto'/>
+												<field name="fecha_desde" string='Desde'/>
+												<field name="fecha_hasta" string='Hasta'/>
+												<field name="dias" string='Dias'/>
+												<field name="valor" string='Acumulado'/>
+										</tree>
+										<form string="Historial de Decimo de Empleado">
+												<group col="4">
+														<field name="tipo"/>
+														<field name="name" string='Asunto'/>
+														<field name="fecha_desde" string='Desde'/>
+														<field name="fecha_hasta" string='Hasta'/>
+														<field name="dias" string='Dias'/>
+														<field name="valor" string='Acumulado'/>
+												</group>
+										</form>
+								</field>
+							</page>
+
+						</xpath>
+						<xpath expr="//page[@name='hr_settings']//group[@name='identification_group']" position="after">
+							<group string="Refund" name="grp_refund">
+								<field name="valor_reembolso"/>
+							</group>
+							<group string="Petty Cash" name="grp_cash">
+								<field name="valor_caja_chica"/>
+							</group>
+							
+							<group string="Active" name="active_group">
+								<field name="active"/>
+
+							</group>
+							
+							<!-- <group string="Record Sheet">
+							  <field name="timesheet_cost"/>
+								<field name="account_id"/>
+							</group> -->
+
+							<group string='Leaves' name="grp_leaves">
+								<field name="remaining_leaves"/>
+							</group>
+
+							<!-- <group string='Actual Contract'>
+								<field name="medic_exam"/>
+								<field name="vehicle"/>
+								<field name="vehicle_distance"/>
+							</group> -->
+								
+							<group string="Contract Data" name="contrato">
+								<field name="sueldo"/>
+								<field name="tipo_rol" string='Rol' class='oe_highlight'/>
+								<field name="condicion_rol" />
+								<field name="tipo_contrato" string='Contrato' />
+								<field name="fecha_ingreso" class='oe_highlight'/>
+								<field name="acumula_fondo_reserva" groups="hr_payroll.group_hr_payroll_manager"/>
+								<field name="provincia_inicio" class='oe_highlight' />
+								<field name="canton_inicio" />
+								<field name="ciudad_inicio" class='oe_highlight'/>
+								<field name="unidad_administrativa" class='oe_highlight'/>
+                                 <field name="checked" />
+								<!-- <field name="job_id_act" string='Cargo/Labor' /> -->
+								<!-- <button name="ejecutar_proceso_acumula_fondo" string="Beneficios Sociales" type="object" attrs="{'invisible':[('acumula_fondo_reserva','=',True)]}"/> -->
+							</group>
+
+							<group string="Replacement Data" name="grp_replacement">
+								<field name="unemployee" />
+								<field name="coach_id" string='Nombre' />
+								<field name="reemplazo_activo"/>
+								<field name="nombre_reemplazo_act_id" />
+								<!-- <field name="tipo_rol_salida" string='Rol' /> -->
+								<field name="tipo_contrato_salida" />
+								<field name="fecha_salida"/>
+								<!-- <field name="unidad_administrativa_salida" /> -->
+							</group>
+
+						</xpath>		
+							
+					</field>
+						
+			</record>
+
+
+        <!-- <record id="view_employee_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.tree.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="unidad_administrativa" string='Unidad Administrativa'/>
+                </field>
+                <field name="name" position="after">
+                    <field name="identification_id" string='Cedula'/>
+                </field>
+                <field name="work_phone" position="replace">
+                    <field name="work_" string='Direccion'/>
+                </field>
+                <field name="work_email" position="replace">
+                    <field name="mobile_phone" string='Telefono'/>
+                </field>
+                <field name="department_id" position="replace">
+                    <field name="tipo_rol" string='Tipo Rol'/>
+                    <field name="tipo_contrato" string='Tipo Contrato'/>
+                </field>
+                <field name="job_id" position="replace">
+                    <field name="birthday" string='Fecha Nacimiento'/>
+                    <field name="age" string='Edad'/>
+                </field>
+                <field name="parent_id" position="replace">
+                    <field name="active" string='Estado'/>
+                    <field name="gender" string='Genero'/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_employee_tree_new_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.tree.new.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="view_employee_tree_inherit"/>
+            <field name="arch" type="xml">
+                <field name="active" position="before">
+                    <field name="fecha_ingreso" string='Fecha Ingreso'/>
+                    <field name="sueldo"/>
+                    <field name="job_id_act" string='Cargo/Labor'/>
+                </field>
+            </field>
+        </record> -->
+    </data>
+</odoo>

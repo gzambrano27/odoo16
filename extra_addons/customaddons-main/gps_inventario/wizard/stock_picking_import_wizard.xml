@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<record id="stock_picking_import_wizard_view_form"
+			model="ir.ui.view">
+			<field name="name">stock.picking.import.wizard.form</field>
+			<field name="model">stock.picking.import.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Importar Picking"
+					version="16.0">
+					<header>
+
+					</header>
+						<notebook>
+							<page string="Archivo"
+								attrs="{'invisible':[('origin','!=','file')]}">
+								<group>
+									<field name="origin"  invisible="1" colspan="2" />
+									<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+										attrs="{'required':[('origin','=','file')],'invisible':[('origin','!=','file')]}" />
+								</group>
+							</page>
+
+						</notebook>
+					<newline />
+					<footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="stock_picking_import_wizard_view_file_action"
+			model="ir.actions.act_window">
+			<field name="name">Importar Inventario</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">stock.picking.import.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="stock_picking_import_wizard_view_form" />
+			<field name="context">{'default_origin':'file'}</field>
+			<field name="target">new</field>
+		</record>
+
+
+	</data>
+</odoo>

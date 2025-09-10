@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+
+<!--
+<record model="res.groups" id="group_seleccion">
+			<field name="name">Seleccion RRHH</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>-->
+
+	<record model="res.groups" id="group_asistente_rrhh">
+			<field name="name">Asistente Nomina</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>
+
+<record model="res.groups" id="group_jefe_rrhh">
+			<field name="name">Jefe RRHH</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>
+
+<!--	<record model="res.groups" id="group_gerente_rrhh">
+			<field name="name">Gerente RRHH</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>-->
+
+<record model="res.groups" id="group_empleados_usuarios">
+			<field name="name">Usuarios de Empleados</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>
+
+
+	<record model="res.groups" id="group_contabilidad_rrhh">
+			<field name="name">Contabilidad para Modulo RRHH</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>
+
+<record model="res.groups" id="group_datos_limitados_empleados_rrhh">
+			<field name="name">Ver datos limitados Empleados</field>
+			<field name="category_id" ref="group_module_categ_hr"/>
+		</record>
+
+
+
+
+</data>
+</odoo>

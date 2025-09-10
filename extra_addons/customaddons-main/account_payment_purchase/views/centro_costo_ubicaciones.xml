@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+   <!-- Views for clase  de importacion Tree View -->
+
+    <record model="ir.ui.view" id="view_centro_costo_ubicaciones_tree">
+        <field name="name">centro.costo.ubicaciones.tree</field>
+        <field name="model">centro.costo.ubicaciones</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <tree string="Ubicaciones">
+                <field name="codigo" string="Codigo"/>
+                <field name="name" string="Descripcion"/>
+                <field name="state" string="Estado"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_centro_costo_ubicaciones_form">
+        <field name="name">centro.costo.ubicaciones.form</field>
+        <field name="model">centro.costo.ubicaciones</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <form string="Ubicaciones">
+	            <separator string="Ubicaciones" />
+	            	<group>
+           	            <group>
+                           <field name="codigo" string="Codigo"/>
+                           <field name="state" string="Estado"  style="width: 20%%"/>
+                        </group>
+		                <group>
+	                    	<field name="name" string="Descripcion"/>
+	                    </group>
+	                </group>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_centro_costo_ubicaciones_form" model="ir.actions.act_window">
+            <field name="name">Ubicaciones Centro Costo</field>
+            <field name="res_model">centro.costo.ubicaciones</field>
+            <field name="view_mode">tree,form</field>       
+   </record>
+   
+   <menuitem id="menu_action_centro_costo_ubicaciones" action="action_centro_costo_ubicaciones_form" parent="account.menu_analytic_accounting"/>
+
+</data>
+</odoo>

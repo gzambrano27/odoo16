@@ -1,0 +1,77 @@
+<odoo>
+    <data noupdate="0">
+        <!-- Categoría "Solicitudes" -->
+        <record id="module_category_solicitudes" model="ir.module.category">
+            <field name="name">Solicitudes</field>
+            <field name="description">Permisos para gestionar solicitudes</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- 1) Usuario de Solicitudes -->
+        <record id="group_usuario_solicitudes_new" model="res.groups">
+            <field name="name">Usuario de Solicitudes</field>
+            <field name="category_id" ref="module_category_solicitudes"/>
+        </record>
+
+        <!-- 2) Jefe de Solicitudes (hereda de Usuario) -->
+        <record id="group_jefe_solicitudes_new" model="res.groups">
+            <field name="name">Jefe de Solicitudes</field>
+            <field name="category_id" ref="module_category_solicitudes"/>
+            <field name="implied_ids" eval="[(4, ref('group_usuario_solicitudes_new'))]"/>
+        </record>
+
+        <!-- 3) Administrador de Solicitudes (hereda de Jefe) -->
+        <record id="group_admin_solicitudes_new" model="res.groups">
+            <field name="name">Administrador de Solicitudes</field>
+            <field name="category_id" ref="module_category_solicitudes"/>
+            <field name="implied_ids" eval="[(4, ref('group_jefe_solicitudes_new'))]"/>
+        </record>
+
+        <!-- PERMISOS DE ACCESO -->
+
+        <!-- Acceso para Usuario de Solicitudes: leer y crear, sin editar ni borrar -->
+        <record id="access_solicitud_servicio_usuario" model="ir.model.access">
+            <field name="name">Usuario - Solicitud de Servicio</field>
+            <field name="model_id" ref="model_solicitud_servicio"/>
+            <field name="group_id" ref="group_usuario_solicitudes_new"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Acceso para Jefe de Solicitudes: leer, crear y escribir; sin borrar -->
+        <record id="access_solicitud_servicio_jefe" model="ir.model.access">
+            <field name="name">Jefe - Solicitud de Servicio</field>
+            <field name="model_id" ref="model_solicitud_servicio"/>
+            <field name="group_id" ref="group_jefe_solicitudes_new"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Acceso para Administrador de Solicitudes: acceso total -->
+        <record id="access_solicitud_servicio_admin" model="ir.model.access">
+            <field name="name">Administrador - Solicitud de Servicio</field>
+            <field name="model_id" ref="model_solicitud_servicio"/>
+            <field name="group_id" ref="group_admin_solicitudes_new"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Regla: Jefes NO pueden modificar la fecha de entrega estimada -->
+        <record id="solicitud_servicio_rule_restrict_fecha_estimada" model="ir.rule">
+            <field name="name">Restricción Fecha de Entrega Estimada para Jefes</field>
+            <field name="model_id" ref="model_solicitud_servicio"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_jefe_solicitudes_new'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

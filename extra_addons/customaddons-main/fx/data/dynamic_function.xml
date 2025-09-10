@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+		<record id="fx_test1" model="dynamic.function">
+			<field name="name">sum1</field>
+			<field name="arguments">a,b</field>
+			<field name="programming_code">result=a+b</field>
+			<field name="property_ids" eval="[(6, 0,[ref('fx.fx_property1')])]" />
+			<field name="locked" eval="1" />
+		</record>
+		
+		<record id="fx_test2" model="dynamic.function">
+			<field name="name">sum2</field>
+			<field name="arguments">a,b,c</field>
+			<field name="programming_code">result=c+sum1(a,b)</field>
+			<field name="property_ids" eval="[(6, 0,[ref('fx.fx_property1')])]" />
+			<field name="notes">función dinámica invocando otra función dinámica</field>
+			<field name="locked" eval="1" />
+		</record>
+		
+		<record id="fx_test3" model="dynamic.function">
+			<field name="name">execute_test_fx</field>
+			<field name="arguments">self,context</field>
+			<field name="programming_code">raise error(_("id %s") % (self._ids))</field>
+			<field name="property_ids" eval="[(6, 0,[ref('fx.fx_property1')])]" />
+			<field name="notes">Para invocar una función dinámica desde una vista la estructura del botón debe ser la siguiente:
+&lt;button name="execute_fx" string="test" context="{'function':'execute_test_fx'}" type="object" /&gt;</field>
+			<field name="locked" eval="1" />
+		</record>
+		
+		<record id="fx_test4" model="dynamic.function">
+			<field name="name">compile_function_test_fx</field>
+			<field name="programming_code">result=compile_function("result=arg0+arg1",1,2)</field>
+			<field name="property_ids" eval="[(6, 0,[ref('fx.fx_property1')])]" />
+			<field name="notes">función dinámica invocando otra función dinámica(compile_function)</field>
+			<field name="locked" eval="1" />
+		</record>
+
+	</data>
+
+
+
+</odoo>

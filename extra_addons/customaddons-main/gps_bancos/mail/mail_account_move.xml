@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+
+
+ <record id="email_template_partner_no_bank" model="mail.template">
+            <field name="name">Documento sin cuenta bancaria</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">Actualizar proveedor de {{ object.name }}</field>
+            <field name="email_to">{{object.get_mail_bank_alert_not()}}</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">Estimados,</p><br/>
+    <p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">
+        Se ha creado la factura <strong><t t-out="object.name"></t></strong> para el proveedor
+        <strong><t t-out="object.partner_id.name"></t></strong>, pero no tiene registrada su cuenta bancaria correspondiente.
+        Por favor, actualice esta información en el sistema para evitar contratiempos en los pagos.
+        <br><br>
+        <strong style="box-sizing:border-box;font-weight:bolder;">Saludos cordiales</strong>
+    </p>
+
+    <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+</div>
+]]>
+</field>
+        </record>
+
+
+    <record id="email_template_partner_no_oc_bank" model="mail.template">
+            <field name="name">OC sin cuenta bancaria</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">Actualizar proveedor de {{ object.name }}</field>
+            <field name="email_to">{{object.get_mail_bank_alert_not()}}</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">Estimados,</p><br/>
+    <p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">
+        Se ha creado la <strong><t t-out="object.name"></t></strong> para el proveedor
+        <strong><t t-out="object.partner_id.name"></t></strong>, pero no tiene registrada su cuenta bancaria correspondiente.
+        Por favor, actualice esta información en el sistema para evitar contratiempos en los pagos.
+        <br><br>
+        <strong style="box-sizing:border-box;font-weight:bolder;">Saludos cordiales</strong>
+    </p>
+
+    <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+</div>
+]]>
+</field>
+        </record>
+
+    <!--  -->
+
+
+</odoo>

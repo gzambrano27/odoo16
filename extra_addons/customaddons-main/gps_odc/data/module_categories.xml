@@ -1,0 +1,15 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Categoría: ODC -->
+        <record id="module_category_ODC" model="ir.module.category">
+            <field name="name">ODC Category</field>
+            <field name="description">Categoría para grupos relacionados a plantillas de ODC</field>
+            <field name="sequence">17</field>
+        </record>
+    </data>
+
+    <record id="group_ODC" model="res.groups">
+		<field name="name">Grupo de ODC Templates</field>
+		<field name="category_id" ref="gps_odc.module_category_ODC" /> <!-- Categoría del grupo -->
+	</record>
+</odoo>

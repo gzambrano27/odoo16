@@ -1,0 +1,90 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+		<record id="dynamic_function_interface_view_filter" model="ir.ui.view">
+			<field name="name">dynamic.function.interface.filter</field>
+			<field name="model">dynamic.function.interface</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Interfaz">
+					<group expand="0" string="Filtrar...">
+						<filter string="Activo" name="is_active" domain="[('active','=',True)]" />
+					</group>
+					<group expand="0" string="Agrupar por...">
+						<filter string="Todos los estados" context="{'group_by':'active'}" 
+						name='grp_all_states'
+						/>
+					</group>
+					<field name="code" />
+					<field name="name" />
+				</search>
+			</field>
+		</record>
+
+		<record id="dynamic_function_interface_view_tree" model="ir.ui.view">
+			<field name="name">dynamic.function.interface.tree</field>
+			<field name="model">dynamic.function.interface</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Interfaz" decoration-muted="(active==False)">
+					<field name="code" />
+					<field name="name" />
+					<field name="active" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="dynamic_function_interface_view_form" model="ir.ui.view">
+			<field name="name">dynamic.function.interface.form</field>
+			<field name="model">dynamic.function.interface</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Interfaz" version="16.0">
+					<header>
+						
+					</header>
+					<group colspan="4" col="2">
+						<group>
+							<field name="code" />
+							<field name="active" />
+						</group>
+						<group>
+							<field name="name"  />
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="dynamic_function_interface_view_action" model="ir.actions.act_window">
+			<field name="name">Interfaz</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">dynamic.function.interface</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">['|',('active','=',True),('active','=',False)]
+			</field>
+			<field name="context">{'search_default_is_active':1}</field>
+			<field name="view_id" ref="dynamic_function_interface_view_tree" />
+			<field name="search_view_id" ref="dynamic_function_interface_view_filter" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="dynamic_function_interface_view_tree_action">
+			<field name="sequence" eval="1" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="dynamic_function_interface_view_tree" />
+			<field name="act_window_id" ref="dynamic_function_interface_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="dynamic_function_interface_view_form_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dynamic_function_interface_view_form" />
+			<field name="act_window_id" ref="dynamic_function_interface_view_action" />
+		</record>
+
+	</data>
+</odoo>

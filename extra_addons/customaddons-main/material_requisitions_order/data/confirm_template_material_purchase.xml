@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <data>
+   
+        <record id="custom_email_confirm_material_requisition_order" model="mail.template">
+           <field name="name">Request for Work Order - Send by Email</field>
+           <!-- <field name="email_from">${object.employee_id.work_email}</field>
+           <field name="subject">Request for Work Order - ${object.name}</field>
+           <field name="email_to">${object.employee_id.parent_id.sudo().work_email or object.employee_id.department_id.sudo().manager_id.work_email}</field> -->
+           <field name="email_from">{{object.employee_id.work_email}}</field>
+           <field name="subject">Request for Work Order - {{object.name}}</field>
+           <field name="email_to">{{object.employee_id.parent_id.sudo().work_email or object.employee_id.department_id.sudo().manager_id.work_email}}</field>
+           <field name="model_id" ref="model_material_requisition_order"/>
+           <field name="auto_delete" eval="True"/>
+           <field name="lang">{{ object.employee_id.address_home_id.lang }}</field>
+           <field name="body_html" type="html"><!-- <![CDATA[ -->
+            <div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF;">
+                <p>Dear <t t-esc="object.employee_id.parent_id.sudo().name"/>,</p><br/>
+                <p>Please approve the request for material requisition with reference number <t t-esc="object.name"/>.</p><br/>
+                <p>Do not hesitate to contact us if you have any questions.</p>
+            </div>
+            <!-- ]]> --></field>
+        </record>
+
+        <record id="custom_email_purchase_requisition" model="mail.template">
+           <field name="name">Approval Request for Work Order to Purchase User - Send by Email</field>
+           <!-- <field name="email_from">${object.employee_id.work_email}</field>
+           <field name="subject">Approval Request for Work Order to Purchase User - ${object.name}</field>
+           <field name="email_to">${object.requisiton_responsible_id.work_email}</field> -->
+           <field name="email_from">{{object.employee_id.work_email}}</field>
+           <field name="subject">Approval Request for Work Order to Purchase User - {{object.name}}</field>
+           <field name="email_to">{{object.requisiton_responsible_id.work_email}}</field>
+           <field name="model_id" ref="model_material_requisition_order"/>
+           <field name="auto_delete" eval="True"/>
+           <field name="lang">{{ object.employee_id.address_home_id.lang }}</field>
+           <field name="body_html" type="html"><!-- <![CDATA[ -->
+            <div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF;">
+                <p>Dear <t t-esc="object.requisiton_responsible_id.name"/>,</p><br/>
+                <p>Please approve the request for material requisition with reference number <t t-esc="object.name"/>.</p><br/>
+                <p>Do not hesitate to contact us if you have any questions.</p>
+            </div>
+            <!-- ]]> --></field>
+        </record>
+
+    </data>
+</odoo>

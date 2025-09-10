@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- ================= VISTA CALENDAR  ================= -->
+  <record id="view_fleet_cronograma_calendar" model="ir.ui.view">
+    <field name="name">fleet.cronograma.calendar</field>
+    <field name="model">fleet.cronograma</field>
+
+    <field name="arch" type="xml">
+        <calendar
+            string="Cronograma de Maniobras"
+            date_start="necesidad_entrega"
+            date_stop="date_stop2"
+            mode="month"
+            color="color"
+            >
+
+            <!-- Orden de campos dentro de la tarjeta -->
+            <field name="sequence"/>
+            <field name="maniobra" string="Requerimiento"/>
+            <field name="tipo_ids" widget="many2many_tags"/>
+            <field name="conductor_id"/>
+            <field name="vehicle_display"/>
+
+            <!-- Badges y decoraciones -->
+            <field name="state" widget="badge"
+                   decoration-info="state=='pending'"
+                   decoration-muted="state=='draft'"
+                   decoration-danger="state=='rechazado'"
+                   decoration-success="state=='aprobado'"
+                   decoration-warning="state=='finalizado'"/>
+        </calendar>
+    </field>
+</record>
+
+  <record id="view_fleet_cronograma_calendar_override"
+          model="ir.ui.view">
+      <field name="name">fleet.cronograma.calendar.override</field>
+      <field name="model">fleet.cronograma</field>
+
+      <!-- heredamos la vista calendario que ya existe -->
+      <field name="inherit_id" ref="fleet_gps_cronograma.view_fleet_cronograma_calendar"/>
+
+      <field name="arch" type="xml">
+          <!-- sustituimos los atributos del nodo <calendar> -->
+          <xpath expr="//calendar" position="attributes">
+              <attribute name="date_start">start_readonly</attribute>
+              <attribute name="date_stop">date_stop2</attribute>
+          </xpath>
+      </field>
+  </record>
+  <!-- ================= VISTA ÁRBOL  ================= -->
+  <record id="view_fleet_cronograma_tree" model="ir.ui.view">
+    <field name="name">fleet.cronograma.tree</field>
+    <field name="model">fleet.cronograma</field>
+    <field name="arch" type="xml">
+      <tree>
+          <header>
+              <button string="Imprimir Cronograma"
+                      type="action"
+                      name="%(action_cronograma_print_wizard)d"
+                      class="btn-primary"/>
+            </header>
+        <field name="sequence"/>
+        <field name="maniobra"/>
+        <field name="tipo_ids" widget="many2many_tags"/>
+        <field name="necesidad_entrega"/>
+        <field name="conductor_id"/>
+        <field name="fecha_finalizacion"/>
+        <field name="state" widget="badge"
+                        decoration-info="state=='pending'"
+                        decoration-muted="state=='draft'"
+                        decoration-danger="state=='rejected'"
+                        decoration-success="state=='approved'"
+                        decoration-warning="state=='finalizado'"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- ================= VISTA FORMULARIO  ================= -->
+  <record id="view_fleet_cronograma_form" model="ir.ui.view">
+    <field name="name">fleet.cronograma.form</field>
+    <field name="model">fleet.cronograma</field>
+    <field name="arch" type="xml">
+      <form string="Cronograma">
+        <header>
+          <button name="action_send"     string="Enviar"    type="object" states="draft"
+                  class="btn-primary" groups="fleet_gps_cronograma.group_cronograma_usuario"/>
+          <button name="action_approve"  string="Aprobar"   type="object" states="pending"
+                  class="btn-success"  groups="fleet_gps_cronograma.group_cronograma_admin"/>
+          <button name="action_reject"   string="Rechazar"  type="object" states="pending"
+                  class="btn-danger"   groups="fleet_gps_cronograma.group_cronograma_admin"/>
+          <button name="action_finalize" string="Finalizar" type="object" states="approved"
+                  class="btn-secondary" groups="fleet_gps_cronograma.group_cronograma_admin"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,pending,approved,rejected,finalizado"/>
+        </header>
+
+        <sheet>
+          <group>
+            <field name="sequence" readonly="1"/>
+            <field name="maniobra" attrs="{'readonly': [('state', 'in',
+                            [ 'approved', 'rejected', 'finalizado'])]}"/>
+            <field name="tipo_ids" widget="many2many_tags" attrs="{'readonly': [('state', 'in',
+                            [ 'approved', 'rejected', 'finalizado'])]}"/>
+            <field name="necesidad_entrega" attrs="{'readonly': [('state', 'in',
+                            [ 'approved', 'rejected', 'finalizado'])]}"/>
+            <field name="numero_dias" attrs="{'readonly': [('state', 'in',
+                            [ 'approved', 'rejected', 'finalizado'])]}"/>
+          </group>
+
+          <group string="Logística" >
+            <field name="proveedor_externo"
+                    attrs="{'readonly': [('state', 'in',
+                            ['rejected', 'finalizado'])]}"/>
+            <field name="vehiculo_id"
+                   attrs="{
+                            'invisible': [('proveedor_externo', '=', True)],
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="vehicle_ref"
+                   attrs="{
+                           'invisible': [('proveedor_externo', '=', False)],
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="conductor_id"
+                   attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="origen"
+                   attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="destino" attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="peso_carga" attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="unidad_peso" attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="fecha_ejecucion" attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+
+            <field name="fecha_finalizacion"
+                   readonly="1"
+                   attrs="{'invisible': [('state', '!=', 'finalizado')]}"/>
+          </group>
+            <group groups="fleet_gps_cronograma.group_cronograma_admin" >
+            <field name="entrega" attrs="{
+                           'readonly' : [('state', 'in', ['rejected', 'finalizado'])]}"/>
+            <field name="observacion" attrs="{
+                            'invisible': [('entrega', '!=', 'parcial')],
+                            'readonly': [('observacion','!=', False)]
+                           }"/>
+            </group>
+        </sheet>
+        <div class="oe_chatter sidebar">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="message_ids"          widget="mail_thread"/>
+            </div>
+      </form>
+    </field>
+  </record>
+
+  <!-- ================= ACCIÓN Y MENÚ  ================= -->
+  <record id="action_fleet_cronograma" model="ir.actions.act_window">
+    <field name="name">Cronograma</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">fleet.cronograma</field>
+    <field name="view_mode">tree,form,calendar</field>
+    <field name="context">{}</field>
+  </record>
+
+  <!-- Menú principal del cronograma, bajo Vehículos -->
+  <menuitem id="fleet_cronograma_menu_root"
+            name="Cronograma"
+            parent="fleet.menu_root"
+            sequence="20"
+            groups="fleet_gps_cronograma.group_cronograma_usuario"/>
+  <menuitem id="fleet_cronograma_menu"
+            name="Cronograma de Maniobras"
+            parent="fleet_cronograma_menu_root"
+            action="action_fleet_cronograma"
+            sequence="1"
+            groups="fleet_gps_cronograma.group_cronograma_usuario"/>
+
+</odoo>

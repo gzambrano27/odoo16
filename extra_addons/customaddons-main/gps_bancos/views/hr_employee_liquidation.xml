@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+                <record model="ir.ui.view"
+                id="hr_employee_liq_finiquito_form_inherit">
+            <field name="name">hr.employee.liq.finiquito.form.inherit</field>
+            <field name="model">hr.employee.liquidation</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="gps_hr.hr_employee_liquidation_finiquito_view_form"/>
+            <field name="arch" type="xml">
+
+<field name="do_account"  position="after">
+
+         <field name="checked" attrs="{'readonly':[('state','=','paid')],'invisible':[('state','not in',('sended','paid'))]}" />
+
+</field>
+
+                     <button name="action_reversed_verified" position="after">
+    <button name="action_reverse_sended" type="object" string="Reversar"
+                        icon="fa-rotate-left"
+                        groups="gps_hr.group_jefe_rrhh"
+                        attrs="{'invisible': ['|',('checked', '=', True),('state', 'not in', ('sended'))]}"  />
+
+                     </button>
+
+
+            </field>
+
+
+             </record>
+
+
+    </data>
+
+
+</odoo>

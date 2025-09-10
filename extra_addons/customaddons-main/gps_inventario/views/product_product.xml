@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.stock.account</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <field name="standard_price" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </field>
+        </field>
+    </record>
+
+
+    <record id="product_template_inht_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.stock.account</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="account_payment_purchase.view_product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="after">
+                <field name="can_edit_categ" invisible="1" />
+            </field>
+            <field name="categ_id"  position="attributes">
+                <attribute name="attrs">{'readonly':[('can_edit_categ','!=',True)]}</attribute>
+                <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_product_form_view_inherit_fecha_compras_ventas" model="ir.ui.view">
+        <field name="name">product.product.form.inherit.fecha.compras.ventas</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="ultima_fecha_compra" readonly="1"/>
+                <field name="ultima_fecha_venta" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_product_stock_tree_inherits" model="ir.ui.view">
+        <field name="name">product.product.stock.tree.inherits</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_product_stock_tree"/>
+        <field name="arch" type="xml">
+            <field name="qty_available" position="attributes">
+                <attribute name="string">Cant. a Mano</attribute>
+            </field>
+            <field name="outgoing_qty" position="attributes">
+                <attribute name="string">Reservas</attribute>
+            </field>
+            <field name="avg_cost" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </field>
+            <field name="total_value" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </field>
+            <!--
+            <xpath expr="//field[@name='outgoing_qty']" position="after">
+            <field name="name" readonly="1"/>
+            </xpath>
+            -->
+        </field>
+    </record>
+
+    <record id="product_product_stock_tree_inherit_stock_account_cost" model="ir.ui.view">
+        <field name="name">product.product.stock.tree.inherits</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock_account.product_product_stock_tree_inherit_stock_account"/>
+        <field name="arch" type="xml">
+            <field name="total_value" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_template_form_inherit_" model="ir.ui.view">
+        <field name="name">product.template.inherit.form</field>
+        <field name="model">product.template</field>
+        <!-- <field name="inherit_id" ref="product.product_template_only_form_view"/> -->
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <!--
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                    <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+            <xpath expr="//group[@name='group_standard_price']" position="attributes">
+                    <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+            -->
+            <xpath expr="//label[@for='standard_price']" position="attributes">
+                    <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+            <xpath expr="//div[@name='standard_price_uom']" position="attributes">
+                    <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="product_template_tree_inherit_prod" model="ir.ui.view">
+        <field name="name">product.template.inherit.standard_price</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/> <!-- vista FORM, no TREE -->
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="product_product_tree_inherit_hide_cost" model="ir.ui.view">
+        <field name="name">product.product.tree.inherit.hide.cost</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+            <xpath expr="//field[@name='lst_price']" position="attributes">
+                <attribute name="groups">gps_inventario.group_costos</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

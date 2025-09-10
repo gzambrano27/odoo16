@@ -1,0 +1,35 @@
+<odoo>
+  <record id="res_config_settings_view_form_permisos_ingreso" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.inherit.permisos_ingreso</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+    <field name="priority" eval="50"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[hasclass('settings')]" position="inside">
+        <div
+          class="app_settings_block"
+          data-key="permisos_ingreso"
+          data-string="Permisos de Ingreso"
+          string="Permisos de Ingreso"
+        >
+          <h2>Permisos de Ingreso</h2>
+          <div class="row mt16 o_settings_container" id="permiso_settings">
+            <div id="permiso_time_limit_box" class="col-12 o_setting_box">
+              <div class="o_setting_left_pane">
+                <div style="width: 50px;">
+                  <field name="permiso_time_limit" widget="float_time"/>
+                </div>
+              </div>
+Ño             <div class="o_setting_right_pane" style="margin-left: 60px;">
+                <label for="permiso_time_limit"/>
+                <div class="text-muted">
+                  Hora límite de creación de permisos (HH:MM)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

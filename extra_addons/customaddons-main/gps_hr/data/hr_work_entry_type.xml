@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+
+<record id="work_entry_vacaciones_gozadas" model="hr.work.entry.type">
+            <field name="name">VACACIONES GOZADAS</field>
+            <field name="color">0</field>
+            <field name="code">VACGOZ</field>
+        </record>
+
+
+        <record id="work_entry_vacaciones_pagadas" model="hr.work.entry.type">
+            <field name="name">VACACIONES PAGADAS</field>
+            <field name="color">1</field>
+            <field name="code">VACPAG</field>
+        </record>
+
+        <record id="work_entry_vacaciones_anticipadas" model="hr.work.entry.type">
+            <field name="name">VACACIONES ANTICIPADAS</field>
+            <field name="color">1</field>
+            <field name="code">VACANT</field>
+        </record>
+
+        <record id="work_entry_permisos" model="hr.work.entry.type">
+            <field name="name">PERMISOS IESS,MATERNIDAD O PATERNIDAD</field>
+            <field name="color">1</field>
+            <field name="code">PERM_IESS</field>
+        </record>
+
+    </data>
+
+</odoo>

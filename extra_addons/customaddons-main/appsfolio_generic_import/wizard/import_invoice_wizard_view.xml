@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<record id="import_invoice_wizard_view" model="ir.ui.view">
+		<field name="name">Import Invoice Lines</field>
+		<field name="model">import.invoice.wizard</field>
+		<field name="arch" type="xml">
+			<form>
+				<group>
+				    <field name="file_import_type" widget="radio"/>
+					<field name="invoice_file"/>
+				</group>
+				<group>
+				    <group>
+					    <field name="option_import_file_by" widget="radio"/>
+					</group>
+					<group>
+					    <field name="product_details_option" widget="radio"/>
+					</group>
+				</group>
+				<footer>
+					<button 
+						name="import_invoice_line_file" 
+						type="object"
+						class="oe_highlight" 
+						string="Import" 
+					/>
+                    <button 
+                    	name="cancel" 
+                    	class="oe_link" 
+                    	special="cancel"
+                    	string="Cancel" 
+                    />
+                    <div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                        	Download Sample: 
+                        </strong>
+                        <a role="button" href="/generic_import/static/Sample File/Sample CSV File/invoice_line.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+	                        <i class="fa fa-download"/>
+	                        CSV file
+                        </a>
+                        <a role="button" href="/generic_import/static/Sample File/Sample XLS File/invoice_line.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+	                        <i class="fa fa-download"/>
+	                        Excel file
+                        </a>
+                    </div>
+				</footer>
+			</form>
+		</field>
+	</record>	
+	<record id="action_import_invoice_wizard_view" model="ir.actions.act_window">
+		<field name="name">Import Invoice Lines</field>
+		<field name="res_model">import.invoice.wizard</field>
+		<field name="target">new</field>		
+		<field name="view_mode">form</field>
+	</record>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+
+        <record id="seq_foreign_purchase" model="ir.sequence">
+            <field name="name">Importacion</field>
+            <field name="code">trade.importation</field>
+            <field name="prefix">OI</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_importation_advance" model="ir.sequence">
+            <field name="name">Pagos Importacion</field>
+            <field name="code">importation.trade</field>
+            <field name="prefix">PI</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

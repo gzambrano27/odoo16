@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_sub_category_user,product.category.user,model_product_sub_category,group_planner_user,1,0,0,0
+access_product_sub_category_manager,product.category.manager,model_product_sub_category,group_planner_manager,1,1,1,1
+access_inv_plan_user,inv.plan,model_inv_plan,group_planner_user,1,1,1,0
+access_inv_plan_tmpl_user,inv.plan.tmpl,model_inv_plan_tmpl,group_planner_user,1,1,1,0
+access_inv_plan_manager,inv.plan,model_inv_plan,group_planner_manager,1,1,1,1
+access_inv_plan_line_user,inv.plan,model_inv_plan_line,group_planner_user,1,1,1,0
+access_inv_plan_line_manager,inv.plan,model_inv_plan_line,group_planner_manager,1,1,1,0
+access_product_sale_history,product.sale.history,model_product_sale_history,,1,1,1,1
+access_product_purchase_history,product.purchase.history,model_product_purchase_history,,1,1,1,1

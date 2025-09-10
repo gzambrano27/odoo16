@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Views for establecimientos Tree View -->
+
+        <record model="ir.ui.view" id="view_establecimientos_tree">
+            <field name="name">establecimientos.tree</field>
+            <field name="model">establecimientos</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Establecimientos">
+                    <field name="codigo" string="Código"/>
+                    <field name="name" string="Establecimiento"/>
+                    <field name="state" string="Estado"/>
+                </tree>
+            </field>
+        </record> 
+        
+        <record model="ir.ui.view" id="view_establecimientos_form">
+            <field name="name">establecimientos.form</field>
+            <field name="model">establecimientos</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Establecimientos">
+                    <group>
+                        <group>
+                            <field name="codigo" string="Código"/>
+                            <field name="state" string="Estado"/>
+                        </group>
+                        <group>
+                            <field name="name" string="Establecimiento"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>   
+        
+        <record id="action_establecimientos_form" model="ir.actions.act_window">
+            <field name="name">Establecimientos</field>
+            <field name="res_model">establecimientos</field>
+            <field name="view_mode">tree,form</field>       
+        </record>
+        
+        <menuitem name="Establecimientos" id="menu_establecimientos_configuration" action="action_establecimientos_form"
+            parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="90"/>
+    
+    </data>
+</odoo>

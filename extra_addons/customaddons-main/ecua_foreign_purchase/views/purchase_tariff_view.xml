@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_tariff_tree">
+            <field name="name">view.purchase.tariff.tree</field>
+            <field name="model">purchase.tariff</field>
+            <field name="arch" type="xml">
+                <tree string="Tariff Subheadings" default_order='id asc'>
+                    <field name="ref"/>
+                    <field name="name"/>
+                    <field name="observation"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="purchase_tariff_form" model="ir.ui.view">
+            <field name="name">Tariff Subheadings</field>
+            <field name="model">purchase.tariff</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tariff Subheadings">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ref"/>
+                                <field name="name"/>
+                                <field name="observation"/>
+                            </group>
+                            <group>
+
+                            </group>
+                        </group>
+                        <group>
+                            <field name="arancel_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_purchase_tariff" model="ir.actions.act_window">
+            <field name="name">Partidas Arancelarias</field>
+            <field name="res_model">purchase.tariff</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_type_arancel_tree" model="ir.ui.view">
+            <field name="name">Listado de Aranceles</field>
+            <field name="model">type.arancel</field>
+            <field name="arch" type="xml">
+                <tree string="List of tariffs">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="type_arancel"/>
+                    <field name="value_type"/>
+                    <field name="percent"/>
+                    <field name="value"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_type_arancel_form" model="ir.ui.view">
+            <field name="name">Listado de Aranceles</field>
+            <field name="model">type.arancel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="List of tariffs">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="type_arancel"/>
+                            </group>
+                        </group>
+                        <separator string="Associated amounts" colspan="4"/>
+                        <group>
+                            <field name="value_type"/>
+                            <field name="percent"
+                                   attrs="{'invisible':[('value_type','=','fix')],'required':[('value_type','!=','fix')]}"/>
+                            <field name="value"
+                                   attrs="{'invisible':[('value_type','=','percent')],'required':[('value_type','!=','percent')]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="type_arancel_action">
+            <field name="name">Listado de Aranceles</field>
+            <field name="res_model">type.arancel</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_regime_type_form" model="ir.ui.view">
+            <field name="name">view.regime.type.form</field>
+            <field name="model">trade.regime.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="date"/>
+                            </group>
+                            <group string="Observaciones">
+                                <field name="description" nolabel="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_regime_type_tree" model="ir.ui.view">
+            <field name="name">view.regime.type.tree</field>
+            <field name="model">trade.regime.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_regime_type_search" model="ir.ui.view">
+            <field name="name">view.regime.type.search</field>
+            <field name="model">trade.regime.type</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="date"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_regime_type_form" model="ir.actions.act_window">
+            <field name="name">Tipo de R&#233;gimen de Importaci&#243;n</field>
+            <field name="res_model">trade.regime.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_regime_type_search"/>
+            <field name="view_id" ref="view_regime_type_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click para adicionar un nuevo Tipo de R&#233;gimen de Importaci&#243;n.
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+
+        <record id="view_regime_form" model="ir.ui.view">
+            <field name="name">view.regime.form</field>
+            <field name="model">trade.regime</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="regime_type_id"/>
+                            </group>
+                            <group string="Observaciones">
+                                <field name="description" nolabel="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_regime_tree" model="ir.ui.view">
+            <field name="name">view.regime.tree</field>
+            <field name="model">trade.regime</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="regime_type_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_regime_search" model="ir.ui.view">
+            <field name="name">view.regime.search</field>
+            <field name="model">trade.regime</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <group expand="1" string="Agrupar por">
+                        <filter name="group_by_date" string="Fecha" context="{'group_by':'date'}"/>
+                        <filter name="group_by_type" string="Tipo" context="{'group_by':'regime_type_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_regime_form" model="ir.actions.act_window">
+            <field name="name">R&#233;gimen de Importaci&#243;n</field>
+            <field name="res_model">trade.regime</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_regime_search"/>
+            <field name="view_id" ref="view_regime_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click para adicionar un nuevo R&#233;gimen de Importaci&#243;n.
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+
+        <record id="view_mean_form" model="ir.ui.view">
+            <field name="name">view.mean.form</field>
+            <field name="model">trade.transportation.mean</field>
+            <field name="arch" type="xml">
+                <form string="Medio de transporte">
+                    <sheet string="Transporte">
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="waypoint_type"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_mean_tree" model="ir.ui.view">
+            <field name="name">view.mean.tree</field>
+            <field name="model">trade.transportation.mean</field>
+            <field name="arch" type="xml">
+                <tree sample="1">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_mean_search" model="ir.ui.view">
+            <field name="name">view.mean.search</field>
+            <field name="model">trade.transportation.mean</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_mean_form" model="ir.actions.act_window">
+            <field name="name">Rutas</field>
+            <field name="res_model">trade.transportation.mean</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_mean_search"/>
+            <field name="view_id" ref="view_mean_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click para adicionar un nuevo Medio de transporte.
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+
+        <record id="view_waypoint_form" model="ir.ui.view">
+            <field name="name">view.waypoint.form</field>
+            <field name="model">trade.transportation.waypoint</field>
+            <field name="arch" type="xml">
+                <form string="Punto de Embarque/Desembarque">
+                    <sheet string="Punto de Embarque/Desembarque">
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="country_id"/>
+                                <field name="type"/>
+                            </group>
+                            <group colspan="4">
+                                <field name="address"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_waypoint_tree" model="ir.ui.view">
+            <field name="name">view.waypoint.tree</field>
+            <field name="model">trade.transportation.waypoint</field>
+            <field name="arch" type="xml">
+                <tree sample="1">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="country_id"/>
+                    <field name="address"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_waypoint_search" model="ir.ui.view">
+            <field name="name">view.waypoint.search</field>
+            <field name="model">trade.transportation.waypoint</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="country_id"/>
+                    <field name="type"/>
+                    <field name="address"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_waypoint_form" model="ir.actions.act_window">
+            <field name="name">Puntos de Embarque/Desembarque</field>
+            <field name="res_model">trade.transportation.waypoint</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_waypoint_search"/>
+            <field name="view_id" ref="view_waypoint_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click para adicionar un nuevo Punto de Embarque/Desembarque.
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+
+        <record id="view_route_form" model="ir.ui.view">
+            <field name="name">view.route.form</field>
+            <field name="model">trade.importation.route</field>
+            <field name="arch" type="xml">
+                <form string="Rutas">
+                    <sheet string="Ruta">
+                        <h1>
+                            <field name="name" placeholder="Ej: Aruba --> Quito"/>
+                        </h1>
+                        <hr/>
+                        <group>
+                            <group>
+
+                                <field name="transportation_mean_id" string="Medio"/>
+                                <field name="type"/>
+                                <field name="country_origin_id"/>
+                                <field name="waypoint_origin_id" domain="[('country_id','=',country_origin_id),
+                            ('type','=',type)]"/>
+                            </group>
+                            <group>
+                                <field name="order"/>
+                                <field name="country_destination_id"/>
+                                <field name="waypoint_destination_id" domain="[('country_id','=',country_destination_id),
+                            ('type','=',type)]"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="obs" string="Observaciones">
+                                <group string="Observaciones">
+                                    <field name="description" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_route_tree" model="ir.ui.view">
+            <field name="name">view.route.tree</field>
+            <field name="model">trade.importation.route</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_route_search" model="ir.ui.view">
+            <field name="name">view.stage.search</field>
+            <field name="model">trade.importation.route</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_route_form" model="ir.actions.act_window">
+            <field name="name">Rutas</field>
+            <field name="res_model">trade.importation.route</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_route_search"/>
+            <field name="view_id" ref="view_route_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to add new route to for Importations.
+                </p>
+                <p>
+
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

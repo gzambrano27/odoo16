@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Acción para abrir la vista -->
+
+
+    <!-- Vista Tree -->
+    <record id="stock_cost_history_tree_view" model="ir.ui.view">
+        <field name="name">stock.cost.history.tree</field>
+        <field name="model">stock.cost.history</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                  <field name="date_from"/>
+                  <field name="date_to"/>
+                <field name="company_id"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="value"/>
+               <field name="cost"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="stock_cost_history_form_view" model="ir.ui.view">
+        <field name="name">stock.cost.history.form</field>
+        <field name="model">stock.cost.history</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <sheet>
+                    <group>
+                             <field name="date_from"/>
+                         <field name="date_to"/>
+                <field name="company_id"/>
+                <field name="product_id"/>
+                         <field name="qty"/>
+                <field name="value"/>
+               <field name="cost"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Search -->
+    <record id="stock_cost_history_search_view" model="ir.ui.view">
+        <field name="name">stock.cost.history.search</field>
+        <field name="model">stock.cost.history</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="company_id"/>
+                <field name="product_id"/>
+                <field name="cost"/>
+                <group>
+                    <filter name="group_by_company" string="Agrupar por Compañía" domain="[]" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_by_product" string="Agrupar por Producto" domain="[]" context="{'group_by': 'product_id'}"/>
+                <filter name="group_by_date_from" string="Agrupar por Fecha Desde" domain="[]" context="{'group_by': 'date_from'}"/>
+<filter name="group_by_date_to" string="Agrupar por Fecha Hasta" domain="[]" context="{'group_by': 'date_to'}"/>
+
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_stock_cost_history" model="ir.actions.act_window">
+        <field name="name">Historial de Costos</field>
+        <field name="res_model">stock.cost.history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="stock_cost_history_search_view"/>
+        <field name="context">{'search_default_group_by_company':1,'search_default_group_by_product':1}</field>
+        <field name="help" type="html">
+            <p>No hay registros de historial de costos.</p>
+        </field>
+    </record>
+
+
+
+</odoo>

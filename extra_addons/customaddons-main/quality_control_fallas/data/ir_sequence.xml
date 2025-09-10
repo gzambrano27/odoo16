@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_quality_control_fallas" model="ir.sequence">
+        <field name="name">Reporte de Fallas</field>
+        <field name="code">quality.control.fallas</field>
+        <field name="prefix">BLU-FOR-CCA-</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

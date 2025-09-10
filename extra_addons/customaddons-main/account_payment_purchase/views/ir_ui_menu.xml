@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+
+
+
+         <menuitem id="menu_purchase_order_line_report_wizard_view_file"
+              name="Margen de Órdenes de Compra"
+               parent="purchase.menu_procurement_management"
+                  sequence="999999"
+                   groups="account_payment_purchase.group_analytic_user"
+              action="purchase_order_line_report_wizard_view_file_action"/>
+
+
+  <menuitem id="menu_res_company_order_margin_flag"
+              name="Margen Órdenes de Compra por Rentabilidad"
+              parent="purchase.menu_purchase_general_settings"
+            groups="account_payment_purchase.group_analytic_user"
+              action="action_res_company_order_margin_flag"/>
+
+        <menuitem id="menu_res_company_order_margin_purchase_flag"
+              name="Margen Órdenes de Compra por Precio de Compra"
+              parent="purchase.menu_purchase_general_settings"
+                  groups="account_payment_purchase.group_analytic_user"
+              action="action_res_company_order_margin_purchase_flag"/>
+
+         <menuitem id="menu_res_company_order_margin_flag_global"
+              name="Margen Órdenes de Compra por Rentabilidad Global"
+              parent="purchase.menu_purchase_general_settings"
+            groups="account_payment_purchase.group_analytic_user"
+              action="action_res_company_order_margin_flag_global"/>
+
+        <menuitem id="res_company_order_margin_purchase_flag_global_menu"
+              name="Margen para Órdenes de Compra (Precio de Compra por Documento)"
+              parent="purchase.menu_purchase_general_settings"
+            groups="account_payment_purchase.group_analytic_user"
+              action="action_res_company_order_margin_purchase_flag_global"/>
+
+
+
+
+
+
+    </data>
+
+
+</odoo>

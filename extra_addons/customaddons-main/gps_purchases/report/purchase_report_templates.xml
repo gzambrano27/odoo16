@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_purchasequotation_document_POL" inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//table[@class='table table-sm mt-4']" position="replace">
+            <table class="table table-sm mt-4">
+                <thead style="display: table-row-group">
+                    <tr>
+                        <th name="th_description"><strong>Description</strong></th>
+                        <!--<th name="th_expected_date" class="text-center"><strong>Expected Date</strong></th>-->
+                        <th name="th_quantity" class="text-end"><strong>Qty</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="o.agrupar().items()" t-as="line">
+                        <tr>
+                            <t>
+                                <td id="product">
+                                    <span t-field="line[0].name"/>
+
+                                </td>
+                                <td class="text-end">
+
+                                    <span t-esc="'{:.2f}'.format(line[1])"/>
+                                </td>
+                            </t>
+                        </tr>
+                        <t t-set="current_section" t-value="line"/>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+</odoo>

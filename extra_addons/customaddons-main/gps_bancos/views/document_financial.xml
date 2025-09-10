@@ -1,0 +1,688 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+    <record id="document_financial_view_search"
+            model="ir.ui.view">
+        <field name="name">document.financial.search</field>
+        <field name="model">document.financial</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Movimientos">
+
+                 <group expand="0" string="Filtrar...">
+						<filter string="Preliminar" name="is_draft"
+							domain="[('state','=','draft')]" />
+                        <filter string="Aprobado" name="is_approved"
+							domain="[('state','=','approved')]" />
+                        <filter string="Anulado" name="is_cancelled"
+							domain="[('state','=','cancelled')]" />
+<separator/>
+
+                     <!-- Filtro por Tipo de Emisión -->
+            <filter name="filter_type_emission_1"
+                    string="Primera Emisión" invisible="context.get('default_type','')!='emision'"
+                    domain="[('type_emission', '=', '1')]" />
+            <filter name="filter_type_emission_2"
+                    string="Segunda Emisión" invisible="context.get('default_type','')!='emision'"
+                    domain="[('type_emission', '=', '2')]" />
+
+            <!-- Filtro por Clase -->
+            <filter name="filter_type_class_a"
+                    string="Clase A" invisible="context.get('default_type','')!='emision'"
+                    domain="[('type_class', '=', 'A')]" />
+            <filter name="filter_type_class_b"
+                    string="Clase B" invisible="context.get('default_type','')!='emision'"
+                    domain="[('type_class', '=', 'B')]" />
+            <filter name="filter_type_class_c"
+                    string="Clase C" invisible="context.get('default_type','')!='emision'"
+                    domain="[('type_class', '=', 'C')]" />
+                     <separator/>
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+						<filter string="Estados"
+							context="{'group_by':'state'}" name='grp_state' />
+						<filter string="Compañia"
+							context="{'group_by':'company_id'}" name='grp_company_id' />
+                        <filter string="Emisor"
+							context="{'group_by':'partner_id'}" name='grp_partner_id' />
+
+                         <filter string="Fecha"
+							context="{'group_by':'date_process'}" name='grp_date_process' />
+ <filter name="group_by_type_emission" invisible="context.get('default_type','')!='emision'"
+                        string="Tipo de Emisión"
+                        context="{'group_by': 'type_emission'}"/>
+                <filter name="group_by_type_class"
+                        string="Clase" invisible="context.get('default_type','')!='emision'"
+                        context="{'group_by': 'type_class'}"/>
+					</group>
+
+                <field name="id"/>
+                <field name="company_id"/>
+                  <field name="partner_id"/>
+                  <field name="name"/>
+                <field name="date_process"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="document_financial_view_tree"
+            model="ir.ui.view">
+        <field name="name">document.financial.tree</field>
+        <field name="model">document.financial</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Movimientos">
+                <field name="internal_type" invisible="1" />
+                <field name="id" string="# ID" optional="hide"/>
+                <field name="company_id"/>
+                <field name="type" invisible="context.get('default_internal_type','')!='out'" />
+                <field name="partner_id"/>
+
+                       <field name="type_emission" invisible="context.get('default_type','')!='emision'"/>
+                        <field name="type_class" invisible="context.get('default_type','')!='emision'"/>
+
+
+                <field name="date_process"/>
+               <field name="date_maturity"/>
+               <field name="number_invoice" invisible="context.get('default_internal_type','')!='out'" optional="hide" />
+                        <field name="name"  />
+
+                <field name="total" sum="total"/>
+                <field name="total_to_paid" sum="total"/>
+                <field name="total_paid" sum="total"/>
+                <field name="total_pending" sum="total"/>
+
+                    <field name="state" optional="show" widget="badge"
+                       decoration-muted="state=='cancelled'"
+                       decoration-info="state=='draft'"
+                       decoration-success="state=='posted'"
+                />
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="document_financial_view_form"
+            model="ir.ui.view">
+        <field name="name">document.financial.form</field>
+        <field name="model">document.financial</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Obligaciones Financieras">
+                <header>
+<button string="Importar" type="action" attrs="{'invisible':[('state','!=','draft')]}"
+        name="%(document_financial_wizard_view_action)d"
+        icon="fa-upload" />
+
+                    <button string="Publicar" icon="fa-check" type="object"
+                             attrs="{'invisible':[('state','!=','draft')]}"
+                            name="action_posted"
+                            />
+
+                    <button string="Reversar" icon="fa-rotate-left" type="object"
+                             attrs="{'invisible':[('state','!=','posted')]}"
+                            name="action_draft"
+                            />
+
+                    <button string="Anular" icon="fa-times" type="object"
+                             attrs="{'invisible':[('state','!=','draft')]}"
+                            name="action_cancel"
+                            />
+
+                    <button string="Pagar" icon="fa-money" type="action"
+                            name="%(document_financial_wizard_payment_view_action)d"  attrs="{'invisible':[('state','!=','posted')]}"
+                            />
+
+                    <button string="Recaudar" icon="fa-money" type="action"
+                            name="%(document_financial_wizard_payment_recaudacion_view_action)d"  attrs="{'invisible':['|',('total_pending_collection','&lt;=',0),('state','!=','posted')]}"
+                            />
+
+
+                    <button string="Act. Colocaciones"
+                            icon="fa-table"
+                            name="update_tables"
+                            type="object"
+                            attrs="{'invisible':['|','|',('update_lines','!=',True),('type','!=','emision'),('state','!=','posted')]}"
+                    />
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                      <div name="button_box" class="oe_button_box">
+                          <field name="number_payments" invisible="1" />
+                    <field name="number_cobros_payments" invisible="1" />
+
+
+
+                        <button name="action_open_payments"
+                                    class="oe_stat_button" icon="fa-money"
+                                    type="object"  groups="gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+                                attrs="{'invisible':[('number_payments','&lt;=',0)]}"
+                                    string="Pagos">
+
+
+                            </button>
+
+
+                        <button name="action_open_cobros_payments"
+                                    class="oe_stat_button" icon="fa-money"
+                                    type="object"  groups="gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+                                attrs="{'invisible':[('number_cobros_payments','&lt;=',0)]}"
+                                    string="Recaudaciones">
+
+
+                            </button>
+
+                          <button name="action_financial_version"
+                                    class="oe_stat_button" icon="fa-book"
+                                    type="object"  groups="gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+ attrs="{'invisible':[('version','&lt;=',1)]}"
+                                    string="Ult. Versión">
+
+
+                            </button>
+
+
+
+                      </div>
+                <group>
+                    <group>
+                        <field name="id" string="# ID" attrs="{'invisible':[('id','&lt;=',0)]}"/>
+                         <field name="type" readonly="1" force_save="1" />
+                        <field name="company_id" readonly="1" force_save="1"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                        <field name="partner_id" attrs="{'readonly':[('state','!=','draft')]}"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                        <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+
+   <field name="date_process" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        <field name="date_maturity" force_save="1" readonly="1"/>
+
+
+
+             <field name="type_emission" widget="radio" attrs="{'invisible':[('type','!=','emision')],'required':[('type','=','emision')],'readonly':[('state','!=','draft')]}"/>
+                        <field name="type_class" widget="radio" attrs="{'invisible':[('type','!=','emision')],'required':[('type','=','emision')],'readonly':[('state','!=','draft')]}"/>
+<field name="version" readonly="1" />
+
+                    </group>
+                    <group>
+
+
+
+
+                          <field name="capital" readonly="1" force_save="1"/>
+                         <field name="periods" readonly="1" force_save="1"/>
+                         <field name="years" readonly="1" force_save="1"/>
+
+                        <field name="total"/>
+                        <field name="total_to_paid"/>
+                        <field name="total_paid"/>
+                        <field name="total_pending"/>
+
+                          <field name="total_to_collect"/>
+                        <field name="total_collected"/>
+                        <field name="total_pending_collection"/>
+  <field name="payment_capital_lines" readonly="1"  attrs="{'invisible':[('placement_ids','=',[])]}" />
+                              <field name="payment_interest_lines" readonly="1"  attrs="{'invisible':[('placement_ids','=',[])]}" />
+
+
+                    </group>
+                </group>
+                <newline/>
+                <notebook>
+
+                    <page string="Detalle" name="page_detalle" >
+<group>
+    <button string="Act. Lineas" name="%(document_financial_version_wizard_form_wizard)d"
+            type="action"
+            attrs="{'invisible':[('state','not in',('posted','draft'))]}"
+            icon="fa-bars"
+            />
+
+
+     <button string="Imp. Líneas" name="%(document_financial_version_in_txt_wizard_form_wizard)d"
+            type="action"
+           attrs="{'invisible':[('state','not in',('posted','draft'))]}"
+            icon="fa-bars"
+            />
+
+</group>
+<field name="line_ids" attrs="{'readonly':[('state','in',('paid','cancelled'))]}"
+                        context="{'default_line_type':type,'hide_update':False,'tree_view_ref':'gps_bancos.document_financial_line_view_tree' ,'form_view_ref':'gps_bancos.document_financial_line_view_form'}"
+/>
+                  </page>
+
+
+    <page string="Liquidaciones"         attrs="{'invisible':['|','|',('update_lines','!=',True),('type','!=','emision'),('state','!=','posted')]}"
+                    >
+        <group>
+             <button name="%(document_financial_liq_version_wizard_view_action)d"
+       type="action" icon="fa-upload"
+string="Importar" colspan="1"
+attrs="{'invisible':[('state','!=','posted')]}"
+
+       />
+        </group>
+                                <field name="liquidation_ids"
+                                       context="{'tree_view_ref':'gps_bancos.document_financial_liquidation_view_tree','default_type_class':type_class,'default_type_emission':type_emission,'default_company_id':company_id,'default_day_base':day_base,'default_term_to_maturity':term_to_maturity}"
+                                              attrs="{'readonly':['|','|', ('update_lines','!=',True),('type','!=','emision'),('state','!=','posted')]}"
+                     />
+
+                            </page>
+<page string="Colocaciones" attrs="{'invisible':[('placement_ids','=',[])]}">
+                                <field name="placement_ids" readonly="1"
+                                       attrs="{'invisible':[('placement_ids','=',[])]}" />
+
+                            </page>
+                    <page string="Pagos" attrs="{'invisible':[('apply_payment_group_ids','=',[])]}">
+                               <field name="apply_payment_group_ids" readonly="1"
+                                      domain="[('internal_type','=','out')]"
+                                      context="{'form_view_ref':'gps_bancos.document_financial_line_payment_group_view_form_payment','tree_view_ref':'gps_bancos.document_financial_line_payment_group_view_tree_payment'}" />
+
+                    </page>
+
+
+
+
+ <page string="Recaudación" attrs="{'invisible':[('cobro_apply_payment_group_ids','=',[])]}">
+                               <field name="cobro_apply_payment_group_ids" readonly="1"
+                                      context="{'show_attachment':0,'form_view_ref':'gps_bancos.document_financial_line_payment_group_view_form_payment','tree_view_ref':'gps_bancos.document_financial_line_payment_group_view_tree_payment'}" />
+
+                    </page>
+
+
+                    <page string="Facturas" >
+                               <field name="invoice_ids"
+                                      context="{'default_move_type': 'in_invoice','tree_view_ref':'account.view_in_invoice_bill_tree'}"
+                                      attrs="{'readonly':[('state','in',('paid','cancelled'))]}"
+                                      domain="[('company_id','=',company_id),('move_type','=','in_invoice'),('state','=','posted')]" />
+                    </page>
+
+                     <page string="Configuración" name="page_conf">
+<group>
+    <group>
+
+         <field name="prestamo_capital_acct_id" attrs="{'required':[('type','=','prestamo')],'invisible':[('type','!=','prestamo')],'readonly':[('state','!=','draft')]}"
+
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','in',('liability_non_current','liability_current')),('deprecated','=',False)]"
+                                         />
+
+
+<field name="number_invoice" attrs="{'readonly':[('state','!=','draft')]}" placeholder="FACTURA..." />
+        <field name="migrated"  attrs="{'readonly':[('state','!=','draft')]}"/>
+ <field name="update_lines"  attrs="{'invisible':[('type','!=','emision')],'readonly':[('state','!=','draft')]}"/>
+
+<field name="day_base"  attrs="{'invisible':[('type','!=','emision')],'readonly':[('state','!=','draft')]}"/>
+<field name="term_to_maturity"  attrs="{'invisible':[('type','!=','emision')],'readonly':[('state','!=','draft')]}"/>
+
+
+
+
+</group>
+    <group>
+
+
+     <field name="amount" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+    <field name="percentage_interest" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+    <field name="interest_rate_type" widget="radio" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+    <field name="percentage_amortize" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+    <field name="insurance_rate" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+    <field name="commission_value" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+    <field name="interest_value" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+    <field name="insurance_value" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+    <field name="first_quota_value" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+    <field name="total_quotas_value" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+    <field name="financial_charge" attrs="{'readonly':[ '|','&amp;',('migrated', '=', True),('state', 'in', ('cancelled', 'paid')), '&amp;',('migrated', '=', False),('state', '!=', 'draft')]}" force_save="1"/>
+
+
+
+</group>
+
+</group>
+
+
+                     </page>
+                </notebook>
+                <newline/>
+                <field name="comments" placeholder="OBSERVACIONES..." attrs="{'readonly':[('state','!=','draft')]}"/>
+     </sheet>
+                <newline/>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+
+            </form>
+        </field>
+    </record>
+
+
+    <!--  -->
+
+    <record id="document_financial_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Emisión de Obligaciones</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">document.financial</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('internal_type','=','out'),('type','=','emision')]</field>
+        <field name="context">{'default_internal_type':'out','default_type':'emision'}</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="search_view_id"
+               ref="document_financial_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="act_window_id"
+               ref="document_financial_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_form_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="document_financial_view_form"/>
+        <field name="act_window_id"
+               ref="document_financial_view_action"/>
+    </record>
+
+
+        <!-- -->
+
+        <record id="document_financial_view_prest_banc_action"
+            model="ir.actions.act_window">
+        <field name="name">Obligaciones bancarias</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">document.financial</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('internal_type','=','out'),('type','=','prestamo')]</field>
+        <field name="context">{'default_internal_type':'out','default_type':'prestamo'}</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="search_view_id"
+               ref="document_financial_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_tree_prest_banc_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="act_window_id"
+               ref="document_financial_view_prest_banc_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_form_prest_banc_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="document_financial_view_form"/>
+        <field name="act_window_id"
+               ref="document_financial_view_prest_banc_action"/>
+    </record>
+
+
+         <record id="document_financial_view_pagares_action"
+            model="ir.actions.act_window">
+        <field name="name">Pagarés</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">document.financial</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('internal_type','=','out'),('type','=','pagares')]</field>
+        <field name="context">{'default_internal_type':'out','default_type':'pagares'}</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="search_view_id"
+               ref="document_financial_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_pagares_banc_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="act_window_id"
+               ref="document_financial_view_pagares_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_form_pagares_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="document_financial_view_form"/>
+        <field name="act_window_id"
+               ref="document_financial_view_pagares_action"/>
+    </record>
+
+
+<!-- -->
+
+
+        <record id="document_financial_view_in_form"
+            model="ir.ui.view">
+        <field name="name">document.financial.in.form</field>
+        <field name="model">document.financial</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Acuerdos de Cobros">
+                <header>
+<button string="Importar" type="action" attrs="{'invisible':[('state','!=','draft')]}"
+        name="%(document_financial_wizard_view_in_action)d"
+        icon="fa-upload" />
+
+                    <button string="Publicar" icon="fa-check" type="object"
+                             attrs="{'invisible':[('state','!=','draft')]}"
+                            name="action_posted"
+                            />
+
+                    <button string="Reversar" icon="fa-rotate-left" type="object"
+                             attrs="{'invisible':[('state','!=','posted')]}"
+                            name="action_draft"
+                            />
+
+                    <button string="Anular" icon="fa-times" type="object"
+                             attrs="{'invisible':[('state','!=','draft')]}"
+                            name="action_cancel"
+                            />
+
+                    <button string="Cobrar" icon="fa-money" type="action"
+                            name="%(document_financial_wizard_payment_cobros_view_action)d"  attrs="{'invisible':[('state','!=','posted')]}"
+                            />
+
+
+                    <button string="Relacionar a Facturas" icon="fa-file-invoice" type="action"
+                            name="%(document_financial_wizard_invoice_view_action)d"  attrs="{'invisible':[('state','!=','posted')]}"
+                            />
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                 <sheet>
+                      <div name="button_box" class="oe_button_box">
+                          <field name="number_payments" invisible="1" />
+                          <field name="version" invisible="1" />
+                        <button name="action_open_cobros_payments"
+                                    class="oe_stat_button" icon="fa-money"
+                              groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                  attrs="{'invisible':[('number_payments','&lt;=',0)]}"
+                                    string="Cobros">
+                            </button>
+
+                           <button name="action_financial_version"
+                                    class="oe_stat_button" icon="fa-book"
+                                    type="object"
+                                   groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                   invisible="1"
+ attrs="{'invisible':[('version','&lt;=',1)]}"
+                                    string="Ult. Versión">
+
+
+                            </button>
+
+                        </div>
+
+                <group>
+                    <group>
+                        <field name="id" string="# ID" attrs="{'invisible':[('id','&lt;=',0)]}"/>
+                         <field name="type" readonly="1" force_save="1" />
+                        <field name="company_id" readonly="1" force_save="1"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+
+                        <field name="partner_id" attrs="{'readonly':[('state','!=','draft')]}"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                        <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+ <field name="name_contract" required="1" />
+
+                         <field name="number_invoice" invisible="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+   <field name="date_process" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        <field name="date_maturity" force_save="1" readonly="1"/>
+
+               <field name="account_analytic_ids"  options="{'no_create':True,'no_edit':True,'no_open':True}"
+
+               domain="[('company_id','=',company_id),('partner_id','=',partner_id)]"
+                      widget="many2many_tags" required="0"
+               />
+
+
+
+                    </group>
+                    <group>
+
+
+
+
+                        <field name="amount" readonly="1" force_save="1"  invisible="1"/>
+                        <field name="percentage_amortize" readonly="1" force_save="1" invisible="1"/>
+                        <field name="percentage_interest" readonly="1" force_save="1" invisible="1"/>
+ <field name="percentage_interest_quota" readonly="1" force_save="1" invisible="1"/>
+     <field name="capital" readonly="1" force_save="1" invisible="1"/>
+                         <field name="periods" readonly="1" force_save="1" invisible="1"/>
+                         <field name="years" readonly="1" force_save="1" invisible="1"/>
+
+                        <field name="total"/>
+                        <field name="total_to_paid"/>
+                        <field name="total_paid"/>
+                        <field name="total_pending"/>
+
+
+
+
+                    </group>
+                </group>
+                <newline/>
+                <notebook>
+                  <page string="Detalle" name="page_detalle">
+
+                      <group>
+    <button string="Act. Líneas" name="%(document_financial_version_in_wizard_form_wizard)d"
+            type="action"
+           attrs="{'invisible':[('state','not in',('posted','draft'))]}"
+            icon="fa-bars"
+            />
+
+
+
+
+
+</group>
+
+                        <field name="line_ids"
+                        context="{'tree_view_ref':'gps_bancos.document_financial_line_view_in_tree','form_view_ref':'gps_bancos.document_financial_line_view_in_form'}"
+                        >
+
+
+
+
+                        </field>
+                  </page>
+                    <page string="Cobros" attrs="{'invisible':[('apply_payment_group_ids','=',[])]}">
+                               <field name="apply_payment_group_ids" readonly="1"
+                                      context="{'form_view_ref':'gps_bancos.document_financial_line_payment_group_view_form_payment','tree_view_ref':'gps_bancos.document_financial_line_payment_group_view_in_tree_payment'}" />
+
+                    </page>
+                </notebook>
+                <newline/>
+                <field name="comments" placeholder="OBSERVACIONES..." attrs="{'readonly':[('state','!=','draft')]}"/>
+                    </sheet>
+                <newline/>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+            </form>
+        </field>
+    </record>
+
+        <!-- -->
+
+        <record id="document_financial_in2_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Ingresos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">document.financial</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('internal_type','=','in'),('type','=','contrato')]</field>
+        <field name="context">{'default_internal_type':'in','default_type':'contrato'}</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="search_view_id"
+               ref="document_financial_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_in_tree2_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="document_financial_view_tree"/>
+        <field name="act_window_id"
+               ref="document_financial_in2_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="document_financial_view_in_form2_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="document_financial_view_in_form"/>
+        <field name="act_window_id"
+               ref="document_financial_in2_view_action"/>
+    </record>
+
+
+    </data>
+
+
+</odoo>

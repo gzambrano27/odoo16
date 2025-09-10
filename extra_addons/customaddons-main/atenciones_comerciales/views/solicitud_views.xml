@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- 1) Vista tree de la Solicitud -->
+    <record id="view_solicitud_aprobacion_atenciones_tree" model="ir.ui.view">
+        <field name="name">solicitud.aprobacion.atenciones.tree</field>
+        <field name="model">solicitud.aprobacion.atenciones</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="solicitante_id" widget="many2one_avatar_user"/>
+                <field name="fecha_solicitud"/>
+                <field name="fecha_salida"/>
+                <field name="fecha_retorno"/>
+                <field name="dias_viaje"/>
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total_movilizacion" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="total_alimentacion" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="total_solicitud" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="state" widget="badge" string="Estado"
+                   decoration-muted="state == 'registrado'"
+                   decoration-info="state == 'a_aprobar'"
+                   decoration-success="state == 'aprobado'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- 2) Vista form de la Solicitud -->
+    <record id="view_solicitud_aprobacion_atenciones_form" model="ir.ui.view">
+        <field name="name">solicitud.aprobacion.atenciones.form</field>
+        <field name="model">solicitud.aprobacion.atenciones</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de Aprobación de Atenciones Comerciales">
+                <!-- Header con el botón de impresión -->
+                <header>
+                    <!-- Botón de impresión; utiliza el id del reporte configurado previamente -->
+                    <button name="%(report_solicitud_aprobacion_atenciones)d" type="action"
+                            string="Imprimir solicitud" class="oe_highlight"
+                            attrs="{'invisible': [('state', '=', 'registrado')]}"/>
+
+                    <!-- Botón de enviar para aprobación (solo para Gerente) -->
+                    <button name="action_send_for_approval" type="object"
+                            string="Enviar para aprobación" states="registrado,revision" class="btn-primary"
+                            groups="atenciones_comerciales.group_gerente"/>
+
+                    <!-- Botón de reiniciar a borrador (solo para Presidente); este metodo cambia el estado a 'registrado' -->
+                    <button name="action_reset_to_registrado" type="object"
+                            string="Reiniciar a Registrado" states="a_aprobar,aprobado" class="btn-secondary"
+                            groups="atenciones_comerciales.group_gerente,atenciones_comerciales.group_presidente"/>
+
+                    <!-- Botón de aprobar (solo para Presidente) -->
+                    <button name="action_approve" type="object"
+                            string="Aprobar" states="a_aprobar" class="btn-secondary"
+                            groups="atenciones_comerciales.group_presidente"/>
+
+                    <!-- Statusbar del estado -->
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group col="12">
+                        <group colspan="6">
+                            <field name="solicitante_id" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="employee_id" readonly="1" invisible="1" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="cargo" readonly="1"/>
+                            <field name="area" readonly="1"/>
+                            <field name="check_confirmacion"
+                               attrs="{'readonly': [('state', '!=', 'revision')], 'invisible': [('state', '!=', 'revision')]}"
+                               groups="atenciones_comerciales.group_aprobador,atenciones_comerciales.group_presidente"/>
+                            <field name="company_id" invisible="1" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="currency_id" invisible="1" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                        </group>
+                        <group colspan="6">
+                            <field name="fecha_solicitud" readonly="1" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="fecha_salida" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="fecha_retorno" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                            <field name="dias_viaje" readonly="1" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="company_id" readonly="1"/>
+                        <field name="cliente_id" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                        <field name="ciudad" attrs="{'readonly': [('state', '!=', 'registrado')]}"/>
+                    </group>
+
+                    <notebook>
+                        <!-- Página Delegados -->
+                        <page string="Delegados">
+                            <field name="delegado_ids" attrs="{'readonly': [('state', '!=', 'registrado')]}">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="puesto"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="puesto"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <!-- Página Movilización -->
+                        <page string="Movilización">
+                            <field name="movilizacion_ids" attrs="{'readonly': [('state', '!=', 'registrado')]}">
+                                <tree editable="bottom">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="concepto"/>
+                                    <field name="monto" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="observaciones"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="concepto"/>
+                                        <field name="monto" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="observaciones"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <!-- Página Alimentación -->
+                        <page string="Alimentación">
+                            <field name="alimentacion_ids" attrs="{'readonly': [('state', '!=', 'registrado')]}">
+                                <tree editable="bottom">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="concepto"/>
+                                    <field name="monto" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="observaciones"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="concepto"/>
+                                        <field name="monto" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="observaciones"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+
+                    <!-- Separador para indicar la sección de Totales -->
+                    <group>
+                        <separator string="Totales"/>
+                    </group>
+                    <!-- Grupo mejorado con 3 columnas para los totales -->
+                    <group class="oe_subtotal_footer o_form_label_align_top">
+                        <field name="total_movilizacion" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="total_alimentacion" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="total_solicitud" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_reg_solicitud_comercial_filter" model="ir.ui.view">
+        <field name="name">solicitud.aprobacion.atenciones.select</field>
+        <field name="model">solicitud.aprobacion.atenciones</field>
+        <field name="arch" type="xml">
+            <search string="Busqueda Aprobaciones de Atenciones">
+                <field name="name"/>
+                <filter string="Mis solicitues" name="mis_solicitudess" domain="[('solicitante_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name = 'Solicitante' string="Solicitante" domain="[]" context="{'group_by':'solicitante_id'}"/>
+                    <filter name = 'Estado' string="Estado" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Registro de la acción para abrir la vista de Solicitud -->
+    <record id="action_solicitud_aprobacion_atenciones" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Atenciones Comerciales</field>
+        <field name="res_model">solicitud.aprobacion.atenciones</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_solicitud_aprobacion_atenciones_tree"/>
+        <field name="search_view_id" ref="view_reg_solicitud_comercial_filter"/>
+        <field name="context">{'search_default_mis_solicitudes': 1}</field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click para crear un Registro de Solicitud.
+            </p>
+        </field>
+    </record>
+
+</odoo>

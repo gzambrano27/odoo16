@@ -1,0 +1,189 @@
+<odoo>
+	<data>
+        <record id="report_docs_format_inout_gen" model="report.paperformat">
+            <field name="name">Formato Movimientos de Ingreso/Salida</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">10</field>
+        </record>
+
+        <record id="report_inform" model="ir.actions.report">
+            <field name="name">Movimientos de Ingreso/Salida</field>
+            <field name="model">inventory.document.transference</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">gps_inventario.informe_inout_gen</field>
+            <field name="report_file">gps_inventario.informe_inout_gen</field>
+            <field name="binding_model_id" ref="gps_inventario.model_inventory_document_transference" />
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="report_docs_format_inout_gen" />
+            <field name="print_report_name">"Movimiento - " + object.name</field>
+        </record>
+
+		<template id="informe_inout_gen">
+			<t t-call="web.basic_layout">
+				<t t-foreach="docs" t-as="o">
+					<div class="page" style="font-family: Verdana; font-size: 17px;">
+						<div class="row" style="align-items: center;">
+							<div class="col-3 text-center">
+								<div>
+									<img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 100px; max-width: 100%;" />
+								</div>
+							</div>
+							<div class="col-9 text-center">
+								<t t-if="o.document_type == 'internal'">
+									<div><strong><h1>CONTROL DE INGRESO DE MATERIALES</h1></strong></div>
+								</t>
+								<t t-elif="o.document_type == 'dispatch'">
+									<t t-if="o.state == 'draft'">
+										<div><strong><h1>SOLICITUD PARA DESPACHO DE MATERIALES</h1></strong></div>
+									</t>
+									<t t-else="">
+										<div><strong><h1>CONTROL DE SALIDA DE MATERIALES</h1></strong></div>
+									</t>
+								</t>
+								<t t-else="">
+									<div><strong><h1>CONTROL DE MATERIALES</h1></strong></div>
+								</t>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-9 mt-5">
+								<div>
+									<strong><span>Bodega:</span></strong> <span t-field="o.warehouse_name"/>
+								</div>
+								<div>
+									<strong><span>Proyecto:</span></strong> <span t-field="o.analytic_distribution"/>
+								</div>
+								<div>
+									<strong><span>Solicitante:</span></strong> <span t-field="o.subcontratista_solicitante.name"/>
+								</div>
+								<div>
+									<strong><span>Fecha:</span></strong> <span t-field="o.date_from"/>
+								</div>
+							</div>
+							<div class="col-3">
+								<t t-if="o.document_type == 'internal'">
+									<div class="row">
+										<div class="col-6"><strong>Ingreso</strong></div>
+										<div class="col-6">
+											<img t-att-src="'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTIwLjI4NSA2LjcwN2wtMTEuMDEgMTEuMDEtNS42NTctNS42NTcgMS40MTQtMS40MTQgNC4yNDMgNC4yNDMgOS41OTctOS41OTd6IiBmaWxsPSIjMDAwIi8+PC9zdmc+'" alt="Check" style="max-height: 20px;"/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-6"><strong>Salida</strong></div>
+										<div class="col-6"></div>
+									</div>
+								</t>
+								<t t-if="o.document_type == 'dispatch'">
+									<div class="row">
+										<div class="col-6"><strong>Ingreso</strong></div>
+										<div class="col-6"></div>
+									</div>
+									<div class="row">
+										<div class="col-6"><strong>Salida</strong></div>
+										<div class="col-6">
+											<img t-att-src="'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTIwLjI4NSA2LjcwN2wtMTEuMDEgMTEuMDEtNS42NTctNS42NTcgMS40MTQtMS40MTQgNC4yNDMgNC4yNDMgOS41OTctOS41OTd6IiBmaWxsPSIjMDAwIi8+PC9zdmc+'" alt="Check" style="max-height: 20px;"/>
+										</div>
+									</div>
+								</t>
+								<t t-if="o.document_type == ''"></t>
+							</div>
+						</div>
+						<br/>
+						<h1 t-field="o.name" class="mt0"/>
+						<t t-if="o.line_ids">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th><strong>DESCRIPCIÓN</strong></th>
+										<th colspan="2"><strong>CANTIDAD</strong></th>
+										<th><strong>OBSERVACIONES</strong></th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- Mostrar desde líneas si aún no hay picking -->
+									<t t-if="not o.picking_id">
+										<t t-foreach="o.line_ids" t-as="line">
+											<tr>
+												<td>
+													<span t-field="line.product_id.display_name"/><br/>
+													<span t-field="line.name"/>
+												</td>
+												<td class="text-right">
+													<span t-field="line.quantity"/>
+												</td>
+												<td class="text-left">
+													<span t-field="line.product_id.uom_id"/>
+												</td>
+												<td class="text-left">
+													<span t-field="line.comments"/>
+												</td>
+											</tr>
+										</t>
+									</t>
+									<!-- Mostrar desde picking si ya existe -->
+									<t t-else="">
+										<t t-foreach="o.picking_id.move_ids_without_package.sorted(lambda ml: (ml.location_id.complete_name, ml.location_dest_id.complete_name))" t-as="ml">
+											<tr>
+												<td>
+													<span t-field="ml.product_id.display_name"/><br/>
+													<span t-field="ml.product_id.description_picking"/>
+												</td>
+												<td class="text-right">
+													<span t-if="o.state != 'done'" t-field="ml.product_uom_qty"/>
+													<span t-if="o.state == 'done'" t-field="ml.qty_done"/>
+												</td>
+												<td class="text-left">
+													<span t-field="ml.product_uom" groups="uom.group_uom"/>
+												</td>
+												<td></td>
+											</tr>
+										</t>
+									</t>
+								</tbody>
+							</table>
+						</t>
+						<div class="row">
+							<t t-if="o.state == 'draft'">
+								<div class="col-6 text-center">
+									<span>.....................................</span><br/>
+									<strong><span>Solicitante</span></strong><br/>
+									<strong><span t-field="o.subcontratista_solicitante.name"/></strong><br/>
+								</div>
+								<div class="col-6 text-center">
+									<span>.....................................</span><br/>
+									<strong><span>Intendente/Supervisor</span></strong><br/>
+									<strong><span t-field="o.intendente_solicitante.name"/></strong><br/>
+								</div>
+							</t>
+							<t t-else="">
+								<div class="col-4 text-center">
+									<span>.....................................</span><br/>
+									<strong><span>Entrega conforme</span></strong><br/>
+									<strong><span t-field="o.create_uid.name"/></strong><br/>
+								</div>
+								<div class="col-4 text-center">
+									<span>.....................................</span><br/>
+									<strong><span>Intendente/Supervisor</span></strong><br/>
+									<strong><span t-field="o.intendente_solicitante.name"/></strong><br/>
+								</div>
+								<div class="col-4 text-center">
+									<span>.....................................</span><br/>
+									<strong><span>Recibí conforme</span></strong><br/>
+									<strong><span t-field="o.intendente_solicitante.name"/></strong><br/>
+								</div>
+							</t>
+						</div>
+
+					</div>
+				</t>
+			</t>
+		</template>
+	</data>
+</odoo>

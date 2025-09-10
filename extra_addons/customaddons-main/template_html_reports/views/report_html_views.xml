@@ -1,0 +1,46 @@
+<odoo>
+  <data>
+
+    <record id="view_template_reports_html_form" model="ir.ui.view">
+      <field name="name">template.reports.html.form</field>
+      <field name="model">template.reports.html</field>
+      <field name="arch" type="xml">
+        <form string="Template Reports HTML">
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="description"/>
+              <field name="python_code"/>
+              <field name="html"/>
+              <field name="active"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_template_reports_html_tree" model="ir.ui.view">
+      <field name="name">template.reports.html.tree</field>
+      <field name="model">template.reports.html</field>
+      <field name="arch" type="xml">
+        <tree string="Template Reports HTML">
+          <field name="name"/>
+          <field name="description"/>
+          <field name="active"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="action_template_reports_html" model="ir.actions.act_window">
+      <field name="name">Template Reports HTML</field>
+      <field name="res_model">template.reports.html</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_template_reports_html" name="Template Reports HTML" parent="menu_html_reports" sequence="1" action="action_template_reports_html"/>
+
+
+
+
+  </data>
+</odoo>

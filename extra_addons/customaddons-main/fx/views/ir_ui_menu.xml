@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+		
+		
+		<menuitem name="Programación" 
+			id="programming_menu" parent="base.menu_custom" sequence="500" 
+			groups="base.group_system,fx.group_exec_programmer"
+			/>		
+		
+		<menuitem name="Propiedad" action="dynamic_function_property_view_action"
+			id="dynamic_function_property_view_menu" parent="programming_menu" sequence="501"
+			groups="base.group_system,fx.group_exec_programmer"
+			/>
+		
+		<menuitem name="Interfaz" 
+			id="dynamic_function_interface_view_menu" parent="programming_menu" sequence="502" 
+			action="dynamic_function_interface_view_action" 
+			groups="base.group_system,fx.group_exec_programmer"
+			/>		
+				
+		<menuitem name="Función" action="dynamic_function_view_action"
+			id="dynamic_function_view_menu" parent="programming_menu" sequence="503"
+			groups="base.group_system,fx.group_exec_programmer"
+			/>		
+			
+			
+	</data>
+</odoo>

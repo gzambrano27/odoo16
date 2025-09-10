@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Paper Format -->
+        <record id="report_docs_format_inform_mat_flat" model="report.paperformat">
+            <field name="name">Formato Informe Materiales Consolidado (Lista)</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">10</field>
+        </record>
+
+        <!-- Report Definition -->
+        <record id="report_inform_mat_flat" model="ir.actions.report">
+            <field name="name">Informe Materiales (Lista Alfabetica)</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">construccion_gps.informe_detallado_material_flat</field>
+            <field name="report_file">construccion_gps.informe_detallado_material_flat</field>
+            <field name="binding_model_id" ref="sale.model_sale_order" />
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="report_docs_format_inform_mat_flat" />
+            <field name="print_report_name">"Lista de Materiales Consolidado - " + object.name</field>
+        </record>
+
+        <!-- QWeb Template: Materiales Consolidado Plano -->
+        <template id="informe_detallado_material_flat">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout">
+                        <div class="page" style="font-family:Verdana, sans-serif; font-size:15px;">
+
+                            <!-- Cabecera -->
+                            <div class="row align-items-center mb-2">
+                                <div class="col-2">
+                                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)"
+                                        style="max-height:125px; max-width:125%;" />
+                                </div>
+                                <div style="font-size:12px;" class="col-6">
+                                    <p style="margin:0px;"><span t-field="doc.company_id.name" /></p>
+                                    <p style="margin:0px;">RUC: <span t-field="doc.company_id.vat" /></p>
+                                    <p style="margin:0px;">KM 1.5 DE LA AV. SAMBORONDON</p>
+                                    <p style="margin:0px;">EDIFICIO OFFICE CENTER OFICINA 26 PISO 3</p>
+                                    <p style="margin:0px;">SAMBORONDON, ECUADOR</p>
+                                    <p style="margin:0px;">TEL: (593)42097912 - 0983380657</p>
+                                    <p style="margin:0px;">EMAIL: gpsgroup@gpsgroup.com.ec</p>
+                                </div>
+                                <div class="col-4">
+                                    <h5 style="margin:0; font-weight:bold;">Lista de Materiales - Consolidado</h5>
+                                    <p><span t-field="doc.referencia_analitica" /></p>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div>
+                                    <strong>PROYECTO: </strong><span t-field="doc.proyecto" /><br/>
+                                    <strong>CLIENTE: </strong><span t-field="doc.partner_id"/><br />
+                                    <strong>REVISIÓN No.: </strong>A<br />
+                                    <strong>FECHA: </strong><span t-field="doc.date_order" t-options='{"widget":"date"}' />
+                                </div>
+                            </div>
+
+                            <!-- Preparar líneas consolidadas -->
+                            <t t-set="sale_lines" t-value="doc._get_order_lines_to_report()" />
+                            <t t-set="apu_pairs" t-value="[
+                                (l, doc.env['apu.apu'].search([('id','=', l.apu_id.id)], limit=1))
+                                for l in sale_lines
+                            ]" />
+                            <t t-set="filtered" t-value="[
+                                (l,a) for (l,a) in apu_pairs
+                                if a and a.subcategoria_id and a.line_ids.filtered(lambda r: r.tipo_componente=='material')
+                            ]" />
+                            <t t-set="mat_lines" t-value="sum(
+                                [a.line_ids.filtered(lambda r: r.tipo_componente=='material') for (_,a) in filtered],
+                                doc.env['apu.apu.line']
+                            )" />
+
+                            <!-- Inicializar contador -->
+                            <t t-set="counter" t-value="0"/>
+
+                            <!-- Tabla consolidada plana -->
+                            <table style="border:1px solid #ccc; border-collapse:collapse; width:100%; page-break-inside:avoid;">
+                                <thead>
+                                    <tr style="background-color:#EAECEE;">
+                                        <th style="padding:8px; border:1px solid #ccc; width:5%;">N°</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:15%;">ITEM</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:20%;">DESCRIPCIÓN</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:15%;">UNIDAD</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:10%;">COSTO</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:10%;">PRECIO</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:10%;">CANTIDAD</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:10%;">SUBTOTAL COSTO</th>
+                                        <th style="padding:8px; border:1px solid #ccc; width:10%;">SUBTOTAL PRECIO</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="mat_lines.mapped('product_id').sorted(key=lambda p: p.name)" t-as="prod">
+                                        <!-- Calcula cantidad y referencia -->
+                                        <t t-set="qty" t-value="sum(
+                                            l.product_uom_qty * mat.product_qty
+                                            for (l,a) in filtered
+                                            for mat in a.line_ids.filtered(
+                                                lambda r: r.tipo_componente=='material' and r.product_id.id==prod.id
+                                            )
+                                        )"/>
+                                        <t t-set="mat_ref" t-value="mat_lines.filtered(lambda m: m.product_id.id==prod.id)[0]"/>
+
+                                        <!-- Incrementa e imprime contador -->
+                                        <t t-set="counter" t-value="counter + 1"/>
+                                        <tr style="background-color:#FFFFFF;">
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:center;">
+                                                <t t-esc="counter"/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:center;">
+                                                [<span t-esc="prod.default_code"/>]
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:left;">
+                                                <span t-esc="prod.name"/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:center;">
+                                                <span t-esc="mat_ref.product_uom_id.name"/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                                <span t-esc="mat_ref.cost"
+                                                      t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                                <span t-esc="mat_ref.precio_unit"
+                                                      t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:center;">
+                                                <t t-esc="qty"/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                                <t t-set="sub_costo" t-value="qty * mat_ref.cost"/>
+                                                <span t-esc="sub_costo"
+                                                      t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                            </td>
+                                            <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                                <t t-set="sub_precio" t-value="qty * mat_ref.precio_unit"/>
+                                                <span t-esc="sub_precio"
+                                                      t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <!-- Totales generales corregidos: incluir mat.product_qty -->
+                                    <t t-set="total_cost"
+                                        t-value="sum(
+                                            l.product_uom_qty * m.product_qty * m.cost
+                                            for (l,a) in filtered
+                                            for m in a.line_ids.filtered(lambda r: r.tipo_componente=='material')
+                                        )"/>
+                                    <t t-set="total_price"
+                                        t-value="sum(
+                                            l.product_uom_qty * m.product_qty * m.precio_unit
+                                            for (l,a) in filtered
+                                            for m in a.line_ids.filtered(lambda r: r.tipo_componente=='material')
+                                        )"/>
+                                    <tr style="background-color:#BFBFBF; font-weight:bold; page-break-inside:avoid;">
+                                        <td colspan="7" style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                            Total General:
+                                        </td>
+                                        <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                            <span t-esc="total_cost"
+                                                  t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                        </td>
+                                        <td style="padding:8px; border:1px solid #ccc; text-align:right;">
+                                            <span t-esc="total_price"
+                                                  t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

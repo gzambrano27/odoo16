@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_employee_liquidation_view_search"
+            model="ir.ui.view">
+        <field name="name">hr.employee.liquidation.search</field>
+        <field name="model">hr.employee.liquidation</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Liquidación de Empleados">
+
+                 <group expand="0" string="Filtrar...">
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+
+					</group>
+
+                <field name="id"/>
+                <field name="company_id"/>
+                   <field name="employee_id"/> 
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_employee_liquidation_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.employee.liquidation.tree</field>
+        <field name="model">hr.employee.liquidation</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Liquidación de Empleados">
+                <field name="id" string="# ID" optional="hide" readonly="1"/>
+                <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                 <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                 <field name="total" attrs="{'readonly':[('state','!=','draft')]}" sum="total"/>
+                 <field name="total_to_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total" optional="hide"/>
+                 <field name="total_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide"/>
+                 <field name="total_pending" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide" />
+                  <field name="state" attrs="{'readonly':[('state','!=','draft')]}" optional="show" widget="badge"
+                        decoration-info="state=='draft'"
+                         decoration-warning="state=='verified'"
+                           decoration-danger="state in ('approved','sended') "
+decoration-muted="state=='cancelled'"
+                       decoration-success="state=='paid'"
+                />
+            </tree>
+        </field>
+    </record>
+
+
+
+     <record id="hr_employee_liquidation_finiquito_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.employee.liquidation.finiquito.tree</field>
+        <field name="model">hr.employee.liquidation</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Liquidación de Empleados">
+                <field name="pay_with_transfer"  optional="hide" />
+                <field name="id" string="# ID" optional="hide" readonly="1"/>
+                <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                 <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                 <field name="contract_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                 <field name="date_start" attrs="{'readonly':[('state','!=','draft')]}"  />
+                 <field name="date_end" attrs="{'readonly':[('state','!=','draft')]}"  />
+<field name="type_liquidation" attrs="{'readonly':[('state','!=','draft')]}"  />
+
+                 <field name="date_for_payment" attrs="{'readonly':[('state','!=','draft')]}" />
+
+                 <field name="total" attrs="{'readonly':[('state','!=','draft')]}" sum="total"/>
+                 <field name="total_to_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total" optional="hide"/>
+                 <field name="total_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide"/>
+                 <field name="total_pending" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide" />
+                  <field name="state" attrs="{'readonly':[('state','!=','draft')]}" optional="show" widget="badge"
+                        decoration-info="state=='draft'"
+                         decoration-warning="state=='verified'"
+                           decoration-danger="state in ('approved','sended') "
+decoration-muted="state=='cancelled'"
+                       decoration-success="state in ('paid','liquidated')"
+                          decoration-bf="state=='paid'"
+
+                />
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="hr_employee_liquidation_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.employee.liquidation.form</field>
+            <field name="model">hr.employee.liquidation</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Liquidación de Empleados">
+                <header>
+
+                    <field name="state"  widget="statusbar"
+                />
+                </header>
+                <group>
+                     <group>
+                     <field name="id" string="# ID" readonly="1"/>
+                <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                      <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}"
+                             options="{'no_create':True,'no_edit':True }" required="1"/>
+  <field name="contract_id" attrs="{'readonly':[('state','!=','draft')]}" required="1"
+         options="{'no_create':True,'no_edit':True }"
+  domain="[('company_id','=',company_id),('employee_id','=',employee_id)]"
+  />
+
+                           <field name="date_process" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+<field name="date_liquidation" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+
+
+                         <field name="vacation_period_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"
+         options="{'no_create':True,'no_edit':True }"
+  domain="[('state','!=','draft'),('company_id','=',company_id),('employee_id','=',employee_id),('contract_id','=',contract_id)]"
+  />
+
+<field name="type_vacation" widget="radio" attrs="{'readonly':[('state','!=','draft')]}" />
+
+
+
+
+                        </group>
+                     <group>
+
+                         <field name="total_taken_days" readonly="1"  force_save="1"  />
+
+               <field name="total" readonly="1"/>
+                 <field name="total_to_paid" readonly="1"/>
+                 <field name="total_paid" readonly="1"/>
+                 <field name="total_pending" readonly="1"/>
+
+                    </group>
+
+                </group>
+<newline/>
+                <notebook>
+                    <page string="Detalle">
+                        <field name="historic_line_ids" force_save="1" readonly="1" nolabel="1">
+<tree string="Detalle">
+
+                             <field name="id" string="# ID" optional="hide" readonly="1"/>
+                  <field name="rule_id"   options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                 <field name="employee_id"   options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+                 <field name="payslip_id"   options="{'no_create':True,'no_edit':True,'no_open':True}"  optional="hide"/>
+                <field name="payslip_line_id"   options="{'no_create':True,'no_edit':True,'no_open':True}"  optional="hide"/>
+
+                <field name="grouped"   />
+                <field name="year"  />
+                <field name="month_id"    options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                  <field name="date_from"  optional="hide"/>
+                  <field name="date_to"  optional="hide"/>
+                <field name="amount"   sum="total"/>
+                 <field name="amount_to_paid"   sum="total" optional="hide"/>
+                 <field name="amount_paid"  sum="total"  optional="hide"/>
+                 <field name="amount_residual"  sum="total"  optional="hide" />
+                  <field name="state"   optional="show" widget="badge"
+                        decoration-info="state=='draft'"
+                       decoration-success="state=='posted'"
+                />
+</tree>
+                        </field>
+                    </page>
+
+            <page string="Configuración">
+<group>
+    <group>
+        <field name="type" readonly="1"  invisible="1" force_save="1"/>
+       <field name="job_id" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1" force_save="1"/>
+                           <field name="department_id" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1" force_save="1"/>
+
+
+               <field name="rule_id"
+                      options="{'no_create':True,'no_edit':True,'no_open':True}"
+                      readonly="1" force_save="1"/>
+<field name="name" readonly="1" force_save="1"/>
+
+</group>
+    <group>
+            <field name="vacation_date_start" readonly="1"  force_save="0"  />
+             <field name="vacation_date_end" readonly="1" force_save="0" />
+
+      <field name="attempt_days" readonly="1"  force_save="1"  />
+<field name="attempt_pending_days" readonly="1" force_save="1" />
+
+          <field name="days" readonly="1" force_save="1" />
+<field name="pending_days" readonly="1"  force_save="1"  />
+
+<field name="pay_with_transfer" widge="boolean_toggle"
+attrs="{'readonly':[('state','!=','draft')]}" invisible="1"
+/>
+
+
+</group>
+
+</group>
+
+            </page>
+                </notebook>
+<newline/>
+                     <field name="comments" colspan="4" attrs="{'readonly':[('state','!=','draft')]}" />
+
+
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_employee_liquidation_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Liquidación de Vacaciones</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.liquidation</field>
+        <field name="view_mode">tree,form</field>
+       <field name="domain">[('type','=','vacation')]</field>
+        <field name="context">{'default_type':'vacation'}</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_employee_liquidation_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_liquidation_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_employee_liquidation_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_liquidation_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_view_form"/>
+        <field name="act_window_id"
+               ref="hr_employee_liquidation_view_action"/>
+    </record>
+
+
+    <!--    -->
+
+     <record id="hr_employee_liquidation_finiquito_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.employee.liquidation.finiquito.form</field>
+            <field name="model">hr.employee.liquidation</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Finiquito de Empleados">
+                <header>
+                    <button name="restore_movements" type="object"
+                            string="Restaurar"
+                            icon="fa-pencil" attrs="{'invisible':[('state','!=','draft')]}"
+                            groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                    />
+
+                    <button name="compute_rules" type="object"
+                            string="Calcular"
+                            icon="fa-cogs" attrs="{'invisible':[('state','!=','draft')]}"
+                            groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                    />
+
+                    <!-- -->
+
+
+
+                <button name="action_verified" type="object" string="Enviar a Verificar"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                icon="fa-rotate-right"
+                        groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                />
+
+
+
+
+                         <button name="action_draft" type="object" string="Reversar"
+                        attrs="{'invisible': ['|',('do_account','!=',True),('state', '!=', 'verified')]}" icon="fa-rotate-left"
+                         groups="gps_hr.group_contabilidad_rrhh,gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                         />
+
+                <button name="action_approved" type="object" string="Aprobar"
+                        attrs="{'invisible': ['|',('do_account','!=',True),('state', '!=', 'verified')]}"
+                        icon="fa-check"
+                        groups="gps_hr.group_contabilidad_rrhh"
+                />
+
+
+
+                         <button name="action_draft" type="object" string="Reversar"
+                        attrs="{'invisible': ['|',('do_account','=',True),('state', '!=', 'verified')]}" icon="fa-rotate-left"
+                        groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                         />
+
+                <button name="action_liquidated" type="object" string="Liquidar"
+                        attrs="{'invisible': ['|',('do_account','=',True),('state', '!=', 'verified')]}"
+                        icon="fa-check"
+                        groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                />
+
+            <button name="action_reversed_verified" type="object" string="Reversar"
+                        icon="fa-rotate-left"
+                            groups="gps_hr.group_jefe_rrhh"
+                          attrs="{'invisible': ['|',('state', '!=', 'approved'),('total', '&lt;=',0 )]}"  />
+
+
+                    <button name="action_sended" type="object" string="Enviar a Pagar"
+                        icon="fa-money"
+                            groups="gps_hr.group_jefe_rrhh"
+                          attrs="{'invisible': ['|',('state', '!=', 'approved'),('total', '&lt;=',0 )]}"  />
+
+
+                    <button name="action_liquidated" type="object" string="Liquidar"
+                        icon="fa-lock"
+                            groups="gps_hr.group_jefe_rrhh,gps_hr.group_contabilidad_rrhh,gps_hr.group_asistente_rrhh"
+                          attrs="{'invisible': ['|',('state', '!=', 'approved'),('total', '&gt;',0 )]}"  />
+
+    <button name="action_liquidated" type="object" string="Liquidar"
+                        icon="fa-lock"
+                        groups="gps_hr.group_jefe_rrhh,gps_hr.group_asistente_rrhh"
+                        attrs="{'invisible': [('state', 'not in', ('paid'))]}"  />
+
+
+
+                <button name="action_cancelled" type="object" string="Anular"
+                        icon="fa-times"
+                        groups="gps_hr.group_jefe_rrhh"
+                        attrs="{'invisible': [('state', 'in', ('cancelled','paid','liquidated'))]}"  />
+
+
+
+                    <!-- -->
+
+                    <field name="state"  widget="statusbar"
+                />
+                </header>
+                <sheet>
+                <group>
+                     <group>
+                     <field name="id" string="# ID" readonly="1"/>
+                <field name="company_id" readonly="1" force_save="1"
+
+
+                       options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                      <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}"
+                             options="{'no_create':True,'no_edit':True }" required="1"
+                             context="{'active_test':False}"
+                      domain="[('id','in',employee_ids)]"
+
+                      />
+  <field name="contract_id" attrs="{'readonly':[('state','!=','draft')]}" required="1"
+         options="{'no_create':True,'no_edit':True }"
+  domain="[('contract_type_id.legal_iess','=',True),('company_id','=',company_id),('employee_id','=',employee_id),('state','=','close')]"
+  />
+
+                           <field name="date_process" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+
+
+
+                         <field name="vacation_period_id" invisible="1" attrs="{'readonly':[('state','!=','draft')]}"
+         options="{'no_create':True,'no_edit':True }"
+  domain="[('state','!=','draft'),('company_id','=',company_id),('employee_id','=',employee_id),('contract_id','=',contract_id)]"
+  />
+
+<field name="type_vacation" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"  invisible="1" />
+
+
+
+                <field name="type_liquidation" widget="radio" attrs="{'readonly':[('state','!=','draft')]}" />
+
+
+                        </group>
+                     <group>
+
+                         <field name="date_for_payment"
+                         attrs="{'invisible':[('state','in',('draft','cancelled'))],'readonly':[('state','in',('approved','paid','liquidated'))],'required':[('state','in',('approved','sended','paid','liquidated'))]}"
+                                />
+
+                         <field name="date_for_account"
+attrs="{'invisible':[('state','in',('draft','cancelled'))],'readonly':[('state','in',('approved','sended','paid','liquidated'))],'required':[('state','in',('approved','sended','paid','liquidated'))]}"
+                                />
+
+
+                         <field name="total_taken_days" readonly="1"  force_save="1"  invisible="1"  />
+
+                         <field name="date_start" readonly="1" force_save="1" />
+                         <field name="date_end" readonly="1" force_save="1"  />
+                           <field name="dias_contrato" readonly="1"  force_save="1"   />
+
+                           <field name="anios_contrato" readonly="1"  force_save="1"    />
+
+               <field name="total" readonly="1"/>
+                 <field name="total_to_paid" readonly="1"/>
+                 <field name="total_paid" readonly="1"/>
+                 <field name="total_pending" readonly="1"/>
+
+
+                    </group>
+
+                </group>
+<newline/>
+                <notebook>
+                    <page   string="Detalle">
+                        <field name="liquidation_line_ids" domain="[('type','!=','payslip')]" force_save="1"  attrs="{'readonly':[('state','!=','draft')]}" nolabel="1" >
+<tree string="Detalle" editable="bottom" create="false" delete="false" edit="true"
+decoration-danger="transaction_type=='expense'" decoration-success="transaction_type=='income'"
+>
+<field name="transaction_type" readonly="1" optional="hide" force_save="1"/>
+        <field name="category_id" readonly="1" force_save="1" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+<field name="rule_id" readonly="1" force_save="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+   <field name="name" readonly="1" force_save="1" />
+    <field name="amount" required="1" />
+
+<field name="signed_amount" readonly="1" sum="total" optional="hide"/>
+   <field name="amount_original" readonly="1" force_save="1" optional="hide" />
+    <field name="comments" placeholder="COMENTARIOS..." />
+</tree>
+
+
+                            <form string="Detalle"   create="false" delete="false" edit="true"
+
+>
+                                <group>
+                                      <group>
+                                    <field name="transaction_type" readonly="1"/>
+<field name="rule_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+   <field name="name" readonly="1" />
+    <field name="amount" required="1" />
+                                </group>
+
+                                      <group>
+
+<field name="signed_amount" readonly="1"  />
+   <field name="amount_original" readonly="1" force_save="1"  />
+                                              <field name="comments" placeholder="COMENTARIOS..." />
+
+                                </group>
+
+                                </group>
+
+
+</form>
+
+                        </field>
+                  <newline/>
+                        <group>
+                                     <field name="total_in_liquidation" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_out_liquidation" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_provision_liquidation" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_liquidation" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+
+                        </group>
+                    </page>
+
+                    <page   string="Rubros">
+
+                        <separator string="Pendientes" />
+       <field name="input_line_ids" colspan="4" nolabel="1"
+              attrs="{'readonly':[('state','!=','draft')]}"
+              domain="[('movement_id','!=',False)]"
+              context="{'form_view_ref':'gps_hr.hr_payslip_input_view_form'}" force_save="1">
+                            <tree string="Datos de entrada" editable="bottom" delete="false" create="false" decoration-danger="category_code=='OUT'" decoration-success="category_code=='IN'" decoration-it="amount!=original_pending">
+
+                                   <field name="rule_id"
+                                          options="{'no_create':True,'no_open':True,'no_edit':True}"
+
+                                   />
+                    <field name="add_iess" modifiers="{&quot;column_invisible&quot;: true}"/>
+                    <field name="movement_id"
+                    />
+                    <field name="original_amount"
+                    />
+                    <field name="movement_ref_id"/>
+                    <field name="date_process" />
+                    <field name="quota" />
+                    <field name="force_payslip" optional="hide" />
+                    <field name="currency_id" invisible="1"/>
+                    <field name="move_line_id" invisible="1"/>
+                                <field name="name"  />
+                                <field name="amount" sum="total" widget="monetary" />
+                    <field name="original_amount" optional="hide" sum="total"/>
+                    <field name="original_pending" optional="hide" sum="total"/>
+                    <field name="category_code" invisible="1"/>
+                    <field name="category_id"  invisible="1"/>
+                                <field name="contract_id" optional="hide"/>
+                                <field name="sequence"  optional="hide"/>
+                            </tree>
+                        </field>
+<newline/>
+                        <separator string="Nuevos" />
+
+
+                         <field name="new_input_line_ids" colspan="4" nolabel="1"
+                                context="{'default_contract_id':contract_id,'default_date_process':date_process}"
+                                attrs="{'readonly':[('state','!=','draft')]}"
+              domain="[('movement_id','=',False)]"  force_save="1">
+                            <tree string="Datos de entrada" editable="bottom"  decoration-danger="category_code=='OUT'" decoration-success="category_code=='IN'" >
+
+                                   <field name="rule_id"
+                                          options="{'no_create':True,'no_open':True,'no_edit':True}"
+required="1" domain="[('type','in',('batch','batch_automatic')),('legal_iess','=',True)]"
+                                   />
+                                <field name="movement_ref_id" required="1" optional="hide"/>
+                    <field name="original_amount"  invisible="1"
+                    />
+                    <field name="date_process" required="1" optional="hide"/>
+                     <field name="currency_id" invisible="1"/>
+                    <field name="amount" sum="total" widget="monetary" required="1"/>
+                    <field name="original_pending" invisible="1" optional="hide" sum="total"/>
+                    <field name="category_code" invisible="1"/>
+                    <field name="category_id"  invisible="1"/>
+                                <field name="contract_id" optional="hide" required="1" readonly="1" force_save="1"/>
+                                <field name="sequence"  optional="hide" invisible="1"/>
+                            </tree>
+                         </field>
+
+  </page>
+
+                      <page   string="Nómina">
+
+                          <group>
+                              <group>
+                                     <field   name="last_payslip_id" readonly="1"  force_save="1"  />
+                              </group>
+                              <group>
+
+<field name="nopaid_days" readonly="1"  force_save="1"  />
+<field name="wage" readonly="1"  force_save="1"  />
+                                  <field name="legal_basic_wages" readonly="1"  force_save="1"  />
+
+
+                                    <field name="currency_id" invisible="1"/>
+                    <field name="total_in" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_out" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_provision" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_payslip" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+
+                              </group>
+                          </group>
+<newline/>
+                              <field name="last_payslip_ids"
+                                     domain="[('type','=','payslip')]"
+                                     force_save="1" attrs="{'invisible':[('nopaid_days','&lt;=',0   )],'readonly':[('state','!=','draft')]}" nolabel="1">
+<tree string="Detalle" editable="bottom" create="false" delete="false" edit="true"
+      decoration-muted="transaction_type=='provision'"
+      decoration-danger="transaction_type=='expense'" decoration-success="transaction_type=='income'">
+<field name="transaction_type" readonly="1" optional="hide" force_save="1"/>
+    <field name="category_id" readonly="1" force_save="1" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+<field name="rule_id" readonly="1" force_save="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+   <field name="name" readonly="1" force_save="1"/>
+    <field name="amount" required="1" readonly="1"/>
+
+<field name="signed_amount" readonly="1" sum="total" optional="hide"/>
+   <field name="amount_original" readonly="1" force_save="1" optional="hide"/>
+    <field name="comments" placeholder="COMENTARIOS..."/>
+</tree>
+
+                              </field>
+
+                          <newline/>
+                          <field name="payslip_ids" readonly="1"
+/>
+
+
+                      </page>
+
+
+
+                    <page   string="Provisiones">
+
+       <field name="provision_ids" colspan="4" nolabel="1" readonly="1"
+              context="{'form_view_ref':'gps_hr.hr_employee_historic_lines_view_form','tree_view_ref':'gps_hr.hr_employee_historic_lines_view_tree'}" force_save="1"
+            />
+
+                    </page>
+                       <page string="Periodos &amp; Permisos" >
+                           <separator string="Periodos" />
+                               <field name="period_ids" domain="[('contract_id','=',contract_id)]" readonly="1" force_save="1" />
+                           <newline/>
+                            <separator string="Permisos" />
+                            <field name="request_ids" domain="[('contract_id','=',contract_id)]" readonly="1" force_save="1"/>
+
+                       </page>
+                    <page string="Cuentas" attrs="{'invisible':[('do_account','!=',True)]}">
+                        <field name="account_ids" attrs="{'readonly':[('state','not in',('draft','verified'))]}"
+                        context="{'default_company_id':company_id}"
+                        >
+<tree string="Cuentas" editable="bottom"
+decoration-danger="credit!=0.00"
+      decoration-success="debit!=0.00"
+>
+    <field name="company_id" invisible="1" />
+ <field name="rule_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+    domain="[('id','in',parent.rule_ids)]" force_save="1"
+        attrs="{'readonly':['|',('origin','=','automatic'),('locked','=',True)]}"
+    />
+    <field name="account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+    domain="[('company_id','=',company_id)]" force_save="1"
+            attrs="{'readonly':[('locked','=',True)]}"
+           placeholder="CUENTA CONTABLE..."
+    />
+    <field name="debit" sum="total"  attrs="{'readonly':[('locked','=',True)]}" force_save="1"/>
+        <field name="credit" sum="total"  attrs="{'readonly':[('locked','=',True)]}" force_save="1"/>
+<field name="locked" invisible="1" />
+    <field name="origin" invisible="1" />
+</tree>
+                        </field>
+                <field name="rule_ids" invisible="1" />
+                        <field name="employee_ids" invisible="1"
+                               context="{'active_test':False}"
+                      domain="['|', ('active','=',True), ('active', '=', False) ]"
+                        />
+                    </page>
+            <page string="Configuración">
+<group>
+    <group>
+        <field name="type" readonly="1"  invisible="1" force_save="1"/>
+       <field name="job_id" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1" force_save="1"/>
+                           <field name="department_id" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1" force_save="1"/>
+
+
+               <field name="rule_id"
+                      options="{'no_create':True,'no_edit':True,'no_open':True}"
+                      invisible="1" force_save="1"/>
+<field name="name" attrs="{'readonly':[('state','!=','draft')]}"  force_save="1"/>
+
+
+           <field name="month_id" readonly="1" force_save="1"
+                      options="{'no_create':True,'no_edit':True,'no_open':True}" />
+        <field name="year"  readonly="1" force_save="1"  />
+
+</group>
+    <group  >
+            <field invisible="1" name="vacation_date_start" readonly="1"  force_save="0"  />
+             <field invisible="1" name="vacation_date_end" readonly="1" force_save="0" />
+
+      <field invisible="1" name="attempt_days" readonly="1"  force_save="1"  />
+<field invisible="1" name="attempt_pending_days" readonly="1" force_save="1" />
+
+          <field invisible="1" name="days" readonly="1" force_save="1" />
+<field invisible="1" name="pending_days" readonly="1"  force_save="1"  />
+
+       <field name="do_account"
+attrs="{'readonly':[('state','!=','draft')]}"
+                       />
+
+
+
+
+
+        <field name="pay_with_transfer" widge="boolean_toggle"
+attrs="{'readonly':[('state','!=','draft')]}"
+/>
+
+    <field name="move_id" readonly="1" groups="gps_hr.group_contabilidad_rrhh"
+                               attrs="{'invisible':[('move_id','=',False)]}"
+                                />
+
+                         <field name="payment_id" readonly="1" groups="gps_hr.group_contabilidad_rrhh"
+                               attrs="{'invisible':[('payment_id','=',False)]}"
+                                />
+
+
+
+
+
+</group>
+
+</group>
+
+            </page>
+                </notebook>
+<newline/>
+                     <field name="comments" colspan="4" attrs="{'readonly':[('state','!=','draft')]}" />
+</sheet>
+  <newline/>
+
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+
+            </form>
+        </field>
+    </record>
+
+     <record id="hr_employee_finiquito_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Liquidación de Haberes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.liquidation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','liquidation')]</field>
+        <field name="context">{'default_type':'liquidation','default_type_liquidation':'renuncia_voluntaria'}</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_employee_liquidation_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_finiquito_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_employee_finiquito_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_finiquito_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_form"/>
+        <field name="act_window_id"
+               ref="hr_employee_finiquito_view_action"/>
+    </record>
+
+
+    <!-- -->
+
+    <record id="hr_employee_finiquito_contabilidad_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Liquidación de Haberes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.liquidation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','liquidation'),('state','not in',('draft','cancelled'))]</field>
+        <field name="context">{'create':False,'delete':False,'default_type':'liquidation','default_type_liquidation':'renuncia_voluntaria'}</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_employee_liquidation_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_finiquito_cont_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_employee_finiquito_contabilidad_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_finiquito_cont_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_employee_liquidation_finiquito_view_form"/>
+        <field name="act_window_id"
+               ref="hr_employee_finiquito_contabilidad_view_action"/>
+    </record>
+
+</odoo>

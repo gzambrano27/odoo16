@@ -1,0 +1,33 @@
+<odoo>
+    <data noupdate="1">
+        <record id="param_correo_envio_notificacion_partner" model="ir.config_parameter">
+            <field name="key">correo.envio.notificacion.partner</field>
+            <field name="value">admin@example.com</field> <!-- puedes cambiar este valor por defecto -->
+        </record>
+
+        <record id="param_mail_test_bank_enable" model="ir.config_parameter">
+            <field name="key">mail.test.bank.enable</field>
+            <field name="value">True</field>
+        </record>
+
+		<record id="param_mail_test" model="ir.config_parameter">
+            <field name="key">mail.test.bank</field>
+            <field name="value">lcrespin@gpsgroup.com.ec</field>
+        </record>
+
+        <record id="param_mail_intercompany" model="ir.config_parameter">
+            <field name="key">mail.intercompany</field>
+            <field name="value">lcrespin@gpsgroup.com.ec</field>
+        </record>
+
+        <record id="param_filter_name" model="ir.config_parameter">
+            <field name="key">filter.account.name</field>
+            <field name="value">True</field>
+        </record>
+
+
+
+
+
+    </data>
+</odoo>

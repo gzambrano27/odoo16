@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record id="hr_employee_movement_wizard_view_discount_form"
+			model="ir.ui.view">
+			<field name="name">hr.employee.movement.wizard.discount.form</field>
+			<field name="model">hr.employee.movement.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Movimiento(s) Diferido(s) de Empleados"
+					version="16.0">
+					<header>
+
+					</header>
+						<notebook>
+							<page string="Archivo"
+								attrs="{'invisible':[('origin','!=','file')]}">
+								<group>
+									<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+										attrs="{'required':[('origin','=','file')],'invisible':[('origin','!=','file')]}" />
+								</group>
+							</page>
+							<page string="Cálculo Automático"
+								attrs="{'invisible':[('origin','=','file')]}">
+								<group>
+									<field name="amount" attrs="{'required':[('origin','!=','file')]}" colspan="2"
+										   />
+								
+									<field name="rate" attrs="{'required':[('origin','!=','file')]}" colspan="2"
+									invisible="1"	/>	
+									<field name="quotas" attrs="{'required':[('origin','!=','file')]}" colspan="2"
+	/>
+									<field name="amount_rate" readonly="1" colspan="2" invisible="1"/>
+									<field name="amount_total" readonly="1" colspan="2" />
+									<field name="amount_quota" readonly="1" colspan="2" />									
+								</group>
+							</page>
+							<page string="Configuración">
+								<group colspan="4" cols="2">
+									<group>
+										<field name="company_id" required="1" readonly="1"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}"/>
+										<field name="date_process" required="1"
+											readonly="1"
+/>
+									</group>
+									<group>
+										<field name="rule_id" required="1" readonly="1"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}"/>
+										<field name="movement_id"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}" readonly="1" force_save="1" />
+										<field name="origin" invisible="1" force_save="1"/>
+
+										<field name="legal_iess" invisible="1" force_save="1"/>
+
+
+									</group>
+								</group>
+							</page>
+						</notebook>
+					<newline />
+					<footer>
+						<button name="process_discount" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="hr_employee_movement_wizard_view_discount_compute_action"
+			model="ir.actions.act_window">
+			<field name="name">Movimiento(s) Diferido(s) de Empleados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.movement.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_movement_wizard_view_discount_form" />
+			<field name="context">{'default_origin':'compute'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<record
+			id="hr_employee_movement_import_wizard_view_discount_file_action"
+			model="ir.actions.act_window">
+			<field name="name">Importar Movimiento(s) Diferido(s) de Empleados
+			</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.movement.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_movement_wizard_view_discount_form" />
+			<field name="context">{'default_origin':'file'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- -->
+
+
+
+		<record id="hr_employee_movement_wizard_view_form"
+			model="ir.ui.view">
+			<field name="name">hr.employee.movement.wizard.form</field>
+			<field name="model">hr.employee.movement.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Importar Movimiento(s) de Empleados"
+					version="16.0">
+					<header>
+
+					</header>
+						<notebook>
+							<page string="Archivo"
+								attrs="{'invisible':[('origin','!=','file')]}">
+								<group>
+									<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+										attrs="{'required':[('origin','=','file')],'invisible':[('origin','!=','file')]}" />
+								</group>
+							</page>
+							<page string="Cálculo Automático"
+								attrs="{'invisible':[('origin','=','file')]}">
+								<field name="employee_ids"
+								context="{'filter_legal_iess':legal_iess, 'document_id':movement_id,'model_name':'hr.employee.movement.wizard','filter_rule_id':rule_id,'filter_company_id':company_id,'filter_date_process':date_process}"
+								/>
+							</page>
+							<page string="Configuración">
+								<group colspan="4" cols="2">
+									<group>
+										<field name="company_id" required="1" readonly="1"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}"/>
+										<field name="date_process" required="1"
+											readonly="1"
+/>
+									</group>
+									<group>
+										<field name="rule_id" required="1" readonly="1"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}"/>
+										<field name="movement_id"
+											options="{'no_open':True,'no_create':True,'no_quick_create':True}" readonly="1" force_save="1" />
+										<field name="origin" invisible="1" force_save="1"/>
+
+
+										<field name="legal_iess" invisible="1" force_save="1"/>
+
+
+									</group>
+								</group>
+							</page>
+						</notebook>
+					<newline />
+					<footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="hr_employee_movement_wizard_view_compute_action"
+			model="ir.actions.act_window">
+			<field name="name">Generar Movimiento(s) de Empleados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.movement.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_movement_wizard_view_form" />
+			<field name="context">{'default_origin':'compute'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<record id="hr_employee_movement_wizard_view_file_action"
+			model="ir.actions.act_window">
+			<field name="name">Importar Movimiento(s) de Empleados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.movement.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_movement_wizard_view_form" />
+			<field name="context">{'default_origin':'file'}</field>
+			<field name="target">new</field>
+		</record>
+
+
+	</data>
+</odoo>

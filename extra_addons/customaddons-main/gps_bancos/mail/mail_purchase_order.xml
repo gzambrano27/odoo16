@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+
+
+ <record id="email_template_partner_no_bank" model="mail.template">
+            <field name="name">Documento sin cuenta bancaria</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">Actualizar proveedor de {{ object.name }}</field>
+            <field name="email_to">{{object.get_mail_bank_alert_not()}}</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">Estimados,</p><br/>
+    <p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">
+        Se ha creado la factura <strong><t t-out="object.name"></t></strong> para el proveedor
+        <strong><t t-out="object.partner_id.name"></t></strong>, pero no tiene registrada su cuenta bancaria correspondiente.
+        Por favor, actualice esta información en el sistema para evitar contratiempos en los pagos.
+        <br><br>
+        <strong style="box-sizing:border-box;font-weight:bolder;">Saludos cordiales</strong>
+    </p>
+
+    <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+</div>
+]]>
+</field>
+        </record>
+
+    <!--  -->
+
+
+     <record id="email_template_payment_request" model="mail.template">
+            <field name="name">Solicitud de Pago</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">Solicitud de Pago # {{ object.id }}</field>
+            <field name="email_to">{{object.get_mail_bank_alert_not()}}</field>
+            <field name="model_id" ref="model_account_payment_request"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">Estimados,</p><br/>
+    <p style="box-sizing:border-box;margin: 0px 0px 10px 0px;">
+        Se ha creado la solicitud # <strong><t t-out="object.id"></t></strong> para el proveedor
+        <strong><t t-out="object.partner_id.name"></t></strong> por favor revisar y validar para proceder con el pago.Por concepto de <strong><t t-out="object.description_motive"></t></strong>
+       <br><br>Para validar la solicitud, ingresa al siguiente
+<a t-att-href="object.get_request_action_url()" style="color: #007bff; text-decoration: underline;">enlace</a>.
+<br><br>
+        <strong style="box-sizing:border-box;font-weight:bolder;">Saludos cordiales</strong>
+    </p>
+
+    <p style="margin:0px 0 12px 0;box-sizing:border-box;"></p>
+</div>
+]]>
+</field>
+        </record>
+
+
+</odoo>

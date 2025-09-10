@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <!--Template Report -->
+    <data>
+        <template id="gps_einvoice_received.electronic_document_received_report_format">
+            <t t-name="gps_einvoice_received.electronic_document_received_report_format">
+                <t t-call="web.html_container">
+                    <t t-call="web.basic_layout">
+                        <t t-foreach="docs" t-as="doc">
+                            <t t-set="var_doc" t-value="doc.get_variables()" />
+                            <t t-set="auth" t-value="doc.get_edi_document_auth()" />
+                            <t t-set="access_key" t-value="doc.access_key" />
+                            <div class="page" style="font-family: Verdana; font-size: 17px;">
+								<div class="row mb-2">
+									<div class="col-6">
+										<div class="me-1">
+											<div class="text-center mt-5 mb-5">
+												<strong style="font-size:25px;"><span style="color:#e74c3c;" t-esc="var_doc['razonSocial']" /><br /></strong>
+											</div>
+											<div>
+												<div class="card p-2">
+													<strong><span t-esc="var_doc['razonSocial']" /></strong><br />
+													<strong>Matriz: </strong> <span t-esc="var_doc['dirMatriz']" /><br /><br />
+													<t t-if="len(var_doc['contribuyenteEspecial'])>0"><strong>Contribuyente Especial Resolución Nro.: </strong> <span t-esc="var_doc['contribuyenteEspecial']" /><br /></t>
+													<strong>Obligado a llevar contabilidad: </strong> <span t-esc="var_doc['obligadoContabilidad']" /><br />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="card p-2 ms-1">
+											<strong>RUC: </strong> <span t-esc="var_doc['ruc']" /><br />
+											<strong><span style="font-size:25px;" t-esc="var_doc['tipoDocumento']" /></strong><br />
+											<strong style="font-size:25px; color:#e74c3c;">No. <span t-esc="doc.document" /></strong><br />
+											<strong>Numero de Autorización: </strong><br /><span t-esc="access_key" /><br />
+											<strong>Fecha de Emisión: </strong><span t-esc="var_doc['fechaEmision']" /><br />
+											<strong>Fecha y Hora de Autorización: </strong>
+											<span t-esc="doc.document_date_auth" />
+											<br />
+											<span style="font-size:15px;"><strong>Ambiente: </strong><span t-esc="var_doc['ambiente']" /><br /></span>
+											<span style="font-size:15px;"><strong>Tipo de emisión: </strong><span t-esc="var_doc['tipoEmision']" /><br /></span>
+											<strong>Clave de Acceso: </strong><br />
+											<img class="p-0 m-0" t-att-src="'/report/barcode/Code128/' + access_key"
+													 style="width: 440px; height: 60px;" alt="Barcode" />
+										</div>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="card p-2">
+										<strong>Razón Social: </strong><span t-esc="var_doc['razonSocialDocumento']" /><br />
+										<strong><span t-esc="var_doc['tipoIdentificacionDocumento']" />: </strong><span t-esc="var_doc['identificacionDocumento']" /><br />
+										<strong>Dirección:</strong><span t-esc="var_doc['direccionSocioDocumento']" /><br />
+										<t t-if="len(var_doc['documentoRelacionado'])&lt;=0">
+											<strong>Fecha Emisión: </strong><span t-esc="var_doc['fechaEmision']" /><br />
+										</t>
+										<t t-if="len(var_doc['documentoRelacionado'])>0">
+											<strong>Fecha Emisión: </strong><span t-esc="var_doc['fechaEmision']" /><br />
+											<strong>Comprobante que<br /> se modifica</strong><span t-esc="var_doc['documentoRelacionado']" /><br />
+										</t>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<t t-set="line_ids" t-value="var_doc['line_ids']" />
+									<t t-if="line_ids">
+										<table class="table table-bordered">
+											<thead>
+												<tr>
+													<th>
+														<b>Código</b>
+													</th>
+													<!-- t-if="o.company_id.show_product_details" -->
+													<th>
+														<b>Descripción</b>
+													</th>
+													<!-- <th scope="col"> -->
+													<!-- <b>Detalles Adicionales</b> -->
+													<!-- </th> -->
+													<th>
+														<b>Cantidad</b>
+													</th>
+													<th>
+														<b>Precio</b>
+													</th>
+													<th>
+														<b>Descuento</b>
+													</th>
+													<th>
+														<b>Subtotal</b>
+													</th>
+												</tr>
+											</thead>
+											<tbody class="invoice_tbody">
+												<t t-foreach="line_ids" t-as="line_detail">
+													<t>
+														<tr>
+															<td class="text-center">
+																<span t-esc="line_detail['codigoPrincipal']" />
+															</td>
+															<td>
+																<span t-esc="line_detail['descripcion']" />
+															</td>
+															<!-- t-if="o.company_id.show_product_details" -->
+															<!-- <td style="max-width: 8px"> -->
+															<!-- <span t-esc="l.name"/> -->
+															<!-- </td> -->
+															<td class="text-right" style="text-align:right">
+																<t t-esc="str(line_detail['cantidad']).replace('.', ',')" />
+															</td>
+															<td class="text-right" style="text-align:right">
+																<!-- <t t-if="o.company_id.show_discount_amount"> -->
+																<!-- <span t-esc="l.discount_amount" -->
+																<!-- t-esc-options='{"widget": "monetary", "display_currency":"o.currency_id"}'/> -->
+																<!-- </t> -->
+																<t>
+																	<t t-esc="str(line_detail['precioUnitario']).replace('.', ',')" />
+																</t>
+															</td>
+															<td class="text-right" style="text-align:right">
+																<span t-esc="doc.format_float(line_detail['descuento'],2)" style="text-align:right" />
+															</td>
+															<td class="text-right" style="text-align:right">
+																<span t-esc="doc.format_float(line_detail['precioTotalSinImpuesto'],2)" style="text-align:right" />
+															</td>
+														</tr>
+													</t>
+												</t>
+											</tbody>
+										</table>
+									</t>
+									<t t-set="withhold_lines" t-value="var_doc['withhold_line_ids']" />
+									<t t-if="len(withhold_lines)>0">
+										<table class="table table-bordered">
+											<thead>
+												<tr>
+													<th>
+														<strong>Número</strong>
+													</th>
+													<!-- t-if="o.company_id.show_product_details" -->
+													<th>
+														<strong>Fecha Emisión</strong>
+													</th>
+													<!-- <th scope="col"> -->
+													<!-- <b>Detalles Adicionales</b> -->
+													<!-- </th> -->
+													<th>
+														<strong>Ejercicio Fiscal</strong>
+													</th>
+													<th>
+														<strong>Base Imponible </strong>
+													</th>
+													<th>
+														<strong>Impuesto</strong>
+													</th>
+													<th>
+														<strong>% Retención</strong>
+													</th>
+													<th>
+														<strong>Valor Retenido</strong>
+													</th>
+												</tr>
+											</thead>
+											<tbody class="invoice_tbody">
+												<t t-foreach="withhold_lines" t-as="line">
+													<t>
+														<tr>
+															<td>
+																<span t-esc="line['numDocSustento']" />
+															</td>
+															<td>
+																<span t-esc="line['fechaEmisionDocSustento']" />
+															</td>
+															<td>
+																<span t-esc="line['periodoFiscal']" />
+															</td>
+															<td class="text-right" style="text-align:right">
+																<t t-esc="str(line['baseImponible']).replace('.', ',')" />
+															</td>
+															<td class="text-right" style="text-align:right">
+																<span t-esc="line['codigoRetencion']" />
+															</td>
+															<td class="text-right" style="text-align:right">
+																<!-- <t t-if="o.company_id.show_discount_amount"> -->
+																<!-- <span t-esc="l.discount_amount" -->
+																<!-- t-esc-options='{"widget": "monetary", "display_currency":"o.currency_id"}'/> -->
+																<!-- </t> -->
+																<t>
+																	<t t-esc="str(line['porcentajeRetener']).replace('.', ',')" />
+																	%
+																</t>
+
+															</td>
+															<td class="text-right" style="text-align:right">
+																<t t-esc="str(line['valorImpuesto']).replace('.', ',')" />
+															</td>
+														</tr>
+													</t>
+												</t>
+											</tbody>
+										</table>
+									</t>
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<div class="pe-1">
+											<table class="table table-bordered">
+												<t t-if="doc.document_type_code=='01'">
+													<tr>
+														<td colspan="4" scope="col" style="text-align:center">
+															<strong>Formas de Pagos</strong></td>
+													</tr>
+													<t t-if="len(var_doc['payments_info'])>0">
+														<t t-foreach="var_doc['payments_info']" t-as="payment_info">
+															<tr>
+																<td colspan="2" style="text-align:left;width:50%;font-height:normal">
+																	<span t-esc="payment_info['dscrFormaPago']" />
+																</td>
+																<td colspan="2" style="text-align:right;font-height:normal">
+																	<span t-esc="payment_info['total']" />
+																</td>
+															</tr>
+														</t>
+													</t>
+												</t>
+												<tr>
+													<td colspan="4" scope="col" style="text-align:center">
+														<strong>Información Adicional</strong>
+													</td>
+												</tr>
+												<t t-if="len(var_doc['infoAdicional'])>0">
+													<t t-foreach="var_doc['infoAdicional']" t-as="info">
+														<tr>
+															<td style="text-align:left;width:30%;font-height:normal">
+																<span t-esc="info['campo']" />
+															</td>
+															<td colspan="3" style="text-align:left;font-height:normal">
+																<span t-esc="info['valor']" />
+															</td>
+														</tr>
+													</t>
+												</t>
+											</table>
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="ps-1">
+											<table class="table table-bordered">
+												<t t-if="doc.document_type_code!='07'">
+													<t t-foreach="var_doc['total_info']" t-as="info">
+														<tr>
+															<td style="text-align:left;width:50%"><strong>
+																<span t-esc="info['dscr']" style="text-align:left" /></strong>
+															</td>
+															<td class="text-right" style="text-align:right">
+																<span t-esc="doc.format_float(info['valor'])" style="text-align:right" />
+															</td>
+														</tr>
+													</t>
+												</t>
+												<t t-if="doc.document_type_code=='07'">
+													<tr>
+														<td style="text-align:left;width:50%">
+															<strong>Total Retenido:</strong>
+														</td>
+														<td class="text-right" style="text-align:right">
+															<span t-esc="doc.format_float(doc.amount)" style="text-align:right" />
+														</td>
+													</tr>
+												</t>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

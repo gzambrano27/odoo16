@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+actas_acta_user,actas.acta,model_actas_acta,group_actas_user,1,1,1,0
+actas_computer_user,actas.computer,model_actas_computer,group_actas_user,1,1,1,0
+actas_personnel_user,actas.personnel,model_actas_personnel,group_actas_user,1,1,1,0

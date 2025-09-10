@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+        <!-- Regla para limitar la visibilidad a los registros creados por el usuario -->
+    <record id="rule_helpdesk_ticket_own" model="ir.rule">
+    <field name="name">See own tickets</field>
+    <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
+    <field name="domain_force">[('create_uid', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('helpdesk.group_helpdesk_user'))]"/>
+    </record>
+
+    </data>
+</odoo>

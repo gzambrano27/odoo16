@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+         <record id="view_form_res_company_order_margin_flag" model="ir.ui.view">
+        <field name="name">res.company.order.margin.flag.form</field>
+        <field name="model">res.company.order.margin.flag</field>
+        <field name="arch" type="xml">
+            <form string="Margen para Órdenes de Compra">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="company_id" required="1"/>
+                            <field name="margin_from" required="1"/>
+                            <field name="margin_to" required="1"/>
+                        </group>
+                        <group>
+                            <field name="color"/>
+                            <field name="action" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+        <record id="view_tree_res_company_order_margin_flag" model="ir.ui.view">
+        <field name="name">res.company.order.margin.flag.tree</field>
+        <field name="model">res.company.order.margin.flag</field>
+        <field name="arch" type="xml">
+            <tree string="Margen para Órdenes de Compra">
+                <field name="company_id"/>
+
+                <field name="margin_from"/>
+                <field name="margin_to"/>
+                <field name="color"/>
+                <field name="action" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+ <record id="action_res_company_order_margin_flag" model="ir.actions.act_window">
+        <field name="name">Margen para Órdenes de Compra de Rentabilidad</field>
+        <field name="res_model">res.company.order.margin.flag</field>
+        <field name="view_mode">tree,form</field>
+         <field name="domain">[('type','=','margen-sale')]</field>
+     <field name="context">{'default_type':'margen-sale'}</field>
+        <field name="view_id" ref="view_tree_res_company_order_margin_flag"/>
+    </record>
+
+
+        <record id="action_res_company_order_margin_purchase_flag" model="ir.actions.act_window">
+        <field name="name">Margen para Órdenes de Compra segun Precio de Compra</field>
+        <field name="res_model">res.company.order.margin.flag</field>
+        <field name="view_mode">tree,form</field>
+         <field name="domain">[('type','=','margen-purchase')]</field>
+            <field name="context">{'default_type':'margen-purchase'}</field>
+        <field name="view_id" ref="view_tree_res_company_order_margin_flag"/>
+    </record>
+
+
+
+
+ <record id="action_res_company_order_margin_flag_global" model="ir.actions.act_window">
+        <field name="name">Margen para Órdenes de Compra de Rentabilidad por Documento</field>
+        <field name="res_model">res.company.order.margin.flag</field>
+        <field name="view_mode">tree,form</field>
+         <field name="domain">[('type','=','margen-sale-global')]</field>
+     <field name="context">{'default_type':'margen-sale-global'}</field>
+        <field name="view_id" ref="view_tree_res_company_order_margin_flag"/>
+    </record>
+
+
+ <record id="action_res_company_order_margin_purchase_flag_global" model="ir.actions.act_window">
+        <field name="name">Margen para Órdenes de Compra (Precio de Compra por Documento)</field>
+        <field name="res_model">res.company.order.margin.flag</field>
+        <field name="view_mode">tree,form</field>
+         <field name="domain">[('type','=','margen-purchase-global')]</field>
+            <field name="context">{'default_type':'margen-purchase-global'}</field>
+        <field name="view_id" ref="view_tree_res_company_order_margin_flag"/>
+    </record>
+
+    </data>
+
+
+</odoo>

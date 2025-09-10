@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+
+<record id="th_family_burden_view_tree_edit"
+            model="ir.ui.view">
+        <field name="name">th.family.burden.tree.edit</field>
+        <field name="model">th.family.burden</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Cargas Familiares" editable="bottom"
+            >
+                	<field name="name" required="1" string='Apellidos y Nombres'/>
+												<field name="relationship" required="1"/>
+												<field name="birth_date" required="1"/>
+												<field name="age" string='Edad' readonly="1"/>
+												<field name="bonus" invisible='1'/>
+
+
+            </tree>
+        </field>
+    </record>
+
+        <!-- -->
+        <record id="th_family_burden_view_tree_readonly"
+            model="ir.ui.view">
+        <field name="name">th.family.burden.tree.readonly</field>
+        <field name="model">th.family.burden</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Cargas Familiares" editable="bottom" create="false" delete="false" edit="false"
+            >
+                	<field name="name" readonly="1" string='Apellidos y Nombres'/>
+												<field name="relationship" readonly="1"/>
+												<field name="birth_date" readonly="1"/>
+												<field name="age" string='Edad' readonly="1"/>
+												<field name="bonus" invisible='1'/>
+            </tree>
+        </field>
+        </record>
+
+            <record id="th_family_burden_view_form_readonly"
+            model="ir.ui.view">
+        <field name="name">th.family.burden.form.readonly</field>
+        <field name="model">th.family.burden</field>
+        <field name="type">form</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Cargas Familiares"  create="false" delete="false" edit="false"
+            >
+                <group>
+                     <group>
+                    <field name="name" readonly="1" string='Apellidos y Nombres'/>
+												<field name="relationship" readonly="1"/>
+                     </group>
+                    <group>
+                        	<field name="birth_date" readonly="1"/>
+												<field name="age" string='Edad' readonly="1"/>
+												<field name="bonus" invisible='1'/>
+                    </group>
+
+                </group>
+            </form>
+        </field>
+            </record>
+
+        <record id="th_family_burden_view_readonly_action" model="ir.actions.act_window">
+            <field name="name">Cargas Familiares</field>
+            <field name="res_model">th.family.burden</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="th_family_burden_view_tree_readonly"/>
+            <field name="context">{'only_user':True}</field>
+            <field name="domain">[]</field>
+        </record>
+
+
+
+        
+    </data>
+    
+</odoo>

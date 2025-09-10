@@ -1,0 +1,96 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* gps_customization
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-23 18:27+0000\n"
+"PO-Revision-Date: 2023-08-23 18:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: gps_customization
+#: model_terms:ir.ui.view,arch_db:gps_customization.report_production_order_responsible
+msgid "<strong>Responsible for Assembly:</strong><br/>"
+msgstr "<strong>Responsable por armado:</strong><br/>"
+
+#. module: gps_customization
+#: model_terms:ir.ui.view,arch_db:gps_customization.report_production_order_responsible
+msgid "<strong>Responsible for Control:</strong><br/>"
+msgstr "<strong>Responsable de Control:</strong><br/>"
+
+#. module: gps_customization
+#: model_terms:ir.ui.view,arch_db:gps_customization.report_production_order_responsible
+msgid "<strong>Responsible for Equipment:</strong><br/>"
+msgstr "<strong>Responsable de Equipo:</strong><br/>"
+
+#. module: gps_customization
+#: model_terms:ir.ui.view,arch_db:gps_customization.report_production_order_responsible
+msgid "<strong>Responsible for Force:</strong><br/>"
+msgstr "<strong>Responsable de Fuerza:</strong><br/>"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__assembly_responsible
+msgid "Assembly responsible"
+msgstr "Responsable por armado"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__control_responsible
+msgid "Control responsible"
+msgstr "Responsable de Control"
+
+#. module: gps_customization
+#: model:ir.model,name:gps_customization.model_mrp_production
+msgid "Custom fields for gps"
+msgstr ""
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:gps_customization.field_product_template__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: gps_customization
+#: code:addons/gps_customization/models/product_template.py:0
+#, python-format
+msgid "El código debe ser único"
+msgstr ""
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__equipment_responsible
+msgid "Equipment responsible"
+msgstr "Responsable de Equipo"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__force_responsible
+msgid "Force responsible"
+msgstr "Responsable de Fuerza"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production__id
+#: model:ir.model.fields,field_description:gps_customization.field_product_template__id
+msgid "ID"
+msgstr "ID (identificación)"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:gps_customization.field_product_template____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: gps_customization
+#: model:ir.model.fields,field_description:gps_customization.field_product_product__old_code
+#: model:ir.model.fields,field_description:gps_customization.field_product_template__old_code
+msgid "Old code"
+msgstr "Código Anterior"
+
+#. module: gps_customization
+#: model:ir.model,name:gps_customization.model_product_template
+msgid "Product Template"
+msgstr "Plantilla producto"

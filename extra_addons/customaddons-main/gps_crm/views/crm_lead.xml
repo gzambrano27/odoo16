@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+	<record model="ir.actions.act_window" id="crm.crm_lead_action_pipeline">
+		<field name="context">{
+				'default_type': 'opportunity',
+				'search_default_assigned_to_me': 1
+		}</field>
+		<field name="search_view_id" ref="view_crm_case_opportunities_filter_inherit"/>
+	</record>
+	<!-- ,'search_anio_modificacion': fields.Date.context_today(self).year -->
+
+	<record id="view_crm_lead_form_inht" model="ir.ui.view">
+		<field name="name">crm.lead.form.inherit</field>
+		<field name="model">crm.lead</field>
+		<field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+		<field name="priority">32</field>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="replace">
+				<field name="partner_id" widget="res_partner_many2one"
+					context="{
+						'default_name': contact_name,
+						'default_title': title,
+						'default_street': street,
+						'default_street2': street2,
+						'default_city': city,
+						'default_state_id': state_id,
+						'default_zip': zip,
+						'default_country_id': country_id,
+						'default_function': function,
+						'default_phone': phone,
+						'default_mobile': mobile,
+						'default_email': email_from,
+						'default_user_id': user_id,
+						'default_team_id': team_id,
+						'default_website': website,
+						'default_lang': lang_code,
+						'show_vat': True
+					}" attrs="{'invisible': [('is_partner_visible', '=', False)]}" required="1"/>
+			</xpath>
+
+			<xpath expr="//div[@class='d-flex align-items-end']" position="replace">
+				<div attrs="{'invisible': [('type', '=', 'lead')]}">
+					<!-- <label for="expected_revenue" class="oe_edit_only pb-1" /> -->
+					<div class="d-flex align-items-end">
+						<field name="company_currency" invisible="1"/>
+						<field name="expected_revenue" string='Presupuesto Aproximado' class="oe_inline o_input_13ch" widget='monetary' options="{'currency_field': 'company_currency'}"/>
+						<span class="oe_grey p-2" groups="crm.group_use_recurring_revenues"> + </span>
+						<!-- <span class="oe_grey p-2" groups="!crm.group_use_recurring_revenues"> at </span> -->
+					</div>
+				</div>
+			</xpath>
+
+
+			<xpath expr="//div[@class='d-flex align-items-baseline']" position="replace">
+				<div attrs="{'invisible': [('type', '=', 'lead')]}">
+					<div class="d-flex align-items-baseline">
+						<field name="is_automated_probability" invisible="1"/>
+						<field name="probability" widget="float" class="oe_inline o_input_6ch"/>
+						<span class="oe_grey" invisible="1"> %</span>
+					</div>
+				</div>
+			</xpath>
+
+			<field name="user_id" position="after">
+				<field name="solicitante" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+				<field name="prioridad" invisible="1"/>
+				<field name="tipo_proyecto"/>
+				<field name="lead_project_id" 
+				 attrs="{'readonly':[('lead_project_sequence','!=',None),('lead_project_sequence','!=',False),('lead_project_sequence','!=','')],'invisible': [('probability', '!=',100)]}" />
+				<field name="lead_project_sequence" readonly="1" force_save="1" attrs="{'invisible': [('lead_project_id', '=', False)]}" />
+			</field>
+
+			<xpath expr="//page[@name='extra']" position="before">
+				<page name="contactos_crm" string="Contactos">
+					<field name="contactos_ids">
+							<tree string="Contactos Lines" editable="bottom">
+								<field name="name"/>
+								<field name="cargo"/>
+								<field name="phone" />
+								<field name="email"/>
+							</tree>
+						</field>
+				</page>
+				<page name="bitacora_lead" string="Bitacora Manual" >
+					<field name="bitacora_ids">
+							<tree string="Lineas de Bitacora" editable="bottom">
+								<field name="fecha_hora_bitacora"/>
+								<field name="contacto"/>
+								<field name="detalles" />
+							</tree>
+						</field>
+				</page>
+
+			</xpath>
+
+			<xpath expr="//page[@name='lead']" position="replace">
+			</xpath>
+			<xpath expr="//page[@name='internal_notes']" position="replace">
+				<page string="Descripcion Proyecto" name="internal_notes1">
+					<field name="description" placeholder="Add a description..." options="{'collaborative': true}"/>
+				</page>
+			</xpath>
+<!--
+			<xpath expr="//div[@class='oe_chatter']" position="replace">
+				<div attrs="{'invisible': [('type', '=', 'lead')]}">
+					<div class="oe_chatter">
+                        <field name="message_follower_ids" />
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                    </div>
+				</div>
+			</xpath>
+-->
+
+			<xpath expr="//div[@class='oe_edit_only d-md-flex align-items-center']" position="replace">
+			</xpath>
+			<!-- <field name="priority" position="attributes">
+                <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
+            </field> -->
+            <!-- Ocultar el campo Probabilidad -->
+			
+            <field name="probability" position="attributes">
+                <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
+            </field>
+
+			<field name="date_deadline" position="attributes">
+                <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
+				<attribute name="nolabel">1</attribute>
+				<attribute name="string">Rankings</attribute>
+            </field>
+			<field name="tag_ids" position="attributes">
+                <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
+				<attribute name="nolabel">1</attribute>
+            </field>
+			<field name="tag_ids" position="after">
+				<field name="anio_modificacion" invisible="1"/>
+				<!-- <field name="current_year" invisible="0"/> -->
+				<field name="codigo_presupuesto"/>
+				<field name="novedades_varias" position="attributes">
+					<attribute name="attrs">{'invisible': [('type', '=', 'oportunidad')]}</attribute>
+					<attribute name="nolabel">1</attribute>
+            	</field>
+				<field name="sequence" readonly="1"/>
+			</field>
+			
+		</field>
+	</record>
+
+	<record id="view_crm_lead_form_inherit_company_name" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.company.name</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+			<header>
+				<xpath expr="//button[@name='action_sale_quotations_new']" position="before">
+                	<button name="button_approve"  string="Aprobar" type="object" class="oe_highlight" confirm="¿Estás seguro de confirmar este registro?"/>
+				</xpath>
+			</header>
+            <!-- Insertar el campo 'Nombre Compañía' justo debajo del campo 'Cliente' -->
+			<!-- <xpath expr="//div[@class='d-flex align-items-center']" position="replace">
+			</xpath> -->
+
+			<xpath expr="//label[@for='email_from']" position="before">
+					<field name="contacto_principal" />
+			</xpath>
+
+			<xpath expr="//group[@name='opportunity_partner']" position="inside">
+                <field name="compania_cliente" string="Nombre Compañía" invisible="1"/>
+				<field name="tipo_lead" />
+				<field name="fecha_entrega" />
+				<field name="licitacion" invisible="1"/>
+				<field name="tdr" invisible="1"/>
+				<field name="financiamiento" />
+				<field name="contacto_financiamiento" attrs="{'invisible':[('financiamiento','=',False)]}"/>
+				<field name="correo_contacto_financiamiento" attrs="{'invisible':[('financiamiento','=',False)]}"/>
+				<field name="visita_tecnica" />
+            </xpath>
+        </field>
+    </record>
+
+	<record id="crm_lead_action_view_form" model="ir.actions.act_window.view">
+		<field name="sequence" eval="7"/>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="view_crm_lead_form_inht"/>
+		<field name="act_window_id" ref="crm.crm_lead_action_pipeline"/>
+	</record>
+
+
+
+	<!--
+	<record model="ir.actions.act_window" id="crm_lead_action_pipeline_inh">
+		<field name="name">Pipeline</field>
+		<field name="res_model">crm.lead</field>
+		<field name="view_mode">kanban,tree,graph,pivot,form,calendar,activity</field>
+		<field name="domain">[('type','=','opportunity')]</field>
+		<field name="context">{
+				'default_type': 'opportunity',
+				'search_default_assigned_to_me': 1,
+				'today': context_today()
+		}</field>
+		<field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+	</record>
+	-->
+
+	<record id="crm_case_kanban_view_leads_inherit" model="ir.ui.view">
+		<field name="name">crm.case.kanban.views.leads.inherit</field>
+		<field name="model">crm.lead</field>
+		<field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+		<field name="arch" type="xml">
+			<xpath expr="//span[@class='o_text_overflow']" position="after">
+				<div attrs="{'invisible':[('codigo_presupuesto','=',False)]}">
+					<b><field style="color: green;" name="codigo_presupuesto"/></b>
+				</div>
+				<div attrs="{'invisible':[('codigo_presupuesto','!=',False)]}">
+					<b><span style="color: red;">REGISTRE EL CÓDIGO</span></b>
+				</div>
+				<div><span><field name="novedades_varias"/></span></div>
+				<div><span><field name="sequence"/></span></div>
+				<div><field name="anio_modificacion" invisible="1"/></div>
+				<div><field name="current_year" invisible="1"/></div>
+				<!-- <field name="current_year" invisible="0" /> -->
+			</xpath>
+		</field>
+	</record>
+
+	<record id="crm_case_tree_view_oppor_inherit" model="ir.ui.view">
+		<field name="name">crm.case.tree.view.oppor.inherit</field>
+		<field name="model">crm.lead</field>
+		<field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+		<field name="arch" type="xml">
+			<xpath expr="//tree" position="inside">
+				<field name='contacto_principal' optional="hide"/>
+				<field name='tipo_lead' optional="hide"/>
+				<field name="fecha_entrega" optional="hide"/>
+				<field name='financiamiento' optional="hide"/>
+				<field name='contacto_financiamiento' optional="hide"/>
+				<field name='correo_contacto_financiamiento' optional="hide"/>
+				<field name='visita_tecnica' optional="hide"/>
+				<field name='solicitante' optional="hide"/>
+				<field name='tipo_proyecto' optional="hide"/>
+				<field name="codigo_presupuesto" optional="hide"/>
+				<field name='novedades_varias' optional="hide"/>
+				<field name="sequence" optional="hide"/>
+			</xpath>
+		</field>
+	</record>
+
+	<record id="view_crm_case_opportunities_filter_inherit" model="ir.ui.view">
+		<field name="name">crm.case.opportunities.filter.inherit</field>
+		<field name="model">crm.lead</field>
+		<field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+		<field name="arch" type="xml">
+			<xpath expr="//filter[@name='assigned_to_me']" position="before">
+				<separator/>
+				<filter string="Año Actual" name="anio_modificacion"
+					domain="[('anio_modificacion','=',context_today().year)]"/>
+				<separator/>
+			</xpath>
+			<xpath expr="//search" position="inside">
+				<field name="codigo_presupuesto" filter_domain="[('codigo_presupuesto', 'ilike', self)]"/>
+				<field name="anio_modificacion" filter_domain="[('anio_modificacion', '=', self)]"/>
+				<!-- <field name='tipo_proyecto' filter_domain="[('tipo_proyecto', 'ilike', self)]"/> -->
+				<!-- <field name='financiamiento' filter_domain="[('financiamiento', 'is', self)]"/> -->
+
+			</xpath>
+		</field>
+	</record>
+
+</odoo>

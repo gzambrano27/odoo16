@@ -1,0 +1,99 @@
+<odoo>
+    <!-- Acción del reporte -->
+    <record id="action_report_inventory_adjust" model="ir.actions.report">
+        <field name="name">Ajuste de Inventario</field>
+        <field name="model">inventory.document.adjust</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gps_inventario.report_inventory_adjust</field>
+        <field name="report_file">gps_inventario.report_inventory_adjust</field>
+        <field name="print_report_name">'Ajuste de Inventario - ' + object.name</field>
+    </record>
+
+    <!-- Plantilla del reporte -->
+    <template id="report_inventory_adjust">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <!-- Cabecera -->
+                <h2>Ajuste de Inventario</h2>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Empresa:</th>
+                        <td><t t-esc="doc.company_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th>Fecha:</th>
+                        <td><t t-esc="doc.date_from"/></td>
+                    </tr>
+                    <tr>
+                        <th>Responsable:</th>
+                        <td>
+                            <t t-foreach="doc.user_ids" t-as="user">
+                                <t t-esc="user.name"/> <br/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Ubicación:</th>
+                        <td><t t-esc="doc.stock_location_id.complete_name"/></td>
+                    </tr>
+                </table>
+
+                <!-- Detalle -->
+                <h3>Detalle</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ref Interna</th>
+                            <th>Producto</th>
+                            <th>Stock Sistema</th>
+                            <th>Stock Conteo</th>
+                            <th>Ajuste</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="doc.line_ids" t-as="line">
+                            <t t-if="line.apply">
+                            <tr>
+
+                                <td><t t-esc="line.product_id.default_code"/></td>
+                                <td><t t-esc="line.product_id.name"/></td>
+                                <td><t t-esc="line.stock"/></td>
+                                <td><t t-esc="line.quantity"/></td>
+                                <td><t t-esc="line.adjust"/></td>
+                                <td>
+                                    <t t-if="line.adjust &lt; 0">
+                                        Faltante
+                                    </t>
+                                    <t t-if="line.adjust &gt; 0">
+                                        Sobrante
+                                    </t>
+                                    <t t-if="line.adjust == 0">
+                                        SN
+                                    </t>
+                                </td>
+                            </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <!-- Firmas -->
+                <table style="width: 100%; margin-top: 40px; font-size: 12px;">
+                    <tr>
+                        <td style="text-align: center; width: 25%; padding: 10px;">
+                            _____________________________<br/>
+                            <strong>FIRMA DEL EMPLEADO</strong><br/>
+                            ELABORADO POR
+                        </td>
+                        <td style="text-align: center; width: 25%; padding: 10px;">
+                            _____________________________<br/>
+                            <strong>JEFE INMEDIATO O SUPERVISOR</strong><br/>
+                            APROBADO POR
+                        </td>
+                       
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

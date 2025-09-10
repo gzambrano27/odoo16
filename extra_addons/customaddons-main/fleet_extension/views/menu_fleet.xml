@@ -1,0 +1,38 @@
+<odoo>
+
+    <!-- Acción para Rutas de Viaje -->
+    <record id="action_travel_route" model="ir.actions.act_window">
+        <field name="name">Rutas de Viaje</field>
+        <field name="res_model">travel.route</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tus primeras rutas de viaje aquí.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Acción para Direcciones -->
+    <record id="action_travel_address" model="ir.actions.act_window">
+        <field name="name">Direcciones</field>
+        <field name="res_model">travel.address</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Administra las direcciones de tus rutas aquí.
+            </p>
+        </field>
+    </record>
+
+    <!-- Crear un nuevo menú raíz para la gestión de rutas -->
+    <menuitem id="menu_fleet_routes_root" name="Gestión de Rutas" parent="fleet.menu_root" sequence="10"/>
+
+        <!-- Submenú Rutas de Viaje -->
+    <menuitem id="menu_travel_route" name="Rutas de Viaje" parent="menu_fleet_routes_root" action="action_travel_route" sequence="10"/>
+
+    <!-- Submenú Direcciones -->
+    <menuitem id="menu_travel_address" name="Direcciones" parent="menu_fleet_routes_root" action="action_travel_address" sequence="20"/>
+
+</odoo>
+

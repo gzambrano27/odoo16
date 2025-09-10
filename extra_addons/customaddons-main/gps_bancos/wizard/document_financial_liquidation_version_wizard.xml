@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="document_financial_liquidation_version_wizard_view_form"
+			model="ir.ui.view">
+			<field name="name">document.financial.liquidation.version.wizard.form</field>
+			<field name="model">document.financial.liquidation.version.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Asistente de Importar Liquidacion"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+						<group>
+
+ 	<field name="document_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+						 	<field name="document_liquidation_id"  readonly="1"
+								   attrs="{'invisible':[('document_liquidation_id','=',False)]}"
+								   force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+									<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+										required="1" />
+
+
+
+						</group>
+						<group>
+
+
+
+
+						 	<field name="company_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="currency_id"  invisible="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+						</group>
+						</group>
+
+					<footer>
+						<button name="process_file" type="object" string="Procesar" />
+
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		
+		<record
+			id="document_financial_liq_version_wizard_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Asistente para Importar Liquidaciones</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.liquidation.version.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_liquidation_version_wizard_view_form" />
+			<field name="target">new</field>
+			<field name="context">{}</field>
+		</record>
+        
+    </data>
+    
+</odoo>

@@ -1,0 +1,19 @@
+<odoo>
+    <data noupdate="1">
+        <record id="seq_product_asset" model="ir.sequence">
+            <field name="name">Sequence Asset Product</field>
+            <field name="code">product.asset.code</field>
+            <field name="prefix">PPE</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_product_asset_small" model="ir.sequence">
+            <field name="name">Sequence Asset Small Product</field>
+            <field name="code">product.asset.small.code</field>
+            <field name="prefix">AFM</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

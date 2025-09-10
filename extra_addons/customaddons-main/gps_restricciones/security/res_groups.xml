@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+		<record model="res.groups" id="group_create_customers">
+			<field name="name">Crear Clientes</field>
+		</record>
+		<record model="res.groups" id="group_create_suppliers">
+			<field name="name">Crear Proveedores</field>
+		</record>
+
+</odoo>

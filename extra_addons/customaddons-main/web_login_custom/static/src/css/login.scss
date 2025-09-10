@@ -1,0 +1,18 @@
+// Ocultar enlaces comunes del login mediante selectores por href.
+// Esto evita romper la vista si el DOM cambia entre versiones/temas.
+a[href*="/web/reset_password"],
+a[href*="/web/signup"],
+a[href*="/web/database/manager"],
+a[href*="odoo.com"] {
+  display: none !important;
+}
+
+/* Ocultar contenedor del footer más común si existe */
+.o_login_footer, .oe_login_footer { display: none !important; }
+
+/* Eliminar separadores visuales adyacentes como '|' si quedan */
+a[href*="/web/database/manager"] + span,
+a[href*="/web/signup"] + span,
+a[href*="/web/reset_password"] + span {
+  display: none !important;
+}

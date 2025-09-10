@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	
+	<record id="electronic_document_received_view_filter"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.filter</field>
+		<field name="model">electronic.document.received</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+			<search string="Documentos Recibidos">
+				<group expand="0" string="Agrupar por...">
+					<filter name="group_by_state" string="Estado"
+						context="{'group_by':'state'}"
+						invisible="context.get('hide_state',False)" />
+								<filter name="group_by_state_sri" string="Estado SRI"
+						context="{'group_by':'state_sri'}" />
+						
+						<filter name="group_by_confirmed_state" string="Estado de Recepción"
+						context="{'group_by':'confirmed_state'}" />
+					
+					<filter name="group_by_date" string="Fecha"
+						context="{'group_by':'date'}" />
+							
+					<filter name="group_by_document_type_id"
+						string="Tipo de Documento"
+						context="{'group_by':'document_type_id'}" /> 
+					
+					<filter name="group_by_state_base_withhold_error" string="Con dif. en Bases"
+						context="{'group_by':'state_base_withhold_error'}" invisible="context.get('hide_07',0)" />	 	
+						
+				
+							
+					
+				
+				</group>
+				<group expand="0" string="Filtrar por...">
+					<filter name="fltr_state_draft" string="Preliminar"
+						domain="[('state','=','draft')]" />
+					<filter name="fltr_state_error" string="Con Error"
+						domain="[('state','=','error')]" />
+					<filter name="fltr_state_updated" string="Actualizado"
+						domain="[('state','=','updated')]" />
+					<filter name="fltr_state_annulled" string="Anulado"
+						domain="[('state','=','annulled')]" />
+					<separator/>
+						<filter name="fltr_confirmed_state_received" string="Recepción: Recibido"
+						domain="[('confirmed_state','=','received')]" />
+						<filter name="fltr_confirmed_state_rejected" string="Recepción: Rechazado"
+						domain="[('confirmed_state','=','rejected')]" />
+						<filter name="fltr_confirmed_state_verified" string="Recepción: Verificado"
+						domain="[('confirmed_state','=','verified')]" />
+						<filter name="fltr_confirmed_state_confirmed" string="Recepción Confirmado"
+						domain="[('confirmed_state','=','confirmed')]" />	
+					<separator/>
+					<filter name="fltr_state_sri_authorized" string="Autorizado SRI"
+						domain="[('state_sri','=','authorized')]" />
+					<filter name="fltr_state_sri_annulled" string="Anulado SRI"
+						domain="[('state_sri','=','annulled')]" />
+					<filter name="fltr_state_sri_not_found" string="No encontrado o eliminado SRI"
+						domain="[('state_sri','=','not_found')]" />
+					<filter name="fltr_state_sri_not_processed" string="No procesado"
+						domain="[('state_sri','=','not_processed')]" />							
+					<separator/>
+					<filter name="fltr_document01" string="Factura"
+						domain="[('document_type_id.code','=','01')]" 
+
+					invisible="context.get('hide_no_07',0)"
+					
+						/>
+					<filter name="fltr_document04" string="Nota de Crédito"
+
+						domain="[('document_type_id.code','=','04')]" 
+						invisible="context.get('hide_no_07',0)"
+						 />
+					<filter name="fltr_document07" string="Retención"
+						domain="[('document_type_id.code','=','07')]" 
+						invisible="context.get('hide_07',0)"
+						/>	
+						<separator/>
+					<filter name="fltr_document_filled" string="Con documento Relacionado"
+						domain="['|',('invoice_id','!=',False),('withhold_id','!=',False)]" />
+					<filter name="fltr_document_nofilled" string="Sin documento Relacionado"
+						domain="[('invoice_id','=',False),('withhold_id','=',False)]" />
+							<separator/>
+					
+					<filter name="fltr_state_number_error_error" string="Error al relacionar documento Base"
+						domain="[('document_type_id.code','=','07'),('state_number_error','=','error')]" 
+						invisible="context.get('hide_07',0)"
+						 />
+					<filter name="fltr_state_number_error_no" string="Sin error al relacionar documento Base"
+						domain="[('document_type_id.code','=','07'),('state_number_error','=','related')]" 
+						invisible="context.get('hide_07',0)"
+						 />
+					<separator/>
+					<filter name="fltr_amount0" string="Mayor a 0"
+						domain="[('amount','&gt;',0)]" />
+					<filter name="fltr_not_amount0" string="Menor o igual a 0"
+						domain="[('amount','&lt;=',0)]" />
+					
+					
+				<!-- 	<newline />
+					<filter name="fltr_with_diff_error" string="Con diferencias en Base"
+						domain="[('document_type_id.code','=','07'),('state_base_withhold_error','=','error')]" 
+						invisible="context.get('hide_07',0)"
+						 />
+					<filter name="fltr_with_diff_ok" string="Sin diferencias en Base"
+						domain="[('document_type_id.code','=','07'),('state_base_withhold_error','=','ok')]" 
+						invisible="context.get('hide_07',0)"
+						 />	
+					<filter name="fltr_with_diff_non" string="No es posible determinar diferencias"
+						domain="[('document_type_id.code','=','07'),('state_base_withhold_error','=','none')]" 
+						invisible="context.get('hide_07',0)"
+						 />	-->
+					<separator/>
+					 <filter name="fltr_with_base_withhold" string="Base Fuente mayor a 0"
+						domain="[('document_type_id.code','=','07'),('base_withhold_fte','&gt;',0)]" 
+						invisible="context.get('hide_07',0)"
+						 />
+					<filter name="fltr_with_diff_non" string="Base IVA mayor a 0"
+						domain="[('document_type_id.code','=','07'),('base_withhold_iva','&gt;',0)]" 
+						invisible="context.get('hide_07',0)"
+						 />
+			<!-- 	<newline />
+					<filter name="fltr_filter_assigned" string="Solo Asignados"
+										groups="pas_electronic_documents_received.group_documents_user_admin_usr,pas_electronic_documents_received.group_documents_user_config_usr"
+						domain="[('assigned','=',2)]" 
+						invisible="context.get('hide_no_07',0)"
+						 />-->
+									  
+				</group>
+				<field name="company_id"
+					invisible="context.get('show_company',True)" />
+				<field name="name" />
+				<field name="document" />
+				<field name="document_related" />
+				<field name="date" />
+				<field name="access_key" />
+				<field name="document_message" />				
+				<field name="taxes_codes" /> 
+			</search>
+		</field>
+	</record>
+
+	<record id="electronic_document_received_view_tree"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.tree</field>
+		<field name="model">electronic.document.received</field>
+		<field name="type">tree</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<tree string="Documentos Recibidos" create="false"
+				delete="false" edit="false" 
+				decoration-success="state=='updated' and (invoice_id or withhold_id )"
+				decoration-info="state=='draft'" 
+				decoration-danger="state=='error' or (state=='updated' and (not invoice_id and not withhold_id) )"
+				decoration-bf="state=='error'"
+				decoration-muted="state=='annulled'">
+				 <header>
+                <button name="update_received_documents_states" type="object" string="Actualizar" icon="fa-update"/>
+            </header>
+
+				<field name="company_id" />
+				<field name="access_key" />
+				<field name="document_type_id"
+					attrs="{'invisible':[('state','=','draft')]}" />
+					<field name="document"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="date"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="amount" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />   
+				<field name="name" />
+				<field name="document_related" optional="hide"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="invoice_id"
+/>
+				<field name="withhold_id"
+ />
+				<field name="out_withhold_id" optional="hide" 
+ />
+				<field name="document_message" optional="hide" />
+				<field name="state" optional="hide" />
+				<field name="msg" optional="hide" />
+				
+				<field name="state_sri" widget="badge" decoration-success="state_sri=='authorized'" 
+				decoration-warning="state_sri=='annulled' and not (invoice_id or withhold_id ) " decoration-danger="state_sri=='not_found' or (state_sri=='annulled' and (invoice_id or withhold_id ) )"  
+				decoration-info="state_sri=='not_processed'" optional="show" 
+				/>	
+				
+	<field name="confirmed_state" widget="badge" decoration-success="confirmed_state=='confirmed'" 
+				decoration-danger="confirmed_state=='rejected'" 
+				decoration-info="confirmed_state=='verified'" 
+				decoration-warning="confirmed_state=='received'" optional="hide" 
+				/>	
+						
+						
+				<button name="action_recover" type="object"
+					icon="fa-download" help="Recuperar Documento"
+					attrs="{'invisible':[('state','in',('updated','annulled'))]}"
+ />
+				<button name="action_get_xml" type="object" icon="fa-code"
+					help="Descargar XML"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+				<button name="action_get_pdf" type="object" icon="fa-print"
+					help="Descargar PDF"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+			</tree>
+		</field>
+	</record>
+	
+	<record id="electronic_document_received_view_tree_07"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.tree.07</field>
+		<field name="model">electronic.document.received</field>
+		<field name="type">tree</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<tree string="Documentos Recibidos" create="false"
+				delete="false" edit="false" 
+				decoration-success="state=='updated' and (invoice_id or withhold_id or out_withhold_id )"
+				decoration-info="state=='draft'" 
+				decoration-danger="((state=='error') or (state=='updated' and (not invoice_id and not withhold_id and not out_withhold_id) ))"
+				decoration-bf="state=='error'"
+				decoration-muted="state=='annulled'">
+				 <header>
+              </header>
+				<field name="company_id"/>
+				<field name="access_key" />
+				<field name="document_type_id"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="document"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="date"
+					attrs="{'invisible':[('state','=','draft')]}" />				
+				<field name="base_withhold" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />   	
+				<field name="base_withhold_fte" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />  	
+					<field name="base_withhold_iva" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />  					
+				<field name="base_withhold_invoice" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />  
+					<field name="base_witthold_error"  optional="hide"
+					attrs="{'invisible':[('state','=','draft')]}"  	invisible="1"							
+					 />  					
+					<field name="state_base_withhold_error"	 widget="badge" 
+					attrs="{'invisible':[('state','=','draft')]}"  invisible="1"
+					decoration-warning="(state_base_withhold_error=='none')" 
+					decoration-success="(state_base_withhold_error=='ok')" 
+				decoration-danger="(state_base_withhold_error=='error')"					
+					/>		
+					<field name="tax_total" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />  
+					<field name="tax_fte" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />  
+					<field name="tax_iva" sum="total"
+					attrs="{'invisible':[('state','=','draft')]}" />    
+    	<field name="amount" sum="total" invisible="1"
+					attrs="{'invisible':[('state','=','draft')]}" />   
+			
+				<field name="name" />
+				<field name="document_related" optional="hide"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="state_number_error"  
+				widget="badge" 
+				decoration-success="state_number_error == 'related'" 
+				decoration-danger="state_number_error == 'error'"
+				attrs="{'invisible':[('state','=','draft')]}"
+				 />
+				<field name="invoice_id" invisible="1" 
+/>
+				<field name="withhold_id"
+/>
+				
+				<field name="out_withhold_id" invisible="1" />
+				
+				<field name="taxes_codes" />
+				
+				<field name="document_message" optional="hide" invisible="1"/>
+				<field name="state" optional="hide" />
+				<field name="msg" optional="hide" />
+				
+		<field name="state_sri" widget="badge" decoration-success="state_sri=='authorized'" 
+				decoration-warning="state_sri=='annulled' and not (invoice_id or withhold_id ) " decoration-danger="state_sri=='not_found' or (state_sri=='annulled' and (invoice_id or withhold_id ) )"  
+				decoration-info="state_sri=='not_processed'" optional="show" 
+				/>	
+				
+	<field name="confirmed_state" widget="badge" decoration-success="confirmed_state=='confirmed'" 
+				decoration-danger="confirmed_state=='rejected'" 
+				decoration-info="confirmed_state=='verified'" 
+				decoration-warning="confirmed_state=='received'" optional="hide" 
+				/>	
+						
+						
+				
+				<button name="action_recover" type="object"
+					icon="fa-download" help="Recuperar Documento"
+					attrs="{'invisible':[('state','in',('updated','annulled'))]}"
+ />
+				<button name="action_get_xml" type="object" icon="fa-code"
+					help="Descargar XML"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+				<button name="action_get_pdf" type="object" icon="fa-print"
+					help="Descargar PDF"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+			</tree>
+		</field>
+	</record>
+		
+	<record id="electronic_document_received_view_tree_not_07"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.tree.not.07</field>
+		<field name="model">electronic.document.received</field>
+		<field name="type">tree</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<tree string="Documentos Recibidos" create="false"
+				delete="false" edit="false" 
+				decoration-success="state=='updated' and (invoice_id or withhold_id or out_withhold_id )"
+				decoration-info="state=='draft'" 
+				decoration-danger="state=='error' or (state=='updated' and (not invoice_id and not withhold_id and not out_withhold_id) )"
+				decoration-bf="state=='error'"
+				decoration-muted="state=='annulled'">
+				 <header>
+              </header>
+				<field name="company_id"/>
+				<field name="access_key" />
+				<field name="document_type_id"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="document"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="date"
+					attrs="{'invisible':[('state','=','draft')]}" />
+		<field name="base_tax_invoice" 
+								attrs="{'invisible':[('state','=','draft')]}" />   
+										<field name="tax_invoice" 
+								attrs="{'invisible':[('state','=','draft')]}" />  
+										<field name="amount" sum="total" 
+					attrs="{'invisible':[('state','=','draft')]}" />        	
+				<field name="name" />
+				<field name="document_related" optional="hide"
+					attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="invoice_id"
+/>
+				<field name="out_withhold_id"
+/>
+			<field name="withhold_id" invisible="1" />
+				<field name="document_message" optional="hide"  />
+				<field name="state" optional="hide" />
+				<field name="msg" optional="hide" />				
+				<field name="state_sri" widget="badge" decoration-success="state_sri=='authorized'" 
+				decoration-warning="state_sri=='annulled' and not (invoice_id or withhold_id ) " decoration-danger="((state_sri=='not_found') or (state_sri=='annulled' and (invoice_id or withhold_id ) ))"  
+				decoration-info="state_sri=='not_processed'" optional="show" 
+				/>		
+				
+	<field name="confirmed_state" widget="badge" decoration-success="confirmed_state=='confirmed'" 
+				decoration-danger="confirmed_state=='rejected'" 
+				decoration-info="confirmed_state=='verified'" 
+				decoration-warning="confirmed_state=='received'" optional="hide" 
+				/>	
+						
+				<button name="action_recover" type="object"
+					icon="fa-download" help="Recuperar Documento"
+					attrs="{'invisible':[('state','in',('updated','annulled'))]}"/>
+				<button name="action_get_xml" type="object" icon="fa-code"
+					help="Descargar XML"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+				<button name="action_get_pdf" type="object" icon="fa-print"
+					help="Descargar PDF"
+					attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+			</tree>
+		</field>
+	</record>
+		
+	<record id="electronic_document_received_view_form"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.form</field>
+		<field name="model">electronic.document.received</field>
+		<field name="type">form</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<form string="Documentos Recibidos" version="16.0"
+				create="false" delete="false" edit="false">
+				<header>
+
+					<button name="action_recover" type="object"
+						icon="fa-download" string="Recuperar"
+						attrs="{'invisible':[('state','in',('updated','annulled'))]}"
+/>
+
+					<button
+						name="%(electronic_document_received_workflow_wizard_view_2rejected_action)d"
+						type="action" icon="fa-times" string="Rechazar"
+						attrs="{'invisible':['|','|',('state','!=','updated'),('state_sri','!=','authorized'),('confirmed_state','!=','received')]}"
+
+					/>
+					<button
+						name="%(electronic_document_received_workflow_wizard_view_2verified_action)d"
+						type="action" icon="fa-check-circle" string="Verificar"
+				attrs="{'invisible':['|','|',('state','!=','updated'),('state_sri','!=','authorized'),('confirmed_state','!=','received')]}"
+
+					/>
+					<button
+						name="%(electronic_document_received_workflow_wizard_view_update_action)d"
+						type="action" icon="fa-edit" string="Actualizar"
+					attrs="{'invisible':['|','|','|','|','|',('withhold_id','!=',False),('invoice_id','!=',False),('state_sri','=','annulled'),('invoice_id','!=',False),('withhold_id','!=',False),('confirmed_state','!=','verified')]}"
+					/>
+
+						<button name="action_recover_state_sri" type="object"
+					icon="fa-refresh" string="Act. Estado" attrs="{'invisible':['|','|',('state','not in',('updated','annulled')),('state_sri','=','annulled'),('enable_change_state_sri','!=',True)]}"  
+
+					/>
+					<button name="update_partner" type="object"
+					icon="fa-users" string="Crear Clte." 
+					attrs="{'invisible':['|','|','|','|','|','|','|',('withhold_id','!=',False),('invoice_id','!=',False),('state_sri','=','annulled'),('invoice_id','!=',False),('withhold_id','!=',False),('partner_id','!=',False),('document_type_code','!=','07'),('state','!=','updated')]}" 
+
+					/> 	
+					<button name="update_partner" type="object"
+					icon="fa-users" string="Crear Prov." 
+					attrs="{'invisible':['|','|','|','|','|','|','|',('withhold_id','!=',False),('invoice_id','!=',False),('state_sri','=','annulled'),('invoice_id','!=',False),('withhold_id','!=',False),('partner_id','!=',False),('document_type_code','=','07'),('state','!=','updated')]}" 
+
+					/> 		
+					<button name="create_process_document" type="object"
+					icon="fa-files-o" string="Procesar Doc." 
+					attrs="{'invisible':['|','|','|','|','|','|',('withhold_id','!=',False),('invoice_id','!=',False),('state_sri','=','annulled'),('invoice_id','!=',False),('withhold_id','!=',False),('confirmed_state','!=','verified'),('partner_id','=',False)]}"
+
+					/> 					
+					<button name="action_get_xml" type="object" icon="fa-code"
+						string="XML"
+						attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+					<button name="action_get_pdf" type="object" icon="fa-print"
+						string="PDF"
+						attrs="{'invisible':[('state','not in',('updated','annulled'))]}" />
+					 <header>
+               </header>
+					<field name="state" widget="statusbar" />
+				</header>
+				 <sheet>
+				<div class="oe_title">
+					<h1>
+						<field name="access_key" required="1" />
+					</h1>
+				</div>
+				<newline />
+				<group colspan="4" cols="2">
+					<group>
+						<field name="company_id" colspan="2"
+							options="{'no_create':True,'no_open':True,'no_edit':True}"
+							required="1"  />
+						<field name="document_type_id"
+							attrs="{'invisible':['|',('state','!=','updated'),('document_type_id','=',False)]}"
+							required="0" colspan="2"
+							options="{'no_create':True,'no_open':True}" />
+							<field name="document_type_code" invisible="1"/>
+						<field name="document"
+							attrs="{'invisible':['|',('state','!=','updated'),('document','=',None)]}"
+							required="0" colspan="2" />
+						<field name="date"
+							attrs="{'invisible':['|',('state','!=','updated'),('date','=',None)]}"
+							invisible="0" colspan="2" />
+						<field name="amount"
+							attrs="{'invisible':['|',('state','!=','updated'),('document','=',None)]}"
+							required="0" colspan="2" />
+						<field name="document_related"
+							attrs="{'invisible':['|','|','|',('state','=','draft'),('document_related','=',None),('document_related','=',False),('document_related','=','')]}" />
+					</group>
+					<group>
+						<field name="name" required="1" colspan="2" />
+						<field name="enable_change_state_sri" invisible="1" colspan="2" />
+						
+							
+							<field name="state_sri" colspan="2" readonly="1"/>
+							
+							
+						<field name="invoice_type"  colspan="2" readonly="1"
+						attrs="{'invisible':[('document_type_code','=','07')]}" 
+						 />
+						 <field name="service_id"  colspan="2" readonly="1" 
+						 	options="{'no_create':True,'no_edit':True,'no_open':True,}"
+						attrs="{'invisible':['|',('document_type_code','=','07'),('invoice_type','!=','service')]}" 
+						 />
+						 
+						 <field name="order_id" colspan="2" readonly="1"
+							attrs="{'invisible':[('order_id','=',False)]}"
+							/>
+							
+							<field name="process_order_id" colspan="2" readonly="1"
+							attrs="{'invisible':[('process_order_id','=',False)]}"
+							/>
+							
+							
+							<field name="process_document_id" colspan="2" readonly="1"
+							attrs="{'invisible':[('process_document_id','=',False)]}"
+							invisible="1" 
+							/>
+							<field name="invoice_id" colspan="2" attrs="{'invisible':[('invoice_id','=',False)]}"  
+ />
+								<field name="withhold_id" colspan="2" attrs="{'invisible':[('withhold_id','=',False)]}"  
+ />
+								<field name="out_withhold_id" colspan="2" attrs="{'invisible':[('out_withhold_id','=',False)]}"  
+ />
+								
+							
+							
+					</group>
+				</group>
+				<notebook>
+					<page string="Respuesta"
+						attrs="{'invisible':['|',('state','!=','updated'),('xml','=',None)]}">
+						<field name="xml" colspan="4" />
+					</page>
+					<page string="Contabilidad" >
+						<group>							
+							<group>
+							<field name="environment_type" colspan="2" readonly="1" />
+							<field name="identification" colspan="2" readonly="1" />
+							<field name="partner_name" colspan="2" readonly="1" />
+							<field name="partner_id" colspan="2" readonly="1"
+							attrs="{'invisible':[('partner_id','=',False)]}"
+							options="{'no_create':True}" 
+							 />							
+							<field name="document_message" colspan="2" readonly="1" 
+							attrs="{'invisible':['|','|',('document_message','=',''),('document_message','=',None),('document_message','=',False)]}" />				
+							<field name="confirmed_state" colspan="2" readonly="1" />
+									
+									<newline/>		
+										<field name="base_withhold" 
+					attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />   	
+				<field name="base_withhold_fte" 
+								attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />   
+					<field name="base_withhold_iva" 
+										attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />     	
+					
+					
+					<field name="tax_total" 
+										attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />   	
+					<field name="tax_fte" 
+											attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />    	
+					<field name="tax_iva" 
+										attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','!=','07')]}" />   
+								
+				
+						<field name="base_tax_invoice" 
+		attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','=','07')]}" />   
+										<field name="tax_invoice" 
+									attrs="{'invisible':['|',('state','!=','updated'),('document_type_code','=','07')]}" />    
+												
+
+    
+    
+							</group>
+<group attrs="{'invisible':[('invoice_id','=',False),('withhold_id','=',False)]}">
+								<field name="invoice_ref" colspan="2"  attrs="{'invisible':[('invoice_id','=',False)]}" />
+								<field name="withhold_ref" colspan="2" attrs="{'invisible':[('withhold_id','=',False)]}"  />
+										
+								
+					
+	</group>
+						</group>
+					</page>
+					<page string="Variables" groups="base.group_system"
+						attrs="{'invisible':['|',('state','!=','updated'),('variables','=',None)]}">
+						<field name="variables" colspan="4" />
+					</page>
+					<page string="Historial">
+						<group>
+							<group>
+								<field name="create_uid"
+									options="{'no_create':True,'no_open':True}" colspan="2"
+									readonly="1" string="Usuario Creación" />
+								<field name="create_date" colspan="2" readonly="1"
+									string="Fecha de  Creación" />
+							</group>
+							<group>
+								<field name="write_uid"
+									options="{'no_create':True,'no_open':True}" colspan="2"
+									readonly="1" string="Ult. Usuario Actualización" />
+								<field name="write_date" colspan="2" readonly="1"
+									string="Ult. Fecha de Actualización" />
+								<field name="msg" colspan="2"
+									attrs="{'invisible':['|','|',('msg','=',''),('msg','=',None),('msg','=',False)]}" />
+							</group>
+						</group>
+
+					</page>
+				</notebook>
+				 </sheet>
+<div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+			</form>
+		</field>
+	</record>
+
+
+	<record id="electronic_document_received_view_action"
+		model="ir.actions.act_window">
+		<field name="name">Documentos Recibidos</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">electronic.document.received</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{'hide_state':False,'search_default_fltr_document_nofilled':1,'search_default_fltr_confirmed_state_received':1,'search_default_fltr_confirmed_state_confirmed':1,'search_default_fltr_confirmed_state_verified':1}</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree" />
+		<field name="search_view_id"
+			ref="electronic_document_received_view_filter" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_view_tree_action">
+		<field name="sequence" eval="1" />
+		<field name="view_mode">tree</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree" />
+		<field name="act_window_id"
+			ref="electronic_document_received_view_action" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_view_form_action">
+		<field name="sequence" eval="2" />
+		<field name="view_mode">form</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_form" />
+		<field name="act_window_id"
+			ref="electronic_document_received_view_action" />
+	</record>
+
+
+<!--  -->
+
+<record id="electronic_document_received_07_view_action"
+		model="ir.actions.act_window">
+		<field name="name">Retenciones Recibidas</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">electronic.document.received</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[('document_type_id.code','=','07')]</field>
+		<field name="context">{'hide_state':False,'search_default_fltr_document_nofilled':1,'hide_no_07':1,'search_default_fltr_confirmed_state_received':1,'search_default_fltr_confirmed_state_confirmed':1,'search_default_fltr_confirmed_state_verified':1}</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree_07" />
+		<field name="search_view_id"
+			ref="electronic_document_received_view_filter" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_07_view_tree_action">
+		<field name="sequence" eval="1" />
+		<field name="view_mode">tree</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree_07" />
+		<field name="act_window_id"
+			ref="electronic_document_received_07_view_action" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_07_view_form_action">
+		<field name="sequence" eval="2" />
+		<field name="view_mode">form</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_form" />
+		<field name="act_window_id"
+			ref="electronic_document_received_07_view_action" />
+	</record>
+	
+<!--  -->
+
+
+<record id="electronic_document_received_not_07_view_action"
+		model="ir.actions.act_window">
+		<field name="name">Facturas &amp; NC Recibidas</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">electronic.document.received</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[('document_type_id.code','!=','07')]</field>
+		<field name="context">{'hide_state':False,'search_default_fltr_document_nofilled':1,'hide_07':1,'search_default_fltr_confirmed_state_received':1,'search_default_fltr_confirmed_state_confirmed':1,'search_default_fltr_confirmed_state_verified':1,'search_default_fltr_filter_assigned':1}</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree_not_07" />
+		<field name="search_view_id"
+			ref="electronic_document_received_view_filter" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_not_07_view_tree_action">
+		<field name="sequence" eval="1" />
+		<field name="view_mode">tree</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_tree_not_07" />
+		<field name="act_window_id"
+			ref="electronic_document_received_not_07_view_action" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_not_07_view_form_action">
+		<field name="sequence" eval="2" />
+		<field name="view_mode">form</field>
+		<field name="view_id"
+			ref="electronic_document_received_view_form" />
+		<field name="act_window_id"
+			ref="electronic_document_received_not_07_view_action" />
+	</record>
+	
+
+
+</odoo>

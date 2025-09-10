@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="paperformat_cronograma_maniobras" model="report.paperformat">
+      <field name="name">Cronograma de Actividades – Logístico Pesado</field>
+      <field name="default" eval="False"/>
+      <field name="format">A4</field>
+      <field name="orientation">Landscape</field>
+      <field name="margin_top">10</field>
+      <field name="margin_bottom">10</field>
+      <field name="margin_left">10</field>
+      <field name="margin_right">10</field>
+      <field name="header_line" eval="False"/>
+      <field name="header_spacing">0</field>
+  </record>
+
+  <record id="action_report_cronograma" model="ir.actions.report">
+      <field name="name">Cronograma de Maniobras</field>
+      <field name="model">fleet.cronograma</field>
+      <field name="report_type">qweb-html</field>
+      <field name="report_name">fleet_gps_cronograma.cronograma_report_template</field>
+      <field name="report_file">fleet_gps_cronograma.cronograma_report_template</field>
+      <field name="paperformat_id" ref="fleet_gps_cronograma.paperformat_cronograma_maniobras"/>
+      <field name="print_report_name">(object and ('Cronograma-%s' % object.sequence)) or 'Cronograma'</field>
+  </record>
+
+  <template id="cronograma_report_template">
+    <t t-name="fleet_gps_cronograma.cronograma_report_template">
+      <t t-call="web.html_container">
+        <style type="text/css">
+          body, table, th, td, h2, h4{font-family:"DejaVu Sans","DejaVu Sans Condensed",sans-serif;}
+          .tbl{border-collapse:collapse;width:100%;}
+          .tbl th,.tbl td{border:1px solid #000;padding:2px 3px;}
+          .hdr-seq{font-weight:bold;}
+          .hdr-title{font-weight:bold;}
+          .hdr-week{font-weight:bold;color:#8B0000;}
+          .libre{text-align:center;}
+        </style>
+
+        <t t-call="web.basic_layout">
+          <div class="page">
+
+            <t t-set="datetime"  t-value="datetime"/>
+            <t t-set="timedelta" t-value="datetime.timedelta"/>
+            <t t-set="date_start" t-value="datetime.datetime.strptime(date_start,'%Y-%m-%d').date()"/>
+            <t t-set="date_end"   t-value="datetime.datetime.strptime(date_end,  '%Y-%m-%d').date()"/>
+
+            <t t-set="dom_all"
+               t-value="[
+                 ('state', 'in', ['approved', 'finalizado']),
+                 ('necesidad_entrega', '&lt;=', date_end),
+                 ('date_stop2', '&gt;=', date_start)
+               ]"/>
+            <t t-set="all_records" t-value="env['fleet.cronograma'].search(dom_all)"/>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <table class="table table-bordered">
+                <tr>
+                  <td class="text-center" style="width:20%;">
+                    <img t-att-src="'/fleet_gps_cronograma/static/img/GPS_LOGO.png'" style="max-height:120px;"/>
+                  </td>
+                  <td class="text-center" style="width:60%;">
+                    <h4><strong>CRONOGRAMA DE ACTIVIDADES<br/>LOGÍSTICO PESADO</strong></h4>
+                  </td>
+                  <td class="text-center" style="width:20%;">
+                    <span class="hdr-seq"><strong>Nº SEQ</strong></span><br/>
+                    <t t-set="unique_seq" t-value="sorted(set(all_records.mapped('sequence')))"/>
+                    <t t-foreach="unique_seq" t-as="s"><t t-esc="s"/><br/></t>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <t t-set="weeks"
+               t-value="[(date_start+timedelta(days=7*i),
+                          min(date_end,date_start+timedelta(days=7*i+6)))
+                         for i in range(((date_end-date_start).days//7)+1)]"/>
+
+            <t t-foreach="weeks" t-as="sem">
+              <h5 class="hdr-week" style="text-align:center;">
+                <strong>SEMANA</strong> <t t-esc="sem[0].isocalendar()[1]"/> / <t t-esc="sem[0].year"/>
+              </h5>
+
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="hdr-title">MATRÍCULA</th>
+                    <t t-set="dias" t-value="[sem[0]+timedelta(days=i) for i in range((sem[1]-sem[0]).days+1)]"/>
+                    <t t-foreach="dias" t-as="d">
+                      <th class="hdr-title">
+                        <t t-esc="d.strftime('%A').upper()"/><br/>
+                        <t t-esc="d.strftime('%d/%m')"/>
+                      </th>
+                    </t>
+                    <th class="hdr-title">CONDUCTOR</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <t t-set="records_week" t-value="all_records.filtered(lambda r: r.necesidad_entrega &lt;= sem[1] and r.date_stop2 &gt;= sem[0])"/>
+                  <t t-set="vehicles_in_week" t-value="records_week.mapped('vehicle_display')"/>
+
+                  <t t-foreach="vehicles_in_week" t-as="vehicle">
+                    <t t-set="records_vehicle" t-value="records_week.filtered(lambda r: r.vehicle_display == vehicle)"/>
+                    <tr>
+                      <td class="text-center"><t t-esc="vehicle or 'N/A'"/></td>
+
+                      <t t-foreach="dias" t-as="d">
+                        <t t-set="activity_day" t-value="records_vehicle.filtered(lambda r: r.necesidad_entrega &lt;= d and r.date_stop2 &gt;= d)"/>
+                        <td class="text-center">
+                          <t t-if="activity_day">
+                            <t t-esc="activity_day[0].maniobra or 'N/A'"/><br/>
+                            <t t-esc="', '.join(activity_day[0].tipo_ids.mapped('name')) or 'N/A'"/>
+                          </t>
+                          <t t-else="">DISPONIBLE</t>
+                        </td>
+                      </t>
+
+                      <td class="text-center"><t t-esc="records_vehicle[0].conductor_id.name or 'N/A'"/></td>
+                    </tr>
+                  </t>
+                </tbody>
+              </table>
+
+              <t t-if="sem[1] &lt; date_end"><div style="page-break-after:always;"></div></t>
+            </t>
+
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>

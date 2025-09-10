@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Categoría para los grupos de APUS -->
+        <record id="module_category_apus" model="ir.module.category">
+            <field name="name">Apus</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Grupo: USUARIO APROBADORES-->
+        <record id="group_apus_aprobador" model="res.groups">
+            <field name="name">Aprobador Requisiciones</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo: USUARIO -->
+        <record id="group_apus_usuario" model="res.groups">
+            <field name="name">Usuario</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo: JEFE (SOLO lectura) -->
+        <record id="group_apus_jefe" model="res.groups">
+            <field name="name">Jefe</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo: GERENTE -->
+        <record id="group_apus_gerente" model="res.groups">
+            <field name="name">Gerente</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo: ADMINISTRADOR -->
+        <record id="group_apus_administrador" model="res.groups">
+            <field name="name">Administrador</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+    </data>
+</odoo>

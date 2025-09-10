@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="res.groups" id="group_reapertura">
+			<field name="name">Reapertura Periodos(Contralor)</field>
+
+		</record>
+
+	<record model="res.groups" id="group_apertura">
+			<field name="name">Apertura de Periodos(Contadores)</field>
+
+		</record>
+
+
+</odoo>
+
+

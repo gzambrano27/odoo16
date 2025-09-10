@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+                id="report_foreign_trade"
+                string="Reporte Importación"
+                model="trade.importation"
+                report_type="qweb-pdf"
+                groups="ecua_foreign_purchase.foreign_group_user"
+                name="ecua_foreign_purchase.report_foreign_trade_"
+                file="ecua_foreign_purchase.report_foreign_trade"
+        />
+
+    </data>
+</odoo>

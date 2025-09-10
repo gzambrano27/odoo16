@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="hr_payslip_move_view_search"
+            model="ir.ui.view">
+        <field name="name">hr.payslip.move.search</field>
+        <field name="model">hr.payslip.move</field>
+        <field name="type">search</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Movimientos">
+
+                <group expand="0" string="Filtrar...">
+						<filter string="Es Débito" name="is_debit"
+							domain="[('debit','&gt;',0)]" />
+                        <filter string="Es Crédito" name="is_credit"
+							domain="[('credit','&gt;',0)]" />
+					</group>
+					<group expand="0" string="Agrupar por...">
+					   <filter string="Rubro"
+							context="{'group_by':'rule_id'}" name='grp_rule_id' />
+                      <filter string="Cuenta"
+							context="{'group_by':'account_id'}" name='grp_account_id' />
+ <filter string="Cuenta Analitica"
+							context="{'group_by':'analytic_account_id'}" name='grp_analytic_account_id' />
+
+
+
+                        <filter string="Rol de Empleado"
+							context="{'group_by':'payslip_id'}" name='grp_payslip_id' />
+
+
+                          <filter string="Empleado"
+							context="{'group_by':'employee_id'}" name='grp_employee_id' />
+
+					</group>
+                <field name="id"/>
+                <field name="rule_id"/>
+                <field name="account_id"/>
+                <field name="employee_id"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_payslip_move_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.payslip.move.tree</field>
+        <field name="model">hr.payslip.move</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Movimientos" edit="false" delete="false" create="false">
+ <field name="payslip_run_id" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+
+                <field name="payslip_id" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+                <field name="rule_id" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+                <field name="account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="employee_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                 <field name="analytic_account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+
+
+                <field name="debit" sum="total" options="{'currency_field': 'currency_id'}"/>
+                <field name="credit" sum="total" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" invisible="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                <field name="abs_total" sum="total" options="{'currency_field': 'currency_id'}" optional="hide"/>
+
+
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="hr_payslip_move_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.payslip.move.form</field>
+        <field name="model">hr.payslip.move</field>
+        <field name="type">form</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Movimientos"  edit="false" delete="false" create="false">
+                <group cols="2" coslpan="4">
+                    <group cols="1">
+                        <field name="payslip_id" coslpan="2" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                               optional="hide"/>
+                        <field name="rule_id" coslpan="2" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                               optional="hide"/>
+                        <field name="account_id" coslpan="2"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                        <field name="employee_id" coslpan="2"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                        <field name="analytic_account_id" coslpan="2"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+
+                    </group>
+                    <group cols="1">
+                        <field name="debit" coslpan="2" options="{'currency_field': 'currency_id'}"/>
+                        <field name="credit" coslpan="2" options="{'currency_field': 'currency_id'}"/>
+                        <field name="currency_id" invisible="1"
+                               options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                        <field name="abs_total" coslpan="2" options="{'currency_field': 'currency_id'}"
+                               optional="hide"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+
+     <record id="hr_payslip_move_view_pivot"
+            model="ir.ui.view">
+        <field name="name">hr.payslip.move.pivot</field>
+        <field name="model">hr.payslip.move</field>
+        <field name="type">pivot</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <pivot string="Movimientos">
+
+
+                <field name="account_id" type="row"/>
+               <field name="debit" type="measure"/>
+                <field name="credit" type="measure"/>
+
+
+            </pivot>
+        </field>
+    </record>
+
+
+</odoo>

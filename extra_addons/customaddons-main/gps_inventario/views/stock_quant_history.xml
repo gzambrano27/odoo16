@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Acción para abrir la vista -->
+
+
+    <!-- Vista Tree -->
+    <record id="stock_quant_history_tree_view" model="ir.ui.view">
+        <field name="name">stock.quant.history.tree</field>
+        <field name="model">stock.quant.history</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                  <field name="date"/>
+                <field name="company_id"/>
+                <field name="product_id"/>
+                <field name="warehouse_id"/>
+                <field name="location_id"/>
+                <field name="quantity"/>
+                <field name="price_unit"/>
+                <field name="cost"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="stock_quant_history_form_view" model="ir.ui.view">
+        <field name="name">stock.quant.history.form</field>
+        <field name="model">stock.quant.history</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <sheet>
+                    <group>
+                          <field name="date"/>
+                        <field name="company_id"/>
+                        <field name="product_id"/>
+                        <field name="warehouse_id"/>
+                        <field name="location_id"/>
+                        <field name="quantity"/>
+                        <field name="price_unit"/>
+                        <field name="cost"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Search -->
+    <record id="stock_quant_history_search_view" model="ir.ui.view">
+        <field name="name">stock.quant.history.search</field>
+        <field name="model">stock.quant.history</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date"/>
+                <field name="company_id"/>
+                <field name="product_id"/>
+                <field name="warehouse_id"/>
+                <field name="location_id"/>
+                <field name="quantity" sum="total"/>
+                <field name="price_unit"/>
+                <field name="cost"/>
+                <group>
+                    <filter name="group_by_company" string="Agrupar por Compañía" domain="[]" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_by_product" string="Agrupar por Producto" domain="[]" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_warehouse" string="Agrupar por Bodega" domain="[]" context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="group_by_location" string="Agrupar por Ubicacion" domain="[]" context="{'group_by': 'location_id'}"/>
+<filter name="group_by_date" string="Agrupar por Fecha" domain="[]" context="{'group_by': 'date'}"/>
+
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_stock_quant_history" model="ir.actions.act_window">
+        <field name="name">Historial de Stock</field>
+        <field name="res_model">stock.quant.history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="stock_quant_history_search_view"/>
+        <field name="context">{'search_default_group_by_date':1,'search_default_group_by_company':1,'search_default_group_by_warehouse':1,'search_default_group_by_location':1}</field>
+        <field name="help" type="html">
+            <p>No hay registros de historial de stock.</p>
+        </field>
+    </record>
+
+
+
+</odoo>

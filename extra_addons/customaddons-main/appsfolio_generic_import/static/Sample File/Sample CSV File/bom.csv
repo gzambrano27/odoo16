@@ -1,0 +1,2 @@
+Main Product,Ref ,Qty ,Material Product,Quantity of Material Product,UOM,partner_id@name,partner_ids@name,x_color,x_notes,x_amount,x_bool
+Demo Product,Demo,1,Demo Material Product,1,Unit,Demo Partner Name,"Demo, Partner",white,white,10000,0

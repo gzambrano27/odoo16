@@ -1,0 +1,1191 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ecua_foreign_purchase
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-31 17:20+0000\n"
+"PO-Revision-Date: 2023-08-31 13:02-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_EC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__tax_percent
+msgid "% VAT"
+msgstr "% IVA"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "&gt;"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__total_liq_fodinfa
+msgid "0.5% of the CIF value"
+msgstr "0.5% del valor del CIF"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_iva_import
+msgid "12% of CIF + FODINFA Value + Total Tariffs"
+msgstr "12% del CIF + Valor FODINFA+ Total Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_iva
+msgid "12% of CIF + FODINFA Value + Total Tariffs + VAT on additional expenses"
+msgstr "12% del CIF + Valor FODINFA+ Total Aranceles + IVA de los gastos adicionales"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.res_config_settings_view_form_importation_inh
+msgid "<span class=\"o_form_label\"> Account importation </span>"
+msgstr "<span class=\"o_form_label\"> Cuenta Importación </span>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<span>IMPORTATION COSTS</span>"
+msgstr "<span>COSTOS IMPORTACIÓN</span>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<span>IMPORTATION DETAIL</span>"
+msgstr "<span>DETALLE IMPORTACIÓN</span>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>FODINFA:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Advalorem:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Cost:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Costo:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Importation VAT:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total IVA Importación:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Safeguard:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total Salvaguardia:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total VAT:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total IVA:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total cost without VAT:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+msgstr ""
+"<strong>\n"
+"                                                        <span style=\"font-size: 14px; \">\n"
+"                                                            <strong>Total costo sin IVA:</strong>\n"
+"                                                        </span>\n"
+"                                                    </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>C+F: </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>CIF: </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Concep: </strong>"
+msgstr "<strong>Concepto: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>DAU: </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>FOB: </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Freight: </strong>"
+msgstr "<strong>Flete: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Importation #: </strong>"
+msgstr "<strong>Importación #: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Incoterm: </strong>"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Insurance: </strong>"
+msgstr "<strong>Seguro: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Settlement Date: </strong>"
+msgstr "<strong>Fecha Liquidación: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "<strong>Supplier: </strong>"
+msgstr "<strong>Proveedor: </strong>"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "AMOUNT"
+msgstr "VALOR"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_advalorem_usd
+msgid "ARANC."
+msgstr "ARANC."
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_saveadv_usd
+msgid "ARANCELES"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.res_config_settings_view_form_importation_inh
+msgid "Account for the importation"
+msgstr "Cuenta para la importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_adval_percents
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__type_arancel__adv
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Advalorem"
+msgstr "Advalorem"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_concept_bill__is_landed_cost
+msgid "Affects the costs of imported products"
+msgstr "Afecta a los costos de los productos importados"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__amount
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__value
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Amount"
+msgstr "Valor"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_type_arancel
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_category__purchase_tariff_id
+msgid "Arancel"
+msgstr "Advalorem"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_type_arancel_form
+msgid "Associated amounts"
+msgstr "Montos Asociados"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_liquidation__split_method__by_current_cost_price
+msgid "By Current Cost Price"
+msgstr "Por Precio de Costo Actual"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_liquidation__split_method__by_quantity
+msgid "By Quantity"
+msgstr "Por Cantidad"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_liquidation__split_method__by_volume
+msgid "By Volume"
+msgstr "Por Volumen"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_liquidation__split_method__by_weight
+msgid "By Weight"
+msgstr "Por Peso"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_cif
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_cif
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "CIF"
+msgstr "CIF"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_order__state_foreign__completed
+msgid "COMPLETED"
+msgstr "COMPLETADO"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "CONCEPT"
+msgstr "CONCEPTO"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "COST"
+msgstr "COSTO"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Calculate Importation Costs"
+msgstr "Calcular Costos de Importación"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Calculate Tariff Distribution"
+msgstr "Calcular Distribución de Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_product__from_trade
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_template__from_trade
+msgid "Can be imported?"
+msgstr "Puede ser importado?"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Cancel Settlement Costs"
+msgstr "Cancelar Liquidación de Costos"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__code
+msgid "Code"
+msgstr "Codigo"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Complete Importation"
+msgstr "Completar Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_res_config_settings
+msgid "Config Settings"
+msgstr "Opciones de configuración"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order_line__price_unit_import
+msgid "Cost"
+msgstr "Costo"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__create_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__create_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__currency_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Date"
+msgstr "Fecha"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__default_value
+msgid "Default value"
+msgstr "Valor por defecto"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_aranceles__def_factor_freight_distribution
+msgid "Definitive Freight Value/FOB Total"
+msgstr "Valor Definitivo Flete/FOB Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_aranceles__def_factor_seguro_distribution
+msgid "Definitive Insurance Value/FOB Total "
+msgstr "Valor Definitivo Seguro/FOB Total "
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__concept_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__concept_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__concept_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__concept_id
+msgid "Description"
+msgstr "Descripción"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__display_name
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__split_method
+msgid "Division Method"
+msgstr "Método de División"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_voucher__exclude
+msgid "Do not include in total sum"
+msgstr "No incluir en la suma total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_liquidation__split_method__equal
+msgid "Equal"
+msgstr "Igual"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__exclude
+msgid "Exclude"
+msgstr "Excluir"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_fob_item
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__subtotal
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_fob
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "FOB"
+msgstr "FOB"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_fob_recibido
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__subtotal_real
+msgid "FOB Adjustment"
+msgstr "Ajustes FOB"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_cif
+msgid "FOB Value + Freight + Insurance"
+msgstr "Valor FOB + Flete + Seguro"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_cyf
+msgid "FOB Value + Freight Value"
+msgstr "Valor FOB + Valor Flete"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_cyf
+msgid "FOB+Freight"
+msgstr "FOB + Flete"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_fodinfa
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__total_liq_fodinfa
+msgid "FODINFA"
+msgstr "FODINFA"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "FOREIGN PRICE"
+msgstr "PRECIO EXTERIOR"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__ins_factor_distri
+msgid "Factor Insurance Distribution"
+msgstr "Distribución de Seguros"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__value_type__fix
+msgid "Fix"
+msgstr "Fijo"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Fodinfa"
+msgstr "Fodinfa"
+
+#. module: ecua_foreign_purchase
+#: model:ir.module.category,name:ecua_foreign_purchase.module_category_ecua_foreign_purchase
+msgid "Foreign Purchase"
+msgstr "Compras Exteriores"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_flete
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Freight"
+msgstr "Flete"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_factor_freight_distribution
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__def_factor_freight_distribution
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__factor_freight
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__freight_factor_distri
+msgid "Freight Factor"
+msgstr "Factor Flete"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_freight
+msgid "Freight/Item"
+msgstr "Flete/Item"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__has_tax
+msgid "Has Taxes?"
+msgstr "Tiene Impuestos?"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__id
+msgid "ID"
+msgstr "ID"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Import Expenses"
+msgstr "Gastos de Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__state_foreign
+msgid "Import Status"
+msgstr "Estado Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.module.category,description:ecua_foreign_purchase.module_category_ecua_foreign_purchase
+msgid "Importaciones"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.product_template_foreign_form
+msgid "Importation"
+msgstr "Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_category__property_account_importation_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_res_company__account_importation_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_res_config_settings__account_importation_id
+msgid "Importation Account"
+msgstr "Cuenta Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.act_window,name:ecua_foreign_purchase.action_product_importation
+msgid "Importation products"
+msgstr "Productos de Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_tariff
+msgid "Importation tariffs"
+msgstr "Aranceles de Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.act_window,name:ecua_foreign_purchase.ecua_foreign_action_purchase
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreign_menu
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreign_menu_1
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreign_menu_root
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.res_config_settings_view_form_importation_inh
+msgid "Importations"
+msgstr "Importaciones"
+
+#. module: ecua_foreign_purchase
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreign_products
+msgid "Importations products"
+msgstr "Productos de Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__amount_import
+msgid "Imported Quantity"
+msgstr "Cantidad Importada"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_insurance
+msgid "Ins/Item"
+msgstr "Seguro/Item"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_insurance
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Insurance"
+msgstr "Seguro"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_factor_seguro_distribution
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__def_factor_seguro_distribution
+msgid "Insurance Factor"
+msgstr "Factor Seguro"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__invoice_id
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__invoice_date
+msgid "Invoice Date"
+msgstr "Fecha Factura"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__invoice_number
+msgid "Invoice Number"
+msgstr "Num Factura"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__payment_date
+msgid "Invoice/Bill Date"
+msgstr "Factura/Fecha"
+
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__invoices_ids
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Invoices"
+msgstr "Facturas"
+
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__is_landed_cost
+msgid "Is Landed Cost?"
+msgstr "Es costo de destino?"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__landed_cost_id
+msgid "Landed Cost"
+msgstr "Costo Destino"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher____last_update
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel____last_update
+msgid "Last Modified on"
+msgstr "Ultima modificación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__write_uid
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__write_uid
+msgid "Last Updated by"
+msgstr "Actualizado por"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__write_date
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.act_window,name:ecua_foreign_purchase.type_arancel_action
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_type_arancel_form
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_type_arancel_tree
+msgid "List of tariffs"
+msgstr "Lista de Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__ref
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__notes
+msgid "Notes"
+msgstr "Notas"
+
+#. module: ecua_foreign_purchase
+#. odoo-python
+#: code:addons/ecua_foreign_purchase/models/purchase_order.py:0
+#, python-format
+msgid "Notice for %s"
+msgstr "Aviso para %s"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__dau_number
+msgid "Num. DAU"
+msgstr "Num. DAU"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_order__state_foreign__draft
+msgid "ORDER"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__observation
+msgid "Observations"
+msgstr "Observaciones"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_report__purchase_id
+msgid "Orden"
+msgstr "Orden"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "PRODUCT"
+msgstr "PRODUCTO"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__percent
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__value_type__percent
+msgid "Percentage"
+msgstr "Porcentaje"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__percent
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__percent
+msgid "Percentage Application"
+msgstr "Porcentaje Aplicación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_product_template
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_product_category
+msgid "Product Category"
+msgstr "Categoría de Producto"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_order
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__purchase_order_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__purchase_order_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__purchase_order_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__purchase_order_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__purchase_order_id
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_order_line
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de pedido de compra"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_report
+msgid "Purchase Report"
+msgstr "Informe de Compras"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "QTY."
+msgstr "CANTIDAD."
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__qty
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: ecua_foreign_purchase
+#. odoo-python
+#: code:addons/ecua_foreign_purchase/models/purchase_order.py:0
+#, python-format
+msgid "Quantity must be non-zero"
+msgstr "La cantidad no puede ser cero"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__voucher_ids
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__voucher_id
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Receipts"
+msgstr "Recibos"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "Relate"
+msgstr "Relacionar"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.invoice_relacionar_importacion_view
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "Relate Import"
+msgstr "Relacionar importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_concept_bill__product_id
+msgid "Related Product"
+msgstr "Relacionar importación"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Related documents"
+msgstr "Documentos Relacionados"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.report,name:ecua_foreign_purchase.report_foreign_trade
+msgid "Reporte Importación"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:res.groups,name:ecua_foreign_purchase.foreign_group_manager
+msgid "Responsable"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_save_usd
+msgid "SALVAG."
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_order__state_foreign__liquidacion
+msgid "SETTLEMENT COSTS"
+msgstr "LIQUIDACIÓN DE COSTOS"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "Safe to assign this document?"
+msgstr "Está seguro de asignar este documento?"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__def_salva_percents
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Safeguard"
+msgstr "Salvaguardia"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__type_arancel__svg
+msgid "Salvage"
+msgstr "Salvaguardia"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_asign_invoice_ft_form
+msgid "Select the import to load this invoice."
+msgstr "Seleccione la orden de importación a cargar en esta factura."
+
+#. module: ecua_foreign_purchase
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreign_config
+msgid "Settings"
+msgstr "Configuraciones"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_date
+msgid "Settlement Date"
+msgstr "Fecha Liquidación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.act_window,name:ecua_foreign_purchase.foreign_concept_action
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_foreing_concept
+msgid "Settlement Expenses"
+msgstr "Gastos de Liquidación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liquidation_line_ids
+msgid "Settlement Lines"
+msgstr "Líneas Liquidación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__dau_number
+msgid "Single Customs Declaration Number"
+msgstr "Número único de declaración aduanera"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__type_arancel__advspe
+msgid "Specific Advalorem"
+msgstr "Advalorem Específico"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__type_arancel__type_arancel__svgesp
+msgid "Specific Salvage"
+msgstr "Salvaguardia Específica"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order_line__price_total_import
+msgid "Subtotal Cost"
+msgstr "Costo Subtotal"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_total_cost_s_iva
+msgid "Subtotals without VAT"
+msgstr "Subtotales sin IVA"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__partner_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__partner_id
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields.selection,name:ecua_foreign_purchase.selection__purchase_order__state_foreign__distribution
+msgid "TARIFF DISTRIBUTION"
+msgstr "DISTRIBUCIÓN ARANCELARIA"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "TOTAL"
+msgstr "TOTAL"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "TOTAL COST"
+msgstr "TOTAL COSTO"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__total_only_foreign
+msgid "TOTAL IMPORT"
+msgstr "TOTAL IMPORTACIÓN"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__aranceles_line_ids
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Tariff Distribution"
+msgstr "Distribución Arancelaria"
+
+#. module: ecua_foreign_purchase
+#: model:ir.ui.menu,name:ecua_foreign_purchase.purchase_tariff_menu
+msgid "Tariff Items"
+msgstr "Partidas Arancelarias"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_product__purchase_tariff_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_template__purchase_tariff_id
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_aranceles__tariff_id
+msgid "Tariff Subheading"
+msgstr "Partidas Arancelarias"
+
+#. module: ecua_foreign_purchase
+#: model:ir.actions.act_window,name:ecua_foreign_purchase.action_purchase_tariff
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.purchase_tariff_form
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.purchase_tariff_tree
+msgid "Tariff Subheadings"
+msgstr "Partidas Arancelarias"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__type_arancel
+msgid "Tariff Type"
+msgstr "Tipo Arancel"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__name
+msgid "Tariff item"
+msgstr "Lista de Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_product__arancel_ids
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_product_template__arancel_ids
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_tariff__arancel_ids
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Tariffs"
+msgstr "Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.ui.menu,name:ecua_foreign_purchase.type_arancel_menu
+msgid "Tariffs List"
+msgstr "Lista de Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_product_category__property_account_importation_id
+msgid "This account will be used when validating a customer invoice."
+msgstr ""
+"Esta cuenta se utilizará al validar una\n"
+"Factura del cliente."
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_voucher__amount
+msgid "Total"
+msgstr "Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__total_fob_amount_distribution
+msgid "Total Amount Fob Invoice"
+msgstr "Factura Fob de importe total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_total_cost
+msgid "Total Cost"
+msgstr "Total Costo"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__liq_total_cost
+msgid "Total Cost + VAT"
+msgstr "Total Costo + IVA"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_cost_sa
+msgid "Total Cost without Tariffs"
+msgstr "Total Costo sin Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__total_fob_amount_distribution
+msgid "Total FOB"
+msgstr "Total FOB"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__factor_seguro
+msgid "Total Freight Value"
+msgstr "Valor Flete Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__total_cost_import
+msgid "Total Import Cost"
+msgstr "Total Costo Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__insurance_total
+msgid "Total Insurance Value"
+msgstr "Valor Seguro Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__total_arancel_amount_distribution
+msgid "Total Tariffs"
+msgstr "Total Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_iva
+msgid "Total VAT "
+msgstr "Total IVA "
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__total_amount
+msgid "Total Value"
+msgstr "Valor Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_adv
+msgid "Total advalorem"
+msgstr "Total advalorem"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "Total amount"
+msgstr "Total Monto"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__total_arancel_amount_distribution
+msgid "Total amount tariffs"
+msgstr "Total Monto Aranceles"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_total_cost_s_iva
+msgid "Total cost without VAT "
+msgstr "Total Costo sin IVA "
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_salva
+msgid "Total safeguard"
+msgstr "Total Salvaguardia"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_invoice__amount
+msgid "Total with VAT"
+msgstr "Total sin IVA"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_type_arancel__value_type
+msgid "Type of value"
+msgstr "Tipo de Valor"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "UDM"
+msgstr "UDM"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order_line__price_unit
+msgid "Unit Price"
+msgstr "Precio unitario"
+
+#. module: ecua_foreign_purchase
+#: model:res.groups,name:ecua_foreign_purchase.foreign_group_user
+msgid "Usuario"
+msgstr "Usuario"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_liquidation__tax
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.report_foreign_trade_
+msgid "VAT"
+msgstr "IVA"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__liq_iva_import
+msgid "VAT Import"
+msgstr "IVA Importación"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__def_factor_freight_distribution
+msgid "Valor Flete Definitivo/FOB Total "
+msgstr "Valor Flete Definitivo/FOB Total "
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_order__freight_total
+msgid "Valor Flete Total"
+msgstr "Valor Flete Total"
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,help:ecua_foreign_purchase.field_purchase_order__def_factor_seguro_distribution
+msgid "Valor Seguro Definitivo/FOB Total "
+msgstr "Valor Seguro Definitivo/FOB Total "
+
+#. module: ecua_foreign_purchase
+#: model:ir.model.fields,field_description:ecua_foreign_purchase.field_purchase_asign_invoice__advice
+msgid "Warning"
+msgstr "Advertencia"
+
+#. module: ecua_foreign_purchase
+#. odoo-python
+#: code:addons/ecua_foreign_purchase/models/purchase_order.py:0
+#, python-format
+msgid "You must enter the price of the Foreign"
+msgstr "Debe ingresar el precio del Extranjero"
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "amount"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model_terms:ir.ui.view,arch_db:ecua_foreign_purchase.view_purchase_order_form_foreign
+msgid "amount_total"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_aranceles
+msgid "purchase.aranceles"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_asign_invoice
+msgid "purchase.asign.invoice"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_concept_bill
+msgid "purchase.concept.bill"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_invoice
+msgid "purchase.invoice"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_liquidation
+msgid "purchase.liquidation"
+msgstr ""
+
+#. module: ecua_foreign_purchase
+#: model:ir.model,name:ecua_foreign_purchase.model_purchase_voucher
+msgid "purchase.voucher"
+msgstr ""

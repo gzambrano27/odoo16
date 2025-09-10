@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="report_movements_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Movimientos de Empleados </field>
+        <field name="model">hr.employee.movement</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_hr.report_movements_xlsx</field>
+        <field name="print_report_name">'Reporte de %s' % object.name </field>
+    </record>
+
+    <record id="report_payslip_runs_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Roles Empleados </field>
+        <field name="model">hr.payslip.run</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_hr.report_payslip_runs_xlsx</field>
+        <field name="print_report_name">'Reporte de %s %s %s' % (object.type_struct_id.name,object.month_id.name,object.year) </field>
+    </record>
+
+
+    <record id="hr_payroll.action_report_payslip" model="ir.actions.report">
+            <field name="name">Rol Individual</field>
+            <field name="model">hr.payslip</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">gps_hr.report_payslip_lang_new</field>
+            <field name="print_report_name">'Rol - %s' % (object.name,)</field>
+        </record>
+
+    <!-- -->
+
+    <record id="report_employee_cumpleanios_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cumpleaños Empleados </field>
+        <field name="model">hr.employee.report.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_hr.hr_employee_report_wizard_cumpleanios_xlsx</field>
+        <field name="print_report_name">'Reporte de Cumpleaños Empleados'</field>
+    </record>
+
+    <record id="report_employee_cargas_familiares_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cargas Familiares Empleados </field>
+        <field name="model">hr.employee.report.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_hr.hr_employee_report_wizard_cargas_familiares_xlsx</field>
+        <field name="print_report_name">'Reporte de Cargas Familiares Empleados'</field>
+    </record>
+
+    <!-- -->
+
+    <record id="report_payslip_movements_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Movimientos de Empleados</field>
+        <field name="model">hr.employee.payslip.reports.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_hr.hr_employee_payslip_reports_movements_wizard_xlsx</field>
+        <field name="print_report_name">'Reporte de Movimientos de Empleados'</field>
+    </record>
+
+
+</odoo>
+        

@@ -1,0 +1,30 @@
+<odoo>
+    <record id="hr_applicant_form_view_inherit_equipment" model="ir.ui.view">
+        <field name="name">hr.applicant.form.view.equipment</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Insertar antes del pie de la vista -->
+            <notebook position="inside">
+                <page string="Equipos a Requerir">
+                    <group>
+                        <field name="equipment_ids">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="quantity"/>
+                                <field name="notes"/>
+                            </tree>
+                            <form string="Equipo a Requerir">
+                                <group>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="notes"/>
+                                </group>
+                            </form>
+                        </field>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

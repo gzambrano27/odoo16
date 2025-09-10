@@ -1,0 +1,60 @@
+<!-- module_info_api/views/module_api_config_views.xml -->
+<odoo>
+  <!-- Tree view -->
+  <record id="view_module_api_config_tree" model="ir.ui.view">
+    <field name="name">module.api.config.tree</field>
+    <field name="model">module.api.config</field>
+    <field name="arch" type="xml">
+      <tree string="API Configurations">
+        <field name="name"/>
+        <field name="module_id"/>
+        <field name="api_endpoint"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form view -->
+  <record id="view_module_api_config_form" model="ir.ui.view">
+    <field name="name">module.api.config.form</field>
+    <field name="model">module.api.config</field>
+    <field name="arch" type="xml">
+      <form string="API Configuration">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="module_id" options="{'no_create': True}"/>
+            <field name="api_endpoint"/>
+            <field name="dominio"/>
+          </group>
+          <notebook>
+            <page string="Fields">
+              <field name="field_ids">
+                <tree editable="bottom">
+                  <!-- Campo invisible para heredar el módulo -->
+                  <field name="parent_module_id" invisible="1"/>
+                  <!-- model_id sin domain en XML: el @api.onchange en Python
+                       ya filtra dinámicamente solo los campos del módulo -->
+                  <field name="model_id" options="{'no_create': True}" domain="[('model_id','=',parent_module_id)]"/>
+                  <field name="name_alias"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action -->
+  <record id="action_module_api_config" model="ir.actions.act_window">
+    <field name="name">API Configuraciones</field>
+    <field name="res_model">module.api.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Menu -->
+  <menuitem id="menu_module_api_root" name="Modulo API" sequence="10"/>
+  <menuitem id="menu_module_api_config" name="Configuraciones"
+            parent="menu_module_api_root"
+            action="action_module_api_config" sequence="10"/>
+</odoo>

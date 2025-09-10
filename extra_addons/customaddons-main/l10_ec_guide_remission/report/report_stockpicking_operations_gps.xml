@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_picking_inherit" inherit_id="stock.report_picking">
+
+        <xpath expr="//h1[@t-field='o.name']" position="replace">
+            <div t-if="o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                <h1 t-field="o.name" class="mt0"/>
+            </div>
+            <div t-elif="not o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                <h1><span>GUÍA DE REMISIÓN INTERNA </span><br/></h1>
+                <h2 t-field="o.name" class="mt0"/>
+            </div>
+
+        </xpath>
+
+        <xpath expr="//div[@name='div_state']" position="replace">
+            <div class="col-auto" name="div_state">
+                <b><strong>Estado:</strong></b>
+                <p t-field="o.state"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='div_sched_date']" position="replace">
+            <div class="col-auto" name="div_sched_date">
+                <b><strong>Fecha de Traslado:</strong></b>
+                <p t-field="o.scheduled_date"/>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

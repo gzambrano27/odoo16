@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_transit_inventory_report_form" model="ir.ui.view">
+        <field name="name">purchase.transit.inventory.report.form</field>
+        <field name="model">purchase.transit.inventory.report</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Órdenes en Tránsito">
+                <group>
+                    <field name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field name="purchase_order_type" widget="selection"/>
+                    <button name="action_export_xlsx" string="Exportar a Excel" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

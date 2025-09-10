@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+
+            <menuitem id="menu_move_withhold_in"
+                      action="action_move_withhold_in" sequence="3"
+            parent="account.menu_finance_payables"
+            />
+
+<menuitem id="menu_move_withhold_out"
+                      action="action_move_withhold_out" sequence="3"
+            parent="account.menu_finance_receivables"
+            />
+
+<menuitem id="parent_sri_menu" sequence="3"
+name="SRI"
+parent="account_accountant.menu_accounting"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+    </data>
+
+
+</odoo>

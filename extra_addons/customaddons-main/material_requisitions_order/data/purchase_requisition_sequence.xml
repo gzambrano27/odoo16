@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="work_order_seq" model="ir.sequence">
+            <field name="name">Work Order Sequence</field>
+            <field name="code">work.order.seq</field>
+            <field name="prefix">OT-</field>
+            <field name="padding">5</field>
+            <!-- Asigna la compañía; por ejemplo, la principal -->
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

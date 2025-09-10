@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_fleet_vehicle_form_inherit" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inherit</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location']" position="after">
+                <field name="tipo"/>
+            </xpath>
+            <notebook position="inside">
+                <page string="Multas">
+                    <field name="multa_ids">
+                        <tree string="Multas" editable="bottom">
+                            <field name="responsable_id"/>
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="description"/>
+                        </tree>
+                        <form string="Multa">
+                            <group>
+                                <field name="responsable_id"/>
+                                <field name="date"/>
+                                <field name="amount"/>
+                                <field name="description"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

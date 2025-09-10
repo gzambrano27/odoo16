@@ -1,0 +1,157 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+        
+        
+        
+    <record id="hr_salary_rule_account_view_search"
+            model="ir.ui.view">
+        <field name="name">hr.salary.rule.account.search</field>
+        <field name="model">hr.salary.rule.account</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Cuentas para reglas Salariales">
+
+                 <group expand="0" string="Filtrar...">
+						 
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+						 
+
+					</group>
+
+               
+            </search>
+        </field>
+    </record>
+
+
+    <record id="hr_salary_rule_account_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.salary.rule.account.tree</field>
+        <field name="model">hr.salary.rule.account</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Cuentas para reglas Salariales">
+                <field name="id" string="# ID" optional="hide"/>
+               <field name="type" />
+										<field name="account_type" />
+										<field name="company_id"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										<field name="account_id"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]" />
+
+                                        <field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]"
+                                        attrs="{'readonly':[('required_journal','!=',True)],'invisible':[('required_journal','!=',True)],'required':[('required_journal','=',True)]}"
+                                        />
+
+
+
+                                        <field name="required_journal" optional="hide" />
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="hr_salary_rule_account_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.salary.rule.account.form</field>
+        <field name="model">hr.salary.rule.account</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            
+              <form string="Cuentas" >
+                                         <group>
+                                        <group>
+                                            <field name="type" colspan="2"/>
+										<field name="account_type" colspan="2"/>
+										<field name="company_id" colspan="2"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+
+                                        </group>
+                                        <group>
+                                            <field name="account_id" colspan="2"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]" />
+                                              <field name="journal_id" colspan="2" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]"
+                                        attrs="{'readonly':[('required_journal','!=',True)],'invisible':[('required_journal','!=',True)],'required':[('required_journal','=',True)]}"
+                                        />
+
+
+
+                                        <field name="required_journal" colspan="2" invisible="1" />
+                                        </group>
+                                         </group>
+<newline/>
+                  <field name="analytic_ids" >
+                      <tree editable="bottom">
+                           <field name="department_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+                      domain="['|',('company_id','=',parent.company_id),('company_id','=',False)]"
+                      />
+                      <field name="analytic_account_id"
+                             domain="['|',('company_id','=',parent.company_id),('company_id','=',False)]"
+                             options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                      </tree>
+                        </field>
+
+
+										</form>
+            
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_account_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Cuentas para reglas Salariales</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.salary.rule.account</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="view_id"
+               ref="hr_salary_rule_account_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_salary_rule_account_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_salary_rule_account_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_salary_rule_account_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_salary_rule_account_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_salary_rule_account_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_salary_rule_account_view_form"/>
+        <field name="act_window_id"
+               ref="hr_salary_rule_account_view_action"/>
+    </record>
+
+    
+        
+        
+        
+        
+        
+        
+        
+    </data>
+    
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+        <record model="ir.ui.view"
+                id="hr_contract_type_form_view_inherit">
+            <field name="name">hr.contract.type.inherit</field>
+            <field name="model">hr.contract.type</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.hr_contract_type_view_tree"/>
+            <field name="arch" type="xml">
+
+<field name="name" position="after">
+
+    <field name="struct_id" />
+    <field name="legal_iess" />
+    <field name="factor" />
+</field>
+
+            </field>
+        </record>
+
+
+
+    </data>
+
+
+</odoo>

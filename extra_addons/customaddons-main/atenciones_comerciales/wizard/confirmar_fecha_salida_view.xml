@@ -1,0 +1,15 @@
+<odoo>
+  <record id="view_confirmar_fecha_salida_wizard" model="ir.ui.view">
+    <field name="name">confirmar.fecha.salida.wizard.form</field>
+    <field name="model">confirmar.fecha.salida.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Confirmar Envío">
+        <field name="mensaje" readonly="1" nolabel="1"/>
+        <footer>
+          <button name="action_confirmar" type="object" string="Sí, continuar y notificar" class="btn-primary"/>
+          <button string="No, corregir fecha" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

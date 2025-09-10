@@ -1,0 +1,238 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+
+                <record model="ir.ui.view"
+                id="hr_payslip_run_form_view_inherit">
+            <field name="name">hr.payslip.run.view.inherit</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+
+                <button name="%(hr_payroll.action_hr_payslip_by_employees)d" position="attributes">
+                    <attribute name="icon">fa-users</attribute>
+                    <attribute name="groups">gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh</attribute>
+                </button>
+   <field name="country_code" position="after">
+       <field name="currency_id" invisible="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+            <field name="total_in" />
+            <field name="total_out" />
+            <field name="total_provision" />
+            <field name="total" />
+<field name="legal_iess" invisible="1" />
+            </field>
+
+                <field name="company_id" position="after">
+                    <field name="month_id" attrs="{'readonly':[('state','!=','draft')]}"
+                    options="{'no_create':True,'no_edit':True,'no_open':True}"
+                    />
+                    <field name="year" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </field>
+<field name="company_id" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </field>
+
+
+ <label for="date_start"  position="before">
+      <field name="type_struct_id" required="1"
+             attrs="{'readonly':[('state','!=','draft')]}"
+             options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+     <field name="inactive" attrs="{'readonly':[('state','!=','draft')]}"/>
+ </label>
+
+
+
+
+
+
+                 <field name="company_id" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="force_save">1</attribute>
+                     <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+                </field>
+
+
+
+                <xpath expr="//form/sheet" position="inside">
+            <notebook>
+                <page string="Detalle" name="page_detalle">
+                    <field name="slip_ids" context="{'hide_parent':True}" attrs="{'readonly':[('state','!=','draft')]}" />
+                </page>
+                 <page string="Solicitudes" name="page_employee_payments" attrs="{'invisible':[('employee_payment_ids','=',[])]}">
+         <field name="employee_payment_ids" readonly="1">
+             <tree string="Pagos de Nómina" editable="bottom" create="false" delete="false" edit="false">
+                <field name="id" string="# ID" optional="hide"/>
+                <field name="company_id"/>
+                  <field name="name"/>
+                <field name="date_process"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total" sum="total"/>
+                  <field name="ref"/>
+                  <field name="state" optional="show" widget="badge" decoration-muted="state=='cancelled'" decoration-warning="state=='sended'" decoration-info="state=='draft'" decoration-success="state=='approved'"/>
+            </tree>
+             <form string="Pagos de Nómina" editable="bottom" create="false" delete="false" edit="false">
+                 <group>
+                       <field name="id" string="# ID" optional="hide"/>
+                <field name="company_id"/>
+                  <field name="name"/>
+                <field name="date_process"/>
+                <field name="currency_id" invisible="1"/>
+
+                 </group>
+                  <group>
+                                               <field name="total" sum="total"/>
+                  <field name="ref"/>
+                  <field name="state" optional="show" widget="badge" decoration-muted="state=='cancelled'" decoration-warning="state=='sended'" decoration-info="state=='draft'" decoration-success="state=='approved'"/>
+                 </group>
+
+
+            </form>
+         </field>
+</page>
+                <page string="Asiento" name="page_moves" attrs="{'invisible':['|',('legal_iess','!=',True),('state','in',('draft','cancel'))]}">
+                   <group coslpan="4">
+                       <button string="Ver Detalle"  coslpan="1"
+                               name="action_open_account_moves"
+                       type="object"
+                       icon="fa-list-ol"
+                               attrs="{'invisible':[('state','in',('draft','cancel'))]}"
+                       />
+                   </group>
+                    <newline/>
+                    <field name="move_line_ids"  readonly="1"/>
+                </page>
+
+
+
+            </notebook>
+
+                </xpath>
+
+ <button name="action_validate" position="before">
+         <button name="print_report" string="Imprimir" icon="fa-print"
+                            type="object" attrs="{'invisible':[('state','=','cancelled')]}" />
+
+     <button name="send_mail_payslip" string="Enviar" icon="fa-envelope"
+                            type="object" attrs="{'invisible':[('state','not in',('paid'))]}"
+     groups="gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh"
+     />
+
+
+
+ </button>
+                <button name="action_validate" position="after">
+
+
+
+                    <button name="restore_movements" type="object"
+                            string="Restaurar"
+                            groups="gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh"
+                             icon="fa-pencil" attrs="{'invisible':['|',('slip_ids','=',[]),('state','!=','draft')]}"
+                            />
+                    <button name="compute_sheets" type="object"
+                            string="Calcular"
+                            groups="gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh"
+                          icon="fa-cogs" attrs="{'invisible':['|',('slip_ids','=',[]),('state','!=','draft')]}"
+                            />
+                    <button name="action_verify" type="object"
+                            string="Confirmar"
+                            groups="gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh"
+                            icon="fa-check" attrs="{'invisible':['|',('slip_ids','=',[]),('state','!=','draft')]}"
+                            />
+
+
+
+                </button>
+
+                <button name="action_paid" position="attributes">
+    <attribute name="invisible">1</attribute>
+</button>
+
+                <button name="action_validate" position="attributes">
+    <attribute name="invisible">1</attribute>
+</button>
+ <button name="action_draft" position="attributes">
+    <attribute name="icon">fa-rotate-left</attribute>
+</button>
+
+                <button name="action_draft" position="after">
+                       <button name="action_close" type="object"
+                            string="Cerrar"
+                               groups="gps_hr.group_asistente_rrhh,gps_hr.group_jefe_rrhh"
+                            icon="fa-lock" attrs="{'invisible':['|',('slip_ids','=',[]),('state','!=','verify')]}"
+                            />
+
+
+                 </button>
+
+                     <button name="action_draft" position="before">
+                     <button
+                            name="action_create_payment_requests"
+                            string="Enviar a Pagar"
+                    type="object" attrs="{'invisible':['|','|',('employee_payment_ids','!=',[]),('state','not in',('close')),('total','&lt;=',0.00)]}"
+                            groups="gps_hr.group_jefe_rrhh"
+                        icon="fa-money"/>
+                     </button>
+
+<xpath expr="//sheet/group/group/div[@class='o_row']" position="after">
+    <field name="date_process"
+           decoration-danger="1"
+           style="color:red"
+           required="1"
+           attrs="{'readonly':[('state','in',('close','paid'))]}"
+           />
+    <field name="id" string="# ID" readonly="1"
+           attrs="{'invisible':[('id','&lt;=',0)]}"
+           />
+
+     <field name="move_id" readonly="1"
+           attrs="{'invisible':[('move_id','&lt;=',0)]}"
+           />
+</xpath>
+
+
+            </field>
+                </record>
+
+
+
+              <record model="ir.ui.view"
+                id="hr_payslip_run_tree_view_inherit">
+            <field name="name">hr.payslip.run.tree.view.inherit</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_tree"/>
+            <field name="arch" type="xml">
+
+                 <field name="name" position="before">
+                       <field name="type_struct_id"   />
+ <field name="id" string="# ID" optional="hide"/>
+                         <field name="inactive" optional="show" />
+ </field>
+
+ <field name="payslip_count" position="attributes">
+ <attribute name="optional">hide</attribute>
+ </field>
+                <field name="state" position="attributes">
+                 <attribute name="widget">badge</attribute>
+                     <attribute name="widget">badge</attribute>
+                     <attribute name="decoration-info">state == 'draft'</attribute>
+                     <attribute name="decoration-warning">state == 'verify'</attribute>
+                    <attribute name="decoration-success">state in ('close','paid')</attribute>
+                    <attribute name="decoration-muted">state == 'cancel'</attribute>
+                </field>
+   <field name="state" position="before">
+            <field name="total_in" />
+            <field name="total_out" />
+            <field name="total_provision" />
+            <field name="total" />
+ <field name="currency_id" invisible="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+            </field>
+            </field>
+              </record>
+
+	</data>
+
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <menuitem id="menu_account_fiscal_year_line"
+              name="Periodos Mensuales" parent="account.account_account_menu"
+              action="action_account_fiscal_year_line"
+  groups="fiscal_year.group_apertura,fiscal_year.group_reapertura"
+    />
+
+
+</odoo>

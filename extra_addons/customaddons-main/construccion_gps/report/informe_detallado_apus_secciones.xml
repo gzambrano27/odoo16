@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Paper Format -->
+        <record id="report_docs_format_breakdown" model="report.paperformat">
+            <field name="name">Formato APU Reporte</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+        </record>
+        <!-- Report Definition -->
+        <record id="report_docs_breakdown_action" model="ir.actions.report">
+            <field name="name">Informe Detallado APU – Secciones Consolidadas</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">construccion_gps.report_docs_breakdown_template</field>
+            <field name="report_file">construccion_gps.report_docs_breakdown_template</field>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="report_docs_format_breakdown"/>
+            <field name="print_report_name">"Informe Consolidado APU - " + object.name</field>
+        </record>
+        <!-- QWeb Template for APU Breakdown -->
+        <template id="report_docs_breakdown_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <!-- Recoger y ordenar APUs -->
+                    <t t-set="apu_data" t-value="[
+                        doc.env['apu.apu'].search([('id','=', ln.apu_id.id)], limit=1)
+                        for ln in doc.order_line
+                    ]"/>
+                    <t t-set="apus_ordered" t-value="[]"/>
+                    <t t-foreach="apu_data" t-as="a">
+                        <t t-if="a and a not in apus_ordered">
+                            <t t-set="apus_ordered" t-value="apus_ordered + [a]"/>
+                        </t>
+                    </t>
+                    <!-- Un bloque por cada APU -->
+                    <t t-foreach="apus_ordered" t-as="apu">
+                        <t t-call="web.basic_layout">
+                            <div class="page" style="font-family:verdana; font-size:16px;">
+                                <!-- Cabecera APU -->
+                                <div class="row align-items-center mb-2">
+                                    <div class="col-6">
+                                        <img t-if="doc.company_id.logo"
+                                             t-att-src="image_data_uri(doc.company_id.logo)"
+                                             style="max-height:125px; max-width:125%;"/>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <h5 style="margin:0; font-weight:bold;">
+                                            APU: <span t-esc="apu.code or '—'"/> —
+                                            <span t-esc="apu.product_tmpl_id.name or 'Sin APU'"/>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div>
+                                        <strong>PROYECTO: </strong><span t-field="doc.proyecto" /><br/>
+                                        <strong>CLIENTE: </strong><span t-field="doc.partner_id"/><br/>
+                                        <strong>REVISIÓN No.: </strong>A<br/>
+                                        <strong>FECHA: </strong><span t-field="doc.date_order" t-options='{"widget":"date"}'/>
+                                    </div>
+                                </div>
+                                <!-- Cantidad vendida de este APU -->
+                                <t t-set="sale_qty" t-value="
+                                    sum(ln.product_uom_qty
+                                        for ln in doc.order_line
+                                        if ln.product_template_id.id == apu.product_tmpl_id.id)
+                                "/>
+                                <!-- Recoger líneas y emparejar tareas -->
+                                <t t-set="lines" t-value="apu.line_ids"/>
+                                <t t-set="components" t-value="lines.filtered(lambda r: r.tipo_componente != 'manoobra')"/>
+                                <t t-set="task_pairs" t-value="[
+                                    (l, t)
+                                    for l in lines
+                                    if l.tipo_componente == 'manoobra'
+                                    for t in l.line_tarea_ids
+                                ]"/>
+                                <t t-set="labels" t-value="{
+                                    'equipo':'Equipos',
+                                    'manoobra':'Mano de Obra',
+                                    'material':'Materiales',
+                                    'transporte':'Transporte'
+                                }"/>
+                                <t t-set="grand_total" t-value="
+                                    sum(c.product_qty * c.precio_unit for c in components)
+                                    + sum(lp[0].product_qty * lp[1].cantidad * lp[1].costo * lp[1].rendimiento for lp in task_pairs)
+                                "/>
+                                <!-- Desglose por sección -->
+                                <t t-foreach="['equipo','manoobra','material','transporte']" t-as="sec">
+                                    <t t-set="sec_comps"  t-value="components.filtered(lambda r: r.tipo_componente == sec)"/>
+                                    <t t-set="sec_tasks"  t-value="[lp for lp in task_pairs if lp[1].tipo_actividad == sec]"/>
+                                    <t t-set="sec_total"  t-value="
+                                        sum(r.product_qty * r.precio_unit for r in sec_comps)
+                                        + sum(lp[0].product_qty * lp[1].cantidad * lp[1].costo * lp[1].rendimiento for lp in sec_tasks)
+                                    "/>
+                                    <t t-if="sec_comps or sec_tasks">
+                                        <h3 style="margin:20px 0 8px; border-bottom:1px solid #000;">
+                                            <t t-esc="labels[sec]"/>
+                                        </h3>
+                                        <!-- Tabla de Componentes -->
+                                        <t t-if="sec_comps">
+                                            <table class="table table-sm o_main_table"
+                                                   style="border:1px solid #ccc; border-collapse:collapse; width:100%; margin-bottom:12px;">
+                                                <thead>
+                                                    <tr style="background-color:#EAECEE;">
+                                                        <th style="width:14%; text-align:center">CODIGO</th>
+                                                        <th style="width:27%; text-align:center">DESCRIPCIÓN</th>
+                                                        <th style="width:13%; text-align:center">U</th>
+                                                        <th style="width:10%; text-align:center">CANT</th>
+                                                        <th style="width:25%; text-align:center">P.UNIT</th>
+                                                        <th style="width:11%; text-align:right">TOTAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="sec_comps" t-as="r">
+                                                        <tr>
+                                                            <td style="text-align:center" class="text-center"><t t-esc="r.product_id.product_tmpl_id.default_code"/></td>
+                                                            <td style="text-align:left"><t t-esc="r.product_id.name"/></td>
+                                                            <td style="text-align:center" class="text-center"><t t-esc="r.product_uom_id.name"/></td>
+                                                            <!-- nueva cantidad -->
+                                                            <td style="text-align:center" class="text-center"><t t-esc="r.product_qty"
+                                                                t-options='{"widget":"float","precision":2}'/></td>
+                                                            <td style="text-align:center" class="text-end">
+                                                                <span t-esc="r.precio_unit"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </td>
+                                                            <td style="text-align:right" class="text-end">
+                                                                <span t-esc="r.product_qty * r.precio_unit"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </t>
+                                        <!-- Tabla de Tareas -->
+                                        <t t-if="sec_tasks">
+                                            <table class="table table-sm o_main_table"
+                                                   style="border:1px solid #ccc; border-collapse:collapse; width:100%; margin-bottom:12px;">
+                                                <thead>
+                                                    <tr style="background-color:#EAECEE;">
+                                                        <th style="width:14%; text-align:center">CODIGO</th>
+                                                        <th style="width:27%; text-align:center">DESCRIPCIÓN</th>
+                                                        <th style="width:14%; text-align:center">U</th>
+                                                        <th style="width:10%; text-align:center">CANT</th>
+                                                        <th style="width:8%; text-align:center">C/H</th>
+                                                        <th style="width:8%; text-align:center">C.HORA</th>
+                                                        <th style="width:8%; text-align:center">REND.</th>
+                                                        <th style="width:11%; text-align:right">TOTAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="sec_tasks" t-as="lp">
+                                                        <t t-set="l" t-value="lp[0]"/>
+                                                        <t t-set="t" t-value="lp[1]"/>
+                                                        <tr>
+                                                            <td style="text-align:center" class="text-center"><t t-esc="t.tarea_id.product_tmpl_id.default_code"/></td>
+                                                            <td style="text-align:left"><t t-esc="t.tarea_id.name"/></td>
+                                                            <td style="text-align:center" class="text-center"><t t-esc="t.unidad.name"/></td>
+                                                            <!-- nueva cantidad -->
+                                                            <td style="text-align:center" class="text-center">
+                                                                <t t-esc="l.product_qty * t.cantidad"
+                                                                    t-options='{"widget":"float","precision":2}'/>
+                                                            </td>
+                                                            <td style="text-align:center" class="text-end">
+                                                                <span t-esc="t.costo"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </td>
+                                                            <td style="text-align:center" class="text-end">
+                                                                <span t-esc="l.product_qty * t.cantidad * t.costo"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </td>
+                                                            <td style="text-align:center" class="text-center"><t t-esc="t.rendimiento"/></td>
+                                                            <td style="text-align:right" class="text-end">
+                                                                <span t-esc="l.product_qty * t.cantidad * t.costo * t.rendimiento"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </t>
+                                        <div style="text-align:right; margin-bottom:12px;">
+                                            <strong>Subtotal <t t-esc="labels[sec]"/>:</strong>
+                                            <span t-esc="sec_total"
+                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                        </div>
+                                    </t>
+                                </t>
+                                <!-- Resumen final de este APU -->
+                                <div class="clearfix" name="apu_total_summary">
+                                    <div class="row" name="total">
+                                        <div class="col-6 ms-auto">
+                                            <table class="table table-sm table-borderless">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Total secciones:</strong></td>
+                                                        <td style="text-align:right;" class="text-end">
+                                                            <span t-esc="grand_total"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Indirectos <span t-esc="apu.indirectos_porcentaje or 0"/>%:</td>
+                                                        <td style="text-align:right;" class="text-end">
+                                                            <span t-esc="(apu.indirectos_precio or 0)"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Utilidad <span t-esc="apu.utilidad_porcentaje or 0"/>%:</td>
+                                                        <td style="text-align:right;" class="text-end">
+                                                            <span t-esc="(apu.utilidad_precio or 0)"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                    <t t-set="total_general" t-value="
+                                                        grand_total
+                                                        + (apu.indirectos_precio or 0)
+                                                        + (apu.utilidad_precio    or 0)
+                                                    "/>
+                                                    <tr style="border-top:1px solid #ccc;">
+                                                        <td><strong>Total General APU:</strong></td>
+                                                        <td style="text-align:right;" class="text-end">
+                                                            <strong>
+                                                                <span t-esc="total_general"
+                                                                      t-options='{"widget":"monetary","display_currency":doc.company_id.currency_id}'/>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Salto de página entre APUs -->
+                                <div style="page-break-after:always;"></div>
+                            </div>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+
+        <record id="view_res_partner_bank_search" model="ir.ui.view">
+  <field name="name">res.partner.bank.search</field>
+  <field name="model">res.partner.bank</field>
+  <field name="arch" type="xml">
+    <search string="Buscar Cuentas Bancarias">
+      <field name="acc_number" string="# de Cuenta"/>
+      <field name="partner_id" string="Titular"/>
+      <field name="bank_id" string="Banco"/>
+      <field name="currency_id" string="Moneda"/>
+      <field name="acc_holder_name" string="Nombre del Titular"/>
+      <field name="tipo_cuenta" string="Tipo de Cuenta"/>
+      <field name="active" string="Activo"/>
+      <field name="tercero" string="Tercero"/>
+      <field name="partner_email" string="Correo"/>
+
+      <separator/>
+
+      <filter string="Activos" name="filter_active" domain="[('active', '=', True)]"/>
+      <filter string="Inactivos" name="filter_inactive" domain="[('active', '=', False)]"/>
+      <filter string="Con Correo" name="filter_with_email" domain="[('partner_email', '!=', False)]"/>
+      <filter string="Sin Correo" name="filter_without_email" domain="[('partner_email', '=', False)]"/>
+    </search>
+  </field>
+</record>
+
+
+        <record id="view_partner_bank_form_inherit_active" model="ir.ui.view">
+    <field name="name">res.partner.bank.form.inherit.active</field>
+    <field name="model">res.partner.bank</field>
+    <field name="inherit_id" ref="base.view_partner_bank_form"/>
+    <field name="arch" type="xml">
+          <field name="allow_out_payment"  position="after">
+               <field name="partner_email" />
+          </field>
+
+    </field>
+        </record>
+
+        <record id="view_partner_bank_tree_inherit_active" model="ir.ui.view">
+    <field name="name">res.partner.bank.tree.inherit.active</field>
+    <field name="model">res.partner.bank</field>
+    <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+    <field name="arch" type="xml">
+        <!-- Ocultar company_id -->
+        <field name="company_id" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </field>
+
+        <!-- Agregar el campo active al final -->
+        <tree position="inside">
+            <field name="active"/>
+        </tree>
+
+        <!-- Aplicar decoración si está inactivo -->
+        <tree position="attributes">
+            <attribute name="decoration-muted">not active</attribute>
+        </tree>
+    </field>
+</record>
+
+
+
+<record id="base.action_res_partner_bank_account_form" model="ir.actions.act_window">
+            <field name="name">Cuentas bancarias</field>
+            <field name="res_model">res.partner.bank</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a Bank Account
+              </p><p>
+                From here you can manage all bank accounts linked to you and your contacts.
+              </p>
+            </field>
+ <field name="domain">[('active', 'in', (True, False))]</field>
+
+        </record>
+
+
+
+
+    </data>
+
+</odoo>

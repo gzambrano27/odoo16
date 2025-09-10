@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+  <record id="tag_traslado" model="fleet.cronograma.tipo">
+    <field name="name">Traslado</field>
+    <field name="color">1</field>
+  </record>
+
+  <record id="tag_maniobra_interna" model="fleet.cronograma.tipo">
+    <field name="name">Maniobra interna</field>
+    <field name="color">2</field>
+  </record>
+</odoo>

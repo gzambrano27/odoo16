@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="account_bank_statement_wizard_view" model="ir.ui.view">
+        <field name="name">account.bank.statement.wizard.view</field>
+        <field name="model">account.bank.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Account Bank Statement Lines">
+                <group>
+                    <field name="file" filename="name"/>
+                    <field name="file_type" widget="radio"/>
+                </group>
+                <footer>
+                    <button 
+                        name="import_data_file_type" 
+                        type="object"
+                        string="Import"/>
+                    <button 
+                        name="cancel" 
+                        string="Cancel" 
+                        class="oe_link"/>
+                    <div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                            Download Sample: 
+                        </strong>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/import_bank_lines.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            CSV file
+                        </a>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/import_bank_lines.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            Excel file
+                        </a>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_bank_statement_wizard_view" model="ir.actions.act_window">
+        <field name="name">Account Bank Statement Wizard</field>
+        <field name="res_model">account.bank.statement.wizard</field>        
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

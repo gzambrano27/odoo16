@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree view de Ausencias -->
+    <record id="view_hr_absence_tree" model="ir.ui.view">
+        <field name="name">hr.absence.tree</field>
+        <field name="model">hr.absence</field>
+        <field name="arch" type="xml">
+            <tree string="Ausencias">
+                <field name="employee_id"/>
+                <field name="company_id"/>
+                <field name="contract_id"/>
+                <field name="type_permisson"/>
+                <field name="holiday_status_id"/>
+                <field name="request_date_from"/>
+                <field name="request_date_to"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view de Ausencias con detalle -->
+    <record id="view_hr_absence_form" model="ir.ui.view">
+		<field name="name">hr.absence.form</field>
+		<field name="model">hr.absence</field>
+		<field name="arch" type="xml">
+			<form string="Ausencia">
+				<header>
+                    <!-- Botón de enviar para aprobación (solo para grupo medio y superior) -->
+                    <button name="action_confirm" type="object" string="Enviar para aprobación"
+                            states="draft" class="btn-primary"
+                            groups="gps_hr_absence.group_empleados_usuarios,gps_hr_absence.group_jefe_rrhh"/>
+
+                    <!-- Botón de aprobar (solo para grupo superior) -->
+                    <button name="action_validate" type="object" string="Aprobar"
+                            states="confirm" class="btn-primary"
+                            groups="gps_hr_absence.group_jefe_rrhh"/>
+
+                    <!-- Botón de reiniciar a borrador (solo para grupo superior) -->
+                    <button name="action_draft" type="object" string="Reiniciar a borrador"
+                            states="confirm" class="btn-primary"
+                            groups="gps_hr_absence.group_jefe_rrhh"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+				<sheet>
+					<group col="12">
+						<group colspan="6">
+							<field name="employee_id"/>
+							<field name="company_id" readonly="1"/>
+							<field name="contract_id"/>
+							<field name="type_permisson"/>
+							<field name="holiday_status_id"/>
+						</group>
+						<group colspan="6">
+							<!-- Fechas visibles solo si es completo -->
+							<field name="request_date_from"
+								   attrs="{'invisible': [('type_permisson','!=','complete')]}"/>
+							<field name="request_date_to"
+								   attrs="{'invisible': [('type_permisson','!=','complete')]}"/>
+
+							<!-- Fecha y rango horario visibles solo si es parcial -->
+							<field string="Fecha" name="request_date_from"
+								   attrs="{'invisible': [('type_permisson','!=','partial')]}"/>
+							<field name="request_hour_from"
+								   widget="float_time"
+								   attrs="{'invisible': [('type_permisson','!=','partial')]}"/>
+							<field name="request_hour_to"
+								   widget="float_time"
+								   attrs="{'invisible': [('type_permisson','!=','partial')]}"/>
+						</group>
+					</group>
+					<!-- Descripción -->
+					<group col="12">
+						<group colspan="12">
+							<field name="description"/>
+						</group>
+					</group>
+
+					<!-- Campo necesario para usar en attrs -->
+					<field name="is_vacation" invisible="1"/>
+
+					<!-- Notebook -->
+					<notebook>
+						<page string="Detalle de Periodos" attrs="{'invisible': [('is_vacation','=',False)]}">
+							<field name="period_line_ids" context="{'default_request_id': active_id}">
+								<tree editable="bottom">
+									<field name="period_id"/>
+									<field name="days"/>
+									<field name="num_days" optional="hide"/>
+									<field name="max_day" optional="hide"/>
+									<field name="date_start" optional="hide"/>
+									<field name="date_stop" optional="hide"/>
+									<field name="state" optional="hide"/>
+									<field name="payment_state" optional="hide"/>
+									<field name="type" optional="hide"/>
+									<field name="description"/>
+								</tree>
+								<form string="Detalle de Periodo de Ausencia">
+									<sheet>
+										<group col="4">
+											<field name="period_id" colspan="2"/>
+											<field name="days"/>
+											<field name="num_days"/>
+										</group>
+										<group col="4">
+											<field name="max_day"/>
+											<field name="date_start"/>
+											<field name="date_stop"/>
+										</group>
+										<group col="4">
+											<field name="state"/>
+											<field name="payment_state"/>
+											<field name="type"/>
+										</group>
+										<group>
+											<field name="description" colspan="4"/>
+										</group>
+									</sheet>
+								</form>
+							</field>
+						</page>
+					</notebook>
+				</sheet>
+
+				<!-- 🔹 Chatter -->
+				<div class="oe_chatter">
+					<field name="message_follower_ids" widget="mail_followers"/>
+					<field name="activity_ids" widget="mail_activity"/>
+					<field name="message_ids" widget="mail_thread"/>
+				</div>
+			</form>
+		</field>
+	</record>
+
+
+    <!-- Acción -->
+    <record id="action_hr_absence" model="ir.actions.act_window">
+        <field name="name">Ausencias</field>
+        <field name="res_model">hr.absence</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú principal -->
+    <menuitem id="menu_hr_absence_root"
+              name="Ausencias"
+              action="action_hr_absence"
+              sequence="10"/>
+
+	<!-- Heredar formulario de tipos de ausencia -->
+    <record id="view_hr_leave_type_inherit_vacations" model="ir.ui.view">
+        <field name="name">hr.leave.type.inherit.vacations</field>
+        <field name="model">hr.leave.type</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+        <field name="arch" type="xml">
+            <!-- Insertar campo después de request_unit dentro del group leave_validation -->
+            <xpath expr="//group[@name='leave_validation']/field[@name='request_unit']" position="after">
+                <field name="vacations"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

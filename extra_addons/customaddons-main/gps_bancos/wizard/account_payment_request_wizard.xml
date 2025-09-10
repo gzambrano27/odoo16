@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="account_payment_request_wizard_view_form" model="ir.ui.view">
+            <field name="name">account.payment.request.wizard.form</field>
+            <field name="model">account.payment.request.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Solicitud de Pagos" version="16.0">
+                    <group>
+                        <group>
+                            <field name="default_mode_payment" readonly="1" force_save="1" />
+                            <field name="code" readonly="1" force_save="1" />
+                            <field name="request_id" invisible="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                            <field name="company_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                            <field name="currency_id" options="{'no_create':True,'no_edit':True,'no_open':True}" invisible="1"/>
+                            <field name="date_request" readonly="1" />
+                            <field name="journal_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                            domain="[('type','in',('bank',)),('company_id','=',company_id),('id','in',enable_journal_ids)]" required="1"
+                            />
+                            <div colspan="2" attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('generate_macro','!=',True)]}" class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+                        <b>Este diario</b>  generará un archivo de carga al banco
+                    </div>
+                        </group>
+                        <group>
+                            <field name="conf_payment_id" required="1"  invisible="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                            <field name="enable_journal_ids" options="{'no_create':True,'no_edit':True,'no_open':True}" invisible="1" widget="many2many_tags" />
+                            <field name="enable_bank_journal_ids" options="{'no_create':True,'no_edit':True,'no_open':True}" invisible="1" widget="many2many_tags" />
+                          <field name="generate_macro" invisible="1"  />
+                            <field name="max_amount_payments"  />
+     <field name="pending" readonly="1" force_save="1"/>
+                            <field name="amount" readonly="1" force_save="1"/>
+                            <field name="dif_max_amount_payments" force_save="1"  readonly="1"  decoration-success="dif_max_amount_payments&gt;=0.00"  decoration-danger="dif_max_amount_payments&lt;0.00" />
+      <field name="comments" require="1" placeholder="COMENTARIOS..." colspan="2" />
+                        </group>
+
+                    </group>
+<field name="payment_request_ids" context="{'hide_bank_account':context.get('hide_bank_account',0)}">
+        <tree string="Pago" create="false"  editable="1"
+        decoration-bf="default_mode_payment=='bank' and not bank_account_id"
+                              decoration-danger="amount!=pending"
+                              decoration-success="amount==pending"
+
+              decoration-it="amount&gt;pending"
+
+        >
+             <field name="counter" readonly="1" widget="badge"
+                    decoration-warning="counter&gt;1" attrs="{'invisible':[('default_mode_payment','!=','bank')]}"
+                    decoration-danger="not counter or counter&lt;=0"/>
+                <field name="request_id" readonly="1" force_save="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+            <field name="partner_id" readonly="1" force_save="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+
+                <field name="pending" force_save="1" sum="total" readonly="1"/>
+            <field name="amount" sum="total" force_save="1"
+            attrs="{'readonly':[('type','in',('hr.employee.payment','hr.employee.liquidation'))]}"
+            />
+
+            <field name="bank_account_id" domain="[('partner_id','=',partner_id)]"
+                   invisible="context.get('hide_bank_account',0)"
+                    attrs="{'required':[('default_mode_payment','=','bank')],'invisible':[('default_mode_payment','!=','bank')]}"
+                   options="{'no_create':True,'no_edit':True,'no_open':True}" />
+
+<field name="is_prepayment" force_save="1" attrs="{'readonly':['|',('lock_account','=',True),('type','in',('account.move','hr.employee.payment','hr.employee.liquidation'))],'invisible':[('type','=','account.move')]}"/>
+            <field name="prepayment_account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+            attrs="{'readonly':[('lock_account','=',True)],'required':[('is_prepayment','=',True)],'invisible':[('is_prepayment','!=',True)]}"
+         domain="[('company_id','=',parent.company_id),('account_type','=','asset_prepayments'),('deprecated','=',False),('prepayment_account','=',True)]"
+
+            />
+<field name="type" invisible="1" />
+          <field name="comments"  />
+<field name="payment_account_id" optional="hide" force_save="1"
+        options="{'no_create':True,'no_edit':True,'no_open':True}"
+       readonly="1"/>
+
+            <field name="document_ref" optional="show" />
+            <field name="lock_account" invisible="1" />
+            <field name="default_mode_payment" invisible="1"/>
+        </tree>
+</field>
+                    <footer>
+                        <button name="process" type="object" string="Procesar" icon='fa-cogs'/>
+                        <button special="cancel" name="cancel" string="Salir" colspan="2" type="object"
+                                icon='fa-times'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record
+                id="account_payment_request_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Registrar Pagos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.request.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_request_wizard_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+
+
+</odoo>

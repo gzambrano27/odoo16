@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<record id="sale_order_wizard_view" model="ir.ui.view">
+            <field name="name">sale.order.wizard.view</field>
+            <field name="model">sale.order.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Import Sale Order">
+                    <group>
+                        <group>
+                            <field name="file_import_type" widget="radio"/>
+                            <field name="file" filename="name"/>
+                        </group>
+                        <group>
+                            <field name="stage" widget="radio"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="sequence_opt"/>
+                    </group>
+                    <group>
+                        <field name="option_import_file_by" widget='radio'/>
+                      </group>
+                    <footer>
+                        <button 
+                            name="import_sale_order_file" 
+                            type="object" 
+                            class="oe_highlight"
+                            string="Import" 
+                        />
+                        <div style="margin-left: auto;margin-right: 0;">
+                            <strong>
+                                Download Sample: 
+                            </strong>
+                            <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/sale_order.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                                <i class="fa fa-download"/>
+                                CSV file
+                            </a>
+                            <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/sale_order.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                                <i class="fa fa-download"/>
+                                Excel file
+                            </a>
+                        </div>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_sale_order_wizard_view" model="ir.actions.act_window">
+            <field name="name">Sale Order Wizard</field>
+            <field name="res_model">sale.order.wizard</field>           
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem 
+            id="sale_order_wizard_menu"
+            action="action_sale_order_wizard_view"
+            parent="sale.menu_sales_config"
+            groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
+        />
+</odoo>

@@ -1,0 +1,25 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Definición de la categoría para Cronograma valorado -->
+        <record id="module_category_cronograma_valorado" model="ir.module.category">
+            <field name="name">Cronograma valorado</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Definición de grupos para Cronograma valorado -->
+        <record id="cronograma_valorado.group_planillas_admin" model="res.groups">
+            <field name="name">Administrador de Cronograma valorado</field>
+            <field name="category_id" ref="module_category_cronograma_valorado"/>
+        </record>
+
+        <record id="cronograma_valorado.group_planillas_user" model="res.groups">
+            <field name="name">Usuario de Cronograma valorado</field>
+            <field name="category_id" ref="module_category_cronograma_valorado"/>
+        </record>
+
+        <record id="cronograma_valorado.group_planillas_reader" model="res.groups">
+            <field name="name">Lector de Cronograma valorado</field>
+            <field name="category_id" ref="module_category_cronograma_valorado"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,229 @@
+<odoo>
+    <!-- Vista de la lista (árbol) de las planillas -->
+    <record id="view_planillas_planilla_tree" model="ir.ui.view">
+        <field name="name">cronograma.planilla.tree</field>
+        <field name="model">cronograma.planilla</field>
+        <field name="arch" type="xml">
+            <tree default_order="create_date desc">
+                <field name="name" widget="badge" decoration-muted="name"/>
+                <field name="usuario_id" string="Usuario" widget="many2one_avatar_user" readonly="1"/>
+                <field name="cuenta_analitica_id" widget="badge" decoration-info="cuenta_analitica_id"/>
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total_subtotal" optional="show" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                <field name="total_subtotal_planilla" optional="show" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="state" widget="badge" string="Estado" optional="show"
+                       decoration-muted="state == 'draft'"
+                       decoration-info="state == 'to_approve'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'cancel'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para las planillas -->
+    <record id="view_planillas_planilla_form" model="ir.ui.view">
+        <field name="name">cronograma.planilla.form</field>
+        <field name="model">cronograma.planilla</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Widget de estado para mostrar diferentes etapas -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,cancel"/>
+                    <!-- Botones con visibilidad condicionada a los grupos -->
+                    <!-- Solo visible para el grupo 'cronograma.group_planillas_admin' y 'cronograma.group_planillas_user' -->
+                    <button name="action_to_approve" type="object" string="Por Aprobar" states="draft"
+                            class="btn-primary" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_user"/>
+                    <!-- Solo visible para el grupo 'cronograma.group_planillas_admin' -->
+                    <button name="action_approve" type="object" string="Aprobar" states="to_approve"
+                            class="btn-primary" groups="cronograma_valorado.group_planillas_admin"/>
+                    <!-- Visible para 'cronograma.group_planillas_admin' y 'cronograma.group_planillas_user' -->
+                    <button name="action_cancel" type="object" string="Cancelar" states="draft,to_approve"
+                            class="btn-primary" groups="cronograma_valorado.group_planillas_admin"/>
+                    <!-- Solo visible para el grupo 'cronograma.group_planillas_admin' -->
+                    <button name="action_reset_to_draft" type="object" string="Reestablecer a Borrador" states="cancel,to_approve,approved"
+                        class="btn-primary" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_user"/>
+                    <button name="export_to_excel" type="object" string="Exportar Excel" groups="cronograma_valorado.group_planillas_admin"/>
+                    <button name="export_to_excel_project" type="object" string="Exportar Excel Project" groups="cronograma_valorado.group_planillas_admin"/>
+                    <button name="generate_curva_s" string="Generar Curva S" type="object"/>
+                </header>
+                <sheet>
+                    <!-- Sección para cargar el archivo Excel -->
+                    <group col="12" class="mb-3">
+                        <group colspan="6">
+                            <field name="import_filename" invisible="1"/>
+                            <field name="import_file" filename="import_filename" widget="binary"  groups="cronograma_valorado.group_planillas_admin"/>
+                        </group>
+                        <group colspan="6">
+                            <button name="import_from_excel" string="Importar" type="object" class="btn-primary" groups="cronograma_valorado.group_planillas_admin"/>
+                            <button name="import_from_excel_project" string="Importar Project" type="object" class="btn-primary" groups="cronograma_valorado.group_planillas_admin"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <group colspan="6">
+                            <field name="name"/>
+                        </group>
+                        <group colspan="6">
+                            <field name="usuario_id" string="Usuario" readonly="1"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <group colspan="8">
+                            <field name="cuenta_analitica_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Detalles">
+                            <field name="notebook_ids">
+                                <tree>
+                                    <field name="rubro" required="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="descripcion"/>
+                                    <field name="unidad_medida"/>
+                                    <field name="precio_unitario" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                    <field name="cantidad"/>
+                                    <field name="consumo" readonly="1"/>
+                                    <field name="diferencia_cantidad" readonly="1"/>
+                                    <field name="subtotal" readonly="1" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                    <field name="subtotal_planilla" readonly="1" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                    <field name="diferencia_subtotal" readonly="1" optional="show" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                </tree>
+                                <form string="Línea de Detalle">
+                                    <sheet>
+                                        <group>
+                                            <field name="rubro" required="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="descripcion"/>
+                                            <field name="unidad_medida"/>
+                                            <field name="precio_unitario" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                        </group>
+                                        <group colspan="12" col="12" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader">
+                                            <group class="oe_subtotal_footer o_form_label_align_top" colspan="4">
+                                                <field name="cantidad"/>
+                                                <field name="subtotal" readonly="1"/>
+                                            </group>
+                                            <group class="oe_subtotal_footer o_form_label_align_top pt-2" colspan="4">
+                                                <field name="consumo" readonly="1"/>
+                                                <field name="subtotal_planilla" readonly="1"/>
+                                            </group>
+                                            <group class="oe_subtotal_footer o_form_label_align_top pt-2" colspan="4">
+                                                <field name="diferencia_cantidad" readonly="1"/>
+                                                <field name="diferencia_subtotal" readonly="1" optional="show"/>
+                                            </group>
+                                        </group>
+                                        <group col="12" groups="cronograma_valorado.group_planillas_user">
+                                            <group class="o_form_label_align_top" colspan="12">
+                                                <field name="cantidad"/>
+                                                <field name="consumo" readonly="1"/>
+                                                <field name="diferencia_cantidad" readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <group>
+                                            <field name="observacion"/>
+                                        </group>
+                                        <notebook>
+                                            <page string="Detalles">
+                                                <field name="detalle_ids">
+                                                    <tree editable="bottom">
+                                                        <field name="currency_id" invisible="1"/>
+                                                        <field name="fecha" required="1"/>
+                                                        <field name="cantidad" required="1"/>
+                                                        <field name="valor" required="1" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                                        <field name="cantidad_avance_real" required="1"/>
+                                                        <field name="valor_avance_real" required="1" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader"/>
+                                                    </tree>
+                                                </field>
+                                            </page>
+                                        </notebook>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group col="12" class="oe_right mt-3" groups="cronograma_valorado.group_planillas_admin,cronograma_valorado.group_planillas_reader">
+                        <group string="Totales Valorados" class="oe_subtotal_footer o_form_label_align_top" colspan="4">
+                            <field name="total_subtotal" class="text-right"/>
+                        </group>
+                        <group string="Totales Avance Real" class="oe_subtotal_footer o_form_label_align_top" colspan="4">
+                            <field name="total_subtotal_planilla" class="text-right"/>
+                        </group>
+                        <group string="Totales Diferencias" class="oe_subtotal_footer o_form_label_align_top" colspan="4">
+                            <field name="total_diferencia_subtotal" class="text-right"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Kanban para las planillas -->
+    <record id="view_planillas_planilla_kanban" model="ir.ui.view">
+        <field name="name">cronograma.planilla.kanban</field>
+        <field name="model">cronograma.planilla</field>
+        <field name="arch" type="xml">
+            <kanban default_order="create_date desc" class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
+                <field name="name"/>
+                <field name="cuenta_analitica_id"/>
+                <field name="state"/>
+                <field name="company_id"/>
+                <field name="currency_id"/>
+                <field name="total_subtotal"/>
+                <field name="total_subtotal_planilla"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
+                            <div class="row">
+                                <div class="text-center my-2" style="font-size:25px;">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="my-1 text-center">
+                                    <field name="create_uid" widget="badge" decoration-muted="create_uid"/>
+                                </div>
+                                <div class="my-1">
+                                    <span class="text-muted"><strong>Analítica: </strong></span>
+                                    <field name="cuenta_analitica_id" widget="badge" decoration-info="cuenta_analitica_id"/>
+                                </div>
+                                <div class="my-1">
+                                    <span class="text-muted"><strong>Total Valorado: </strong></span>
+                                    <field name="total_subtotal" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="my-1">
+                                    <span class="text-muted"><strong>Total Avance Real: </strong></span>
+                                    <field name="total_subtotal_planilla" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="my-1">
+                                    <span class="text-muted"><strong>Estado: </strong></span>
+                                    <!-- Badge del estado -->
+                                    <field name="state" widget="badge"
+                                        decoration-muted="state == 'draft'"
+                                        decoration-info="state == 'to_approve'"
+                                        decoration-success="state == 'approved'"
+                                        decoration-danger="state == 'cancel'"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista de las planillas -->
+    <record id="action_planillas_planillas" model="ir.actions.act_window">
+        <field name="name">Planillas</field>
+        <field name="res_model">cronograma.planilla</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+</odoo>

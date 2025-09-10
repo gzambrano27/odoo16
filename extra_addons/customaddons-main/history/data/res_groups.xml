@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+	<record model="res.groups" id="group_exec_security_conf">
+			<field name="name">Configuración de Logs</field>
+			<field name="category_id" ref="group_module_categ_history"/>
+		</record>
+	
+	
+		<record model="res.groups" id="group_exec_security_read">
+			<field name="name">Lectura de Logs</field>
+			<field name="category_id" ref="group_module_categ_history"/>
+		</record>
+	
+	
+	</data>
+	
+	</odoo>

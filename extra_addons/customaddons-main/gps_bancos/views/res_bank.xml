@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+
+
+<record id="view_res_bank_form_bancos_inherit" model="ir.ui.view">
+        <field name="name">res.bank.view.form.bancos.inherit</field>
+        <field name="model">res.bank</field>
+        <field name="inherit_id" ref="base_cash_management.view_res_bank_form_inherit" />
+        <field name="arch" type="xml">
+            <field name="bank_code_ids" position="before">
+                <group groups="base.group_system">
+                    <field name="use_macro_format" groups="base.group_system" />
+                </group>
+            </field>
+               <field name="bank_code_ids" position="attributes">
+                   <attribute name="groups">base.group_system</attribute>
+                    <attribute name="attrs">{'invisible':[('use_macro_format','!=',True)]}</attribute>
+               </field>
+        </field>
+    </record>
+
+
+    </data>
+
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<menuitem id="gps_einvoice_received_menu_root"
+		name="Gestión de Documentos" sequence="54"
+
+/>
+	
+<!-- >	<menuitem id="gps_einvoice_received_menu_process_menu" name="Procesos"
+		sequence="0" parent="gps_einvoice_received_menu_root"
+		groups="gps_einvoice_received.group_documents_approve_document_usr,gps_einvoice_received.group_documents_user_read_department_usr,gps_einvoice_received.group_documents_user_read_usr,gps_einvoice_received.group_documents_user_config_usr,gps_einvoice_received.group_documents_user_admin_usr,account.group_account_readonly,account.group_account_invoice" />
+-->
+
+
+	<menuitem id="electronic_document_received_batch_menu"
+		name="Lote de Documentos Recibidos" sequence="0"
+		parent="gps_einvoice_received_menu_root"
+		action="electronic_document_received_batch_view_action" />
+<!-- 	<menuitem id="electronic_document_update_states_sri_wizard_menu"
+		name="Actualizar Estados de los Documentos Recibidos por el SRI" sequence="1"
+		parent="gps_einvoice_received_menu_process_menu"
+		groups="gps_einvoice_received.group_documents_user_config_usr,gps_einvoice_received.group_documents_user_admin_usr"
+		action="electronic_document_update_states_sri_wizard_view_action" />-->
+	
+	
+	
+	
+	<menuitem id="electronic_document_received_menu"
+		name="Documentos Recibidos" sequence="2"
+		parent="gps_einvoice_received_menu_root"
+		action="electronic_document_received_view_action" />
+		
+<menuitem id="electronic_document_received_07_menu"
+		name="Retenciones Recibidas" sequence="3"
+		parent="gps_einvoice_received_menu_root"
+
+		action="electronic_document_received_07_view_action" />
+
+<menuitem id="electronic_document_received_not_07_menu"
+		name="Facturas &amp; NC Recibidas" sequence="4"
+		parent="gps_einvoice_received_menu_root"
+
+		action="electronic_document_received_not_07_view_action" />
+
+<!-- 
+
+	<menuitem id="gps_einvoice_received_menu_config_menu" name="Configuración"
+		sequence="9999" parent="gps_einvoice_received_menu_root"
+		groups="gps_einvoice_received.group_documents_user_config_usr,gps_einvoice_received.group_documents_user_admin_usr" />
+
+	<menuitem id="partner_group_received_view_act_menu" name="Grupo de Documentos Recibidos"
+		sequence="0" parent="gps_einvoice_received_menu_config_menu" 
+		action="partner_group_received_view_action" 		
+		groups="gps_einvoice_received.group_documents_user_config_usr,gps_einvoice_received.group_documents_user_admin_usr" />
+	
+-->
+
+
+</odoo>

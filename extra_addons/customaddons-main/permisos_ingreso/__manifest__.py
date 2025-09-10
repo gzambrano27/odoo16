@@ -1,0 +1,28 @@
+{
+    'name': 'Permisos de Ingreso',
+    'version': '1.0',
+    'category': 'Project',
+    'summary': 'Gestión de permisos de ingreso a proyectos',
+    'description': 'Módulo para gestionar permisos de ingreso a proyectos en Odoo.',
+    'author': 'Guillermo Zambrano',
+    'website': 'https://www.odoo.com',
+    'depends': ['base', 'portal'],
+    'data': [
+        'security/permisos_ingreso_security.xml',
+        'security/ir.model.access.csv',
+        'views/proyecto_views.xml',
+        'views/personal_views.xml',
+        'views/dispositivo_views.xml',
+        'views/permiso_views.xml',
+        'views/lista_negra_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/menu_views.xml',
+    ],
+    'images': [
+        'static/description/logo.png',
+        'static/description/icon.png',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="report_factura" model="report.paperformat">
+		<field name="name">Formato Acta</field>
+		<field name="default" eval="True"/>
+		<field name="format">A4</field>
+		<field name="orientation">Portrait</field>
+		<field name="margin_top">7</field>
+		<field name="margin_bottom">5</field>
+		<field name="margin_left">5</field>
+		<field name="margin_right">5</field>
+		<field name="header_line" eval="False"/>
+		<field name="header_spacing">10</field>
+	</record>
+
+	<record id="electronic_document_received_report_documents" model="ir.actions.report">
+		<field name="name">Documento Recibido</field>
+		<field name="model">electronic.document.received</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">gps_einvoice_received.electronic_document_received_report_format</field>
+		<field name="report_file">(object.document_type_id.name+' '+object.document)</field>
+		<field name="print_report_name">(object.document_type_id.name+' '+object.document)</field>
+		<field name="binding_type">report</field>
+		<field name="paperformat_id" ref="report_factura"/> <!-- Relación con el formato de papel -->
+	 </record>
+</odoo>
+

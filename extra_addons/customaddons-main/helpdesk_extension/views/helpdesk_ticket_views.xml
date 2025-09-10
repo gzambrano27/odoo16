@@ -1,0 +1,57 @@
+<odoo>
+    <data>
+
+        <record id="helpdesk_ticket_tree_inherit" model="ir.ui.view">
+            <field name="name">helpdesk.ticket.tree.inherit</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_tree"/> <!-- Referencia a la vista original -->
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Usuario</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="helpdesk_ticket_form_inherit" model="ir.ui.view">
+            <field name="name">helpdesk.ticket.form.inherit</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/> <!-- Referencia a la vista original -->
+            <field name="arch" type="xml">
+                <field name="tag_ids" position="replace">
+                    <field name="tag_ids"
+                           widget="many2many_tags"
+                           options="{'no_quick_create': True, 'no_create_edit': True}"
+                           domain="[]"/>
+                </field>
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Usuario</attribute>
+                </field>
+                <field name="ticket_type_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="groups">base.group_system</attribute>
+                </xpath>
+                <field name="ticket_type_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="kanban_state" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//field[@name='priority']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="groups">base.group_system</attribute>
+                </xpath>
+
+                <!-- Aplicar las opciones a team_id -->
+                <field name="team_id" position="attributes">
+                    <attribute name="options">{'no_open': True, 'no_create': True, 'no_edit': True}</attribute>
+                </field>
+
+                <xpath expr="//header" position="inside">
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

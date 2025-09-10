@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  	
+    	
+    	
+    	<record id="report_ventas_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reportes de Ventas</field>
+        <field name="model">l10n.ec.ats</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_ats.report_ventas_xlsx</field>
+        <field name="report_file">Reportes de Ventas</field>
+    </record>
+    
+    <record id="report_compras_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reportes de Compras</field>
+        <field name="model">l10n.ec.ats</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_ats.report_compras_xlsx</field>
+        <field name="report_file">Reportes de Compras</field>
+    </record>
+    
+    <record id="report_impuestos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reportes de Impuestos</field>
+        <field name="model">l10n.ec.ats</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_ats.report_impuestos_xlsx</field>
+        <field name="report_file">Reportes de Impuestos</field>
+    </record>
+
+    <record id="report_compras_acct_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reportes de Compras por Cuentas</field>
+        <field name="model">l10n.ec.ats</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_ats.report_compras_acct_xlsx</field>
+        <field name="report_file">Reportes de Compras por Cuentas</field>
+    </record>
+
+    
+</odoo>
+        

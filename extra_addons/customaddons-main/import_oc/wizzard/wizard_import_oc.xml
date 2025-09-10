@@ -1,0 +1,34 @@
+<odoo>
+  <data>
+    <record id="view_import_oc_form" model="ir.ui.view">
+      <field name="name">import.oc.form</field>
+      <field name="model">import.oc</field>
+      <field name="arch" type="xml">
+        <form string="Import OC">
+          <group>
+            <field name="file" string="File" required="1"/>
+            <field name="import_date" string="Import Date" default="datetime.datetime.now()"/>
+            <field name="currency_id" string="Import Currency"/>
+            <field name="payment_term_id" string="Import payment term"/>
+            <field name="planeed_date" string="Import planned date"/>
+          </group>
+          <footer>
+            <button name="import_oc" string="Import" type="object" class="oe_highlight"/>
+            <button string="Cancel" class="oe_link" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_import_oc" model="ir.actions.act_window">
+      <field name="name">Import PO</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">import.oc</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_import_oc" name="Import PO" parent="purchase.menu_purchase_root" action="action_import_oc"/>
+
+  </data>
+</odoo>

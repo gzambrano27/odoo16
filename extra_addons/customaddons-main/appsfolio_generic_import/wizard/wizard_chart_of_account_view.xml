@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="wizard_import_chart_view" model="ir.ui.view">
+		<field name="name">wizard.import.chart.view</field>
+		<field name="model">import.chart.account</field>
+		<field name="arch" type="xml">
+			<form string="Import Chart Of Accounts">
+				<group>
+					<field name="import_file_type" widget="radio"/>
+				</group>
+				<group>
+					<field name="select_file" filename="name"/>
+				</group>
+				<footer>
+					<button
+						name="import_file"
+						string="Import"
+						type="object"
+						class="oe_highlight"
+					/>
+					<button
+						string="Cancel"
+						class="oe_link"
+						special="cancel"
+					/>
+					<div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                            Download Sample: 
+                        </strong>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/chart_of_accounts.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            CSV file
+                        </a>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/chart_of_accounts.xlsx" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            Excel file
+                        </a>
+                    </div>
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<record id="action_chart_of_account_view" model="ir.actions.act_window">
+		<field name="name">Import Chart Of Accounts</field>
+		<field name="res_model">import.chart.account</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="wizard_import_chart_view"/>
+		<field name="target">new</field>
+	</record>
+
+	<menuitem
+		id="menu_chart_of_account"
+		action="action_chart_of_account_view"
+		name="Import Charts Of Accounts"
+		parent="account.account_account_menu"
+		sequence="0"/>
+
+</odoo>

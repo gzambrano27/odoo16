@@ -1,0 +1,67 @@
+
+.bjs-powered-by {
+    display: none;
+}
+
+.control_panel {
+    list-style: none;
+}
+
+.control_panel > li {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.control_panel > li > a {
+    background: #DDD;
+    border: solid 1px #666;
+    display: inline-block;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.control_panel a {
+    opacity: 0.3;
+}
+
+.control_panel a.active {
+    opacity: 1.0;
+}
+
+.btn-toggle-prop {
+    float: right;
+}
+
+.bpmn_properties {
+    border-left: solid 1px #ccc;
+}
+
+.buttons {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    z-index: 2;
+}
+
+.buttons > li {
+    display: inline-block;
+    margin-right: 10px;
+}
+.buttons > li > a {
+    background: #DDD;
+    border: solid 1px #666;
+    display: inline-block;
+    padding: 5px;
+}
+
+.buttons a {
+    opacity: 0.3;
+}
+
+.buttons a.active {
+    opacity: 1.0;
+}

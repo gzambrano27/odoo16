@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="usrs_view_groups_form_inherit" model="ir.ui.view">
+        <field name="name">res.groups.form.inherit</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Ejemplo: agregar una pestaña nueva al formulario -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Restricciones Personalizadas">
+                   <group>
+                        <group>
+                          <field name="is_profile" colspan="2"/>
+                   </group>
+                       <group>
+
+                  </group>
+                   </group>
+
+                </page>
+            </xpath>
+
+            <!-- Ejemplo: agregar un campo al inicio del formulario -->
+            <!--
+            <xpath expr="//sheet/group" position="before">
+                <group>
+                    <field name="tu_campo_nuevo"/>
+                </group>
+            </xpath>
+            -->
+
+        </field>
+    </record>
+</odoo>

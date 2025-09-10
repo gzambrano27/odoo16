@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_foreign_trade_" name="Reporte Importación">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div t-call="web.external_layout">
+                        <div class="page">
+
+                            <h3 class="text-center">
+                                <span>IMPORTATION DETAIL</span>
+                            </h3>
+
+                            <div class="row">
+                                <div class="col-2">
+                                    <strong>Importación #:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-field="o.name"></span>
+                                </div>
+                                <div class="col-2">
+                                    <strong>Proveedor:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-field="o.partner_id.name"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <strong>Incoterm:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-field="o.incoterm_id.code"></span>
+                                </div>
+                                <div class="col-2">
+
+                                </div>
+                                <div class="col-4">
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!--                                <div class="col-2">-->
+                                <!--                                    <strong>Concep:</strong>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="col-4">-->
+                                <!--                                    <span t-field="o.partner_id.ref"></span>-->
+                                <!--                                </div>-->
+                                <div class="col-2">
+                                    <strong>DAU:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-field="o.dau_number"></span>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+
+                            <table style="width: 100%;" class="table table-condensed">
+                                <thead>
+                                    <tr style="font-size:10pt; background-color: silver; text-align: center; margin-bottom: 10px;">
+                                        <th style="width: 25%;">PRODUCT</th>
+                                        <th style="width: 10%;">UDM</th>
+                                        <th style="width: 10%;">TARIFA</th>
+                                        <th style="width: 5%;">%ADV</th>
+                                        <th style="width: 10%;">QTY.</th>
+                                        <th style="width: 10%;">FOREIGN PRICE</th>
+                                        <th style="width: 10%;">TOTAL</th>
+                                        <th style="width: 10%;">COST</th>
+                                        <th style="width: 10%;">TOTAL COST</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.importation_rnote_ids" t-as="ol">
+                                        <tr>
+                                            <td style="font-size:10pt; width: 25.0000%;">
+                                                <span
+                                                        t-field="ol.product_id.name"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 10.0000%;">
+                                                <span
+                                                        t-field="ol.product_id.uom_id.name"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 00.0000%;">
+                                                <span
+                                                        t-field="ol.tariff_id"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 5.0000%;">
+                                                <span
+                                                        t-field="ol.def_adval_percents"/>%
+                                            </td>
+
+                                            <td style="font-size:10pt; width: 10.0000%; text-align: right;">
+                                                <span
+                                                        t-field="ol.product_qty"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 10.0000%; text-align: right;">
+                                                <span
+                                                        t-field="ol.price"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 10.0000%; text-align: right;">
+                                                <span
+                                                        t-field="ol.price_subtotal"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 10.0000%; text-align: right;">
+                                                <strong>
+                                                    <span
+                                                            t-field="ol.price_unit_import"/>
+                                                </strong>
+                                            </td>
+                                            <td style="font-size:10pt; width: 10.0000%; text-align: right;">
+                                                <span
+                                                        t-field="ol.price_total_import"
+                                                        t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-size:10pt; width: 20.0000%;" colspan="5">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span
+                                                            style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <span
+                                                                t-field="o.total_only_foreign"/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+
+                                        <td style="font-size:10pt; width: 20.0000%;" colspan="2">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span
+                                                            style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <span
+                                                                t-field="o.liq_total_cost_s_iva"
+                                                                t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3 class="text-center">
+                                <span>IMPORTATION COSTS</span>
+                            </h3>
+
+                            <div class="row">
+                                <div class="col-2">
+                                    <strong>Fecha Liquidación:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-field="o.liq_date"></span>
+                                </div>
+                                <div class="col-2">
+                                    <strong>FOB:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-esc="'{0:,.2f}'.format(o.liq_fob)"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <strong>Flete:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-esc="'{0:,.2f}'.format(o.liq_flete)"></span>
+                                </div>
+                                <div class="col-2">
+                                    <strong>C+F:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-esc="'{0:,.2f}'.format(o.liq_cyf)"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <strong>Seguro:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-esc="'{0:,.2f}'.format(o.liq_insurance)"></span>
+                                </div>
+                                <div class="col-2">
+                                    <strong>CIF:</strong>
+                                </div>
+                                <div class="col-4">
+                                    <span t-esc="'{0:,.2f}'.format(o.liq_cif)"></span>
+                                </div>
+                                <div class="col-6">
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <table style="width: 100%;" class="table table-condensed">
+                                <thead>
+                                    <tr style="background-color: silver; text-align: center; margin-bottom: 10px;">
+                                        <th style="font-size:10pt">CONCEPT</th>
+                                        <th style="font-size:10pt">AMOUNT</th>
+                                        <th style="font-size:10pt">VAT</th>
+                                        <th style="font-size:10pt">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.liquidation_line_ids" t-as="line">
+                                        <tr>
+                                            <td style="font-size:10pt; width: 25.0000%;">
+                                                <span t-field="line.concept_id.name"/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 25.0000%;; text-align: right;">
+                                                <span t-esc="line.amount"
+                                                      t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 25.0000%;; text-align: right;">
+                                                <span t-esc="line.tax"
+                                                      t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                            </td>
+                                            <td style="font-size:10pt; width: 25.0000%;; text-align: right;">
+                                                <span t-esc="line.total_amount"
+                                                      t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-black">
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total costo sin IVA:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_total_cost_s_iva"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total Advalorem:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_adv"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total Salvaguardia:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_salva"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>FODINFA:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.total_liq_fodinfa"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total IVA Importación:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_iva_import"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total IVA:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_iva"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:10pt; width: 75.0000%;" colspan="3">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; ">
+                                                        <strong>Total Costo:</strong>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td style="font-size:10pt; width: 25.0000%;" colspan="1">
+                                            <div style="text-align: right;">
+                                                <strong>
+                                                    <span style="font-size: 14px; color: rgb(184, 49, 47);">
+                                                        <t t-esc="o.liq_total_cost"
+                                                           t-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                            <br/>
+
+
+                            <div class="row">
+                                <div class="col-4" style="text-align: center;">
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <strong>__________________________________</strong>
+                                    <br/>
+                                    <strong>Bodega</strong>
+                                </div>
+
+
+                                <div class="col-4" style="text-align: center;">
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <strong>__________________________________</strong>
+                                    <br/>
+                                    <strong>Compras</strong>
+                                </div>
+                                <div class="col-4" style="text-align: center;">
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <strong>__________________________________</strong>
+                                    <br/>
+                                    <strong>Contabilidad</strong>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </t>
+            </t>
+
+        </template>
+    </data>
+</odoo>

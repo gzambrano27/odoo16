@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+	<record id="view_account_fiscal_year_line_tree" model="ir.ui.view">
+    <field name="name">account.fiscal.year.line.tree</field>
+    <field name="model">account.fiscal.year.line</field>
+    <field name="arch" type="xml">
+        <tree string="Periodos del Año Fiscal" create="false" edit="false" delete="false">
+            <field name="name"/>
+			   <field name="company_id"/>
+                    <field name="period_id" options="{'no_create':True,'no_open':True,'no_edit':True}" />
+            <field name="year"/>
+            <field name="month_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+            <field name="date_from"/>
+            <field name="date_to"/>
+            <field name="state"/>
+            <field name="for_account_move"/>
+            <field name="for_account_payment"/>
+            <field name="for_stock_move_line"/>
+        </tree>
+    </field>
+</record>
+
+
+
+	<record id="view_account_fiscal_year_line_form" model="ir.ui.view">
+    <field name="name">account.fiscal.year.line.form</field>
+    <field name="model">account.fiscal.year.line</field>
+    <field name="arch" type="xml">
+        <form string="Periodo del Año Fiscal" create="false" edit="false" delete="false">
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="year"/>
+                    <field name="month_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </group>
+                <group string="Aplicación">
+                    <field name="for_account_move"/>
+                    <field name="for_account_payment"/>
+                    <field name="for_stock_move_line"/>
+                </group>
+                <group>
+                    <field name="company_id" options="{'no_create':True,'no_open':True,'no_edit':True}" />
+                    <field name="period_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids"/>
+                <field name="activity_ids"/>
+                <field name="message_ids"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+
+	<record id="action_account_fiscal_year_line" model="ir.actions.act_window">
+    <field name="name">Periodos del Año Fiscal</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">account.fiscal.year.line</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_account_fiscal_year_line_tree"/>
+    <field name="search_view_id" eval="False"/>
+    <field name="context">{}</field>
+</record>
+
+
+
+</odoo>

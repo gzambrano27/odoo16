@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fleet_vehicle_multa,fleet.vehicle.multa,model_fleet_vehicle_multa,base.group_user,1,1,1,1
+access_fleet_vehicle_tax,fleet.vehicle.tax,model_fleet_vehicle_tax,base.group_user,1,1,1,1
+access_travel_route,travel.route,model_travel_route,base.group_user,1,1,1,1
+access_travel_address,travel.address,model_travel_address,base.group_user,1,1,1,1

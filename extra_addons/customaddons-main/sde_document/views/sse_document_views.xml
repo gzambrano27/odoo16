@@ -1,0 +1,138 @@
+<odoo>
+
+    <record id="view_sse_document_form" model="ir.ui.view">
+        <field name="name">sse.document.form</field>
+        <field name="model">sse.document</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de Salida de Equipos" create="true" edit="true">
+                <header>
+                    <!-- Borrador -->
+                    <button name="action_send"
+                            states="draft"
+                            string="Enviar"
+                            type="object"
+                            class="btn-primary"/>
+
+                    <!-- Pendiente -->
+                    <button name="action_reset_draft"
+                            states="pending"
+                            string="Volver a borrador"
+                            type="object"
+                            class="btn-secondary"/>
+
+                    <!-- Aprobar / Denegar — jefe directo -->
+                    <button name="action_approve"
+                            states="pending"
+                            string="Aprobar"
+                            type="object"
+                            class="btn-primary"
+                            />
+                    <button name="action_deny"
+                            states="pending"
+                            string="DENEGAR"
+                            type="object"
+                            class="btn-primary"
+                            />
+
+
+                    <!-- Imprimir (solo en aprobado) -->
+                    <button name="print_sse_report"
+                            states="approved"
+                            string="Generar PDF"
+                            type="object"
+                            class="btn-primary"/>
+
+                    <!-- Barra de estado -->
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,pending,approved,denied"/>
+                </header>
+
+                <!-- Campo invisible que valida si el usuario es jefe directo -->
+                <field name="is_direct_manager" invisible="1"/>
+
+                <sheet>
+                    <!-- Datos generales -->
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="issue_date" string="Fecha de emisión" attrs="{'readonly':[('state','=','approved')]}" />
+                            <field name="expiration_date" string="Fecha de expiración" attrs="{'readonly':[('state','=','approved')]}"/>
+                            <field name="validity_state" readonly="1" widget="badge" decoration-success="validity_state=='vigente'"
+                                                                                    decoration-danger="validity_state=='vencido'"/>
+                            <field name="location_id" string="Ubicación"
+                                   options="{'no_create_edit': True}" attrs="{'readonly':[('state','=','approved')]}"/>
+                        </group>
+
+                    </group>
+
+                    <notebook>
+                        <!-- Datos del solicitante -->
+                        <page string="Datos personales">
+                            <group>
+                                <field name="employee_id" options="{'no_create': True}" attrs="{'readonly':[('state','=','approved')]}" />
+
+                                <field name="department_id" readonly="1"/>
+                                <field name="company_id" readonly="1"/>
+                                <field name="job_id" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Jefe directo -->
+                        <page string="Jefe directo">
+
+                            <group>
+                                <field name="manager_id" options="{'no_create': True}" attrs="{'readonly':[('state','=','approved')]}"/>
+                                <field name="manager_department_id" readonly="1"/>
+                                <field name="manager_company_id" readonly="1"/>
+                                <field name="manager_job_id" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Equipos -->
+                        <page string="Equipos asignados">
+                            <field name="equipment_line_ids" attrs="{'readonly':[('state','=','approved')]}" >
+                                <tree editable="bottom">
+                                    <field name="modelo"/>
+                                    <field name="marca"/>
+                                    <field name="serial_number"/>
+                                    <field name="color"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================= -->
+    <!-- TREE VIEW                                         -->
+    <!-- ================================================= -->
+    <record id="view_sse_document_tree" model="ir.ui.view">
+        <field name="name">sse.document.tree</field>
+        <field name="model">sse.document</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="manager_id"/>
+                <field name="issue_date"/>
+                <field name="expiration_date"/>
+                <field name="validity_state" widget="badge" decoration-success="validity_state=='vigente'"
+                                                decoration-danger="validity_state=='vencido'"/>
+                <field name="state" widget="badge" decoration-success="state=='approved'"
+                                    decoration-danger="state=='denied'"
+                                    decoration-info="state=='pending'"
+                                    decoration-muted="state=='draft'"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

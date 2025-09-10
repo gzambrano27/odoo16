@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+
+	<record id="view_hr_deductible_expenses_period_tree" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.period.tree</field>
+    <field name="model">hr.deductible.expenses.period</field>
+    <field name="arch" type="xml">
+        <tree string="Tabla de Rangos Impuesto a la Renta"
+        decoration-muted="not active"
+        >
+            <field name="year" />
+    	    <field name="active" />
+        </tree>
+    </field>
+</record>
+
+
+<record id="view_hr_deductible_expenses_period_form" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.period.form</field>
+    <field name="model">hr.deductible.expenses.period</field>
+    <field name="arch" type="xml">
+        <form string="Tabla de Rangos Impuesto a la Renta">
+         <header>
+            </header>
+            <sheet>
+
+                <group>
+                <group>
+                     <field name="year" />
+
+                </group>
+                <group>
+
+    	    <field name="active" />
+                </group>
+
+                    </group>
+                <newline/>
+                <field name="line_ids">
+                    <tree string="Detalle" editable="bottom">
+                         <field name="fraccion_basica" />
+                         <field name="exceso_hasta" />
+                         <field name="imp_fraccion_basica" />
+                         <field name="imp_fraccion_excedente" />
+                    </tree>
+                    </field>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+<record id="view_hr_deductible_expenses_period_search" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.period.search</field>
+    <field name="model">hr.deductible.expenses.period</field>
+    <field name="arch" type="xml">
+        <search string="Buscar Periodos">
+          <field name="year" />
+        </search>
+    </field>
+</record>
+
+<record id="action_hr_deductible_expenses_period_payslip" model="ir.actions.act_window">
+    <field name="name">Tabla de Rangos Impuesto a la Renta</field>
+    <field name="res_model">hr.deductible.expenses.period</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_hr_deductible_expenses_period_tree"/>
+    <field name="context">{}</field>
+    <field name="domain">[]</field>
+</record>
+
+
+
+
+
+
+
+
+
+	</data>
+
+
+	</odoo>

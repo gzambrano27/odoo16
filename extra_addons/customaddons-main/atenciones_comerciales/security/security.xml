@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <!-- Definir la categoría de módulo para Reembolsos -->
+    <record id="module_category_atenciones_comerciales" model="ir.module.category">
+        <field name="name">Atencion Comercial</field>
+        <field name="description">Permite configurar las atenciones comerciales.</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <record id="group_gerente" model="res.groups">
+        <field name="name">Gerente</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_category_atenciones_comerciales"/>
+    </record>
+    
+    <record id="group_presidente" model="res.groups">
+        <field name="name">Presidente</field>
+        <field name="category_id" ref="module_category_atenciones_comerciales"/>
+        <field name="implied_ids" eval="[(4, ref('group_gerente'))]"/>
+    </record>
+
+    <!-- Definir el grupo de administrador para Reembolsos -->
+    <record id="group_administrador" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="category_id" ref="module_category_atenciones_comerciales"/>
+        <field name="implied_ids" eval="[(4, ref('group_presidente'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo adicional: Aprobador -->
+    <record id="group_aprobador" model="res.groups">
+        <field name="name">Aprobador</field>
+        <field name="category_id" ref="module_category_atenciones_comerciales"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Record Rule para Aprobador: Ver todos los registros -->
+    <record id="solicitud_atenciones_rule_aprobador" model="ir.rule">
+      <field name="name">Solicitud Atenciones - Aprobador: Ver todos</field>
+      <field name="model_id" ref="model_solicitud_aprobacion_atenciones"/>
+      <field name="groups" eval="[(4, ref('group_aprobador'))]"/>
+      <field name="domain_force">[(1,'=',1)]</field>
+    </record>
+
+    <!-- Record Rule para Gerente: Solo ve sus propios registros -->
+    <record id="solicitud_atenciones_rule_gerente" model="ir.rule">
+      <field name="name">Solicitud Atenciones - Gerente: Solo sus registros</field>
+      <field name="model_id" ref="model_solicitud_aprobacion_atenciones"/>
+      <field name="groups" eval="[(4, ref('group_gerente'))]"/>
+      <field name="domain_force">[('solicitante_id','=',user.id)]</field>
+    </record>
+
+    <!-- Record Rule para Presidente: Ve todos los registros -->
+    <record id="solicitud_atenciones_rule_presidente" model="ir.rule">
+      <field name="name">Solicitud Atenciones - Presidente: Ver todos</field>
+      <field name="model_id" ref="model_solicitud_aprobacion_atenciones"/>
+      <field name="groups" eval="[(4, ref('group_presidente'))]"/>
+      <field name="domain_force">[(1,'=',1)]</field>
+    </record>
+
+    <!-- Record Rule para Administrador: Ve todos los registros -->
+    <record id="solicitud_atenciones_rule_admin" model="ir.rule">
+      <field name="name">Solicitud Atenciones - Administrador: Ver todos</field>
+      <field name="model_id" ref="model_solicitud_aprobacion_atenciones"/>
+      <field name="groups" eval="[(4, ref('group_administrador'))]"/>
+      <field name="domain_force">[(1,'=',1)]</field>
+    </record>
+  </data>
+</odoo>

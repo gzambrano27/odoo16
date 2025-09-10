@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="report_edocs_paperformat" model="report.paperformat">
+        <field name="name">Formato Acta</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+    </record>
+
+    <record id="action_report_sse_document" model="ir.actions.report">
+        <field name="name">Salida de Equipos (PDF)</field>
+        <field name="model">sse.document</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sde_document.report_sse_document_template</field>
+
+
+    </record>
+
+    <!-- =======================================================
+         PLANTILLA QWEB  –  SOLO los datos solicitados
+         (usa <main> para evitar errores)
+         ======================================================= -->
+    <template id="report_sse_document_template">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+
+                <main class="page" style="font-family: Verdana; font-size: 17px;">
+                    <!-- Encabezado con logo -->
+                    <div class="row mb-4">
+                        <div class="col text-center">
+                            <img t-att-src="'/sde_document/static/src/img/GPS_LOGO.png'" style="max-height: 100px;"/>
+                        </div>
+                    </div>
+
+                    <!-- Título y código -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td class="text-center align-middle" style="width: 40%;">
+                                        <h3 style="margin:5px 0 0;"><strong>SALIDA DE EQUIPOS</strong></h3>
+                                    </td>
+                                    <td class="text-center align-middle" style="width: 35%;">
+                                        <p style="margin:0;"><strong>Código:</strong> <t t-esc="doc.name"/></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Código QR -->
+                    <h2 style="text-align:center; margin-top:20px;"><strong>Código QR</strong></h2>
+                        <div style="text-align:center;">
+                                <br></br>
+                                <img t-att-src="'data:image/png;base64,%s' % doc._get_qr_image().decode()"
+                                     style="width:300px;"/>
+                        </div>
+                    <!-- Solicitante -->
+                    <table class="table table-bordered">
+                        <h3><strong>Datos del solicitante</strong></h3>
+                        <p>
+                            <strong>Nombre:</strong> <t t-esc="doc.employee_id.name or '—'"/><br/>
+                            <strong>Identificación:</strong> <t t-esc="doc.sudo().identificacion or '—'"/><br/>
+                            <strong>Departamento:</strong> <t t-esc="doc.department_id.name or '—'"/><br/>
+                            <strong>Ubicación:</strong> <t t-esc="doc.location_id.name or '—'"/>
+
+                        </p>
+                    </table>
+                    <!-- Solicitante -->
+                    <table class="table table-bordered">
+                        <h3><strong>Fechas</strong></h3>
+                        <p>
+                            <strong>Fecha de emisión:</strong> <t t-esc="doc.issue_date or '—'"/><br/>
+                            <strong>Fecha de expiración:</strong> <t t-esc="doc.expiration_date or '—'"/><br/>
+
+                        </p>
+                    </table>
+
+
+                    <!-- Equipos -->
+                    <table  class="table table-bordered">
+                        <h3><strong>Equipos registrados</strong></h3>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Modelo</th><th>Marca</th>
+                                <th>N.º&#160;Serie</th><th>Color</th><!-- ← sustitución -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="idx" t-value="1"/>
+                            <t t-foreach="doc.equipment_line_ids" t-as="l">
+                                <tr>
+                                    <td><t t-esc="idx"/></td>
+                                    <td><t t-esc="l.modelo or '—'"/></td>
+                                    <td><t t-esc="l.marca or '—'"/></td>
+                                    <td><t t-esc="l.serial_number or '—'"/></td>
+                                    <td><t t-esc="l.color or '—'"/></td>
+                                </tr>
+                                <t t-set="idx" t-value="idx + 1"/>
+                            </t>
+                            <t t-if="not doc.equipment_line_ids">
+                                <tr><td colspan="5" style="text-align:center;"><strong>Sin equipos registrados</strong></td></tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br></br>
+
+
+                </main>
+
+                <div class="pagebreak"/>
+            </t>
+        </t>
+    </template>
+</odoo>

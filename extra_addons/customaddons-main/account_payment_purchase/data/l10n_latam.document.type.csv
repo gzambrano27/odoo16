@@ -1,0 +1,4 @@
+"id","sequence","code","name","report_name","internal_type","doc_code_prefix","country_id/id","active","l10n_ec_check_format"
+"ec_dt_01N",1,"00","Fact. Sin Validez Tributaria","Doc. Sin Validez Tributaria","invoice","SinDoc","base.ec",1,0
+"ec_dt_02N",1,"00","NotCr. Sin Validez Tributaria","Doc. Sin Validez Tributaria","invoice","SinDoc","base.ec",1,0
+"ec_dt_03N",1,"00","Notdb. Sin Validez Tributaria","Doc. Sin Validez Tributaria","invoice","SinDoc","base.ec",1,0

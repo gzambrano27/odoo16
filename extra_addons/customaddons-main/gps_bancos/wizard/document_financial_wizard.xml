@@ -1,0 +1,813 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="document_financial_wizard_view_form"
+			model="ir.ui.view">
+			<field name="name">document.financial.wizard.form</field>
+			<field name="model">document.financial.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Asistente de Operaciones Financieras"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+						<group>
+
+							<field name="internal_type" invisible="1"
+                        />
+
+							<field name="type_action" invisible="1"
+                        />
+							<field name="type"    invisible="context.get('invisible_type',0)"
+								   readonly="context.get('readonly_type',0)"
+                        />
+									<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+										attrs="{'required':[('type','=','file')],'invisible':[('type','!=','file')]}" />
+
+							<field name="amount" attrs="{'invisible':[('type','!=','compute')]}"/>
+							<field name="years" attrs="{'invisible':[('type','!=','compute')]}"/>
+							<field name="percentage_amortize" readonly="1" force_save="1" attrs="{'invisible':[('type','!=','compute')]}"/>
+
+							<field name="percentage_type" attrs="{'invisible':[('type','!=','compute')]}" readonly="1" />
+							<field name="percentage_interest" attrs="{'invisible':[('type','!=','compute')]}"/>
+
+														<field name="percentage_interest_quota" attrs="{'invisible':[('type','!=','compute')]}"/>
+
+
+
+							<field name="capital" attrs="{'invisible':[('type','!=','compute')]}"/>
+							<field name="periods" attrs="{'invisible':[('type','!=','compute')]}"/>
+
+						</group>
+						<group>
+							<field name="document_financial_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="company_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="currency_id"  invisible="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+						</group>
+						</group>
+					<newline />
+					<field name="message"
+						   attrs="{'required':[('type','=','text')],'invisible':[('type','!=','text')]}"
+                        />
+					<footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs' invisible="context.get('default_internal_type','')!='out'"/>
+						<button name="process_in" type="object" string="Procesar"
+							icon='fa-cogs' invisible="context.get('default_internal_type','')!='in'"/>
+
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		
+		<record
+			id="document_financial_wizard_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Asistente de Operaciones Financieras</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'import','invisible_type':1,'readonly_type':1,'default_internal_type':'out'}</field>
+		</record>
+
+		<record
+			id="document_financial_wizard_view_in_action"
+			model="ir.actions.act_window">
+			<field name="name">Asistente de Registro de Cobros Programados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'import','readonly_type':1,'default_internal_type':'in'}</field>
+		</record>
+
+		<!-- -->
+
+
+			<record
+			id="document_financial_wizard_view_payment_form"
+			model="ir.ui.view">
+			<field name="name">document.financial.wizard.payment.form</field>
+			<field name="model">document.financial.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Asistente de Operaciones Financieras"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+						<group>
+							<field name="internal_type" invisible="1" />
+							<field name="name" readonly="1" />
+							<field name="document_financial_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="document_financial_type"  invisible="1" />
+					<field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+			domain="[('company_id','=',company_id),('type','in',('bank',))]"
+			/>
+
+
+	<field name="payment_date" />
+							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
+
+
+
+				<field name="attachment_ids" widget="many2many_binary"/>
+
+						</group>
+						<group>
+					 		<field name="company_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="currency_id"  invisible="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+				<field name="payment_capital" attrs="{'invisible':[('original_payment_capital','&lt;=',0.00)]}"/>
+							<field name="payment_interest"  attrs="{'invisible':[('original_payment_interest','&lt;=',0.00)]}"/>
+
+							<field name="payment_other" attrs="{'invisible':[('original_payment_other','&lt;=',0.00)]}" />
+							<field name="payment_overdue_interest" style="color:red"
+							attrs="{'invisible':[('internal_type','!=','out')]}"
+							/>
+<field name="payment_total" force_save="1" attrs="{'readonly':[('internal_type','=','out')]}"/>
+
+<field name="register_invoices" string="Cambiar Cont."/>
+
+						</group>
+
+
+
+					</group>
+					<newline/>
+					<notebook>
+						<page string="Cuotas">
+							<field name="line_ids" force_save="1" readonly="context.get('readonly_lines',0)"
+						   context="{'form_view_ref':'gps_bancos.document_financial_line_view_form','tree_view_ref':'gps_bancos.document_financial_line_view_tree_payment'}"
+						   domain="[('document_id','=',document_financial_id),('total_pending','&gt;',0)]">
+							<tree string="Detalle" >
+
+                                  <field name="id" readonly="1" optional="hide"/>
+                         <field name="quota" readonly="1"/>
+                                <field name="date_process"/>
+                             <field name="percentage_amortize" readonly="1" sum="total" optional="hide"/>
+                                    <field name="percentage_interest" readonly="1" optional="hide"/>
+
+                                 <field name="payment_capital" sum="total" optional="hide" />
+                                 <field name="payment_interest" sum="total" optional="hide"/>
+
+
+
+                        <field name="total" sum="total" readonly="1"/>
+                        <field name="total_to_paid" sum="total" readonly="1" optional="hide"/>
+                        <field name="total_paid" sum="total"  readonly="1"/>
+                        <field name="total_pending" sum="total"  readonly="1"/>
+
+                            </tree>
+					</field>
+						</page>
+					<page string="Cuentas">
+						<field name="line_account_ids" attrs="{'readonly':[('register_invoices','!=',True)]}"
+							   	force_save="1">
+							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
+								<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+								domain="[('company_id','=',parent.company_id)]"
+
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+
+								<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+
+								<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+							</tree>
+
+							<form string="Detalle" create="true" delete="true" edit="true">
+								<group>
+									<group>
+										<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+								domain="[('company_id','=',parent.company_id)]"
+
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+
+								<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+								</group>
+									<group>
+										<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+								</group>
+
+								</group>
+
+
+
+							</form>
+						</field>
+					</page>
+					<page string="Configuración">
+<group colspan="2" cols="1">
+
+						<group>
+<field name="do_account" />
+
+
+						</group>
+							<group>
+	<field name="original_payment_capital" readonly="1" force_save="1"
+	attrs="{'invisible':[('original_payment_capital_sinaplicar','&lt;=',0.00)]}"
+	/>
+							<field name="original_payment_interest" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_payment_interest_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_payment_other" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_payment_other_sinaplicar','&lt;=',0.00)]}"
+							/>
+
+								<field name="payment_amount" force_save="1" invisible="1"
+									   attrs="{'readonly':[('internal_type','=','out')],'invisible':[('internal_type','!=','out')]}"/>
+
+									<field name="original_payment_capital_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_capital_sinaplicar','&lt;=',0.00)]}"
+									/>
+							<field name="original_payment_interest_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_interest_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_payment_other_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_other_sinaplicar','&lt;=',0.00)]}"
+							/>
+<field name="payment_amount_income" readonly="1" force_save="1" attrs="{'invisible':[('internal_type','!=','in')]}"/>
+
+
+
+						</group>
+</group>
+					</page>
+					</notebook>
+
+					<newline/>
+					<footer>
+						<button name="process_payment" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+		<record
+			id="document_financial_wizard_payment_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Pagos de Operaciones Financieras</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_payment_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process'}</field>
+		</record>
+
+
+
+
+
+
+			<record
+			id="document_financial_wizard_view_payment_cobro_form"
+			model="ir.ui.view">
+			<field name="name">document.financial.wizard.payment.cobro.form</field>
+			<field name="model">document.financial.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Cobros de Contratos"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+						<group>
+							<field name="internal_type" invisible="1" />
+							<field name="name" readonly="1" />
+							<field name="document_financial_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="document_financial_type"  invisible="1" />
+					<field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+			domain="[('company_id','=',company_id),('type','in',('bank',))]"
+			/>
+
+
+	<field name="payment_date" />
+							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
+
+
+
+				<field name="attachment_ids" widget="many2many_binary"/>
+
+						</group>
+						<group>
+					 		<field name="company_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="currency_id"  invisible="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+				<field name="payment_capital" attrs="{'invisible':[('original_payment_capital','&lt;=',0.00)]}"/>
+							<field name="payment_interest"  attrs="{'invisible':[('original_payment_interest','&lt;=',0.00)]}"/>
+
+							<field name="payment_other" attrs="{'invisible':[('original_payment_other','&lt;=',0.00)]}" />
+
+
+							<field name="payment_cobro_amount" attrs="{'invisible':[('original_cobro_amount','&lt;=',0.00)]}"/>
+														<field name="payment_cobro_interes"  attrs="{'invisible':[('original_cobro_interes','&lt;=',0.00)]}" />
+<field name="payment_total" force_save="1" readonly="1"/>
+<field name="register_invoices" string="Cambiar Cont."/>
+
+
+						</group>
+
+
+
+					</group>
+					<newline/>
+					<notebook>
+
+
+						<page string="Cuotas" attrs="{'invisible':[('internal_type','=','out')]}">
+							<field name="line_ids" force_save="1" readonly="context.get('readonly_lines',0)"
+						   context="{'form_view_ref':'gps_bancos.document_financial_line_view_in_form','tree_view_ref':'gps_bancos.document_financial_line_view_in_tree'}"
+						   domain="[('document_id','=',document_financial_id),('total_pending','&gt;',0)]">
+							<tree string="Detalle" >
+
+                                  <field name="id" readonly="1" optional="hide"/>
+                         <field name="quota" readonly="1"/>
+                                <field name="date_process"/>
+
+								  <field name="amount" sum="total"/>
+
+
+                    <field name="amount_interes"  sum="total"  />
+
+                        <field name="total" sum="total" readonly="1"/>
+                        <field name="total_to_paid" sum="total" readonly="1" optional="hide"/>
+                        <field name="total_paid" sum="total"  readonly="1"/>
+                        <field name="total_pending" sum="total"  readonly="1"/>
+
+                            </tree>
+					</field>
+						</page>
+
+					<page string="Cuentas">
+						<field name="line_account_ids" attrs="{'readonly':[('register_invoices','!=',True)]}"
+							   	force_save="1">
+							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
+								<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+								domain="[('company_id','=',parent.company_id)]"
+
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+
+								<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+
+								<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+							</tree>
+
+							<form string="Detalle" create="true" delete="true" edit="true">
+								<group>
+									<group>
+										<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+								domain="[('company_id','=',parent.company_id)]"
+
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+
+								<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+								</group>
+									<group>
+										<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+								</group>
+
+								</group>
+
+
+
+							</form>
+						</field>
+					</page>
+					<page string="Configuración">
+<group colspan="2" cols="1">
+
+						<group>
+<field name="do_account" />
+
+
+						</group>
+							<group>
+	<field name="original_payment_capital" readonly="1" force_save="1"
+	attrs="{'invisible':[('original_payment_capital_sinaplicar','&lt;=',0.00)]}"
+	/>
+							<field name="original_payment_interest" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_payment_interest_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_payment_other" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_payment_other_sinaplicar','&lt;=',0.00)]}"
+							/>
+
+								<field name="payment_amount" force_save="1" invisible="1"
+									   attrs="{'readonly':[('internal_type','=','out')],'invisible':[('internal_type','!=','out')]}"/>
+
+									<field name="original_payment_capital_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_capital_sinaplicar','&lt;=',0.00)]}"
+									/>
+							<field name="original_payment_interest_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_interest_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_payment_other_sinaplicar" readonly="1" force_save="1"
+						attrs="{'invisible':[('original_payment_other_sinaplicar','&lt;=',0.00)]}"
+							/>
+
+
+<field name="payment_amount_income" readonly="1" force_save="1" attrs="{'invisible':[('internal_type','!=','in')]}"/>
+
+
+			<field name="original_cobro_amount" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_cobro_amount_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_cobro_interes" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_cobro_interes_sinaplicar','&lt;=',0.00)]}"
+							/>
+
+								<field name="original_cobro_amount_sinaplicar" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_cobro_amount_sinaplicar','&lt;=',0.00)]}"
+							/>
+							<field name="original_cobro_interes_sinaplicar" readonly="1" force_save="1"
+							attrs="{'invisible':[('original_cobro_interes_sinaplicar','&lt;=',0.00)]}"
+							/>
+
+
+
+
+
+						</group>
+</group>
+					</page>
+					</notebook>
+
+					<newline/>
+					<footer>
+						<button name="process_payment" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+<record
+			id="document_financial_wizard_payment_view_lines_action"
+			model="ir.actions.act_window">
+			<field name="name">Pagos de Operaciones Financieras</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_payment_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process','readonly_lines':1}</field>
+		</record>
+
+		<record
+			id="document_financial_wizard_payment_cobros_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Cobros de Acuerdos</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_payment_cobro_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process'}</field>
+		</record>
+
+		<!-- -->
+
+
+	<record id="document_financial_wizard_view_invoiced_form" model="ir.ui.view">
+    <field name="name">document.financial.wizard.invoiced.form</field>
+    <field name="model">document.financial.wizard</field>
+    <field name="type">form</field>
+    <field eval="8" name="priority" />
+    <field name="arch" type="xml">
+        <form string="Asistente de Facturación" version="16.0">
+            <group cols="2">
+                <field name="document_financial_id" readonly="1" force_save="1"
+                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+                <field name="partner_id" readonly="1" force_save="1"
+                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+                <field name="company_id" readonly="1" force_save="1"
+                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+                <field name="currency_id" invisible="1" force_save="1"
+                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+            </group>
+
+
+<notebook>
+	<page string="Cuotas">
+			<field name="financial_line_ids"
+                domain="[('document_id','=',document_financial_id)]"
+                widget="one2many_list"
+				force_save="1"
+				   readonly="context.get('readonly_line',0)==1"
+                context="{'default_document_id': document_financial_id,'tree_view_ref':'gps_bancos.document_financial_line_view_in_tree','form_view_ref':'gps_bancos.document_financial_line_view_in_form'}" />
+
+	</page>
+
+	<page string="Facturas">
+			<field name="invoice_ids"
+                domain="[('partner_id','=',partner_id),('state','=','posted'),('move_type','in',('out_invoice','out_receipt')),('id','not in',apply_invoice_ids)]"
+                 context="{'default_partner_id': partner_id,'tree_view_ref':'account.view_out_invoice_tree'}" />
+		<newline/>
+		<field name="apply_invoice_ids" invisible="1" />
+	</page>
+
+	<page string="Detalle Aplicado">
+			<field name="invoiced_line_ids" nolabel="1">
+<tree editable="bottom" decoration-it="not invoice_id" decoration-bf="not invoice_id" create="false" edit="true" delete="false">
+	  <field name="line_id" readonly="1" force_save="1"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+          <field name="invoice_id" readonly="1" force_save="1"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+
+	 <field name="amount" readonly="1" force_save="1" sum="total"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+
+	 <field name="amount_base" readonly="1" force_save="1" sum="total"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+        <field name="amount_iva" readonly="1" force_save="1" sum="total"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+
+	 <field name="amount_retenido" readonly="1" force_save="1" sum="total"
+			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+
+
+
+</tree>
+			</field>
+	</page>
+</notebook>
+
+
+            <footer>
+                <button name="process_invoice" type="object" string="Procesar" icon="fa-cogs" class="btn-primary" />
+                <button name="cancel" type="object" string="Salir" icon="fa-times" special="cancel" class="btn-secondary" />
+            </footer>
+        </form>
+    </field>
+</record>
+
+
+
+
+		<record
+			id="document_financial_wizard_invoice_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Relacionar a Facturas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_invoiced_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process'}</field>
+		</record>
+
+
+<record
+			id="document_financial_wizard_invoice_line_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Relacionar a Facturas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_invoiced_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process','readonly_line':1}</field>
+		</record>
+
+		<!--    -->
+
+
+			<record
+			id="document_financial_wizard_view_payment_recaudacion_bank_form"
+			model="ir.ui.view">
+			<field name="name">document.financial.wizard.payment.recaudacion.bank.form</field>
+			<field name="model">document.financial.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Asistente de Recaudación"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+						<group>
+							<field name="internal_type" invisible="1" />
+							<field name="name" readonly="1" />
+							<field name="document_financial_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="document_financial_type"  invisible="1" />
+					<field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+			domain="[('company_id','=',company_id),('type','in',('bank',))]"
+			/>
+
+
+	<field name="payment_date" />
+							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
+
+
+
+				<field name="attachment_ids" widget="many2many_binary" invisible="1" />
+
+						</group>
+						<group>
+					 		<field name="company_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+							<field name="currency_id"  invisible="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+		<field name="payment_collect" force_save="1"  />
+
+<field name="payment_amount_collect" invisible="1"  />
+
+						</group>
+
+
+
+					</group>
+
+					<notebook>
+					<page string="Cuentas">
+						<field name="line_account_ids"  force_save="1">
+							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
+								<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="1"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+								<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+							</tree>
+
+							<form string="Detalle" create="true" delete="true" edit="true">
+								<group>
+									<group>
+									<field name="account_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="1"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
+								   attrs="{'required':[('is_prepayment','=',True)]}"
+								   optional="hide"/>
+<field name="analytic_id" force_save="1"
+									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+									   required="0"
+									   domain="[('company_id','=',parent.company_id)]"
+								/>
+								</group>
+									<group>
+										<field name="debit" force_save="1"
+									   sum="total"/>
+								<field name="credit" force_save="1"
+									   sum="total"/>
+								<field name="is_prepayment" invisible="1"/>
+								</group>
+
+								</group>
+
+
+							</form>
+
+						</field>
+					</page>
+					<page string="Configuración">
+<group colspan="2" cols="1">
+
+						<group>
+<field name="do_account" />
+
+
+						</group>
+							<group>
+<field name="is_cobro" readonly="1" force_save="1" />
+
+						</group>
+</group>
+					</page>
+					</notebook>
+
+					<newline/>
+					<footer>
+						<button name="process_payment_cobro" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+		<record
+			id="document_financial_wizard_payment_recaudacion_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Recaudaciones de Operaciones Financieras</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">document.financial.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="document_financial_wizard_view_payment_recaudacion_bank_form" />
+			<field name="target">new</field>
+			<field name="context">{'default_type_action':'process','default_is_cobro':True}</field>
+		</record>
+
+    </data>
+    
+    
+</odoo>

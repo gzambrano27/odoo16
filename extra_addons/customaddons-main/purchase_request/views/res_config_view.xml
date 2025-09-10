@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_purchase_inherit_requisition" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.purchase.inherit.requisition</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='po_order_approval']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="require_requisition_po_setting">
+                    <div class="o_setting_left_pane">
+                        <field name="require_requisition_po"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="require_requisition_po"/>
+                        <div class="text-muted">
+                            Obliga a vincular una requisición de materiales o de servicios para crear una orden de compra.
+                        </div>
+                    </div>
+                    <div class="o_setting_left_pane">
+                        <field name="dias_eval"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="dias_eval"/>
+                        <div class="text-muted">
+                            Dias a evaluar de una requisicion aprobada para convertirse en OC.
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_company_form_inherit_requisition" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.require_requisition_po</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="require_requisition_po"/>
+                <field name="dias_eval"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

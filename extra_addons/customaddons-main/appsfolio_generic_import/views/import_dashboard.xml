@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="kanban_view_import_dashboard" model="ir.ui.view">
+        <field name="name">kanban.view.import.dashboard</field>
+        <field name="model">import.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard o_salesteam_kanban" create="0">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="pending_data"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_content o_kanban_get_form" style="width: 90%;">
+                            <div class="o_has_icon">
+                                <div class="container o_kanban_card_content">
+                                    <div class="row">
+                                        <div class="o_kanban_primary_left">
+                                            <div t-if="record.state.raw_value =='sale.order'"
+                                                 style="color: #714B61; margin-left: 10px;" name="sale order">
+                                                <left>
+                                                    <i title="Sale Order" class="fa fa-shopping-cart fa-5x"/>
+                                                </left>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div t-if="record.state.raw_value =='purchase.order'"
+                                                 style="color: #714B61; margin-left: 30px;" name="purchase order">
+                                                <left>
+                                                    <i title="Purchase Order" class="fa fa-credit-card-alt fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='account.move'"
+                                                 style="color: #714B61; margin-left: 30px;" name="account move">
+                                                <left>
+                                                    <i title="Invoice" class="fa fa-credit-card-alt fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='stock.picking'"
+                                                 style="color: #714B61; margin-left: 30px;" name="stock picking">
+                                                <left>
+                                                    <i title="Picking" class="fa fa-shopping-bag fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='mrp.bom'"
+                                                 style="color: #714B61; margin-left: 30px;" name="mrp bom">
+                                                <left>
+                                                    <i title="BOM" class="fa fa-industry fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='res.partner'"
+                                                 style="color: #714B61; margin-left: 30px;" name="res partner">
+                                                <left>
+                                                    <i title="Partner" class="fa fa-user fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='product.pricelist'"
+                                                 style="color: #714B61; margin-left: 30px;" name="product pricelist">
+                                                <left>
+                                                    <i title="Price list" class="fa fa-list fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='product.template'"
+                                                 style="color: #714B61; margin-left: 30px;" name="product template">
+                                                <left>
+                                                    <i title="Product" class="fa fa-product-hunt fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='product.product'"
+                                                 style="color: #714B61; margin-left: 30px;" name="variant">
+                                                <left>
+                                                    <i title="Product variant" class="fa fa-product-hunt fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='stock.quant'"
+                                                 style="color: #714B61; margin-left: 30px;" name="Inventory">
+                                                <left>
+                                                    <i title="Stock Quant" class="fa fa-exchange fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='account.payment'"
+                                                 style="color: #714B61; margin-left: 30px;" name="account payment">
+                                                <left>
+                                                    <i title="Payment" class="fa fa-credit-card fa-5x"/>
+                                                </left>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='account.account'"
+                                                 style="color: #714B61; margin-left: 30px;"
+                                                 name="import chart of account">
+                                                <left>
+                                                    <i title="Chart Of Account" class="fa fa-cloud-download fa-5x"/>
+                                                </left>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 o_kanban_primary_right" style="margin-left: 4%;">
+                                            <div t-if="record.state.raw_value =='sale.order'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_view_order_form_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left:4px">
+                                                        Sale Order
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm " style="margin-top: 20%;"
+                                                        name="%(action_sale_order_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Sale Order
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value == 'purchase.order'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_view_inherit_purchase_order_form_view)d"
+                                                   type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left:4px">
+                                                        Purchase Order
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm" style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_purchase_order_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Purchase Order
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='account.move'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_view_move_form_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left:4px">
+                                                        Invoice/Bills/Credit Note
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm btn-primar"
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_account_move_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Invoice/Bills
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='stock.picking'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_view_picking_view_inherit)d"
+                                                   type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left:4px">
+                                                        Shippment / Delivery
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_stock_picking_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Picking
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='mrp.bom'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_mrp_bom_inherit_view)d"
+                                                   type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Bill of Materials
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_mrp_bom_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import BOM
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='res.partner'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_res_partner_view_inherit)d"
+                                                   type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left:4px">
+                                                        Partner
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_res_partner_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Partner
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='product.pricelist'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_product_pricelist_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Pricelist
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_sale_pricelist_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Pricelist
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value == 'product.template'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_product_template_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Product Template
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_product_product_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Product
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value == 'product.product'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_product_product_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Product Variant
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_product_variant_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Product Variant
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value =='stock.quant'">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_view_stock_quant_view_inherit)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Inventory
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_stock_quant_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Inventory
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value == 'account.payment'"
+                                                 name="account payment details">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_account_payment_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Payment
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm "
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_account_payment_wizard_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Payment
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div t-if="record.state.raw_value == 'account.account'"
+                                                 name="import chart of account">
+                                                <a style="font-size: 20px; color:#714B61;"
+                                                   name="%(action_account_account_inherit_view)d" type="action">
+                                                    <span class="o_value">
+                                                        <t t-esc="record.pending_data.raw_value"/>
+                                                    </span>
+                                                    <span class="o_label" style="padding-left: 4px">
+                                                        Chart of Account
+                                                    </span>
+                                                </a>
+                                                <br/>
+                                                <br/>
+                                                <button class="btn btn-sm"
+                                                        style="margin-top: 20%; color:#714B61;"
+                                                        name="%(action_chart_of_account_view)d" type="action">
+                                                    <span class="o_label"
+                                                          style="white-space: nowrap; background-color:#714B61; padding:7px 14px; color: white; font-size:1.08333333rem; text-transform:uppercase;">
+                                                        Import Chart of Account
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="action_kanban_view_import_dashboard" model="ir.actions.act_window">
+        <field name="name">All In One Import Dashboard</field>
+        <field name="res_model">import.dashboard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="kanban_view_import_dashboard"/>
+        <field name="usage">menu</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            </p>
+        </field>
+    </record>
+</odoo>

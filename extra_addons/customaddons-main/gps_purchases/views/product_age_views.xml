@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!--
+    <record model="ir.ui.view" id="product_age_report_tree_view">
+        <field name="name">product.age.report.tree</field>
+        <field name="model">product.age.report</field>
+        <field name="arch" type="xml">
+            <tree string="Product Age Report">
+                <field name="company_ids" />
+            </tree>
+        </field>
+    </record>
+    -->
+
+    <record model="ir.ui.view" id="product_age_report_form_view">
+        <field name="name">product.age.report.form</field>
+        <field name="model">product.age.report</field>
+        <field name="arch" type="xml">
+            <form string="Product Age Report">
+                <sheet string="Product Age Report">
+                    <!-- <label for="name" />
+                    <h2><field name="name" /></h2> -->
+                    <group col="4">
+                        <field name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                    <group col="4">
+                        <field name="start_date" />
+                        <field name="end_date" />
+                    </group>
+                    <notebook>
+                            <page name="compra" string="Última compra">
+                            </page>
+                            <page name="rotación" string="Rotación">
+                            </page>
+                            <page name="existencia" string="Stock a Fecha">
+                                <field name="quant_ids">
+                                    <tree string="Stock Quant" editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="location_id"/>
+                                        <field name="quantity"/>
+                                        <field name="reserved_quantity"/>
+                                        <field name="company_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_age_report_view" model="ir.actions.act_window">
+        <field name="name">Product Age Report</field>
+        <field name="res_model">product.age.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <!-- <field name="view_id" ref="product_age_report_form_view"/> -->
+    </record>
+
+    <menuitem id="action_product_age_report_menu"
+        name="Product Age Report"
+        parent="purchase.purchase_report_main"
+        groups="purchase.group_purchase_manager,purchase.group_purchase_user"
+        action="action_product_age_report_view" />
+
+</odoo>

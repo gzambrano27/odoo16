@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+
+
+<record id="hr_vacation_period_wizard_view_form" model="ir.ui.view">
+    <field name="name">hr.vacation.period.wizard.form</field>
+    <field name="model">hr.vacation.period.wizard</field>
+    <field name="type">form</field>
+    <field name="priority">8</field>
+    <field name="arch" type="xml">
+        <form string="Generar Periodo de Vacaciones">
+            <header>
+            </header>
+            <notebook>
+                <page string="Configuración">
+                    <group colspan="2" cols="1">
+                        <field name="company_id"
+                               options="{'no_open': True, 'no_create': True, 'no_quick_create': True}"
+                               required="1" colspan="2" />
+                        <field name="year_start" colspan="2"
+                               on_change="onchange_year_endstart(year_start, year_end)" />
+                        <field name="year_end" colspan="2"
+                               on_change="onchange_year_endstart(year_start, year_end)" />
+                    </group>
+                </page>
+                <page string="Empleado(s)">
+                    <field name="employee_ids" nolabel="1" colspan="4"
+                           domain="[]"
+                           options="{'no_open': True, 'no_create': True, 'no_quick_create': True}" />
+                </page>
+            </notebook>
+            <footer>
+                <button name="process" type="object" string="Procesar" icon="fa-cogs" />
+                <button special="cancel" name="cancel" string="Salir" colspan="2" type="object" icon="fa-times" />
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="hr_vacation_period_wizard_view_action" model="ir.actions.act_window">
+    <field name="name">Generar Periodo de Vacaciones</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">hr.vacation.period.wizard</field>
+    <field name="view_id" ref="hr_vacation_period_wizard_view_form" />
+    <field name="context">{}</field>
+    <field name="target">new</field>
+</record>
+
+
+    </data>
+</odoo>

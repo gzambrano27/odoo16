@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+    <template id="report_detalle_pago">
+    <t t-name="gps_bancos.report_detalle_pago">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+             <t t-set="doc" t-value="doc.sudo()" />
+
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family:verdana; font-size:14px;">
+                    <div class="container font-sans">
+                        <div class="row text-center align-items-center mb-3">
+                            <div class="col-4">
+                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" class="img-fluid" alt="Logo" width="150"/>
+                            </div>
+                            <div class="col-8">
+                                <h1 class="h3 fw-bold mb-0"><t t-esc="doc.company_id.name"/></h1>
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <span><strong>LIQUIDACIÓN #:</strong> <t t-esc="doc.id"/></span><br/>
+                            <span><strong>FORMA DE PAGO:</strong> <t t-esc="doc.bank_macro_id.get_mode_payment_dscr()"/></span><br/>
+                            <span><strong>PROVEEDOR:</strong> <t t-esc="doc.partner_id.name"/></span><br/>
+                            <span><strong>FECHA DE PAGO:</strong> <t t-esc="doc.date_payment"/></span><br/>
+                            <span><strong>TOTAL:</strong> $ <t t-esc="'{:,.2f}'.format(doc.amount)"/></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <h2 class="text-dark fw-bold border-bottom pb-2 mb-2">Detalle de Pago</h2>
+
+                            <t t-if="doc.payment_ids">
+                                <p class="text-danger fst-italic">(*) Montos en rojo indican aplicación directa de estos pagos.</p>
+                            </t>
+
+                            <!-- Facturas -->
+                            <t t-if="doc.invoices_ids">
+                                <h3 class="h5 text-secondary mt-4">Facturas</h3>
+                                <t t-foreach="doc.invoices_ids" t-as="invoice">
+
+                                     <t t-set="withholds" t-value="invoice.get_withholds()" />
+
+                                    <div class="card mb-3" style="page-break-inside: avoid;">
+                                        <div style="border:1px solid #aaa" class="card-body">
+                                            <p><strong>Factura:</strong> <t t-esc="invoice.l10n_latam_document_number or invoice.name"/></p>
+                                            <table style="border:1px solid #ffffff" class="table table-sm o_main_table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Base imponible</td>
+                                                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(invoice.amount_untaxed)"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>IVA 15%</td>
+                                                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(invoice.amount_tax)"/></td>
+                                                    </tr>
+                                                    <tr><td colspan="2"><hr class="my-2"/></td></tr>
+                                                    <tr>
+                                                        <td><strong>Total</strong></td>
+                                                        <td class="text-end"><strong>$ <t t-esc="'{:,.2f}'.format(invoice.amount_total)"/></strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Retenciones <t t-esc="','.join(withhold_name.replace('Ret', '') for withhold_name in withholds.mapped('name')) "/>  </td>
+                                                        <td class="text-end">- $<t t-set="withhold_amount" t-value="sum(withholds.mapped('amount_total_signed')) if withholds else 0.0"/><t t-esc="'{:,.2f}'.format(withhold_amount)"/></td>
+                                                    </tr>
+                                                    <tr><td colspan="2"><hr class="my-2"/></td></tr>
+                                                    <tr>
+                                                        <td/><td class="text-end"><strong>$ <t t-esc="'{:,.2f}'.format(invoice.amount_total - withhold_amount)"/></strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <!-- Conciliaciones -->
+                                            <t t-set="conciliaciones" t-value="invoice.line_ids.mapped('matched_debit_ids') + invoice.line_ids.mapped('matched_credit_ids')"/>
+                                            <t t-if="conciliaciones">
+                                                <table class="table table-sm table-striped o_main_table mt-3">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:15%">FECHA</th>
+                                                            <th style="width:70%">DESCRIPCIÓN</th>
+                                                            <th style="width:15%" class="text-end">MONTO</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="conciliaciones" t-as="reconc">
+                                                            <t t-set="line" t-value="reconc.debit_move_id if reconc.debit_move_id.move_id != invoice else reconc.credit_move_id"/>
+                                                            <t t-set="move" t-value="line.move_id"/>
+
+                                                            <t t-set="withholds" t-value="invoice.get_withholds()" />
+
+                                                            <t t-set="payment_descr" t-value="move.get_payment_dscr_summary()"/>
+                                                             <t t-if="move not in withholds">
+                                                                <tr t-att-class="'text-danger' if (payment_descr[0] and payment_descr[0] in doc.payment_ids) else ''">
+                                                                    <td style="width:15%"><t t-esc="move.date"/></td>
+                                                                    <td style="width:70%"><t t-esc="payment_descr[1]"/></td>
+                                                                    <td style="width:15%" class="text-end">$ <t t-esc="'{:,.2f}'.format(reconc.amount)"/></td>
+                                                                </tr>
+                                                             </t>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+
+                            <!-- Órdenes de Compra -->
+                            <t t-if="doc.order_ids">
+                                <h3 class="h5 text-secondary mt-4">Órdenes de Compra</h3>
+                                <t t-foreach="doc.order_ids" t-as="order">
+                                    <div class="card mb-3" style="page-break-inside: avoid;">
+                                        <div style="border:1px solid #aaa" class="card-body">
+                                            <p><strong>OC:</strong> <t t-esc="order.name"/></p>
+                                            <table style="border:1px solid #ffffff" class="table table-sm o_main_table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Base imponible</td>
+                                                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(order.amount_untaxed)"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>IVA 15%</td>
+                                                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(order.amount_tax)"/></td>
+                                                    </tr>
+                                                    <tr><td colspan="2"><hr class="my-2"/></td></tr>
+                                                    <tr>
+                                                        <td><strong>Total</strong></td>
+                                                        <td class="text-end"><strong>$ <t t-esc="'{:,.2f}'.format(order.amount_total)"/></strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <t t-if="order.purchase_payment_line_ids">
+                                                <table class="table table-sm table-striped o_main_table mt-3">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:15%">FECHA</th>
+                                                            <th style="width:70%">DESCRIPCIÓN</th>
+                                                            <th style="width:15%" class="text-end">MONTO</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="order.purchase_payment_line_ids" t-as="pago">
+                                                            <t t-set="payment_descr" t-value="pago.payment_id.move_id.get_payment_dscr_summary()"/>
+                                                            <tr t-att-class="'text-danger' if (payment_descr[0] and payment_descr[0] in doc.payment_ids) else ''">
+                                                                <td style="width:15%"><t t-esc="pago.payment_id.date"/></td>
+                                                                <td style="width:70%"><t t-esc="payment_descr[1]"/></td>
+                                                                <td style="width:15%" class="text-end">$ <t t-esc="'{:,.2f}'.format(pago.amount)"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+
+                            <t t-if="not doc.invoices_ids and not doc.order_ids">
+                                <p class="fst-italic"><t t-esc="doc.comments or ''"/></p>
+                            </t>
+
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+    </t>
+
+           </template>
+</odoo>

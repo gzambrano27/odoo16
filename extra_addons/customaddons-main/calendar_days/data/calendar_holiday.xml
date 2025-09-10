@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+		<record id="holiday1" model="calendar.holiday">
+			<field name="name">Año Nuevo</field>
+		</record>
+		
+		<record id="holiday2" model="calendar.holiday">
+			<field name="name">Carnaval</field>
+		</record>
+		
+		<record id="holiday3" model="calendar.holiday">
+			<field name="name">Viernes Santo</field>
+		</record>
+		
+		<record id="holiday4" model="calendar.holiday">
+			<field name="name">Día del Trabajo</field>
+		</record>
+		
+		<record id="holiday5" model="calendar.holiday">
+			<field name="name">Batalla del Pichincha</field>
+		</record>
+		
+		<record id="holiday6" model="calendar.holiday">
+			<field name="name">Fundación de Guayaquil</field>
+		</record>
+		
+		<record id="holiday7" model="calendar.holiday">
+			<field name="name">Primer Grito de Independencia</field>
+		</record>
+		
+		<record id="holiday8" model="calendar.holiday">
+			<field name="name">Independencia de Guayaquil</field>
+		</record>
+		
+		<record id="holiday9" model="calendar.holiday">
+			<field name="name">Día de Difuntos</field>
+		</record>
+		
+		<record id="holiday10" model="calendar.holiday">
+			<field name="name">Independencia de Cuenca</field>
+		</record>
+		
+		<record id="holiday11" model="calendar.holiday">
+			<field name="name">Navidad</field>
+		</record>
+		
+		<record id="holiday12" model="calendar.holiday">
+			<field name="name">Fin de Año</field>
+		</record>
+		
+		
+		
+			
+		
+	</data>
+
+</odoo>

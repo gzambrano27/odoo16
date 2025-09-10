@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<!-- <data>
+		<record id="group_project_jefe" model="res.groups">
+			<field name="name">Jefe</field>
+			<field name="implied_ids" eval="[(4, ref('project.group_project_manager'))]"/>
+			<field name="category_id" ref="base.module_category_services_project"/>
+		</record>
+	</data> -->
+	<data noupdate="1">
+		<record id="group_project_jefe" model="res.groups">
+			<field name="name">Jefe</field>
+			<field name="category_id" ref="base.module_category_services_project"/>
+			<field name="implied_ids" eval="[(4, ref('project.group_project_user'))]"/>
+		</record>
+		<record id="group_project_managern" model="res.groups">
+			<field name="name">AdministradorN</field>
+			<field name="category_id" ref="base.module_category_services_project"/>
+			<field name="implied_ids" eval="[(4, ref('bryntum_gantt.group_project_jefe'))]"/>
+			<field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+		</record>
+    </data>
+
+	<data>
+		<!-- Regla para Administradores: ven todas las tareas -->
+		<record id="ir_rule_project_task_manager" model="ir.rule">
+			<field name="name">Tareas: Administrador ve todas</field>
+			<field name="model_id" ref="project.model_project_task"/>
+			<field name="domain_force">[(1, '=', 1)]</field>
+			<field name="groups" eval="[(4, ref('project.group_project_manager'))]"/>
+		</record>
+		<!-- Regla para Jefes: ven solo las tareas de su departamento -->
+		<!-- <record id="ir_rule_project_task_jefe" model="ir.rule">
+			<field name="name">Tareas: Jefe ve las de su departamento</field>
+			<field name="model_id" ref="project.model_project_task"/>
+			<field name="domain_force">[('department_id', '=', user.department_id.id)]</field>
+			<field name="groups" eval="[(4, ref('bryntum_gantt.group_project_jefe'))]"/>
+		</record> -->
+		<!-- Regla para Usuarios: ven solo las tareas asignadas a ellos, donde el proyecto esté activo -->
+		<!-- <record id="ir_rule_project_task_user" model="ir.rule">
+			<field name="name">Tareas: Usuario ve solo las asignadas (proyecto activo)</field>
+			<field name="model_id" ref="project.model_project_task"/>
+			<field name="domain_force">
+				<![CDATA[
+					[('user_ids', 'in', [user.id]), ('project_id.active', '=', True)]
+				]]>
+			</field>
+			<field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+		</record> -->
+
+		<!-- Regla: Ver tareas propias o asignadas (como empleado) -->
+        <record id="rule_project_task_user_own_or_assigned" model="ir.rule">
+            <field name="name">Tareas creadas o asignadas al usuario</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">
+                ['|',
+                    ('create_uid', '=', user.id),
+                    ('assigned_employee_ids.id', '=', user.employee_id.id)
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Regla: Ver proyectos creados por el usuario -->
+        <record id="rule_project_project_user_own" model="ir.rule">
+            <field name="name">Proyectos creados por el usuario</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+		</record>
+
+		<record id="rule_project_task_jefe_own_or_team" model="ir.rule">
+			<field name="name">Tareas del jefe o su equipo</field>
+			<field name="model_id" ref="project.model_project_task"/>
+			<field name="domain_force">
+				['|', '|',
+					('create_uid', '=', user.id),
+					('create_uid.employee_id.parent_id.user_id.id', '=', user.id),
+					('assigned_employee_ids.parent_id.user_id.id', '=', user.id)
+				]
+			</field>
+			<field name="groups" eval="[(4, ref('bryntum_gantt.group_project_jefe'))]"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="0"/>
+		</record>
+
+		<record id="rule_project_jefe_own_or_team" model="ir.rule">
+			<field name="name">Proyectos propios o de empleados a cargo</field>
+			<field name="model_id" ref="project.model_project_project"/>
+			<field name="domain_force">
+				['|',
+					('create_uid', '=', user.id),
+					('create_uid.employee_id.parent_id.user_id.id', '=', user.id)
+				]
+			</field>
+			<field name="groups" eval="[(4, ref('bryntum_gantt.group_project_jefe'))]"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="0"/>
+		</record>
+	</data>
+</odoo>
+

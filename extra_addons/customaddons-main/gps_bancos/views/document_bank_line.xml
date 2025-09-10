@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record id="document_bank_line_view_tree_payment"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.tree.payment</field>
+            <field name="model">document.bank.line</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Detalle">
+                    <field name="id" readonly="1" optional="hide"/>
+                    <field name="quota" readonly="1"/>
+                    <field name="date_process"/>
+                    <field name="percentage_amortize" readonly="1" sum="total" optional="hide"/>
+                    <field name="percentage_interest" readonly="1" optional="hide"/>
+                    <field name="payment_capital" sum="total" optional="hide"/>
+                    <field name="payment_interest" sum="total" optional="hide"/>
+                    <field name="original_amount" sum="total" optional="hide"/>
+                    <field name="total" sum="total" readonly="1"/>
+                    <field name="total_to_paid" sum="total" readonly="1" optional="hide"/>
+                    <field name="total_paid" sum="total" readonly="1"/>
+                    <field name="total_pending" sum="total" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="document_bank_line_view_tree"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.tree</field>
+            <field name="model">document.bank.line</field>
+            <field name="type">tree</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Detalle"   create="false" delete="false"
+                      decoration-it="payment_overdue_interest&gt;0"
+                      decoration-bf="((state=='paid' and overdue) ) "
+                      decoration-muted="state=='cancelled'"
+                      decoration-success="((state=='paid' ) or (state=='posted' and total_pending&lt;=0.00) )"
+                      decoration-danger="( (state=='posted' and total_pending&gt;0.00) )"
+                >
+                    <field name="id" readonly="1" optional="hide"/>
+                    <field name="quota" readonly="1"/>
+                    <field name="date_process"/>
+                    <field name="percentage_amortize" readonly="1" sum="total" optional="show"/>
+                    <field name="percentage_interest" readonly="1" optional="show"/>
+                    <field name="payment_capital" sum="total"/>
+                    <field name="payment_interest" sum="total"/>
+                    <field name="payment_overdue_interest" sum="total" optional="hide"/>
+                    <field name="payment_other" sum="total"/>
+                    <field name="original_amount" sum="total" optional="hide"/>
+                    <field name="total" sum="total" readonly="1"/>
+                    <field name="total_to_paid" sum="total" optional="hide" readonly="1"
+                           attrs="{'invisible':[('state','not in',('posted','paid'))]}"/>
+                    <field name="total_paid" sum="total" optional="hide"
+                           attrs="{'invisible':[('state','not in',('posted','paid'))]}" readonly="1"/>
+                    <field name="total_pending" sum="total" optional="hide"
+                           attrs="{'invisible':[('state','not in',('posted','paid'))]}" readonly="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="overdue" invisible="1"/>
+                    <button help="Pagar"
+                            icon="fa-money"
+                            name="%(document_bank_wizard_payment_view_lines_action)d"
+                            type="action"
+                            attrs="{'invisible':[('total_pending','&lt;=',0)]}"
+                    />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="document_bank_line_view_form"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.form</field>
+            <field name="model">document.bank.line</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Detalle" create="false" delete="false" edit="true">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="id" readonly="1"/>
+                                <field name="quota" readonly="1"/>
+                                <field name="date_process" readonly="1"/>
+
+                                <field name="payment_capital" readonly="1"/>
+                                <field name="payment_interest" readonly="1"/>
+                                <field name="payment_overdue_interest" readonly="1"/>
+                                <field name="payment_other" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="total" readonly="1"/>
+                                <field name="total_to_paid" readonly="1"
+                                       attrs="{'invisible':[('state','not in',('posted','paid') )]}"/>
+                                <field name="total_paid" attrs="{'invisible':[('state','not in',('posted','paid') )]}"
+                                       readonly="1"/>
+                                <field name="total_pending"
+                                       attrs="{'invisible':[('state','not in',('posted','paid') )]}" readonly="1"/>
+
+                            </group>
+                        </group>
+                        <newline/>
+                        <notebook>
+                            <page string="Pagos" attrs="{'invisible':[('payment_ids','=',[])]}">
+                                <field name="payment_ids" readonly="1"
+                                       attrs="{'invisible':[('payment_ids','=',[])]}"
+                                       context="{'form_view_ref':'gps_bancos.document_bank_line_payment_view_form_payment','tree_view_ref':'gps_bancos.document_bank_line_payment_view_tree_payment'}"/>
+
+                            </page>
+                            <page string="Adjuntos">
+                                <field name="attachment_ids"
+                                       widget="many2many_binary"/>
+
+                            </page>
+                            <page string="Configuración" attrs="{'invisible':[('payment_ids','=',[])]}">
+                                <group>
+                                    <group>
+                                        <field name="percentage_amortize" readonly="1"/>
+                                        <field name="percentage_interest" readonly="1"/>
+                                    </group>
+                                    <group>
+
+                                    </group>
+                                </group>
+
+                            </page>
+                        </notebook>
+
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- -->
+
+        <record id="document_bank_line_view_in_tree"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.tree</field>
+            <field name="model">document.bank.line</field>
+            <field name="type">tree</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Detalle"   create="false" delete="false">
+
+                    <field name="id" readonly="1" optional="hide"/>
+                    <field name="quota"/>
+                    <field name="date_process"/>
+                    <field name="amount" sum="total"/>
+                    <field name="total" sum="total" invisible="1"/>
+                    <field name="total_to_paid" sum="total" optional="hide" readonly="1"/>
+                    <field name="total_paid" sum="total" optional="hide" readonly="1"/>
+                    <field name="total_pending" sum="total" optional="hide" readonly="1"/>
+
+                    <field name="total_invoiced" readonly="1" sum="total" optional="show"/>
+                    <field name="total_to_invoice" readonly="1" sum="total" optional="show"/>
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="document_bank_line_view_in_form"
+                model="ir.ui.view">
+            <field name="name">document.bank.line.in.form</field>
+            <field name="model">document.bank.line</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Detalle" create="false" delete="false" edit="true">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="id" readonly="1"/>
+                                <field name="quota" readonly="1"/>
+                                <field name="date_process" readonly="1"/>
+                            </group>
+                            <group>
+
+
+                                <field name="total" readonly="1"/>
+                                <field name="total_to_paid" readonly="1"/>
+                                <field name="total_paid" readonly="1"/>
+                                <field name="total_pending" readonly="1"/>
+
+                                <field name="total_invoiced" readonly="1"/>
+                                <field name="total_to_invoice" readonly="1"/>
+
+                            </group>
+                        </group>
+                        <newline/>
+                        <notebook>
+                            <page string="Pagos">
+                                <field name="payment_ids" readonly="1">
+                                    <tree string="Pago">
+                                        <field name="date_process" readonly="1"/>
+                                        <field name="amount" readonly="1" sum="total"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Adjuntos">
+                                <field name="attachment_ids"
+                                       widget="many2many_binary"/>
+
+                            </page>
+                            <page string="Facturas">
+                                <field name="invoice_ids"  >
+                                    <tree string="Factura" create="false" delete="true" edit="false">
+                                        <field name="invoice_id" readonly="1"/>
+                                        <field name="invoice_date" readonly="1"/>
+                                        <field name="state" readonly="1" optional="hide"/>
+                                        <field name="amount" readonly="1" sum="total"/>
+
+                                    </tree>
+                                </field>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+
+
+</odoo>

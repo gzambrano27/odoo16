@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Secuencia para el tipo de orden de producción A -->
+        <record id="seq_reg_tareas" model="ir.sequence">
+            <field name="name">Registro Tareas</field>
+            <field name="code">TAREA</field>
+            <field name="prefix">TAREA_</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <record id="view_tareas_form" model="ir.ui.view">
+        <field name="name">tareas.form</field>
+        <field name="model">tareas</field>
+        <field name="arch" type="xml">
+            <form string="Tareas">
+                <sheet>
+                    <group>
+                        <field name="code" readonly="1"/>
+                        <field name="name"/>
+                        <field name="state"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tareas_tree" model="ir.ui.view">
+        <field name="name">tareas.tree</field>
+        <field name="model">tareas</field>
+        <field name="arch" type="xml">
+            <tree string="Tareas">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_tareas" model="ir.actions.act_window">
+        <field name="name">Tareas</field>
+        <field name="res_model">tareas</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>Administración de tareas.</p>
+        </field>
+    </record>
+    
+</odoo>

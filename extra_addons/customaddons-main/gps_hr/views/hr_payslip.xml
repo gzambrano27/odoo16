@@ -1,0 +1,468 @@
+<?xml version="1.0" ?>
+
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view"
+                id="hr_payslip_form_view_inherit">
+            <field name="name">hr.payslip.view.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+
+
+
+
+                <field name="contract_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_edit':True}</attribute>
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </field>
+
+                <field name="struct_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_open':True,'no_edit':True}</attribute>
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </field>
+
+                <field name="date_from" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </field>
+
+                <field name="date_to" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </field>
+
+                <field name="company_id" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </field>
+
+
+                <field name="payslip_run_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_edit':True}</attribute>
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                    <attribute name="invisible">context.get('hide_parent',False)</attribute>
+                </field>
+
+
+                <field name="has_negative_net_to_report" position="before">
+                    <field name="id" string="# ID" readonly="1"
+                           attrs="{'invisible':[('id','&lt;=',0)]}"
+                    />
+                    <field name="to_liquidate" readonly="1" force_save="1"/>
+<field name="inactive" readonly="1"  />
+                </field>
+
+                <field name="struct_id" position="after">
+                    <field name="currency_id" invisible="1"/>
+                    <field name="total_in" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_out" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_provision" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="total_payslip" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </field>
+                <field name="struct_id" position="after">
+                    <field name="structure_type_id" invisible="1"/>
+                    <field name="legal_iess" invisible="1"/>
+
+
+                </field>
+
+                <page  name="salary_computation" position="before">
+   <page string="Solicitudes" name="grp_requests">
+<field name="leave_ids" nolabel="1" readonly="1" />
+       <newline/>
+       <separator string="Sol. por Vacaciones" attrs="{'invisible':[('period_line_detail_ids','=',[])]}"/>
+       <newline  attrs="{'invisible':[('period_line_detail_ids','=',[])]}"/>
+       <field name="period_line_detail_ids" nolabel="1" readonly="1"  attrs="{'invisible':[('period_line_detail_ids','=',[])]}" >
+                <tree string="Detalle Sol. por Vacaciones por Mes">
+
+<field name="period_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+<field name="request_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+<field name="date_start" />
+<field name="date_stop" />
+<field name="days" sum="total" />
+                </tree>
+
+
+            <form string="Detalle Sol. por Vacaciones por Mes">
+<group>
+    <group>
+    <field name="period_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+<field name="request_id" options="{'no_create':True,'no_open':True,'no_edit':True}" />
+</group>
+    <group>
+    <field name="date_start" />
+<field name="date_stop" />
+<field name="days"  />
+</group>
+
+</group>
+
+
+                </form>
+
+       </field>
+
+   </page>
+                </page>
+
+                <xpath expr="//page[@name='account_info']//field[@name='company_id']" position="after">
+                    <field name="department_id" readonly="1" force_save="1"
+                           options="{'no_create':True,'no_open':True,'no_edit':True}"
+                    />
+                    <field name="job_id" readonly="1" force_save="1"
+                           options="{'no_create':True,'no_open':True,'no_edit':True}"
+                    />
+                    <field name="legal_basic_wages" widget="monetary"
+                           options="{'currency_field': 'currency_id'}" readonly="1" force_save="1"/>
+                    <field name="wage" widget="monetary"
+                           options="{'currency_field': 'currency_id'}" readonly="1" force_save="1"
+                    />
+                    <field name="date_start_contract" readonly="1" force_save="1"
+                    />
+                    <field name="date_end_contract" readonly="1" force_save="1"
+                           attrs="{'invisible':['|',('date_end_contract','=',None),('date_end_contract','=',False)]}"
+                    />
+       <field name="pay_with_transfer"  />
+
+                    <field name="bank_account_id" readonly="1" force_save="1"
+                           options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+
+                    <field name="bank_history_id" readonly="1"
+                           force_save="1"
+                           options="{'no_quick_create': True,'no_create': True,'no_create_edit': True}"
+                           attrs="{'invisible':[('bank_account_id','=',False)]}"
+                    />
+
+                    <field name="bank_acc_number" readonly="1"
+                           force_save="1"
+                           attrs="{'invisible':[('bank_account_id','=',False)]}"
+                    />
+
+                    <field name="bank_tipo_cuenta" readonly="1"
+                           force_save="1"
+                           attrs="{'invisible':[('bank_account_id','=',False)]}"
+                    />
+
+                </xpath>
+                <field name="input_type_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <field name="journal_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </field>
+
+                <field name="input_type_id" position="after">
+                    <field name="rule_id" readonly="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                    <field name="add_iess" invisible="1"/>
+                    <field name="movement_id" invisible="1"/>
+                    <field name="original_amount" invisible="1"/>
+                </field>
+
+                <xpath expr="//field[@name='worked_days_line_ids']/tree/field[@name='work_entry_type_id']"
+                       position="attributes">
+                    <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='sequence']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='quantity']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='rate']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='amount']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='category_id']" position="attributes">
+                    <attribute name="optional">show</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">
+                    <field name="category_code" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">
+                    <field name="adjust_total" sum="total"/>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree" position="attributes">
+                    <attribute name="decoration-danger">category_code=='OUT'</attribute>
+                    <attribute name="decoration-success">category_code=='IN'</attribute>
+                    <attribute name="decoration-muted">category_code=='PRO'</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='input_line_ids']/tree/field[@name='name']" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                    <attribute name="force_save">True</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='input_line_ids']/tree" position="attributes">
+                    <attribute name="create">False</attribute>
+                </xpath>
+
+
+                <xpath expr="//field[@name='input_line_ids']/tree/field[@name='name']" position="before">
+                    <field name="movement_ref_id" readonly="1" force_save="1"/>
+                    <field name="date_process" readonly="1" force_save="1"/>
+                    <field name="quota" readonly="1" force_save="1"/>
+                    <field name="force_payslip" invisible="1" readonly="1" force_save="1"/>
+                    <field name="currency_id" invisible="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                    <field name="move_line_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']/tree/field[@name='amount']" position="attributes">
+                    <attribute name="attrs">{'readonly':[('force_payslip','=',True)]}</attribute>
+                    <attribute name="sum">total</attribute>
+                    <attribute name="widget">monetary</attribute>
+                    <attribute name="options">{'currency_field': 'currency_id'}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']/tree/field[@name='amount']" position="after">
+                    <field name="original_amount" readonly="1" force_save="1" sum="total" optional="hide"/>
+                    <field name="original_pending" readonly="1" force_save="1" sum="total" optional="hide"/>
+                    <field name="category_code" invisible="1"/>
+                    <field name="category_id" options="{'no_create':True,'no_open':True,'no_edit':True}" invisible="1"/>
+
+
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']/tree" position="attributes">
+                    <attribute name="decoration-danger">category_code=='OUT'</attribute>
+                    <attribute name="decoration-success">category_code=='IN'</attribute>
+                    <attribute name="decoration-it">amount!=original_pending</attribute>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                    <attribute name="context">{'form_view_ref':'gps_hr.hr_payslip_input_view_form'}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='input_line_ids']" position="after">
+                    <separator string="Facturas" attrs="{'invisible':[('legal_iess','=',True)]}"/>
+                    <newline attrs="{'invisible':[('legal_iess','=',True)]}"/>
+                    <field name="partner_employee_id" invisible="1"/>
+                    <field name="invoice_ids" attrs="{'invisible':[('legal_iess','=',True)],'readonly':[('state','!=','draft')]}" nolabel="1"
+                           force_save="1" domain="[('partner_id','=',partner_employee_id),('state','=','posted'),('move_type','=','in_invoice')]">
+                        <tree string="Facturas" create="false" edit="false">
+                            <field name="id" string="# ID" invisible="1"/>
+                            <field name="move_type" invisible="1"/>
+                            <field name="name"/>
+
+                            <field name="partner_id"/>
+                            <field name="journal_id" optional="hide"/>
+
+                            <field name="l10n_latam_document_type_id"/>
+                            <field name="amount_untaxed" string="Base imponible" sum="Total" optional="show"
+                                   modifiers="{&quot;readonly&quot;: true}"/>
+
+
+                            <field name="invoice_date"/>
+                            <field name="amount_total" sum="total"/>
+                            <field name="amount_residual" sum="total"/>
+                            <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'"
+                                   decoration-warning="payment_state in ('partial', 'in_payment')"
+                                   decoration-success="payment_state in ('paid', 'reversed')" optional="show"
+                                   modifiers="{&quot;invisible&quot;: [[&quot;payment_state&quot;, &quot;in&quot;, &quot;invoicing_legacy&quot;]], &quot;readonly&quot;: true}"/>
+                            <field name="state" widget="badge" decoration-success="state == 'posted'"
+                                   decoration-info="state == 'draft'" optional="show" on_change="1"
+                                   modifiers="{&quot;readonly&quot;: true, &quot;required&quot;: true}"/>
+
+                            <field name="currency_id" invisible="1" optional="hide" string="Divisa de la moneda"
+                                   on_change="1"
+                                   modifiers="{&quot;readonly&quot;: [[&quot;state&quot;, &quot;in&quot;, [&quot;posted&quot;, &quot;cancel&quot;]]], &quot;required&quot;: true}"/>
+                            <field name="company_currency_id" invisible="1"
+                                   modifiers="{&quot;readonly&quot;: true, &quot;column_invisible&quot;: true}"/>
+
+
+                        </tree>
+                    </field>
+                </xpath>
+
+                <button name="compute_sheet" position="after">
+                    <button name="restore_movements" type="object"
+                            string="Restaurar"
+                            icon="fa-pencil" attrs="{'invisible':[('state','!=','draft')]}"
+                    />
+
+                </button>
+
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="options">{'no_create': True,'no_edit': True,'no_open': True}</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='compute_sheet']" position="replace">
+
+                </xpath>
+                <xpath expr="//button[@name='compute_sheet']" position="replace">
+                    <button string="Calcular Hoja" icon="fa-cogs" name="compute_sheet" type="object"
+                            attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('credit_note', '=', True)]}"
+                            class="oe_highlight"
+                            help="Recompute the payslip lines only, not the worked days / input lines"/>
+                    <button string="Calcular Hoja" icon="fa-cogs" invisible="1" name="compute_sheet" type="object"
+                            attrs="{'invisible': ['|', ('state', '!=', 'verify'), ('credit_note', '=', True)]}"
+                            help="Recompute the payslip lines only, not the worked days / input lines"/>
+
+
+                    <button string="Devolver" icon="fa-money"   name="%(action_hr_payslip_payment_wizard)d" type="action"
+                            attrs="{'invisible': ['|',('legal_iess','!=',True),  ('state', '!=', 'paid') ]}"
+                            help="Devolver los valores no aplicados en el mes en curso"/>
+
+
+
+
+
+
+
+                </xpath>
+
+                <xpath expr="//button[@name='compute_sheet']" position="attributes">
+                    <attribute name="icon">fa-cogs</attribute>
+                    <attribute name="attrs">{'invisible':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <button name="action_payslip_cancel" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+                <button name="action_print_payslip" position="attributes">
+                    <attribute name="icon">fa-print</attribute>
+                </button>
+
+                <button name="action_payslip_done" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+                <button name="action_payslip_done" position="after">
+                <button name="send_mail_payslip" string="Enviar" icon="fa-envelope"
+                        type="object" attrs="{'invisible':[('state','not in',('paid','done'))]}"/>
+                </button>
+                <xpath expr="//button[@name='refund_sheet']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_payslip_paid']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <div class="oe_button_box" name="button_box" position="inside">
+                   <button type="object" class="oe_stat_button"
+                           name="action_adjust_movements"
+                           id="action_adjust_movements" icon="fa-files-o"
+                           attrs="{'invisible': [('adjust_movement_counter', '=', 0)]}">
+                        <field name="adjust_movement_counter" widget="statinfo" string="Ajustes"/>
+                    </button>
+                </div>
+
+                <field name="employee_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_edit':True}</attribute>
+                    <attribute name="context">{'inactive':inactive,'filter_date_start':date_from,'filter_date_process':date_to, 'filter_legal_iess':legal_iess, 'filter_type_struct_id':structure_type_id,'active_test':not inactive}</attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view"
+                id="hr_payslip_tree_view_inherit">
+            <field name="name">hr.payslip.tree.view.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree"/>
+            <field name="arch" type="xml">
+
+                <field name="company_id" position="attributes">
+                    <attribute name="invisible">context.get('hide_parent',False)</attribute>
+                    <attribute name="optional">hide</attribute>
+                </field>
+
+                <field name="payslip_run_id" position="attributes">
+                    <attribute name="invisible">context.get('hide_parent',False)</attribute>
+                    <attribute name="optional">hide</attribute>
+                </field>
+
+
+                <field name="number" position="before">
+                    <field name="id" string="# ID" optional="hide"/>
+                       <field name="inactive" optional="show" />
+                </field>
+                <field name="basic_wage" position="after">
+
+                    <field name="total_in" sum="total" widget="monetary" options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_out" sum="total" widget="monetary" options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_provision" sum="total" widget="monetary"
+                           options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="total_payslip" sum="total" widget="monetary"
+                           options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="to_liquidate" optional="hide"/>
+                    <field name="pay_with_transfer"  optional="hide"/>
+                </field>
+
+                <field name="net_wage" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <field name="state" position="after">
+                    <field name="bank_account_id" invisible="1"
+                           options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                </field>
+
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-it">not bank_account_id or not to_liquidate</attribute>
+                    <attribute name="decoration-danger">not bank_account_id</attribute>
+                    <attribute name="decoration-bf">not to_liquidate</attribute>
+
+
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view"
+                id="hr_payslip_account_form_view_inherit">
+            <field name="name">hr.payslip.account.view.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll_account.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <button name="action_payslip_done" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+            </field>
+        </record>
+
+        <record id="hr_payroll.action_view_hr_payslip_month_form" model="ir.actions.act_window">
+            <field name="name">Recibos de nómina del empleado</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_mode">tree,kanban,form,activity</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+            <field name="context">{'create':False,'edit':False,'delete':True,"search_default_group_by_batch":1}</field>
+        </record>
+
+        <record id="hr_payroll.hr_payslip_action_view_to_pay" model="ir.actions.act_window">
+            <field name="name">Recibos de nómina del empleado</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_mode">tree,kanban,form,pivot,activity</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+            <field name="domain">[('state', 'in', ['draft', 'verify'])]</field>
+            <field name="context">{'create':False,'edit':False,'delete':True}</field>
+
+        </record>
+
+         <record id="hr_payroll.action_view_hr_payslip_month_form" model="ir.actions.act_window">
+        <field name="name">Recibos de nómina del empleado</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">tree,kanban,form,activity</field>
+        <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        <field name="context">{}</field>
+    </record>
+
+    </data>
+
+</odoo>

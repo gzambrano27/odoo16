@@ -1,0 +1,30 @@
+<odoo>
+    <record id="view_import_purchase_request_wizard" model="ir.ui.view">
+        <field name="name">import.purchase.request.wizard.form</field>
+        <field name="model">import.purchase.request.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importar Requisiciones">
+                <group>
+                    <field name="file" filename="filename"/>
+                </group>
+                <footer>
+                    <button string="Importar" type="object" name="action_import" class="btn-primary"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_import_purchase_request" model="ir.actions.act_window">
+        <field name="name">Importar Requisiciones</field>
+        <field name="res_model">import.purchase.request.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="menu_import_purchase_request"
+        sequence="22"
+        parent="menu_purchase_request"
+        action="action_import_purchase_request"
+    />
+</odoo>

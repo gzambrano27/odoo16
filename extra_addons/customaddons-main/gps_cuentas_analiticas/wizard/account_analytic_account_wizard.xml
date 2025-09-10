@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="account_analytic_account_wizard_view_form" model="ir.ui.view">
+            <field name="name">account.analytic.account.wizard.form</field>
+            <field name="model">account.analytic.account.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Reporte de Cuentas analíticas" version="16.0">
+
+  <group>
+      <field name="type" readonly="1" />
+      <field name="company_ids" required="1"
+      widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      />
+      <field name="analytic_ids" required="0" placeholder="TODAS LAS CUENTAS ANALITICAS"
+            widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      domain="[('company_id', 'in', company_ids)]"
+      />
+  </group>
+                    <footer>
+                        <button name="process" type="object" string="Procesar" icon='fa-cogs'/>
+                        <button special="cancel" name="cancel" string="Salir" colspan="2" type="object"
+                                icon='fa-times'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record
+                id="account_analytic_account_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Cuentas analíticas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.analytic.account.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_analytic_account_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_type':'all'}</field>
+        </record>
+
+
+        <!-- -->
+
+         <record id="account_analytic_account_wizard_view_move_form" model="ir.ui.view">
+            <field name="name">account.analytic.account.wizard.move.form</field>
+            <field name="model">account.analytic.account.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Reporte de Asientos de Cuentas analíticas" version="16.0">
+
+  <group>
+      <field name="type" readonly="1" />
+      <field name="company_ids" required="1"
+      widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      />
+      <field name="date_from" required="1"/>
+      <field name="date_to" required="1"/>
+
+      <field name="analytic_ids" required="0" placeholder="TODAS LAS CUENTAS ANALITICAS"
+            widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      domain="[('company_id', 'in', company_ids)]"
+      />
+  </group>
+                    <footer>
+                        <button name="process" type="object" string="Procesar" icon='fa-cogs'/>
+                        <button special="cancel" name="cancel" string="Salir" colspan="2" type="object"
+                                icon='fa-times'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record
+                id="account_analytic_account_wizard_move_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Asientos de Cuentas analíticas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.analytic.account.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_analytic_account_wizard_view_move_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_type':'account_move'}</field>
+        </record>
+
+    </data>
+
+
+</odoo>

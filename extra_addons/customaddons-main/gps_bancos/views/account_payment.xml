@@ -1,0 +1,110 @@
+<odoo>
+    <data>
+
+
+               <record model="ir.ui.view"
+                id="account_payment_view_payment_inherit">
+            <field name="name">account.payment.form.payment.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+               <label for="amount" position="before">
+                    <field name="vat" readonly="1"
+                           attrs="{'invisible':['|','|','|',('partner_id','=',False),('vat','=',False),('vat','=',''),('vat','=',None)]}"
+                           />
+                </label>
+                        <field name="destination_journal_id" position="before">
+
+                 <field name="bank_macro_id" readonly="1"
+                                 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_analistas_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos,gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+                        context="{'form_view_ref':'gps_bancos.account_payment_bank_macro_view_form'}"
+                                  />
+<field name="name_account"  readonly="1"
+        attrs="{'invisible':['|','|',('name_account','=',False),('name_account','=',None),('name_account','=','') ]}"
+
+
+       />
+
+
+
+
+                        </field>
+
+                 <button name="button_open_bills" position="after">
+                        <button name="action_open_payment_requests"
+                                 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_analistas_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos,gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+                                type="object" class="oe_stat_button" icon="fa-expand" attrs="{'invisible': [('macro_request_counter','=', 0)]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_text">
+                                        <field name="macro_request_counter"/>
+                                        <span> Solicitudes</span>
+                                    </span>
+                                </div>
+                            </button>
+                 </button>
+
+
+
+
+            </field>
+               </record>
+
+
+    <record model="ir.ui.view"
+            id="account_payment_form_bank_view_inherit">
+        <field name="name">account.payment.bank.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account_payment_advance.view_account_payment_form_inherit"/>
+        <field name="arch" type="xml">
+
+  <xpath expr="//page[@name='page_invoice']" position="after">
+            <page string="O.C." name="page_oc"  attrs="{'invisible':[('is_prepayment','!=',True)]}" >
+               <field name="payment_purchase_line_ids" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_amount':amount}">
+                       <tree editable="bottom">
+                           <field name="order_id"
+                                  options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                  domain="[('company_id','=',parent.company_id),('partner_id','=',parent.partner_id),('state','in',('purchase','done'))]"
+                                  />
+                            <field name="amount" sum="total"/>
+                       </tree>
+
+                    <form>
+                        <group>
+                             <field name="order_id"
+                                  domain="[('company_id','=',parent.company_id),('partner_id','=',parent.partner_id),('state','in',('purchase','done'))]" options="{'no_create':True,'no_open':True,'no_edit':True}"
+                                  />
+
+
+
+                            <field name="amount" sum="total"/>
+                        </group>
+
+                       </form>
+
+               </field>
+            </page>
+
+        </xpath>
+        </field>
+    </record>
+
+
+
+       <record id="view_account_payment_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.view.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="ref2" />
+            </xpath>
+        </field>
+    </record>
+
+
+    </data>
+
+
+</odoo>

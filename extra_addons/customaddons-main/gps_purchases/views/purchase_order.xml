@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+        <record model="ir.ui.view" id="purchase_order_view_inherit">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+            	<field name="payment_term_id" position="after">
+	            	<field name="required_advance_payment" invisible="1" />
+	            	<field name="date_advance_payment"  attrs="{'invisible':[('required_advance_payment','!=',True)],  'readonly':[('state','in',('purchase','done'))]  }"/>
+	            	<field name="date_advance_first_payment" readonly="1" attrs="{'invisible':['|',('date_advance_first_payment','=',False),('date_advance_first_payment','=',None)]}" />
+				</field>
+				<field name="invoice_status" position="before">
+					<field name="type_guarantee_ids" widget="many2many_tags"/>
+				</field>
+				<xpath expr="//notebook" position="after">
+					<div class="oe_chatter" position="move">
+					</div>
+				</xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="referencia_anterior" readonly="1" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase_order_inherit_tree_analytic_account_names" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <field name="activity_ids" position="after">
+                    <field name="analytic_account_names" optional="hide"/>
+                </field>
+                <field name="date_order" position="after">
+                    <field name="effective_date" optional="hide"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

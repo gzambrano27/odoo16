@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payslip_new">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+<t t-set="doc" t-value="doc.sudo()"/>
+
+
+                <div class="container" style="font-family: Verdana; font-size: 15px;">
+                    <!-- Header -->
+                    <div class="row text-center">
+                        <div class="col-4" style="vertical-align: middle;">
+                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" class="img-fluid" alt="Logo" style="width: 150px"/>
+                        </div>
+                        <div class="col-8" style="vertical-align: middle;">
+                            <span class="fw-bold" style="font-size: 25px;"><t t-esc="doc.company_id.name"/></span>
+                        </div>
+                    </div>
+                    <br></br>
+                    <div class="row text-center my-2">
+                        <div class="col-12">
+                            <span class="fw-bold">ROL DE PAGOS INDIVIDUAL <br/> <t t-esc="doc.payslip_run_id.month_id.name.upper()"/> DEL <t t-esc="doc.payslip_run_id.year"/> </span>
+                        </div>
+                    </div>
+                    <br></br>
+                    <!-- Datos del empleado -->
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th style="width:20%; vertical-align: middle;">IDENTIFICACION:</th>
+                                <td style="width:80%; vertical-align: middle;" colspan="3"><t t-esc="doc.employee_id.identification_id"/></td>
+                            </tr>
+                            <tr>
+                                <th style="width:20%; vertical-align: middle;">EMPLEADO:</th>
+                                <td style="width:80%; vertical-align: middle;" colspan="3"><t t-esc="doc.employee_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <th style="width:20%; vertical-align: middle;">DEPARTAMENTO:</th>
+                                <td style="width:80%; vertical-align: middle;" colspan="3"><t t-esc="doc.department_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <th style="width:20%; vertical-align: middle;">CARGO:</th>
+                                <td style="width:80%; vertical-align: middle;" colspan="3"><t t-esc="doc.job_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <th style="width:20%; vertical-align: middle;">SALARIO:</th>
+                                <td class="text-center" style="width:25%; vertical-align: middle;">$<t t-esc="'{:.2f}'.format(doc.wage)"/></td>
+                                <th style="width:30%; vertical-align: middle;">DIAS LABORADOS:</th>
+                                <td class="text-center" style="width:25%; vertical-align: middle;"><t t-esc="doc.total_worked_days"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br></br>
+                    <!-- Detalles de ingresos y egresos -->
+                    <div class="row text-center my-2">
+                        <div class="col-12">
+                            <span class="fw-bold">DETALLES</span>
+                        </div>
+                    </div>
+                    <br></br>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">INGRESOS</th>
+                                <th class="text-center">VALOR</th>
+                                <th class="text-center">EGRESOS</th>
+                                <th class="text-center">VALOR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="lines" t-value="doc._get_print_lines()"/>
+                            <t t-foreach="lines" t-as="line">
+                                <tr>
+                                    <!-- Ingresos -->
+                                    <t t-if="line[1] is not None">
+                                        <t t-if="line[0]!=1">
+                                            <td><t t-esc="line[1]"/></td>
+                                            <td class="text-end">$<t t-esc="'{:.2f}'.format(line[2])"/></td>
+                                        </t>
+                                        <t t-if="line[0]==1">
+                                            <td><b><t t-esc="line[1]"/></b></td>
+                                            <td class="text-end"><b>$<t t-esc="'{:.2f}'.format(line[2])"/></b></td>
+                                        </t>
+                                    </t>
+                                    <t t-if="line[1] is None">
+                                        <td colspan="2"><t t-esc="line[1]"/></td>
+                                    </t>
+                                    <!-- Egresos -->
+                                    <t t-if="line[3] is not None">
+                                         <t t-if="line[0]!=1">
+                                           <td><t t-esc="line[3]"/></td>
+                                            <td class="text-end">$<t t-esc="'{:.2f}'.format(line[4])"/></td>
+                                        </t>
+                                        <t t-if="line[0]==1">
+                                            <td><b><t t-esc="line[3]"/></b></td>
+                                              <td class="text-end"><b>$<t t-esc="'{:.2f}'.format(line[4])"/></b></td>
+                                        </t>
+                                    </t>
+                                    <t t-if="line[3] is None">
+                                         <td colspan="2"><t t-esc="line[3]"/></td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <!-- Firmas -->
+                    <div class="row mt-5 text-center">
+                        <div class="col-6">
+                            <div>______________________________</div>
+                            <div class="my-1"><t t-esc="doc.employee_id.name"/></div>
+                            <div class="my-1"><t t-esc="doc.job_id.name"/></div>
+                            <div class="my-1"><t t-esc="doc.employee_id.identification_id"/></div>
+                        </div>
+                        <div class="col-6">
+                            <div>______________________________</div>
+                            <div class="my-1">Aprobado por:</div>
+                            <div class="my-1">Cargo del aprobador</div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_payslip_lang_new">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="o" t-value="o.with_context(lang=o.employee_id.sudo().address_home_id.lang or o.env.lang)"/>
+                <t t-call="gps_hr.report_payslip_new" t-lang="o.env.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_purchase_order_state_log_tree" model="ir.ui.view">
+    <field name="name">purchase.order.state.log.tree</field>
+    <field name="model">purchase.order.state.log</field>
+    <field name="arch" type="xml">
+      <tree string="Trazabilidad de estado" create="false">
+        <field name="changed_on"/>
+        <field name="changed_by"/>
+        <field name="state_from"/>
+        <field name="state_to"/>
+        <field name="note"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_purchase_order_state_log_search" model="ir.ui.view">
+    <field name="name">purchase.order.state.log.search</field>
+    <field name="model">purchase.order.state.log</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="order_id"/>
+        <field name="changed_by"/>
+        <field name="state_from"/>
+        <field name="state_to"/>
+        <filter string="Hoy" name="today" domain="[('changed_on','&gt;=', context_today())]"/>
+      </search>
+    </field>
+  </record>
+
+  <record id="view_purchase_order_state_log_form" model="ir.ui.view">
+    <field name="name">purchase.order.state.log.form</field>
+    <field name="model">purchase.order.state.log</field>
+    <field name="arch" type="xml">
+      <form string="Detalle de cambio de estado">
+        <group>
+          <field name="order_id" readonly="1"/>
+          <field name="changed_on" readonly="1"/>
+          <field name="changed_by" readonly="1"/>
+          <field name="state_from" readonly="1"/>
+          <field name="state_to" readonly="1"/>
+          <field name="note"/>
+        </group>
+      </form>
+    </field>
+  </record>
+</odoo>

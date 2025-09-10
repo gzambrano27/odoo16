@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="gen_inventory_view" model="ir.ui.view">
+        <field name="name">gen.inventory.view</field>
+        <field name="model">gen.inventory</field>
+        <field name="arch" type="xml">
+            <form string="Success">
+                <field name="product_counter" readonly="True"/>
+                <span>
+                    Records are imported successfully.
+                </span>
+                <footer>
+                    <button 
+                        class="oe_highlight"
+                        special="save" 
+                        string="OK"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

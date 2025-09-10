@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+
+     	<record model="std.reason.document" id="std_reason_document_id_01">
+            <field name="name">VENTA</field>
+        </record>
+		
+		<record model="std.reason.document" id="std_reason_document_id_02">
+            <field name="name">TRASLADO</field>
+        </record>
+
+</data>
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+calendar_day,calendar_day,model_calendar_day,base.group_system,1,0,0,0
+calendar_holiday,calendar_holiday,model_calendar_holiday,base.group_system,1,1,1,1
+calendar_month,calendar_month,model_calendar_month,base.group_system,1,0,0,0
+calendar_day_all,calendar_day_all,model_calendar_day,,1,0,0,0
+calendar_holiday_all,calendar_holiday_all,model_calendar_holiday,,1,1,1,1
+calendar_month_all,calendar_month_all,model_calendar_month,,1,0,0,0
+calendar_legal_holiday_all,calendar_legal_holiday_all,model_calendar_legal_holiday,,1,1,1,1

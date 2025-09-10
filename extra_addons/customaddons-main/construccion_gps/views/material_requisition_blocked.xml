@@ -1,0 +1,73 @@
+<odoo>
+  <data>
+
+    <record id="material_purchase_requisition_form_readonly" model="ir.ui.view">
+      <field name="name">material.purchase.requisition.form.readonly</field>
+      <field name="model">material.purchase.requisition</field>
+      <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+      <field name="priority" eval="100"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet" position="before">
+        <div class="alert alert-danger" style="color:black; font-weight:bold; font-size:16px;">
+            Este módulo ya no debe ser usado para crear Requisiciones de Servicios. Por favor, utiliza el módulo de Requisiciones de Compra.
+        </div>
+        </xpath>
+        <!-- Campos generales bloqueados -->
+        <xpath expr="//field[@name='name']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='employee_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='department_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='company_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='requisiton_responsible_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='global_partner_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='request_date']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='receive_date']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='date_end']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='analytic_account_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='reason']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='location_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='dest_location_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='custom_picking_type_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <!-- Desactiva todos los botones del header -->
+        <xpath expr="//header/button" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <!-- Línea de requisiciones en solo lectura -->
+        <xpath expr="//field[@name='requisition_line_ids']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+      </field>
+    </record>
+
+  </data>
+</odoo>

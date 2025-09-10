@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wizard_import_stock_valuation,wizard.import.stock.valuation,model_wizard_import_stock_valuation,,1,1,1,1

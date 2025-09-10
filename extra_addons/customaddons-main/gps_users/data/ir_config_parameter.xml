@@ -1,0 +1,20 @@
+<odoo>
+  <data noupdate="1">
+    <record id="param_password_check_enabled" model="ir.config_parameter">
+        <field name="key">password_check_enabled</field>
+        <field name="value">1</field>
+    </record>
+    <record id="param_password_min_letters" model="ir.config_parameter">
+        <field name="key">password_min_letters</field>
+        <field name="value">3</field>
+    </record>
+    <record id="param_password_min_digits" model="ir.config_parameter">
+        <field name="key">password_min_digits</field>
+        <field name="value">3</field>
+    </record>
+    <record id="param_password_min_symbols" model="ir.config_parameter">
+        <field name="key">password_min_symbols</field>
+        <field name="value">1</field>
+    </record>
+  </data>
+</odoo>

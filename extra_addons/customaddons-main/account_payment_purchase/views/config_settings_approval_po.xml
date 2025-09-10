@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record model="ir.ui.view" id="view_parametros_aprobacion_po_tree">
+        <field name="name">config.settings.approval.po.tree</field>
+        <field name="model">config.settings.approval.po</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_account_financiero_app')])]"/>
+        <field name="arch" type="xml">
+            <tree string="Parametros para Rangos de Aprobacion">
+                <field name="usuario_id"/>
+                <field name="monto_desde"/>
+                <field name="monto_hasta"/>
+                <field name="approve_financiero"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_parametros_aprobacion_po_form">
+        <field name="name">config.settings.approval.po.form</field>
+        <field name="model">config.settings.approval.po</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_account_financiero_app')])]"/>
+        <field name="arch" type="xml">
+            <form string="Parametros para Rangos de Aprobacion">
+	            <sheet string="Configuracion de Tarifas">
+		            <field name="usuario_id"/>
+	                <field name="monto_desde"/>
+	                <field name="monto_hasta"/>
+	                <field name="approve_financiero"/>
+	             </sheet>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_parametros_aprobacion_po_form" model="ir.actions.act_window">
+            <field name="name">Parametros Aprobacion</field>
+            <field name="res_model">config.settings.approval.po</field>
+            <field name="view_mode">tree,form</field>       
+   </record>
+   
+   <menuitem id="menu_purchase_config_approvals" name="Configuracion Aprobadores" parent="purchase.menu_purchase_config"/>
+
+    <menuitem
+        action="action_parametros_aprobacion_po_form" id="menu_aprobacion_usuarios_po"
+        parent="menu_purchase_config_approvals" sequence="1"/>
+
+
+    
+    <record model="ir.ui.view" id="view_parametros_aprobacion_po_admin_tree">
+        <field name="name">config.settings.approval.po.admin.tree</field>
+        <field name="model">config.settings.approval.po.admin</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_account_financiero_app')])]"/>
+        <field name="arch" type="xml">
+            <tree string="Parametros para Rangos de Aprobacion">
+                <field name="usuario_id"/>
+                <field name="monto_desde"/>
+                <field name="monto_hasta"/>
+                <field name="approve_financiero"/>
+                <field name="usuario_creador"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_parametros_aprobacion_po_admin_form">
+        <field name="name">config.settings.approval.po.admin.form</field>
+        <field name="model">config.settings.approval.po.admin</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_account_financiero_app')])]"/>
+        <field name="arch" type="xml">
+            <form string="Parametros para Rangos de Aprobacion">
+	            <sheet string="Configuracion de Tarifas">
+		            <field name="usuario_id"/>
+	                <field name="monto_desde"/>
+	                <field name="monto_hasta"/>
+	                <field name="approve_financiero"/>
+                    <field name="usuario_creador"/>
+	             </sheet>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_parametros_aprobacion_po_admin_form" model="ir.actions.act_window">
+            <field name="name">Parametros Aprobacion OC Administrativas</field>
+            <field name="res_model">config.settings.approval.po.admin</field>
+            <field name="view_mode">tree,form</field>       
+   </record>
+   
+    <menuitem
+        action="action_parametros_aprobacion_po_admin_form" id="menu_aprobacion_usuarios_po_admin"
+        parent="menu_purchase_config_approvals" sequence="2"/>
+	
+</odoo>

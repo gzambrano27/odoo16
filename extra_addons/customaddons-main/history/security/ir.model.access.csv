@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+log_history_values,log_history_values,model_log_history_values,base.group_system,1,1,1,1
+log_history_values_users,log_history_values_users,model_log_history_values,base.group_user,1,0,0,0
+log_history,log_history,model_log_history,base.group_system,1,1,1,1
+log_history_users,log_history_users,model_log_history,base.group_user,1,0,0,0
+log_history_values_conf,log_history_values_conf,model_log_history_values,history.group_exec_security_conf,1,1,1,1
+log_history_conf,log_history_conf,model_log_history,history.group_exec_security_conf,1,1,1,1
+log_history_values_read,log_history_values_read,model_log_history_values,history.group_exec_security_read,1,1,1,1
+log_history_read,log_history_read,model_log_history,history.group_exec_security_read,1,1,1,1

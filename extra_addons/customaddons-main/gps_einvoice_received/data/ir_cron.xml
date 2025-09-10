@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="ir_cron_updated_ereceived" model="ir.cron">
+        <field name="name">Actualizar Documentos Recibidos</field>
+        <field name="model_id" ref="model_electronic_document_received"/>
+        <field name="state">code</field>
+        <field name="code">model.update_received_documents_states()</field>
+        <field name="interval_number">1</field>  <!-- Cada 1 unidad -->
+        <field name="interval_type">hours</field>  <!-- Cada día -->
+        <field name="nextcall">2025-01-18 00:00:00</field>  <!-- Fecha de la primera ejecución -->
+        <field name="numbercall">-1</field>  <!-- Ejecutar infinitamente -->
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

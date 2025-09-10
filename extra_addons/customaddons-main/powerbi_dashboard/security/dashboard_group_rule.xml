@@ -1,0 +1,12 @@
+
+<odoo>
+    <record id="rule_powerbi_dashboard_group_filter" model="ir.rule">
+        <field name="name">Dashboards restringidos por grupo</field>
+        <field name="model_id" ref="model_powerbi_dashboard"/>
+        <field name="domain_force">['|', ('group_ids','=',False), ('group_ids','in', user.groups_id.ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+</odoo>

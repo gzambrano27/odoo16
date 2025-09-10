@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_product_importation" model="ir.actions.act_window">
+            <field name="name">Importation products</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('from_trade','=',True),('detailed_type','=', 'product')]</field>
+            <field name="context">{'default_from_trade':1}</field>
+            <field name="view_id" ref="product.product_template_tree_view"/>
+            <field name="help" type="html">
+                <p>
+                </p>
+            </field>
+        </record>
+
+        <record id="product_template_foreign_form" model="ir.ui.view">
+            <field name="name">product.template.form.foreign</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']" position="inside">
+                    <span class="d-inline-block">
+                        <field name="from_trade"/>
+                        <label for="from_trade"/>
+                    </span>
+                </xpath>
+                <xpath expr="//page[@name='purchase']" position="after">
+                    <page string="Importation" attrs="{'invisible': [('from_trade', '=', False)]}">
+                        <group>
+                            <group>
+                                <field name="purchase_tariff_id" attrs="{'invisible': [('from_trade','!=',True)]}"/>
+                                <field name="arancel_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

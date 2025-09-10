@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+        <record model="ir.ui.view"
+                id="hr_leave_type_form_view_inherit">
+            <field name="name">hr.leave.type.inherit</field>
+            <field name="model">hr.leave.type</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+            <field name="arch" type="xml">
+
+<field name="company_id" position="after">
+
+    <field name="salary_rule_id"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+    <field name="subsidies_period" />
+    <field name="vacations" />
+</field>
+
+            </field>
+        </record>
+
+
+
+    </data>
+
+
+</odoo>

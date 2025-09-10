@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+
+<odoo>
+    <data>
+
+
+       <record id="hr_payslip_input_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.payslip.input.form</field>
+        <field name="model">hr.payslip.input</field>
+        <field name="type">form</field>
+        <field eval="999" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Entradas de recibo de nómina"  edit="false" delete="false" create="false">
+                <group cols="2" coslpan="4">
+                    <group cols="1">
+                        <field name="name" coslpan="2" />
+                        <field name="rule_id" coslpan="2" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                />
+<field name="movement_ref_id" coslpan="2" />
+                        <field name="date_process" coslpan="2" />
+
+                    </group>
+                    <group cols="1">
+<field name="quota" coslpan="2" />
+                        <field name="amount" coslpan="2"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+
+
+    </data>
+
+</odoo>

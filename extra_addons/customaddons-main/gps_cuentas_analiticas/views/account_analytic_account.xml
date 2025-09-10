@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_analytic_account_form_inherit" model="ir.ui.view">
+        <field name="name">view.account.analytic.account.form.inherit</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_list" />
+        <field name="arch" type="xml">
+
+              <field name="balance" position="after">
+                  <field name="state" widget="radio" />
+              </field>
+            <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-muted">state == 'inactive'</attribute>
+                </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_analytic_account_tree_inherit" model="ir.ui.view">
+        <field name="name">view.account.analytic.account.tree.inherit</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+        <field name="arch" type="xml">
+
+              <field name="currency_id" position="after">
+                  <field name="state" widget="radio" />
+              </field>
+        </field>
+    </record>
+
+    <record id="view_account_analytic_account_form_inherit_replica" model="ir.ui.view">
+        <field name="name">Analytic Account: Add Replication Tab</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Añadir pestaña en el notebook -->
+            <field name="partner_id" position="after">
+                <field name="companies_to_replicate_ids" widget="many2many_tags"
+                    domain="[('id', '!=', company_id)]" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+            </field>
+
+        </field>
+    </record>
+
+    <record id="view_account_analytic_account_search_inherit" model="ir.ui.view">
+        <field name="name">view.account.analytic.account.search.inherit</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_search" />
+        <field name="arch" type="xml">
+            <filter name="inactive" position="after">
+                <separator/>
+                <filter string="Inactivo" domain="[('state', '=', 'inactive')]" name="flter_inactive"/>
+                <separator/>
+                <filter string="Activo" domain="[('state', '=', 'active')]" name="flter_active"/>
+            </filter>
+
+        </field>
+    </record>
+
+
+
+</odoo>

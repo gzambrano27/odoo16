@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+
+        <record id="report_edocs_paperformat" model="report.paperformat">
+            <field name="name">Formato Acta</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">20</field>
+        </record>
+
+        <report
+            id="maintenance_equipment_acta_entrega"
+            string="Acta de Entrega de Equipo"
+            model="maintenance.acta"
+            report_type="qweb-pdf"
+            name="maintenance_add_actas.report_equipment_entrega"
+            file="maintenance_add_actas.report_equipment_entrega"
+            print_report_name="(object.presenta_codigo())"
+            paperformat="report_edocs_paperformat"
+        />
+
+        <report
+            id="maintenance_equipment_acta_recepcion"
+            string="Acta de Recepcion de Equipo"
+            model="maintenance.acta"
+            report_type="qweb-pdf"
+            name="maintenance_add_actas.report_equipment_recepcion"
+            file="maintenance_add_actas.report_equipment_recepcion"
+            print_report_name="(object.presenta_codigo())"
+            paperformat="report_edocs_paperformat"
+        />
+
+    </data>
+</odoo>

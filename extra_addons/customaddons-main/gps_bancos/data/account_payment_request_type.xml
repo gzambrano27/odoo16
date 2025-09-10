@@ -1,0 +1,92 @@
+<odoo>
+    <data noupdate="1">
+
+
+ <record id="req_type_cxp" model="account.payment.request.type">
+            <field name="name">CUENTAS POR PAGAR</field>
+            <field name="code">account.cxp</field>
+            <field name="type">registro</field>
+     <field name="type_module">financial</field>
+ </record>
+
+         <record id="req_type_anticipo_oc" model="account.payment.request.type">
+            <field name="name">ANTICIPOS DE OC</field>
+            <field name="code">purchase.anticipo</field>
+            <field name="type">registro</field>
+             <field name="type_module">financial</field>
+ </record>
+
+  <record id="req_type_otros_anticipo" model="account.payment.request.type">
+            <field name="name">OTROS ANTICIPOS</field>
+            <field name="code">account.anticipo</field>
+            <field name="type">registro</field>
+      <field name="type_module">financial</field>
+ </record>
+
+
+         <record id="req_type_reembolso" model="account.payment.request.type">
+            <field name="name">REEMBOLSOS</field>
+            <field name="code">account.pagos.reembolso</field>
+            <field name="type">registro</field>
+             <field name="type_module">financial</field>
+ </record>
+
+         <record id="req_type_caja_chica" model="account.payment.request.type">
+            <field name="name">CAJA CHICA</field>
+            <field name="code">account.pagos.cajachica</field>
+            <field name="type">registro</field>
+             <field name="type_module">financial</field>
+ </record>
+
+
+<!-- -->
+
+        <record id="req_type_nomina" model="account.payment.request.type">
+            <field name="name">ROLES DE PAGO</field>
+            <field name="code">account.pagos.nomina</field>
+            <field name="type">registro</field>
+            <field name="type_module">payslip</field>
+ </record>
+
+         <record id="req_type_anticipo" model="account.payment.request.type">
+            <field name="name">ANTICIPOS NOMINA</field>
+            <field name="code">account.pagos.anticipo</field>
+            <field name="type">registro</field>
+               <field name="type_module">payslip</field>
+ </record>
+
+
+         <record id="req_type_utilidades" model="account.payment.request.type">
+            <field name="name">UTILIDADES</field>
+            <field name="code">account.pagos.utilidades</field>
+            <field name="type">registro</field>
+              <field name="type_module">payslip</field>
+ </record>
+
+         <record id="req_type_decimos" model="account.payment.request.type">
+            <field name="name">DECIMOS</field>
+            <field name="code">account.pagos.decimos</field>
+            <field name="type">registro</field>
+              <field name="type_module">payslip</field>
+ </record>
+
+        <record id="req_type_devoluciones" model="account.payment.request.type">
+            <field name="name">DEVOLUCIONES</field>
+            <field name="code">account.pagos.devoluciones</field>
+            <field name="type">registro</field>
+              <field name="type_module">payslip</field>
+ </record>
+
+
+        <record id="req_type_finiquitos" model="account.payment.request.type">
+            <field name="name">FINIQUITOS</field>
+            <field name="code">account.pagos.finiquitos</field>
+            <field name="type">registro</field>
+              <field name="type_module">payslip</field>
+ </record>
+
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Vista de formulario para el wizard -->
+        <record id="view_hr_advance_by_employees" model="ir.ui.view">
+            <field name="name">th.advance.employees.form</field>
+            <field name="model">th.advance.employees</field>
+            <field name="arch" type="xml">
+                <form string="Advance by Employees">
+                    <header>
+                        <button icon="fa-check-square" string="Generate" name="compute_sheet" type="object" class="oe_highlight" context="{'employee_ids': employee_ids}" />
+                        <button name="cargar_employees" string="Load Employees" type="object" class="btn-primary"/>
+                    </header>
+                    <group>
+                        <div class="alert alert-info" role="alert" style="width:100vh;margin-bottom: 15px;">
+                            <strong>Note:</strong> This wizard will generate Discount for all selected employee(s).
+                        </div>
+                    </group>
+                    <group>
+                        <separator string="Employees" colspan="4"/>
+                        <field name="employee_ids" colspan='2' widget="many2many_tags" options="{'no_create': True}" nolabel="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción para abrir el wizard -->
+        <record id="action_hr_advance_by_employees" model="ir.actions.act_window">
+            <field name="name">Generate Advance</field>
+            <field name="res_model">th.advance.employees</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_advance_by_employees"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

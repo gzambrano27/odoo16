@@ -1,0 +1,158 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+		<record id="dynamic_function_view_filter" model="ir.ui.view">
+			<field name="name">dynamic.function.filter</field>
+			<field name="model">dynamic.function</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Función">
+					<group expand="0" string="Filtrar...">
+						<filter string="Activo" name="is_active"
+							domain="[('active','=',True)]" />
+					</group>
+					<group expand="0" string="Agrupar por...">
+						<filter string="Todos los estados"
+							context="{'group_by':'active'}" name='grp_all_states' />
+						<filter string="Interfaz"
+							context="{'group_by':'interface_id'}" name='grp_all_interfaces' />
+					</group>
+					<field name="name" />
+					<field name="interface_id" />
+				</search>
+			</field>
+		</record>
+
+		<record id="dynamic_function_view_tree" model="ir.ui.view">
+			<field name="name">dynamic.function.tree</field>
+			<field name="model">dynamic.function</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Función" decoration-muted="(active==False)">
+
+					<field name="interface_id" />
+					<field name="name" />
+					<field name="arguments" />
+					<field name="property_ids" />
+					<field name="active" />
+					<button name="%(dynamic_function_test_wizard_view_action)d"
+						type="action" icon="fa-bug" help="Probar" string="Probar"
+						groups="base.group_system,fx.group_exec_programmer" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="dynamic_function_view_form" model="ir.ui.view">
+			<field name="name">dynamic.function.form</field>
+			<field name="model">dynamic.function</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Función" version="16.0">
+					<header>
+						<button name="%(dynamic_function_test_wizard_view_action)d"
+							type="action" icon="fa-bug" string="Probar"
+							groups="base.group_system,fx.group_exec_programmer" />
+					</header>
+					<group colspan="4" col="2">
+						<group>
+							<field name="displayed_name" readonly="1" />
+							<field name="name"
+								attrs="{'readonly':[('locked','=',True)]}" placeholder="fx" />
+							<field name="arguments"
+								attrs="{'readonly':[('locked','=',True)]}"
+								placeholder="arg1,arg2,..." />
+						</group>
+						<group>
+							<field name="interface_id"
+								attrs="{'readonly':[('locked','=',True)]}"
+								options="{'no_open': True, 'no_create': True}" />
+							<field name="external_name"
+								attrs="{'invisible':[('interface_id','=',False)],'required':[('interface_id','!=',False)]}" />
+							<field name="property_ids"
+								attrs="{'readonly':[('locked','=',True)]}"
+								widget="many2many_tags"
+								options="{'no_open': True, 'no_create': True}" />
+							<field name="notes"
+								attrs="{'readonly':[('locked','=',True)]}"
+								placeholder="DESCRIPCION" />
+							<field name="active"
+								attrs="{'readonly':[('locked','=',True)]}" />
+							<field name="locked" invisible="1" />
+						</group>
+					</group>
+					<newline />
+					<notebook>
+						<page name="hr_page_code" string="Código de Programación">
+							<separator string="Ayuda" />
+							<newline/>
+							<field name="help_programming_code" readonly="0"
+								nolabel="1" widget="ace" options="{'mode': 'python'}" />
+							<newline />
+							<separator string="Código" />
+							<newline />
+							<field name="programming_code" nolabel="1" widget="ace"
+								options="{'mode': 'python'}" />
+						</page>
+
+						<page name="hr_page_history" string="Log de Modificaciones"
+							attrs="{'invisible':['|',('id','&lt;=',0),('id','=',False)]}"
+							groups="history.group_exec_security_conf,history.group_exec_security_read">
+							<group>
+								<group>
+									<field name="create_uid" string="Creado por"
+										options="{'no_create': True,'no_open': True}" readonly="1" />
+									<field name="create_date" string="Creado en" readonly="1" />
+								</group>
+								<group>
+									<field name="write_uid" string="Actualizado por"
+										options="{'no_create': True,'no_open': True}" readonly="1" />
+									<field name="write_date" string="Actualizado en"
+										readonly="1" />
+								</group>
+							</group>
+							<newline />
+							<field name="history_ids" readonly="1"
+								context="{'model':'dynamic.function'}" />
+						</page>
+
+					</notebook>
+
+				</form>
+			</field>
+		</record>
+
+
+		<record id="dynamic_function_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Función</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">dynamic.function</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">['|',('active','=',True),('active','=',False)]
+			</field>
+			<field name="context">{'search_default_is_active':1}</field>
+			<field name="view_id" ref="dynamic_function_view_tree" />
+			<field name="search_view_id" ref="dynamic_function_view_filter" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="dynamic_function_view_tree_action">
+			<field name="sequence" eval="1" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="dynamic_function_view_tree" />
+			<field name="act_window_id" ref="dynamic_function_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="dynamic_function_view_form_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dynamic_function_view_form" />
+			<field name="act_window_id" ref="dynamic_function_view_action" />
+		</record>
+
+	</data>
+</odoo>

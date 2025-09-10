@@ -1,0 +1,95 @@
+<odoo>
+    <menuitem id="menu_powerbi_root" name="Informes Gerenciales" sequence="10" web_icon="powerbi_dashboard,static/description/icon.png"/>
+
+
+    <!-- Acción para configuración general -->
+    <record id="action_powerbi_dashboard_all" model="ir.actions.act_window">
+        <field name="name">Todos los Dashboards</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Acción: Ventas -->
+    <record id="action_powerbi_dashboard_sales" model="ir.actions.act_window">
+        <field name="name">Dashboard de Ventas</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','sales')]</field>
+        <field name="context">{'default_category': 'sales'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Acción: CRM -->
+    <record id="action_powerbi_dashboard_crm" model="ir.actions.act_window">
+        <field name="name">Dashboard CRM</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','crm')]</field>
+        <field name="context">{'default_category': 'crm'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Acción: Finanzas -->
+    <record id="action_powerbi_dashboard_finance" model="ir.actions.act_window">
+        <field name="name">Dashboard Finanzas</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','finance')]</field>
+        <field name="context">{'default_category': 'finance'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+    <!-- Acción: Logística -->
+    <record id="action_powerbi_dashboard_logistics" model="ir.actions.act_window">
+        <field name="name">Dashboard Logistica</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','logistics')]</field>
+        <field name="context">{'default_category': 'logistics'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Acción: Proyectos -->
+    <record id="action_powerbi_dashboard_project" model="ir.actions.act_window">
+        <field name="name">Dashboard Proyectos</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','project')]</field>
+        <field name="context">{'default_category': 'project'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Acción: Talento Humano -->
+    <record id="action_powerbi_dashboard_hr" model="ir.actions.act_window">
+        <field name="name">Dashboard Talento Humano</field>
+        <field name="res_model">powerbi.dashboard.gen</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('category','=','hr')]</field>
+        <field name="context">{'default_category': 'hr'}</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_powerbi_config" name="Configuración"
+              parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_all"
+              sequence="5"/>
+
+    <menuitem id="menu_powerbi_sales" name="Ventas" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_sales" sequence="10"/>
+    <menuitem id="menu_powerbi_crm" name="CRM" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_crm" sequence="20"/>
+    <menuitem id="menu_powerbi_finance" name="Finanzas" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_finance" sequence="30"/>
+    <menuitem id="menu_powerbi_logistics" name="Logística/Supply" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_logistics" sequence="40"/>
+    <menuitem id="menu_powerbi_project" name="Proyectos" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_project" sequence="50"/>
+    <menuitem id="menu_powerbi_hr" name="Talento Humano" parent="menu_powerbi_root"
+              action="action_powerbi_dashboard_hr" sequence="60"/>
+</odoo>

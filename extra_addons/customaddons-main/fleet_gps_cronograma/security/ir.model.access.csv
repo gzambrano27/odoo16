@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+fleet_cronograma_user,fleet_cronograma user,model_fleet_cronograma,fleet_gps_cronograma.group_cronograma_usuario,1,1,1,0
+fleet_cronograma_admin,fleet_cronograma admin,model_fleet_cronograma,fleet_gps_cronograma.group_cronograma_admin,1,1,1,1
+fleet_cronograma_tipo_user,fleet_cronograma.tipo user,model_fleet_cronograma_tipo,fleet_gps_cronograma.group_cronograma_usuario,1,0,0,0
+fleet_cronograma_tipo_admin,fleet_cronograma.tipo admin,model_fleet_cronograma_tipo,fleet_gps_cronograma.group_cronograma_admin,1,1,1,1
+access_cronograma_print_wizard_user,Cronograma – Fechas (Imprimir) usuario,model_cronograma_print_wizard,fleet_gps_cronograma.group_cronograma_usuario,1,0,1,0
+access_cronograma_print_wizard_admin,Cronograma – Fechas (Imprimir) admin,model_cronograma_print_wizard,fleet_gps_cronograma.group_cronograma_admin,1,1,1,1

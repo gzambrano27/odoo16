@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_maintenance_acta_user,maintenance.acta.user,model_maintenance_acta,group_maintenance_acta_user,1,0,0,0
+access_maintenance_acta_manager,maintenance.acta.manager,model_maintenance_acta,group_maintenance_acta_manager,1,1,1,1
+access_maintenance_equipment_caracteristicas,access_maintenance_equipment_caracteristicas,model_maintenance_equipment_caracteristicas,,1,1,1,1

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_reserva_sala_usuario,reserva_sala: Usuario - Reserva de Sala,model_reserva_sala,group_usuario_reservas,1,1,1,0
+access_reserva_sala_admin,reserva_sala: Administrador - Reserva de Sala,model_reserva_sala,group_admin_reservas,1,1,1,1
+access_sala_reunion_usuario,reserva_sala: Usuario - Sala de Reunión,model_sala_reunion,group_usuario_reservas,1,0,0,0
+access_sala_reunion_admin,reserva_sala: Administrador - Sala de Reunión,model_sala_reunion,group_admin_reservas,1,1,1,1
+access_correos_primordiales_usuario,correos_primordiales: Usuario - Correos Primordiales,model_correos_primordiales,group_usuario_reservas,1,0,0,0
+access_correos_primordiales_admin,correos_primordiales: Administrador - Correos Primordiales,model_correos_primordiales,group_admin_reservas,1,1,1,1

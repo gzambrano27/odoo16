@@ -1,0 +1,46 @@
+<odoo>
+    <record id="view_planillas_categoria_tree" model="ir.ui.view">
+        <field name="name">planillas.categoria.tree</field>
+        <field name="model">planillas.categoria</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="codigo" widget="badge" decoration-muted="codigo"/>
+                <field name="name"/>
+                <field name="seccion_id"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="estado" widget="badge" optional="show"
+                       decoration-success="estado == 'activo'"
+                       decoration-danger="estado == 'inactivo'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_planillas_categoria_form" model="ir.ui.view">
+        <field name="name">planillas.categoria.form</field>
+        <field name="model">planillas.categoria</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="codigo"/>
+                        <field name="name" required="1"/>
+                        <field name="seccion_id"/>
+                        <field name="estado" required="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_planillas_categorias" model="ir.actions.act_window">
+        <field name="name">Categorías</field>
+        <field name="res_model">planillas.categoria</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <menuitem name="Ingresos y Egresos" id="menu_transaction_configuration"
+                  parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="60" />
+
+    <menuitem name="Tipos de Egresos" id="menu_expenses_configuration_action"
+              action="action_hr_expenses_type_view" parent="menu_transaction_configuration"
+              sequence="1" />
+
+    <menuitem name="Tipos de Ingresos" id="menu_incomes_configuration_action"
+              action="action_hr_incomes_type_view" parent="menu_transaction_configuration"
+              sequence="2" />
+
+    <menuitem name="Wages Sectorial Commision Tables" id="menu_sectorial_configuration"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="70" />
+
+    <menuitem name="Legal Basic Wages and Provisions" id="menu_sectorial_legal_action"
+              parent="menu_sectorial_configuration" action="hr_legal_wages_action"
+              sequence="1" />
+
+    <menuitem name="Sectorial Commision" id="menu_sectorial_configuration_action"
+              parent="menu_sectorial_configuration" action="hr_sectorial_commission_action"
+              sequence="3" />
+
+    <menuitem name="Sectorial Tables" id="menu_sectorial_table_action"
+              parent="menu_sectorial_configuration" action="hr_sectorial_commission_table_action"
+              sequence="2" />
+
+    <menuitem name="Descuentos de Empleados" id="menu_discount_employees"
+              parent="hr.menu_hr_root" sequence="5" />
+
+<!--    <menuitem name="Descuentos" id="menu_discount_action" parent="menu_discount_employees"
+              action="action_hr_discount" sequence="1" groups="hr.group_hr_manager" />
+
+    <menuitem name="Anticipos de Salarios" id="menu_advances_action" parent="menu_discount_employees"
+              action="action_hr_discount_run" sequence="3" />-->
+
+    <!--<menuitem name="Decimos" id="menu_decimos_action" parent="menu_discount_employees"
+              action="action_hr_decimo_run" sequence="5" groups="hr.group_hr_manager"/>
+
+    <menuitem name="Retencion Judicial" id="menu_retencion_action" parent="menu_discount_employees"
+              action="action_hr_retencion" sequence="4" />
+
+    <menuitem name="Beneficio Patronal" id="menu_beneficio_patronal_action" parent="menu_discount_employees"
+              action="action_hr_beneficio_patronal" sequence="6" />
+
+    <menuitem name="Planilla IESS" id="menu_planilla_iess_action" parent="menu_discount_employees"
+              action="action_hr_planilla_iess" sequence="8" />
+
+    <menuitem name="Apoyo Solidario - Retenciones" id="menu_apoyo_solidario_action" parent="menu_discount_employees"
+              action="action_hr_apoyo" sequence="10" />
+
+    <menuitem name="Prestamos" id="menu_loans" parent="menu_discount_employees"
+              sequence="3" />
+
+    <menuitem id="hr_import_multas" name="Importar multas" parent="menu_loans"
+              sequence="7" action="hr_multas_wizard_action" />
+
+    <menuitem name="Multas" id="menu_hr_multas"
+              parent="menu_loans" action="hr_multas_action" sequence="8" />
+
+    <menuitem id="hr_import_otros_descuentos" name="Importar Otros Dsctos" parent="menu_loans"
+              sequence="9" action="hr_otros_dsctos_wizard_action" />
+
+    <menuitem name="Otros Descuentos" id="menu_hr_otros_descuentos"
+              parent="menu_loans" action="hr_otros_dsctos_action" sequence="10" />
+
+
+    <menuitem name="Anticipos" id="menu_advance_action" parent="menu_discount_employees"
+              action="action_hr_advance" sequence="2" groups="hr.group_hr_manager" />
+
+    <menuitem name="Prestamos" id="menu_loans_action" parent="menu_loans"
+              action="action_hr_loans" sequence="1" />
+
+    <menuitem id="hr_prestamos_wizard_menu" name="Importar prestamos IESS" parent="menu_loans"
+              sequence="1" action="hr_prestamos_wizard_action" />
+
+    <menuitem name="Prestamos del IESS" id="menu_hr_prestamos_iess"
+              parent="menu_loans" action="hr_prestamos_action" sequence="2" />
+
+    <menuitem id="menu_register_novedades" name="Novedades"
+              parent="hr.menu_hr_root" groups="hr.group_hr_manager"/>
+
+    <menuitem name="Importar Eventos" id="menu_eventos_marcaciones" parent="menu_register_novedades"
+              action="hr_reg_marcaciones_wizard_action" sequence="0" />
+
+    <menuitem name="Registro Marcaciones" id="menu_registro_marcaciones" parent="menu_register_novedades"
+              action="hr_action_reg_marcaciones" sequence="4" />
+
+    <menuitem name="Registro Rubros" id="menu_registro_rubros" parent="menu_register_novedades"
+              action="hr.action_reg_rubros" sequence="5"/>
+
+    <menuitem name="Importar Labor Diaria" id="menu_imp_labor_diaria" parent="menu_register_novedades"
+              action="hr_reg_labdiaria_wizard_action" sequence="6"/>
+
+    <menuitem name="Registrar Labor Diaria" id="menu_reg_labor_diaria" parent="menu_register_novedades"
+              action="hr_action_reg_lab_diaria" sequence="7"/>
+
+    <menuitem name="Generar Novedades" id="menu_genera_novedad" parent="menu_register_novedades"
+              action="action_genera_novedades" sequence="8" groups="hr.group_hr_manager" />
+
+    <menuitem name="Importar Rubros Masivos" id="menu_import_rubros_masivos" parent="menu_register_novedades"
+              action="hr_import_rubros_wizard_action" sequence="9" groups="hr.group_hr_manager" />
+
+    <menuitem name="Actualizar Asistencias" id="menu_actualiza_asistencia" parent="menu_register_novedades"
+              action="hr_actualiza_asistencia_action" sequence="10" groups="hr.group_hr_manager" />
+
+    <menuitem id="menu_register_asistencias" name="Asistencias Diaria"
+              parent="hr.menu_hr_root" groups="hr.group_hr_user"/>
+
+    <menuitem name="Importar Asistencias" id="menu_import_asistencias" parent="menu_register_asistencias"
+              action="hr_reg_asistencias_wizard_action" sequence="2" groups="hr.group_hr_user" />
+
+    <menuitem name="Asistencias" id="registros_asistencias" parent="menu_register_asistencias"
+              action="hr_action_reg_asistencias" sequence="3" groups="hr.group_hr_user" />
+
+    <menuitem id="menu_register_reembolsos" name="Reembolsos"
+              parent="hr.menu_hr_root" />
+
+    <menuitem name="Registro Reembolsos" id="menu_registro_reembolsos" parent="menu_register_reembolsos"
+              action="action_registro_reembolso" sequence="1" />
+
+    <menuitem name="Registro Caja Chica" id="menu_registro_caja_chica" parent="menu_register_reembolsos"
+              action="action_registro_caja_chica" sequence="2" />
+
+    <menuitem name="Bonificacion de Empleados" id="menu_bonificacion_employees"
+              parent="hr.menu_hr_root" />
+
+    <menuitem name="Bonificacion" id="menu_bonificacion_action" parent="menu_bonificacion_employees"
+              action="action_hr_bonificacion" sequence="1" />
+
+    <menuitem name="Abono" id="menu_abono_action" parent="menu_bonificacion_employees"
+              action="action_hr_abono_empleado" sequence="2" />
+
+    <menuitem id="menu_register_register" name="Registros"
+              parent="hr.menu_hr_root"/>
+
+    <menuitem id="menu_register_historic" name="Historicos"
+              parent="menu_register_register"/>
+
+    <menuitem id="menu_register_historic_vacations2" name="Registro de Vacaciones"
+              parent="menu_register_historic" action="open_view_vacaciones_form3" groups="hr.group_hr_manager"/>
+
+    <menuitem id="menu_register_historic_payslip_log" name="Log de Importación" parent="menu_register_historic" action="action_hr_prestamos_wizard_form"/> 
+
+    <menuitem id="menu_finiquito" name="Finiquito" parent="menu_register_historic" action="open_view_finiquito_form" sequence="10"/>
+
+    <menuitem id="menu_hr_department_tree" parent="hr.menu_hr_root" sequence="90"/>
+    <menuitem action="action_department_form" id="menu_hr_department_tree1" parent="menu_hr_department_tree" sequence="91" />
+    <menuitem action="action_account_area_form" id="menu_area" parent="menu_hr_department_tree" sequence="92" />
+
+    <menuitem name="Configuracion Rubros" id="menu_hr_rubros_tree" parent="hr.menu_hr_root" sequence="100"/>
+    <menuitem action="action_rubros_form" id="menu_rubros" parent="menu_hr_rubros_tree" sequence="11" />
+    <menuitem action="action_lista_blanca_rubros_form" id="menu_lista_blanca_rubros" parent="menu_hr_rubros_tree" sequence="20" />
+
+    <menuitem name="Configuracion Reglamento" id="menu_hr_reglamento_tree" parent="hr.menu_hr_root" sequence="200" groups="hr.group_hr_manager" />
+    <menuitem action="action_reglamento_interno_form" id="menu_reglamento" parent="menu_hr_reglamento_tree" sequence="10" groups="hr.group_hr_manager" />
+
+    <menuitem name="Configuracion Ausencia" id="menu_hr_conf_ausencia" parent="hr_holidays.menu_hr_holidays_configuration" sequence="100" groups="hr.group_hr_manager" />
+    <menuitem action="hr_holidays.open_view_holiday_status" id="conf_ausencias" parent="menu_hr_conf_ausencia" sequence="10" groups="hr.group_hr_manager"/>
+    <menuitem action="action_especialidades_form" id="conf_especialidades" parent="menu_hr_conf_ausencia" sequence="20" groups="hr.group_hr_manager"/> -->
+
+    <menuitem name="Vistas Empleados Sql" id="menu_vistas_sistemas_empleados"
+              parent="hr.menu_human_resources_configuration" sequence="4" />
+    
+    <menuitem name="Vista Empleado/Contrato" id="menu_empleado_contrato" parent="menu_vistas_sistemas_empleados"
+              action="action_employee_contract_info" sequence="1" />
+
+
+  </data>
+</odoo>

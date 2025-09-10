@@ -1,0 +1,94 @@
+<odoo>
+    <!-- Definir la categoría para Calendar Approval -->
+    <record id="calendar_approval.module_category_calendar_approval" model="ir.module.category">
+        <field name="name">Calendar Approval</field>
+    </record>
+
+    <!-- Grupo manager para aprobar/reservar -->
+    <record id="group_calendar_approval_manager" model="res.groups">
+        <field name="name">Calendar Approval Manager</field>
+        <field name="category_id" ref="calendar_approval.module_category_calendar_approval"/>
+    </record>
+
+    <!-- Regla para usuarios normales: ven sus pending + todos approved -->
+    <record id="calendar_event_rule_user" model="ir.rule">
+        <field name="name">Calendar Event Rule for Normal Users</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="domain_force">[
+            '|',
+            ('create_uid','=',user.id),
+            ('approval_state','=','approved')
+        ]</field>
+        <field name="groups" eval="[]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Regla para managers: ven todo -->
+    <record id="calendar_event_rule_manager" model="ir.rule">
+        <field name="name">Calendar Event Rule for Managers</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('calendar_approval.group_calendar_approval_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ACL para usuarios normales (solo pueden ver sus eventos, no pueden editar) -->
+    <record id="calendar_event_acl_user" model="ir.model.access">
+        <field name="name">calendar.event user</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="group_id" eval="False"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ACL para managers (pueden editar todo) -->
+    <record id="calendar_event_acl_manager" model="ir.model.access">
+        <field name="name">calendar.event manager</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="group_id" ref="calendar_approval.group_calendar_approval_manager"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ACL para salas: usuarios normales pueden ver, managers tienen acceso completo -->
+    <record id="calendar_room_acl_user" model="ir.model.access">
+        <field name="name">calendar.room user</field>
+        <field name="model_id" ref="calendar_approval.model_calendar_room"/>
+        <field name="group_id" eval="False"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="calendar_room_acl_manager" model="ir.model.access">
+        <field name="name">calendar.room manager</field>
+        <field name="model_id" ref="calendar_approval.model_calendar_room"/>
+        <field name="group_id" ref="calendar_approval.group_calendar_approval_manager"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ACL para mail.mail -> user normal crea mails (envía correos). -->
+    <record id="mail_mail_acl_user" model="ir.model.access">
+        <field name="name">mail.mail user access</field>
+        <field name="model_id" ref="mail.model_mail_mail"/>
+        <field name="group_id" eval="False"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Vista Tree -->
+        <record id="view_apu_apu_tags_tree" model="ir.ui.view">
+            <field name="name">apu.apu.tags.tree</field>
+            <field name="model">apu.apu.tags</field>
+            <field name="arch" type="xml">
+                <tree string="Etiquetas APU">
+                    <field name="name"/>
+                    <field name="color"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Form -->
+        <record id="view_apu_apu_tags_form" model="ir.ui.view">
+            <field name="name">apu.apu.tags.form</field>
+            <field name="model">apu.apu.tags</field>
+            <field name="arch" type="xml">
+                <form string="Etiqueta APU">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción para abrir etiquetas -->
+        <record id="action_apu_apu_tags" model="ir.actions.act_window">
+            <field name="name">Etiquetas APU</field>
+            <field name="res_model">apu.apu.tags</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+                  
+    </data>
+</odoo>

@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="view_partner_inv_plan_form" model="ir.ui.view">
+            <field name="name">res.partner.stock.inv.plan.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="stock.view_partner_stock_form"/>
+            <field name="arch" type="xml">
+                <field name="property_stock_customer" position="after">
+                    <field name="picking_type_id"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

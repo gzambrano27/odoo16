@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ========================================================= -->
+    <!-- ACCIÓN (debe ir antes de los menú‐items que la referencian) -->
+    <!-- ========================================================= -->
+    <record id="sse_action_documents" model="ir.actions.act_window">
+        <field name="name">Documentos SSE</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sse.document</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- ======================== -->
+    <!-- MENÚS                    -->
+    <!-- ======================== -->
+    <!-- Menú raíz -->
+    <menuitem id="sse_menu_root"
+              name="SSE"
+              sequence="50"
+              groups="sde_document.group_sse_usuario,sde_document.group_sse_admin"
+                web_icon="sde_document,static/description/icono.png"/>
+
+    <!-- Menú documentos (usa la acción definida arriba) -->
+    <menuitem id="sse_menu_documents"
+              name="Documentos SSE"
+              parent="sse_menu_root"
+              action="sse_action_documents"/>
+</odoo>

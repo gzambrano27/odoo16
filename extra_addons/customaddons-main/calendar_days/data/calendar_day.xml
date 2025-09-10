@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+		<record id="d1" model="calendar.day">
+			<field name="name">Lunes</field>
+			<field name="value">1</field>
+		</record>
+
+			<record id="d2" model="calendar.day">
+			<field name="name">Martes</field>
+			<field name="value">2</field>
+		</record>
+		
+			<record id="d3" model="calendar.day">
+			<field name="name">Miercoles</field>
+			<field name="value">3</field>
+		</record>
+		
+			<record id="d4" model="calendar.day">
+			<field name="name">Jueves</field>
+			<field name="value">4</field>
+		</record>
+		
+			<record id="d5" model="calendar.day">
+			<field name="name">Viernes</field>
+			<field name="value">5</field>
+		</record>
+		
+			<record id="d6" model="calendar.day">
+			<field name="name">Sábado</field>
+			<field name="value">6</field>
+		</record>
+		
+			<record id="d7" model="calendar.day">
+			<field name="name">Domingo</field>
+			<field name="value">0</field>
+		</record>
+		
+	</data>
+
+</odoo>

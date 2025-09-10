@@ -1,0 +1,2 @@
+PRODUCT,QUANTITY,UOM,DESCRIPTION,PRICE,TAX,x_partner_id@name,x_partner_ids@name,x_color,x_bool
+Basic Computer,1,Units,Basic Computer,10000,Tax 15.00%,Addison Olson,"Douglas Fletcher,Lorraine Douglas",red,TRUE

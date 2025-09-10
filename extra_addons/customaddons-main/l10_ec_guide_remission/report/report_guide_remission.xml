@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="guide_remission">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o"><div></div>
+                    <div class="page" style="font-family: Verdana; font-size: 15px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <img t-if="o.company_id.partner_id.image_1920" t-att-src="'/web/image/res.partner/%s/image_1920' % o.company_id.partner_id.id"
+                                    alt="Company Logo" class="img-fluid" style="max-height: 100px; margin-bottom: 20px;" />
+                                </div>
+                                <div class="card m-1 p-2">
+                                    <p><t t-esc="o.get_company_name()" /></p>
+                                    <p><strong>Dirección:</strong> <t t-esc="o.get_company_street()"/></p>
+                                    <p><strong>Contribuyente Especial Nro:</strong> <t t-esc="o.get_special_taxpayer_number()" /></p>
+                                    <p><strong>Obligado a llevar contabilidad:</strong> <t t-esc="o.get_forced_accounting_status()" /></p>
+                                    <p><strong>Agente de Retención Resolución No.:</strong> <t t-esc="o.get_withhold_agent_number()" /></p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card m-1 p-2">
+                                    <p><strong>R.U.C.:</strong><t t-esc="o.get_company_identification()" /></p>
+                                    <h2>GUIA DE REMISION</h2>
+                                    <br></br>
+                                    <p><strong>No.:</strong> <t t-esc="o.get_retention_number()" /></p>
+                                    <br></br>
+                                    <p><strong>Número de Autorización:</strong> <t t-esc="o.get_authorization_number()" /></p>
+                                    <br></br>
+                                    <p><strong>Fecha y hora de Autorización:</strong> <t t-esc="o.get_emission_date()" /></p>
+                                    <br></br>
+                                    <p><strong>Ambiente:</strong> <t t-esc="o.get_production_environment()" /></p>
+                                    <br></br>
+                                    <p><strong>Emisión:</strong> NORMAL</p>
+                                    <br></br>
+                                    <p><strong>Número de Autorización:</strong> <t t-esc="o.get_authorization_number()" /></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="card m-1 p-2">
+                                <p><strong>Identificación (Transportista):</strong> <t t-esc="o.get_driver_identification()" /></p>
+                                <p><strong>Razón Social / Nombres y Apellidos:</strong> <t t-esc="o.get_driver_name()" /></p>
+                                <p><strong>Placa:</strong> <t t-esc="o.get_vehicle_plate()" /></p>
+                                <p><strong>Punto de Partida:</strong> <t t-esc="o.address_origin" /></p>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p><strong>Fecha inicio:</strong> <t t-esc="o.date_initial" /></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p><strong>Fecha fin Transporte:</strong> <t t-esc="o.date_end" /></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="card m-1 p-2">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p><strong>Comprobante de Venta:</strong> <t t-esc="o.get_associated_invoice()"/></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p><strong>Fecha de Emisión:</strong> <t t-esc="o.get_emission_date()" /></p>
+                                    </div>
+                                </div>
+                                <p><strong>Número de Autorización:</strong> <t t-esc="o.get_authorization_number()" /></p>
+                                <br></br>
+                                <p><strong>Motivo Traslado:</strong> <t t-esc="o.reason_document_id.name" /></p>
+                                <p><strong>Destino (Punto de llegada):</strong> <t t-esc="o.address_destination" /></p>
+                                <p><strong>Identificación (Destinatario):</strong> <t t-esc="o.get_recipient_identification()"/></p>
+                                <p><strong>Razón Social / Nombres y Apellidos:</strong> <t t-esc="o.get_recipient_name()"/></p>
+                                <p><strong>Documento Aduanero:</strong></p>
+                                <p><strong>Código Establecimiento Destino:</strong></p>
+                                <p><strong>Ruta:</strong></p>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="p-2">
+                                <!-- Detalles de los Productos -->
+                                <table class="table table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Descripción</th>
+                                            <th>Cantidad</th>
+                                            <th>Notas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.line_guide_ids" t-as="line">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="line.code" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.name" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.qty" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.details" />
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="text-center"><strong>Información Adicional</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Requisición</strong></td>
+                                        <td><t t-esc="o.documento_requisicion.name" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cuenta Analítica</strong></td>
+                                        <td><t t-esc="o.cuenta_analitica_id.name" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

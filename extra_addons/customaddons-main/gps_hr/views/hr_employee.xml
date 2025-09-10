@@ -1,0 +1,499 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+	
+      <record model="ir.ui.view"
+                id="hr_employee_form_custom_view_inherit">
+            <field name="name">hr.employee.view.custom.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="talent_human.custom_view_employee_form"/>
+            <field name="arch" type="xml">
+
+					<field name="first_name"  position="attributes">
+		 <attribute name="required">1</attribute>
+	</field>
+
+				<field name="last_name"  position="attributes">
+		 <attribute name="required">1</attribute>
+	</field>
+
+					<field name="department_id"  position="attributes">
+						<attribute name="domain">[]</attribute>
+						<attribute name="options">{'no_create':True,'no_edit':True}</attribute>
+					</field>
+
+				<field name="job_id"  position="attributes">
+						<attribute name="domain">[]</attribute>
+						<attribute name="options">{'no_create':True,'no_edit':True}</attribute>
+					</field>
+
+				<field name="parent_id"  position="attributes">
+						<attribute name="domain">[]</attribute>
+						<attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+					</field>
+
+
+				<field name="coach_id"  position="attributes">
+						<attribute name="domain">[]</attribute>
+						<attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+					</field>
+
+
+
+<field name="second_name"  position="attributes">
+		 <attribute name="required">1</attribute>
+	</field>
+
+				<field name="mother_last_name"  position="attributes">
+		 <attribute name="required">1</attribute>
+	</field>
+
+	<field name="provincia_inicio" position="after">
+		<field name="previous_day_contract" />
+	</field>
+
+				<group name="contrato">
+					<field name="contracts_count" invisible="1" />
+				</group>
+
+				<field name="sueldo" position="attributes">
+		 <attribute name="required">1</attribute>
+					<attribute name="attrs">{'readonly':[('contracts_count','&gt;',0)]}</attribute>
+	</field>
+
+
+			<field name="fecha_ingreso"  position="attributes">
+		 <attribute name="class">None</attribute>
+				<attribute name="attrs">{'readonly':[('contracts_count','&gt;',0)]}</attribute>
+	</field>
+					  <button name="action_contact_create" position="attributes">
+						  <attribute name="invisible">1</attribute>
+					  </button>
+				<button name="action_contact_create" position="after">
+				  <button name="action_contact_create_validate" string="Crear Contacto" type="object" class="btn-primary" groups="base.group_system"
+				  icon="fa-gears" invisible="1"
+				  />
+					  <button name="create_update_request" string="Crear Solicitud" type="object" icon="fa-copy"
+
+							  groups="base.group_system"
+
+				  />
+
+				</button>
+
+
+				<field name="tipo_contrato" position="attributes">
+		<attribute name="required">1</attribute>
+		<attribute name="invisible">0</attribute>
+					<attribute name="attrs">{'readonly':[('tipo_contrato','!=',False),('contracts_count','&gt;',0)]}</attribute>
+
+									<attribute name="options">{'no_create':True,'no_edit':True,'no_open':True,}</attribute>
+
+
+	</field>
+
+
+				<field name="tipo_rol" position="attributes">
+		<attribute name="required">0</attribute>
+		<attribute name="invisible">1</attribute>
+					<attribute name="attrs">{'readonly':[('contracts_count','&gt;',0)]}</attribute>
+	</field>
+
+				<field name="condicion_rol" position="attributes">
+		<attribute name="required">1</attribute>
+		<attribute name="invisible">1</attribute>
+	</field>
+
+				<field name="acumula_fondo_reserva" position="attributes">
+		<attribute name="required">0</attribute>
+		<attribute name="invisible">1</attribute>
+	</field>
+
+				<field name="provincia_inicio" position="attributes">
+		<attribute name="required">1</attribute>
+					<attribute name="class">None</attribute>
+		<attribute name="invisible">0</attribute>
+					<attribute name="options">{'no_create':True,'no_edit':True,'no_open':True,}</attribute>
+    <attribute name="domain">[('country_id.code','=','EC')]</attribute>
+					<attribute name="attrs">{'readonly':[('contracts_count','&gt;',0)]}</attribute>
+				</field>
+
+				<field name="canton_inicio" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+
+				<field name="ciudad_inicio" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+
+
+				<field name="unidad_administrativa" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+
+<field name="checked" position="attributes">
+		<attribute name="required">0</attribute>
+		<attribute name="invisible">1</attribute>
+	</field>
+
+				<group name="grp_refund" position="attributes">
+		<attribute name="invisible">1</attribute>
+							</group>
+							<group name="grp_cash" position="attributes">
+		<attribute name="invisible">1</attribute>
+							</group>
+
+				<group name="grp_leaves" position="attributes">
+		<attribute name="invisible">1</attribute>
+							</group>
+	<field name="substitute" position="attributes">
+		<attribute name="invisible">1</attribute>
+	</field>
+			<group  name="grp_replacement" position="attributes">
+		<attribute name="invisible">1</attribute>
+							</group>
+
+
+											<field name="disability"  position="attributes">
+		<attribute name="attrs">{'required':[('inability','=',True)],'invisible':[('inability','!=',True)]}</attribute>
+											</field>
+
+				<field name="percent_disability"  position="attributes">
+		<attribute name="attrs">{'required':[('inability','=',True)],'invisible':[('inability','!=',True)]}</attribute>
+											</field>
+
+				<field name="km_home_work" position="attributes">
+		 <attribute name="required">1</attribute>
+	</field>
+
+
+  <button name="action_user_create"  position="attributes">
+	   <attribute name="invisible">1</attribute>
+  </button>
+
+
+				  <button name="action_user_create"  position="after">
+      <button name="action_copy_profile" string="Dar permisos"
+			  type="object" class="btn-primary" groups="base.group_system"
+	  />
+
+  </button>
+
+			</field>
+	  </record>
+
+
+
+<record id="hr_employee_relative.hr_employee_view_form" model="ir.ui.view">
+        <field name="name">hr.employee.view.form.inherit.relatives</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <field name="spouse_complete_name" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="spouse_birthdate" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="children" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <xpath expr="//notebook" position="inside">
+                <page string="Relatives" groups="hr.group_hr_user" name="page_relative" invisible="1">
+                    <field name="relative_ids" nolabel="1" />
+                </page>
+            </xpath>
+
+	<xpath expr="//group[@name='active_group']/field[@name='user_id']"  position="after">
+ <field name="profile_ids" widget="many2many_checkboxes" />
+
+			</xpath>
+
+        </field>
+    </record>
+
+<record model="ir.ui.view"
+                id="hr_employee_form_view_inherit">
+            <field name="name">hr.employee.view.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+				 <field name="bank_account_id" position="before">
+					<field name="partner_id" readonly="1"/>
+				 </field>
+<field name="bank_account_id" position="attributes">
+	<field name="options">{'color_field': 'color', 'no_create_edit': True, 'no_edit': True,'no_open': True, 'no_create': True}</field>
+				 </field>
+
+
+						<field name="job_title" position="attributes">
+		<attribute name="invisible">1</attribute>
+				</field>
+
+				<field name="job_id" position="attributes">
+		<attribute name="string">Cargo</attribute>
+				</field>
+
+
+				 <field name="employee_type"  position="attributes">
+		<attribute name="invisible">1</attribute>
+				</field>
+
+				<field name="name" position="attributes">
+		<attribute name="readonly">1</attribute>
+					<attribute name="force_save">1</attribute>
+				</field>
+
+				<field name="category_ids" position="attributes">
+		<attribute name="options">{'color_field': 'color', 'no_create_edit': True, 'no_edit': True,'no_open': True, 'no_create': True}</attribute>
+				</field>
+
+
+				<page name="personal_information" position="replace">
+						 <page name="personal_information" string="Información privada" groups="hr.group_hr_user">
+                                <group>
+
+                                        <group string="Ciudadanía">
+                                        <field name="country_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+
+                                       <field
+                         options="{'no_create':True,'no_edit':True,'no_open':True}"
+                         name="l10n_latam_identification_type_id" required="1"
+									   domain="[('is_vat','!=',True)]"
+
+									   />
+
+
+                                        <field name="identification_id" required="1"/>
+											<field name="tiene_ruc" />
+                                        <field name="passport_id"/>
+                                        <field name="gender" widget="radio" required="1"/>
+                                        <field name="birthday" required="1"/>
+                                        <field name="place_of_birth" required="1"/>
+                                        <field options="{'no_open': True, 'no_create': True}" name="country_of_birth" required="1"/>
+                                  <newline/>
+											<separator string="Contabilizacion"/>
+											 <newline/>
+											  <field name="partner_id" readonly="1" options="{'no_edit': True, 'no_create': True}"/>
+      <field name="ruc_partner_id" options="{'no_edit': True, 'no_create': True}"
+			 attrs="{'required':[('tiene_ruc','=',True)],'invisible':[('tiene_ruc','!=',True)]}"
+
+	  domain="[('l10n_latam_identification_type_id','!=',l10n_latam_identification_type_id),('vat','in',(identification_id+'001',identificacion_tercero))]"
+
+	  />
+                                    </group>
+
+									 <group string="Contacto privado">
+
+  <field name="private_street" placeholder="CALLE..." required="1" />
+	 <field name="private_street2" placeholder="REFERENCIA..." required="1" />
+                                        <field name="address_home_id" invisible="1" context="{                                                 'show_address': 1,                                                 'default_type': 'private',                                                 'form_view_ref': 'base.res_partner_view_form_private'}" options="{'always_reload': True, 'highlight_first_line': True}"/>
+                                        <field name="private_email"  required="1"/>
+                                        <field name="phone"  required="1" />
+                                        <field name="lang" invisible="1" readonly="1" attrs="{'invisible':[('address_home_id','=',False)]}" force_save="1"/>
+                                        <label for="km_home_work"/>
+                                        <div class="o_row" name="div_km_home_work">
+                                            <field name="km_home_work" class="o_hr_narrow_field"/>
+                                            <span>Km</span>
+                                        </div>
+
+										 <field name="partner_id" string="Cliente/Proveedor" invisible="1"
+										domain="[('vat','ilike',identification_id)]" readonly="1"
+												options="{'no_create':True,'no_edit':True,'no_open':True}"
+										/>
+
+
+										  <field name="bank_account_id"
+												 options="{'no_create':True,'no_edit':True,'no_open':True}"
+												 force_save="1"
+												 context="{'default_partner_id': address_home_id}" readonly="1"/>
+
+
+                                    </group>
+									 <group string="Situación familiar">
+                                        <field name="marital" required="1"/>
+                                        <field name="spouse_complete_name" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}" invisible="1"/>
+                                        <field name="spouse_birthdate" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}"  invisible="1"/>
+                                        <field name="children"  invisible="1"/>
+                                        <separator name="emergency"  invisible="1" string="Emergency"/>
+                                        <field name="emergency_contact"  invisible="1"/>
+                                        <field name="emergency_phone"  invisible="1" class="o_force_ltr"/>
+                                    </group>
+                                    <group string="Education" invisible="1">
+                                        <field name="certificate"  invisible="1"/>
+                                        <field name="study_field"  invisible="1"/>
+                                        <field name="study_school"  invisible="1"/>
+                                        <separator name="has_work_permit"  invisible="1" string="Work Permit"/>
+                                        <field name="visa_no"  invisible="1"/>
+                                        <field name="permit_no"  invisible="1"/>
+                                        <field name="visa_expire"  invisible="1"/>
+                                        <field name="work_permit_expiration_date"  invisible="1"/>
+                                        <field name="work_permit_name" invisible="1"/>
+                                        <field name="has_work_permit"  invisible="1" widget="work_permit_upload" filename="work_permit_name"/>
+                                    </group>
+
+                                </group>
+							 <newline/>
+
+								<field name="family_burden_ids" nolabel="1" colspan="4"
+								context="{'tree_view_ref':'gps_hr.th_family_burden_view_tree_edit'}"
+								/>
+
+
+                            </page>
+
+
+
+
+
+				</page>
+
+
+				<page  name="page_historial" position="attributes">
+							<attribute name="invisible">1</attribute>
+						</page>
+
+					<page  name="page_public_information" position="attributes">
+							<attribute name="invisible">1</attribute>
+						</page>
+
+
+						 <div id="o_work_employee_container" position="after">
+								<field name="notes" placeholder="OTRA INFORMACION..." colspan="4"/>
+						 </div>
+
+				<page name="page_family_burden" position="attributes">
+						<attribute name="invisible">1</attribute>
+				 </page>
+
+				<group name="managers" position="attributes">
+		<attribute name="invisible">1</attribute>
+				 </group>
+
+				 <field name="address_home_id"  position="attributes">
+		<attribute name="invisible">1</attribute>
+				 </field>
+
+					<div class="o_row" name="div_km_home_work" position="after">
+
+						<field name="pay_with_transfer" />
+
+				 <field name="bank_id"  options="{'no_open': True, 'no_create': True}"
+				 attrs="{'invisible':[('pay_with_transfer','!=',True)],'required':[('pay_with_transfer','=',True)]}"
+				 />
+                                <field name="bank_type" attrs="{'invisible':[('pay_with_transfer','!=',True)],'required':[('pay_with_transfer','=',True)]}" widget="radio"/>
+                                <field name="account_number"  attrs="{'invisible':[('pay_with_transfer','!=',True)],'required':[('pay_with_transfer','=',True)]}" />
+
+						<field name="tercero" attrs="{'invisible':[('pay_with_transfer','!=',True)],'required':[('pay_with_transfer','=',True)]}"  />
+						<field
+                         options="{'no_create':True,'no_edit':True,'no_open':True}"
+                         name="l10n_latam_identification_tercero_id"
+							   attrs="{'invisible':['|',('pay_with_transfer','!=',True),('tercero','!=',True)],'required':[('pay_with_transfer','=',True),('tercero','=',True)]}" />
+
+
+						<field name="identificacion_tercero" attrs="{'invisible':['|',('pay_with_transfer','!=',True),('tercero','!=',True)],'required':[('pay_with_transfer','=',True),('tercero','=',True)]}"  />
+						<field name="nombre_tercero"  attrs="{'invisible':['|',('pay_with_transfer','!=',True),('tercero','!=',True)],'required':[('pay_with_transfer','=',True),('tercero','=',True)]}"  />
+
+
+						<field name="certificado_bancario_attch_ids" colspan="2"
+							   widget="many2many_binary" options="{'no_create': True}"/>
+
+					 </div>
+
+
+					<page   name="page_historial"  position="attributes">
+		<attribute name="invisible">1</attribute>
+				 </page>
+
+
+				<field name="contact_ids" position="after">
+					<newline/>
+					<separator string="Parientes" />
+					<field name="relative_ids" nolabel="1" >
+
+
+						<tree string="Parientes" editable="bottom"
+            >
+                	<field name="relation_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+	<field name="name" required="1" />
+	<field name="partner_id" invisible="1" />
+							<field name="gender" required="1" />
+							<field name="date_of_birth" required="0" />
+							<field name="phone_number" required="0" />
+							<field name="job" required="0" />
+<field name="notes" required="0" />
+
+            </tree>
+
+					</field>
+
+				</field>
+
+					<page name="page_contactos"  position="attributes">
+		<attribute name="string">Contactos &amp; Parientes</attribute>
+				 </page>
+
+
+			</field>
+</record>
+
+
+
+		<record model="ir.ui.view"
+                id="hr_employee_planning_form_view_inherit">
+            <field name="name">hr.employee.planning.view.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="planning.hr_employee_view_form_inherit"/>
+            <field name="arch" type="xml">
+			 <group name="planning"  position="attributes">
+		<attribute name="invisible">1</attribute>
+				 </group>
+				<field name="flexible_hours" position="attributes">
+		<attribute name="invisible">1</attribute>
+				</field>
+
+			</field>
+</record>
+
+
+<!-- -->
+
+		<record id="view_hr_employee_tree_rrhh" model="ir.ui.view">
+    <field name="name">hr.employee.tree.rrhh</field>
+    <field name="model">hr.employee</field>
+    <field name="groups_id" eval="[(4, ref('gps_hr.group_datos_limitados_empleados_rrhh'))]"/>
+    <field name="priority" eval="9999"/>
+    <field name="arch" type="xml">
+        <tree create="false" delete="false" edit="false">
+            <field name="id"/>
+            <field name="name"/>
+            <field name="identification_id"/>
+        </tree>
+    </field>
+</record>
+
+		<record id="view_hr_employee_form_rrhh" model="ir.ui.view">
+    <field name="name">hr.employee.form.rrhh</field>
+    <field name="model">hr.employee</field>
+    <field name="groups_id" eval="[(4, ref('gps_hr.group_datos_limitados_empleados_rrhh'))]"/>
+    <field name="priority" eval="9999"/>
+    <field name="arch" type="xml">
+        <form create="false" delete="false" edit="false" >
+            <sheet>
+                <group>
+                    <field name="id" readonly="1"/>
+                    <field name="name"/>
+                    <field name="identification_id"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+	</data>
+</odoo>

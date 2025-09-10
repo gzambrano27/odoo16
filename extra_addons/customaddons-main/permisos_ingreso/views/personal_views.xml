@@ -1,0 +1,122 @@
+<odoo>
+    <record id="action_export_personal_dispositivos" model="ir.actions.server">
+        <field name="name">Exportar Personal y Dispositivos</field>
+        <field name="model_id" ref="model_permisos_ingreso_personal"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['permisos_ingreso.personal'].action_export_excel()
+        </field>
+    </record>
+
+    <!-- Vista de formulario para el modelo 'Personal' -->
+    <record id="view_form_personal" model="ir.ui.view">
+        <field name="name">personal.form</field>
+        <field name="model">permisos_ingreso.personal</field>
+        <field name="arch" type="xml">
+            <form string="Personal">
+                <header>
+                    <button name="action_aprobar_sf" type="object" string="Aprobado por Seguridad Física"
+                            estado="no_aprobado" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_seguridad"/>
+                    <button name="action_no_aprobado" type="object" string="No Aprobado"
+                            estado="aprobado_sf" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_seguridad"/>
+                    <field name="estado" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group col="12">
+                        <group colspan="6">
+                            <field name="import_file" filename="import_filename" widget="binary"/>
+                        </group>
+                        <group colspan="6">
+                            <button name="import_personal_dispositivos_excel" string="Importar" type="object" class="btn-primary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="cedula"/>
+                        <field name="apellidos"/>
+                        <field name="nombres"/>
+                        <field name="company_id"/>
+                        <field name="actividad_personal"/>
+                        <field name="placa_personal"/>
+                    </group>
+                    <notebook>
+                        <page string="Dispositivos">
+                            <field name="dispositivos">
+                                <tree string="Dispositivos" editable="bottom">
+                                    <field name="tipo"/>
+                                    <field name="modelo"/>
+                                    <field name="serie"/>
+                                    <field name="color"/>
+                                </tree>
+                                <form string="Dispositivo">
+                                    <group>
+                                        <field name="tipo"/>
+                                        <field name="modelo"/>
+                                        <field name="serie"/>
+                                        <field name="color"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de lista para el modelo 'Personal' -->
+    <record id="view_tree_personal" model="ir.ui.view">
+        <field name="name">personal.tree</field>
+        <field name="model">permisos_ingreso.personal</field>
+        <field name="arch" type="xml">
+            <tree string="Personal" default_order="apellidos asc">
+                <header>
+                    <button name="action_export_excel"
+                            type="object"
+                            string="Exportar"
+                            class="oe_highlight"
+                            icon="fa-download"/>
+                </header>
+                <field name="cedula"/>
+                <field name="apellidos"/>
+                <field name="nombres"/>
+                <field name="company_id"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="estado" widget="badge" string="Estado"
+                   decoration-success="estado == 'aprobado_sf'"
+                   decoration-danger="estado == 'no_aprobado'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda para el modelo 'Personal' con filtros de agrupación -->
+    <record id="view_search_personal" model="ir.ui.view">
+        <field name="name">permisos_ingreso.personal.search</field>
+        <field name="model">permisos_ingreso.personal</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Personal">
+                <field name="cedula"/>
+                <field name="apellidos"/>
+                <field name="nombres"/>
+                <filter name="group_by_company" string="Compañía" context="{'group_by': 'company_id'}"/>
+                <filter name="group_by_estado" string="Estado" context="{'group_by': 'estado'}"/>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- Acción para abrir la vista de lista y formulario del modelo 'Personal' -->
+    <record id="action_personal" model="ir.actions.act_window">
+        <field name="name">Personal</field>
+        <field name="res_model">permisos_ingreso.personal</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_search_personal"/>
+    </record>
+</odoo>

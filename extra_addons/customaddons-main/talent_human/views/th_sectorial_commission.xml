@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Comisión Sectorial -->
+        <record model="ir.ui.view" id="hr_sectorial_commission_search">
+            <field name="name">th.commission.search</field>
+            <field name="model">th.sectorial.commission</field>
+            <field name="arch" type="xml">
+                <search string="Comisión Sectorial">
+                    <group>
+                        <filter name="code" string="Code" domain="[]" context="{'group_by':'code'}"/>
+                        <filter name="name" string="Name" domain="[]" context="{'group_by':'name'}"/>
+                        <field name="code"/>
+                        <field name="name"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sectorial_commission_tree">
+            <field name="name">th.commission.tree</field>
+            <field name="model">th.sectorial.commission</field>
+            <field name="arch" type="xml">
+                <tree string="Comisión Sectorial">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sectorial_commission_form">
+            <field name="name">th.commission.form</field>
+            <field name="model">th.sectorial.commission</field>
+            <field name="arch" type="xml">
+                <form string="Comisión Sectorial">
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_sectorial_commission_action" model="ir.actions.act_window">
+            <field name="name">Sectorial commissions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">th.sectorial.commission</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_sectorial_commission_search"/>
+        </record>
+
+        <record id="hr_sectorial_commission_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_sectorial_commission_tree"/>
+            <field name="act_window_id" ref="hr_sectorial_commission_action"/>
+        </record>
+        
+        <record id="hr_sectorial_commission_action_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_sectorial_commission_form"/>
+            <field name="act_window_id" ref="hr_sectorial_commission_action"/>
+        </record>
+
+        <!-- Tablas Sectoriales -->
+        <record model="ir.ui.view" id="hr_sectorial_commission_table_search">
+            <field name="name">th.sectorial.commission.table.search</field>
+            <field name="model">th.sectorial.commission.table</field>
+            <field name="arch" type="xml">
+                <search string="Tablas Sectoriales">
+                    <group>
+                        <filter name="sectorial_commission" string="Sectorial commission" domain="[]" context="{'group_by':'sectorial_commission'}"/>
+                        <field name="name"/>
+                        <field name="sectorial_commission"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sectorial_commission_table_tree">
+            <field name="name">th.sectorial.commission.table.tree</field>
+            <field name="model">th.sectorial.commission.table</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="Tabla Sectorial">
+                    <field name="name"/>
+                    <field name="sectorial_commission"/>
+                    <field name="basic_wages"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sectorial_commission_table_form">
+            <field name="name">th.sectorial.commission.table.form</field>
+            <field name="model">th.sectorial.commission.table</field>
+            <field name="arch" type="xml">
+                <form string="Tabla Sectorial">
+                    <group>
+                        <field name="name"/>
+                        <field name="sectorial_commission"/>
+                        <field name="basic_wages"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_sectorial_commission_table_action" model="ir.actions.act_window">
+            <field name="name">Sectorial tables</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">th.sectorial.commission.table</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_sectorial_commission_table_search"/>
+        </record>
+
+        <record id="hr_sectorial_commission_table_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_sectorial_commission_table_tree"/>
+            <field name="act_window_id" ref="hr_sectorial_commission_table_action"/>
+        </record>
+
+        <record id="hr_sectorial_commission_table_action_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_sectorial_commission_table_form"/>
+            <field name="act_window_id" ref="hr_sectorial_commission_table_action"/>
+        </record>
+
+        <!-- Wages Legal Ecuadorian -->
+        <record model="ir.ui.view" id="hr_legal_wages_search">
+            <field name="name">th.legal.search</field>
+            <field name="model">th.legal.wages</field>
+            <field name="arch" type="xml">
+                <search string="Provisiones y salarios Legales">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_legal_wages_tree">
+            <field name="name">Legals Wages and Provisions</field>
+            <field name="model">th.legal.wages</field>
+            <field name="arch" type="xml">
+                <tree string="Provisiones y salarios Legales" editable="bottom">
+                    <field name="name"/>
+                    <field name="basic_wages"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_legal_wages_form">
+            <field name="name">Legals Wages and Provisions</field>
+            <field name="model">th.legal.wages</field>
+            <field name="arch" type="xml">
+                <form string="Provisiones y salarios Legales">
+                    <group>
+                        <field name="name"/>
+                        <field name="basic_wages"/>
+                        <field name="state"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_legal_wages_action" model="ir.actions.act_window">
+            <field name="name">Legals Wages and Provisions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">th.legal.wages</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_legal_wages_search"/>
+        </record>
+
+        <record id="hr_legal_wages_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_legal_wages_tree"/>
+            <field name="act_window_id" ref="hr_legal_wages_action"/>
+        </record>
+
+        <record id="hr_legal_wages_action_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_legal_wages_form"/>
+            <field name="act_window_id" ref="hr_legal_wages_action"/>
+        </record>
+    </data>
+</odoo>

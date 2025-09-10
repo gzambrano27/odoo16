@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<record id="hr_vacation_period_view_filter" model="ir.ui.view">
+    <field name="name">hr.vacation.period.filter</field>
+    <field name="model">hr.vacation.period</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+        <search string="Vacaciones por Periodo del Empleado">
+            <group expand="0" string="Agrupar por...">
+                <filter name="group_by_company_id" string="Empresa"
+                        context="{'group_by': 'company_id'}" />
+                <filter name="group_by_employee_id" string="Empleado"
+                        context="{'group_by': 'employee_id'}" />
+                <filter name="group_by_state" string="Estado"
+                        context="{'group_by': 'state'}" />
+                <filter name="group_by_year_start" string="Año Inicial"
+                        context="{'group_by': 'year_start'}" />
+                <filter name="group_by_year_end" string="Año Final"
+                        context="{'group_by': 'year_end'}" />
+                <filter name="group_by_years" string="Año(s)"
+                        context="{'group_by': 'years'}" />
+            </group>
+            <group expand="0" string="Filtrar por...">
+                <filter string="Preliminar" name="fltr_state_draft"
+                        domain="[('state','=','draft')]" />
+                <filter string="Confirmado" name="fltr_state_confirmed"
+                        domain="[('state','=','confirmed')]" />
+                <filter string="Finalizado" name="fltr_state_ended"
+                        domain="[('state','=','ended')]" />
+                <newline />
+                <filter string="Menor igual a 5 años" name="fltr_minus_5"
+                        domain="[('years','&lt;=',5)]" />
+                <filter string="Mayor a 5 años" name="fltr_nominus_5"
+                        domain="[('years','&gt;',5)]" />
+                <newline />
+                <filter string="Todos los días ganado"
+                        name="fltr_not_days_pending" domain="[('locked','=',True)]" />
+                <filter string="Pendiente ganar días"
+                        name="fltr_days_pending" domain="[('locked','=',False)]" />
+            </group>
+            <field name="company_id" />
+            <field name="employee_id" />
+            <field name="year_start" />
+            <field name="year_end" />
+            <field name="years" />
+        </search>
+    </field>
+</record>
+
+
+		<record id="hr_vacation_period_view_tree" model="ir.ui.view">
+    <field name="name">hr.vacation.period.tree</field>
+    <field name="model">hr.vacation.period</field>
+    <field name="type">tree</field>
+    <field eval="8" name="priority" />
+    <field name="arch" type="xml">
+        <tree string="Vacaciones por Periodo del Empleado"   create="false" delete="false" edit="false"
+        decoration-it="pending_days&lt;0"
+        >
+            <field name="company_id"
+                   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+            <field name="employee_id"
+                   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+            <field name="contract_id"
+                   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+            <field name="date_start" />
+            <field name="date_end"
+                   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+            <field name="year_start" />
+            <field name="year_end" />
+            <field name="date_start_contract" />
+            <field name="date_end_contract" invisible="1" />
+            <field name="years" />
+            <field name="days" sum="total" />
+            <field name="pending_days" sum="total" />
+            <field name="attempt_days" sum="total" />
+            <field name="attempt_pending_days" sum="total" decoration-danger="attempt_pending_days&lt;=0" />
+            <field name="state" widget="badge"
+            decoration-info="state=='draft'"
+                    decoration-success="state=='ended'"
+                    decoration-danger="state=='confirmed'"
+
+            />
+        </tree>
+    </field>
+</record>
+
+		<record id="hr_vacation_period_view_form" model="ir.ui.view">
+    <field name="name">hr.vacation.period.form</field>
+    <field name="model">hr.vacation.period</field>
+    <field name="type">form</field>
+    <field eval="8" name="priority" />
+    <field name="arch" type="xml">
+        <form string="Vacaciones por Periodo del Empleado" create="false" delete="false">
+
+            <header>
+<button string="Forzar Confirmacion" attrs="{'invisible':[('state','!=','draft')]}"
+        name="action_approved" type="object" icon="fa-check" />
+
+
+                <button name="%(action_open_hr_vacation_period_line_wizard)d"
+                    string="Pagar Días"
+                    type="action" attrs="{'invisible':['|',('attempt_pending_days','&lt;=',0),('state','!=','confirmed')]}"
+                    icon="fa-money"
+                    context="{'default_period_id': active_id}"/>
+
+                <field name="state" widget="statusbar" />
+            </header>
+
+            <sheet>
+
+            <group colspan="4" cols="2">
+                <group>
+                    <field name="company_id" readonly="1"
+                           options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" colspan="2" />
+                    <field name="employee_id" readonly="1" colspan="2"
+                           options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+                           domain="[('company_id','=',company_id)]" />
+                    <field name="contract_id" readonly="1" colspan="2"
+                           options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+                           domain="[('employee_id','=',employee_id),('company_id','=',company_id)]" />
+                    <field name="date_start_contract" required="1" readonly="1" colspan="2" />
+                    <field name="date_end_contract" required="0" readonly="1" colspan="2"
+                           attrs="{'invisible':['|',('date_end_contract','=',None),('date_end_contract','=',False)]}" />
+                </group>
+                <group>
+                    <field name="date_start" readonly="1" colspan="2" />
+                    <field name="date_end" readonly="1" colspan="2" />
+                    <label for="year_start" string="Periodo" />
+                    <div>
+                        <field name="year_start" class="oe_inline" readonly="1" style="width:50%" />
+                        -
+                        <field name="year_end" class="oe_inline" readonly="1" style="width:50%" />
+                    </div>
+                </group>
+            </group>
+            <newline />
+            <notebook>
+                <page string="Detalle">
+                    <group colspan="4" cols="2">
+                        <group string="Tiempo">
+                            <field name="years" readonly="1" colspan="2" />
+                            <field name="add_year_days" readonly="1" colspan="2" />
+                            <field name="period_days" readonly="1" colspan="2" />
+                            <field name="passed_days" readonly="1" colspan="2" />
+                            <field name="migrated" invisible="1" />
+                            <field name="comments" placeholder="OBSERVACIONES DEL PERIODO DE VACACIONES"
+                                   attrs="{'readonly':[('state','not in',('draft','confirmed'))]}" colspan="2" />
+                        </group>
+                        <group string="Tentativos">
+                            <field name="attempt_days" readonly="1" colspan="2" string="Dia(s)" />
+                            <field name="attempt_pending_days" readonly="1" string="Pendiente(s)" colspan="2" />
+                        </group>
+                        <group string="Utilizados">
+                            <field name="taken_pending_migrated_days"
+                                   attrs="{'readonly':[('state','not in',('draft','confirmed'))]}"
+                                   colspan="1"
+/>
+
+                            <field name="taken_days" readonly="1" colspan="2" />
+                            <field name="total_taken_days" readonly="1" colspan="2" style="font:bold" />
+                          <field name="weekend_days" readonly="1" force_save="1"
+                                   attrs="{'readonly':[('state','not in',('draft','confirmed'))]}"
+                                   colspan="1"  />
+                            <field name="request_counter" readonly="1" colspan="2" />
+                        </group>
+                        <group string="Ganados">
+                            <field name="days" readonly="1" colspan="2" />
+                            <field name="pending_days" readonly="1" colspan="2" />
+                        </group>
+                    </group>
+                     <newline/>
+                    <separator string="Detalle"
+                                    attrs="{'invisible':[('line_ids','=',[])]}" />
+<newline/>
+								<field name="line_ids" readonly="1"  colspan="4"
+                                       domain="[('days','&gt;',0)]"
+                                       attrs="{'invisible':[('line_ids','=',[])]}"
+                               context="{'hide_employee':True,'form_view_ref':'gps_hr.view_hr_vacation_period_line_form'}"
+                                >
+									<tree string="Detalle"
+                                    decoration-muted="state in ('refuse','cancel') or days&lt;=0"
+                                          decoration-bf="type=='migrated'"
+                                          decoration-it="type=='payment'"
+                                    >
+                                        <field name="type" readonly="1" optional="hide" />
+
+										<field name="name" readonly="1"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										<field name="date" readonly="1" />
+                                        <field name="date_start" readonly="1" optional="hide"/>
+										<field name="date_stop" readonly="1" optional="hide"/>
+										<field name="days" readonly="1" sum="total" />
+										<field name="state" readonly="1" optional="hide"/>
+
+
+                                          <field name="wage"  optional="hide"/>
+                        <field name="total" optional="hide"/>
+                        <field name="comments" required="1"/>
+
+									</tree>
+								</field>
+
+						</page>
+						<page string="Permiso(s)"
+							attrs="{'invisible':[('request_counter','&lt;=',0)]}">
+							<field name="request_ids" colspan="4" readonly="1"
+								nolabel="1" context="{'hide_partial':True}"
+								domain="[('state','not in',('refuse'))]" />
+						</page>
+              </notebook>
+            </sheet>
+              <newline/>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+        </form>
+    </field>
+</record>
+
+		<record id="hr_vacation_period_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Vacaciones por Periodo del Empleado</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.vacation.period</field>
+			 <field name="view_mode">tree,form</field>
+			<field name="domain">[]</field>
+			<field name="context">{'default_search_fltr_state_confirmed':1}</field>
+			<field name="view_id" ref="hr_vacation_period_view_tree" />
+			<field name="search_view_id"
+				ref="hr_vacation_period_view_filter" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="hr_vacation_period_view_tree_action">
+			<field name="sequence" eval="1" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="hr_vacation_period_view_tree" />
+			<field name="act_window_id"
+				ref="hr_vacation_period_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="hr_vacation_period_view_form_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="hr_vacation_period_view_form" />
+			<field name="act_window_id"
+				ref="hr_vacation_period_view_action" />
+		</record>
+
+	</data>
+</odoo>

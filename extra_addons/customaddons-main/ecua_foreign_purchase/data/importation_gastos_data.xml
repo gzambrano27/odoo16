@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+        <record model="purchase.concept.bill" id="cconcepto_1">
+            <field name="name">PROVEEDORES</field>
+            <field name="has_tax">False</field>
+            <field name="is_landed_cost">False</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_2">
+            <field name="name">FLETE AEREO</field>
+            <field name="has_tax">False</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_3">
+            <field name="name">SEGURO DE TRANSPORTE</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_4">
+            <field name="name">HANDLING</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_5">
+            <field name="name">FODINFA</field>
+            <field name="has_tax">False</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_6">
+            <field name="name">AFORO</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_7">
+            <field name="name">TRAMITE AGENTE DE ADUANA</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_8">
+            <field name="name">BODEGAJE</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_9">
+            <field name="name">TRANSPORTE</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_10">
+            <field name="name">CUSTODIA</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_11">
+            <field name="name">TASA DE CONTROL ADUANERO</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_12">
+            <field name="name">AJUSTES</field>
+        </record>
+        <record model="purchase.concept.bill" id="cconcepto_13">
+            <field name="name">ARANCELES</field>
+            <field name="has_tax">False</field>
+        </record>
+    </data>
+</odoo>

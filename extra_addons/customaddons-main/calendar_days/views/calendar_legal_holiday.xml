@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<record id="calendar_legal_holiday_view_filter" model="ir.ui.view">
+			<field name="name">calendar.legal.holiday.filter</field>
+			<field name="model">calendar.legal.holiday</field>
+			<field name="arch" type="xml">
+				<search string="Días Legales Festivos">
+					<field name="date_from" />
+					<field name="date_to" />
+					<field name="holiday_id" optional="{'no_create':True,'no_edit':True,'no_open':True}"/>
+				</search>
+			</field>
+		</record>
+
+		<record id="calendar_legal_holiday_view_tree" model="ir.ui.view">
+			<field name="name">calendar.legal.holiday.tree</field>
+			<field name="model">calendar.legal.holiday</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Días Legales Festivos"  >
+					<field name="date_from" />
+					<field name="date_to" />
+					<field name="holiday_id" />
+				</tree>
+			</field>
+		</record>
+
+		 <record id="calendar_legal_holiday_view_calendar" model="ir.ui.view">
+        <field name="name">calendar.legal.holiday.view</field>
+        <field name="model">calendar.legal.holiday</field>
+			 <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Días Legales Festivos"
+                      date_start="date_to"
+                      date_stop="date_to" >
+                <field name="holiday_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+            </calendar>
+        </field>
+    </record>
+
+		<record id="calendar_legal_holiday_view_form" model="ir.ui.view">
+			<field name="name">calendar.legal.holiday.form</field>
+			<field name="model">calendar.legal.holiday</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Días Legales Festivos" version="16.0">
+					<group colspan="4" col="2"  >
+						<group colspan="2">
+							<field name="date_from" colspan="2"/>
+					<field name="date_to" colspan="2"/>
+
+						</group>
+						<group colspan="2">
+							<field name="holiday_id"  colspan="2" optional="{'no_create':True,'no_edit':True,'no_open':True}"/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+		
+		<record id="calendar_legal_holiday_view_action" model="ir.actions.act_window">
+			<field name="name">Días Legales Festivos</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">calendar.legal.holiday</field>
+			<field name="view_mode">tree,form,calendar</field>
+			<field name="context">{}</field>
+			<field name="view_id" ref="calendar_legal_holiday_view_tree" />
+			<field name="search_view_id" ref="calendar_legal_holiday_view_filter" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="calendar_legal_holiday_view_tree_action">
+			<field name="sequence" eval="1" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="calendar_legal_holiday_view_tree" />
+			<field name="act_window_id" ref="calendar_legal_holiday_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="calendar_legal_holiday_view_form_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="calendar_legal_holiday_view_form" />
+			<field name="act_window_id" ref="calendar_legal_holiday_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="calendar_legal_holiday_view_calendar_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">calendar</field>
+			<field name="view_id" ref="calendar_legal_holiday_view_calendar" />
+			<field name="act_window_id" ref="calendar_legal_holiday_view_action" />
+		</record>
+		
+	</data>
+</odoo>

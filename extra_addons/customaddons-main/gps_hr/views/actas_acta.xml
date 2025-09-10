@@ -1,0 +1,84 @@
+<odoo>
+
+
+<record id="view_acta_form_user" model="ir.ui.view">
+        <field name="name">acta.form.user</field>
+        <field name="model">actas.acta</field>
+    <field name="priority">9999</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="Información del Acta">
+                        <field name="name"/>
+                        <field name="fecha_salida_equipo"/>
+                        <field name="fecha_recepcion_equipo"/>
+                        <field name="employee_ids"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" string="Jefe Directo:" widget="many2one"/>
+                    </group>
+                    <notebook>
+                        <page string="Modelos de Computadoras">
+                            <field name="computer_models">
+                                <tree editable="bottom">
+                                    <field name="model"/>
+                                    <field name="brand"/>
+                                    <field name="serial_number"/>
+                                    <field name="color"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Personal">
+                            <field name="personnel">
+                                <tree editable="bottom">
+                                    <field name="employee_id"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                    <field name="identification_id"/>
+                                    <field name="job_id"/>
+                                    <field name="department_id"/>
+                                    <field name="company_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="%(gps_actas.actas_report)d" type="action" class="btn btn-primary">
+                        Imprimir Acta
+                    </button>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+<record id="action_acta_user" model="ir.actions.act_window">
+        <field name="name">Actas</field>
+        <field name="res_model">actas.acta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'only_user':True}</field>
+        <field name="help" type="html">
+            <p>
+                Gestiona las actas para la autorización de salida de computadores.
+            </p>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window.view"
+            id="action_acta_tree_user">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="gps_actas.view_acta_tree"/>
+        <field name="act_window_id"
+               ref="action_acta_user"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="action_acta_form_user">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="view_acta_form_user"/>
+        <field name="act_window_id"
+               ref="action_acta_user"/>
+    </record>
+
+</odoo>

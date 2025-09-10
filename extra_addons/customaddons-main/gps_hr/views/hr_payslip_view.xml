@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+<record id="view_hr_payslip_view_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.view.tree</field>
+        <field name="model">hr.payslip.view</field>
+        <field name="arch" type="xml">
+            <tree string="Roles de Pago" create="false" edit="false" delete="false">
+
+                <field name="company_id"/>
+                <field name="employee_name"/>
+                <field name="month_name"/>
+                <field name="year"/>
+
+                 <field name="total_in" sum="total"/>
+                <field name="total_out" sum="total"/>
+                <field name="total_payslip" sum="total"/>
+
+                <button help="Imprimir"
+                        icon="fa-print"
+                        name="print_payslip" type="object" />
+
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_hr_payslip_view_tree_only" model="ir.actions.act_window">
+        <field name="name">Roles de Pago</field>
+        <field name="res_model">hr.payslip.view</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_hr_payslip_view_tree"/>
+        <field name="target">current</field>
+        <field name="context">{'only_user':True}</field>
+    </record>
+
+
+    </data>
+
+
+</odoo>

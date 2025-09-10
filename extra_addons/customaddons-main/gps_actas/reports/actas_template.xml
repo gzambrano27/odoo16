@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_actas_template">
+        <t t-call="web.basic_layout">
+            <div class="page" style="font-family: Verdana; font-size: 17px;">
+                <t t-foreach="docs.sudo()" t-as="doc">
+                    <!-- Encabezado -->
+                    <div class="row mb-4">
+                        <div class="col text-center">
+                            <img t-att-src="'/gps_actas/static/src/img/GPS_LOGO.png'" style="max-height: 100px;" />
+                        </div>
+                    </div>
+
+                    <!-- Título -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td class="text-center align-middle" style="width: 40%;">
+                                        <h5><strong>AUTORIZACIÓN SALIDA DE COMPUTADORES – LAPTOP</strong></h5>
+                                    </td>
+                                    <td class="text-center align-middle" style="width: 35%;">
+                                        <p><strong>Codigo:</strong> <span t-esc="doc.name"/></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Información del empleado -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p>
+                                <strong>Apellidos y Nombres:</strong> <t t-esc="doc.employee_ids and doc.employee_ids[0].name or 'N/A'"/><br/>
+                                <strong>R.U.C / CI:</strong> <t t-esc="doc.employee_ids and doc.employee_ids[0].identification_id or 'N/A'"/><br/>
+                                <strong>Cargo:</strong> <t t-esc="doc.employee_ids and doc.employee_ids[0].job_id.name or 'N/A'"/><br/>
+                                <strong>Área/Departamento:</strong> <t t-esc="doc.employee_ids and doc.employee_ids[0].department_id.name or 'N/A'"/><br/>
+                                <strong>Fecha de salida de equipo:</strong> <t t-esc="doc.fecha_salida_equipo or 'N/A'"/><br/>
+                                <strong>Fecha de recepción de equipo:</strong> <t t-esc="doc.fecha_recepcion_equipo or 'N/A'"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Introducción -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p>
+                                Por medio de la presente, me permito solicitar de manera formal la autorización correspondiente para la salida del equipo portátil (laptop) asignado a las siguientes personas, quienes requieren desarrollar y/o concluir tareas de carácter prioritario desde sus respectivos domicilios. Esta solicitud responde a la necesidad de garantizar la continuidad y cumplimiento de las actividades críticas de nuestra área, en alineación con los objetivos institucionales.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de personal -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Personal</th>
+                                        <th>R.U.C / CI</th>
+                                        <th>Área/Departamento</th>
+                                        <th>Compañía</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="index" t-value="1"/>
+                                    <t t-foreach="doc.personnel" t-as="person">
+                                        <tr>
+                                            <td><t t-esc="index"/></td>
+                                            <td><t t-esc="person.employee_id.name or 'N/A'"/></td>
+                                            <td><t t-esc="person.identification_id or 'N/A'"/></td>
+                                            <td><t t-esc="person.department_id.name or 'N/A'"/></td>
+                                            <td><t t-esc="person.company_id.name or 'N/A'"/></td>
+                                        </tr>
+                                        <t t-set="index" t-value="index + 1"/>
+                                    </t>
+                                    <t t-if="not doc.personnel">
+                                        <tr>
+                                            <td colspan="5" class="text-center">No hay personal registrado</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de equipos -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ITEM</th>
+                                        <th>Modelo</th>
+                                        <th>Marca</th>
+                                        <th>N/S</th>
+                                        <th>Color</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="index" t-value="1"/>
+                                    <t t-foreach="doc.computer_models" t-as="model">
+                                        <tr>
+                                            <td><t t-esc="index"/></td>
+                                            <td><t t-esc="model.model or 'N/A'"/></td>
+                                            <td><t t-esc="model.brand or 'N/A'"/></td>
+                                            <td><t t-esc="model.serial_number or 'N/A'"/></td>
+                                            <td><t t-esc="model.color or 'N/A'"/></td>
+                                        </tr>
+                                        <t t-set="index" t-value="index + 1"/>
+                                    </t>
+                                    <t t-if="not doc.computer_models">
+                                        <tr>
+                                            <td colspan="5" class="text-center">No hay modelos registrados</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Declaración de responsabilidad -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p>
+                                Asimismo, el personal involucrado asume plenamente la responsabilidad por la custodia, buen uso y conservación del equipo asignado, así como por la protección de la información contenida en el mismo. En caso de pérdida o hurto, el personal deberá cubrir el costo total del equipo, conforme al valor correspondiente,en línea a las políticas internas de seguridad y confidencialidad de GPS Group. Por mi parte, como Gerente del área, manifiesto mi compromiso y responsabilidad en respaldar esta autorización, asegurándome de que se cumplan todas las medidas necesarias para el correcto uso del equipo y la preservación de la información institucional.
+                            </p>
+                            <p>
+                                Atentamente,
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Firmas -->
+                    <div class="row" style="page-break-before: always;">
+                        <div class="col-6">
+                            <h5><strong>FIRMA DE JEFE DIRECTO</strong></h5>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <p class="mt-5">____________________________________</p>
+                            <p>
+                                <t t-esc="doc.employee_ids and doc.employee_ids[0].name or 'N/A'"/><br/>
+                                <t t-esc="doc.employee_ids and doc.employee_ids[0].identification_id or 'N/A'"/><br/>
+                                <t t-esc="doc.employee_ids and doc.employee_ids[0].department_id.name or 'N/A'"/>
+                            </p>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                                <h5><strong>FIRMA DE SEGURIDAD</strong></h5>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <p class="mt-5">____________________________________</p>
+                            <h5><strong>NOMBRE:</strong></h5>
+                            <br></br>
+                            <h5><strong>CI:</strong></h5>
+                        </div>
+                        <div class="col-6">
+                            <h5><strong>FIRMA DE PERSONAL</strong></h5>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <t t-foreach="doc.personnel" t-as="person">
+                                <p class="mt-5">____________________________________</p>
+                                <p>
+                                    <t t-esc="person.employee_id.name or 'N/A'"/><br/>
+                                    <t t-esc="person.identification_id or 'N/A'"/><br/>
+                                    <t t-esc="person.department_id.name or 'N/A'"/><br/>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                </p>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <record id="report_edocs_paperformat" model="report.paperformat">
+        <field name="name">Formato Acta</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+    </record>
+
+    <report
+        id="actas_report"
+        model="actas.acta"
+        string="Reporte de Acta"
+        report_type="qweb-pdf"
+        name="gps_actas.report_actas_template"
+        file="gps_actas.report_actas_template"
+        print_report_name="'Acta_%s' % (object.id)"
+        paperformat="report_edocs_paperformat"
+    />
+
+</odoo>

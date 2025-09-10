@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+
+        <!-- Grupo de usuarios -->
+	    <record id="group_analytic_user" model="res.groups">
+	        <field name="name">Analytic User</field>
+	        <field name="category_id" ref="base.module_category_hidden"/>
+	    </record>
+
+        <record id="group_margen_compra_user" model="res.groups">
+	        <field name="name">Margen Compra User</field>
+	        <field name="category_id" ref="base.module_category_hidden"/>
+	    </record>
+	    
+	    <!-- Grupo de usuarios -->
+	    <record id="group_account_import_user" model="res.groups">
+	        <field name="name">Account Import User</field>
+	        <field name="category_id" ref="base.module_category_accounting"/>
+	    </record>
+
+		<record id="group_account_financiero_app" model="res.groups">
+			<field name="name">Financiero Aprobador</field>
+			<field name="category_id" ref="base.module_category_accounting"/>
+		</record>
+
+		<record id="group_purchase_user_registrador" model="res.groups">
+			<field name="name">Registrador Compra</field>
+			<field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+			<field name="category_id" ref="base.module_category_inventory_purchase"/>
+		</record>
+
+        <record id="group_purchase_user_presupuesto" model="res.groups">
+			<field name="name">Presupuestador</field>
+			<field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+			<field name="category_id" ref="base.module_category_inventory_purchase"/>
+		</record>
+
+        <record id="group_purchase_user_administrativo" model="res.groups">
+			<field name="name">Administrativo</field>
+			<field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+			<field name="category_id" ref="base.module_category_inventory_purchase"/>
+		</record>
+
+		 <record id="group_costo_usuario" model="res.groups">
+	        <field name="name">Usuario Costos MRP</field>
+	       	<field name="category_id" ref="base.module_category_accounting"/>
+	    </record>
+
+        <record id="group_pgpp_cambiar" model="res.groups">
+	        <field name="name">Planificacion y Gestion Cambios</field>
+	       	<field name="category_id" ref="base.module_category_hidden"/>
+	    </record>
+
+        <record id="group_pgpp_visualizar" model="res.groups">
+	        <field name="name">Planificacion y Gestion Visualizar</field>
+	       	<field name="category_id" ref="base.module_category_hidden"/>
+	    </record>
+
+        <!-- <record id="group_purchase_viewer" model="res.groups">
+            <field name="name">Compras - Solo lectura</field>
+            <field name="category_id" ref="base.module_category_purchase_management"/>
+        </record> -->
+        <record id="group_purchase_viewer" model="res.groups">
+            <field name="name">Compras - Solo lectura</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+        <record id="purchase.group_purchase_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record>
+        <record id="group_purchase_sensitive_fields" model="res.groups">
+            <field name="name">Compras - Campos sensibles</field>
+            <field name="category_id" ref="base.module_category_purchase_management"/>
+        </record>
+
+        <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record>
+        <!-- <record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record>
+        <record id="purchase.menu_purchase_order" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="groups_id" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record>
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="groups_id" eval="[(4, ref('account_payment_purchase.group_purchase_viewer'))]"/>
+        </record> -->
+
+		<!--         reembolsos -->
+        <!-- Definir la categoría de módulo para Reembolsos -->
+        <record id="module_category_reembolsos_management" model="ir.module.category">
+            <field name="name">Reembolsos</field>
+            <field name="description">Allows you to manage your reembolsos.</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Definir el grupo de usuario para Reembolsos -->
+        <record id="group_reembolso_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_category_reembolsos_management"/>
+        </record>
+        
+        <!-- Definir el grupo de usuario para Reembolsos -->
+        <record id="group_reembolso_jefe" model="res.groups">
+            <field name="name">Jefe</field>
+            <field name="category_id" ref="module_category_reembolsos_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_reembolso_user'))]"/>
+        </record>
+
+        <record id="group_reembolso_contador" model="res.groups">
+            <field name="name">Contador</field>
+            <field name="category_id" ref="module_category_reembolsos_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_reembolso_jefe'))]"/>
+        </record>
+
+        <!-- Definir el grupo de administrador para Reembolsos -->
+        <record id="group_reembolso_manager" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="category_id" ref="module_category_reembolsos_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_reembolso_contador'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- caja chica -->
+        <!-- Definir la categoría de módulo para caja chica -->
+        <record id="module_category_caja_chica_management" model="ir.module.category">
+            <field name="name">Caja Chica</field>
+            <field name="description">Permite administrar tu Caja Chica.</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Definir el grupo de usuario para Caja Chica -->
+        <record id="group_caja_chica_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_category_caja_chica_management"/>
+        </record>
+
+        <record id="group_caja_chica_jefe" model="res.groups">
+            <field name="name">Jefe</field>
+            <field name="implied_ids" eval="[(4, ref('group_caja_chica_user'))]"/>
+            <field name="category_id" ref="module_category_caja_chica_management"/>
+        </record>
+        
+        <record id="group_caja_chica_contador" model="res.groups">
+            <field name="name">Contador</field>
+            <field name="implied_ids" eval="[(4, ref('group_caja_chica_jefe'))]"/>
+            <field name="category_id" ref="module_category_caja_chica_management"/>
+        </record>
+
+        <!-- Definir el grupo de administrador para Caja Chica -->
+        <record id="group_caja_chica_manager" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="category_id" ref="module_category_caja_chica_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_caja_chica_contador'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Asignar el grupo de administrador a un usuario por defecto -->
+<!--         <record id="base.default_user" model="res.users"> -->
+<!--             <field name="groups_id" eval="[(4, ref('group_reembolso_manager'))]"/> -->
+<!--         </record> -->
+        <record id="module_category_requisiciones_admin_presi" model="ir.module.category">
+            <field name="name">Requisiciones</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="group_purchase_admin" model="res.groups">
+            <field name="name">Administrativo de Compras</field>
+            <field name="category_id" ref="account_payment_purchase.module_category_requisiciones_admin_presi"/>
+        </record>
+
+        <record id="group_purchase_presidencia" model="res.groups">
+            <field name="name">Presidencia de Compras</field>
+            <field name="category_id" ref="account_payment_purchase.module_category_requisiciones_admin_presi"/>
+        </record>
+    </data>
+
+</odoo>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Categoría para todos los permisos de Actas -->
+        <record id="module_category_actas" model="ir.module.category">
+            <field name="name">Actas</field>
+            <field name="description">Permisos para gestionar Actas</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- Grupos en cascada: Usuario ▸ Jefe ▸ Administrador -->
+        <record id="group_actas_user" model="res.groups">
+            <field name="name">Usuario de Actas</field>
+            <field name="category_id" ref="module_category_actas"/>
+        </record>
+
+        <record id="group_actas_manager" model="res.groups">
+            <field name="name">Jefe de Actas</field>
+            <field name="category_id" ref="module_category_actas"/>
+            <field name="implied_ids" eval="[(4, ref('group_actas_user'))]"/>
+        </record>
+
+        <record id="group_actas_admin" model="res.groups">
+            <field name="name">Administrador de Actas</field>
+            <field name="category_id" ref="module_category_actas"/>
+            <field name="implied_ids" eval="[(4, ref('group_actas_manager'))]"/>
+        </record>
+
+        <!-- Permisos de acceso por modelo -->
+
+        <!-- actas.acta -->
+        <record id="access_acta_user" model="ir.model.access">
+            <field name="name">Usuario - Acta</field>
+            <field name="model_id" ref="model_actas_acta"/>
+            <field name="group_id" ref="group_actas_user"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_acta_manager" model="ir.model.access">
+            <field name="name">Jefe - Acta</field>
+            <field name="model_id" ref="model_actas_acta"/>
+            <field name="group_id" ref="group_actas_manager"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_acta_admin" model="ir.model.access">
+            <field name="name">Administrador - Acta</field>
+            <field name="model_id" ref="model_actas_acta"/>
+            <field name="group_id" ref="group_actas_admin"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- actas.computer -->
+        <record id="access_computer_user" model="ir.model.access">
+            <field name="name">Usuario - Computer</field>
+            <field name="model_id" ref="model_actas_computer"/>
+            <field name="group_id" ref="group_actas_user"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_computer_manager" model="ir.model.access">
+            <field name="name">Jefe - Computer</field>
+            <field name="model_id" ref="model_actas_computer"/>
+            <field name="group_id" ref="group_actas_manager"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_computer_admin" model="ir.model.access">
+            <field name="name">Administrador - Computer</field>
+            <field name="model_id" ref="model_actas_computer"/>
+            <field name="group_id" ref="group_actas_admin"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- actas.personnel -->
+        <record id="access_personnel_user" model="ir.model.access">
+            <field name="name">Usuario - Personnel</field>
+            <field name="model_id" ref="model_actas_personnel"/>
+            <field name="group_id" ref="group_actas_user"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_personnel_manager" model="ir.model.access">
+            <field name="name">Jefe - Personnel</field>
+            <field name="model_id" ref="model_actas_personnel"/>
+            <field name="group_id" ref="group_actas_manager"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_personnel_admin" model="ir.model.access">
+            <field name="name">Administrador - Personnel</field>
+            <field name="model_id" ref="model_actas_personnel"/>
+            <field name="group_id" ref="group_actas_admin"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Regla: los Jefes no pueden borrar Actas -->
+        <record id="acta_rule_no_unlink_for_manager" model="ir.rule">
+            <field name="name">Jefes no pueden borrar Actas</field>
+            <field name="model_id" ref="model_actas_acta"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_actas_manager'))]"/>
+            <field name="perm_read"  eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

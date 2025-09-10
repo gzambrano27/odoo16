@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+
+
+
+
+             <record model="ir.ui.view"
+                id="account_move_view_payment_form_inherit">
+            <field name="name">account.move.form.payment.inherit</field>
+            <field name="model">account.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+
+    <field name="manual_origin" position="after">
+
+         <field name="date_approved" readonly="1" />
+
+</field>
+
+
+
+            </field>
+
+
+             </record>
+
+
+
+
+
+             <record model="ir.ui.view"
+                id="account_move_view_payment_tree_inherit">
+            <field name="name">account.move.tree.payment.inherit</field>
+            <field name="model">account.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="arch" type="xml">
+
+    <field name="state" position="after">
+
+         <field name="date_approved" optional="hide"/>
+
+</field>
+
+
+
+            </field>
+
+
+             </record>
+
+
+
+
+
+    </data>
+</odoo>

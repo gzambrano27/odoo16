@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<menuitem name="CopyModule"
+            id="menu_copy_root"
+            web_icon="next_gen_copy,static/description/icon.png"
+            groups="group_copy_manager"
+            sequence="195"/>
+            
+    <record id="view_purchase_order_copy_wizard" model="ir.ui.view">
+        <field name="name">purchase.order.copy.wizard.form</field>
+        <field name="model">purchase.order.copy.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Copy Purchase Orders">
+                <group>
+                    <group>
+                        <field name="objeto" required='1'/>
+                        <field name="fecha_desde" required='1'/>
+                        <field name="fecha_hasta" required='1'/>
+                    </group>
+                    <group>
+                        <field name="origin_host"/>
+                        <field name="origin_db"/>
+                        <field name="origin_user"/>
+                        <field name="origin_password" password="True"/>
+                    </group>
+                    <group>
+                        <field name="destination_host"/>
+                        <field name="destination_db"/>
+                        <field name="destination_user"/>
+                        <field name="destination_password" password="True"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Copy" type="object" name="copy_orders" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_purchase_order_copy_wizard" model="ir.actions.act_window">
+        <field name="name">Copy Purchase Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order.copy.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_purchase_order_copy_wizard"/>
+        <field name="target">new</field>
+    </record>
+    
+    
+
+	<menuitem id="menu_copy_objects" name="Objects Copy"
+            parent="menu_copy_root" sequence="1" 
+            groups="group_copy_manager"
+            />
+
+        <!--Supplier menu-->
+         <menuitem id="menu_copy_objects_varios" name="Copy Object" 
+             parent="menu_copy_objects" 
+             action="action_purchase_order_copy_wizard" sequence="15"
+             groups="group_copy_manager"
+             /> 
+
+</odoo>

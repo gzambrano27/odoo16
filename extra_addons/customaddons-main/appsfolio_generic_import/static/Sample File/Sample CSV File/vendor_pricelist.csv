@@ -1,0 +1,2 @@
+VENDOR,PRODUCT TEMPLATE,PRODUCT VARIANT,MINIMAL QUANTITY,PRICE,CURRENCY,START DATE,END DATE,DELAY,x_partner_id@name,x_partner_ids@name,x_color,x_notes,x_amount,x_bool
+Demo,Demo Product,Demo Product,100,800,INR,2023-10-10,2024-12-12,15,Agrolait,"Axeloer,Camptocamp",red,red,50000,0

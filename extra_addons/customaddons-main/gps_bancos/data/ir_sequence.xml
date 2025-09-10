@@ -1,0 +1,29 @@
+<odoo>
+    <data noupdate="1">
+
+
+ <record id="sequence_bank_macro" model="ir.sequence">
+            <field name="name">Pago al Banco</field>
+            <field name="code">bank.macro.request</field>
+            <field name="prefix">PBK</field>
+            <field name="padding">9</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+         <record id="sequence_document_financial_ref_seq" model="ir.sequence">
+            <field name="name">Referencia al Banco</field>
+            <field name="code">document.financial.ref.sequence</field>
+            <field name="prefix">RBK</field>
+            <field name="padding">9</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,630 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+    <record id="account_payment_bank_macro_view_search"
+            model="ir.ui.view">
+        <field name="name">account.payment.bank.macro.search</field>
+        <field name="model">account.payment.bank.macro</field>
+        <field name="type">tree</field>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Pagos a Proveedores">
+
+                 <group expand="0" string="Filtrar...">
+						<filter string="Preliminar" name="is_draft"
+							domain="[('state','=','draft')]" />
+
+                     <filter string="Generado" name="is_generated"
+							domain="[('state','=','generated')]" />
+
+                     <filter string="Confirmado" name="is_confirmed"
+							domain="[('state','=','confirmed')]" />
+
+                        <filter string="Realizado" name="is_done"
+							domain="[('state','=','done')]" />
+                        <filter string="Anulado" name="is_cancelled"
+							domain="[('state','=','cancelled')]"
+                        />
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+						<filter string="Estados"
+							context="{'group_by':'state'}" name='grp_state' />
+						<filter string="Compañia"
+							context="{'group_by':'company_id'}" name='grp_company_id' />
+                         <filter string="Fecha de Solicitud"
+							context="{'group_by':'date_request'}" name='grp_date_request' />
+ <filter string="Fecha de Pago"
+							context="{'group_by':'date_payment'}" name='grp_date_payment' />
+					</group>
+
+                <field name="id" string="# ID"/>
+                 <field name="number_week" string="# Sem."/>
+                <field name="name"/>
+                <field name="journal_id"/>
+                <field name="company_id"/>
+                <field name="date_payment"/>
+                <field name="date_request"/>
+                   <field name="ref"  />
+            </search>
+        </field>
+    </record>
+
+
+        <record id="account_payment_bank_macro_view_calendar" model="ir.ui.view">
+          <field name="name">account.payment.bank.macro.calendar</field>
+         <field name="model">account.payment.bank.macro</field>
+			 <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Pagos a Proveedores"
+                      date_start="date_request"
+                      date_stop="date_request"
+            mode="month"
+                 hide_time="true" js_class="project_calendar" event_open_popup="true"
+
+            >
+                <field name="id" string="# ID"/>
+                <field name="journal_id"  filters="1"/>
+                <field name="comments"/>
+                <field name="amount"/>
+            </calendar>
+        </field>
+    </record>
+        
+    <record id="account_payment_bank_macro_view_tree"
+            model="ir.ui.view">
+        <field name="name">account.payment.bank.macro.tree</field>
+        <field name="model">account.payment.bank.macro</field>
+        <field name="type">tree</field>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Pagos a Proveedores" edit="false" create="false" delete="false"
+               >
+  <field name="id" string="# ID"/>
+                <field name="default_mode_payment" />
+                <field name="number_week"
+                       string="# Sem."
+                       attrs="{'invisible':[('number_week','&lt;=',0)]}" />
+                <field name="name"/>
+                <field name="journal_id"/>
+                <field name="company_id"/>
+                <field name="date_request"  />
+                <field name="date_payment" attrs="{'invisible':['|',('date_payment','=',None),('date_payment','=',False)]}"/>
+                <field name="max_amount_payments" sum="total"/>
+                <field name="pending" sum="total"/>
+                <field name="amount" sum="total"/>
+                <field name="ref" />
+                <field name="dif_max_amount_payments"  decoration-success="dif_max_amount_payments&gt;=0.00"  decoration-danger="dif_max_amount_payments&lt;0.00" />
+                <field name="state" optional="show" widget="badge"
+                       decoration-muted="state=='cancelled'"
+                       decoration-info="state=='draft'"
+                       decoration-warning="state=='generated'"
+                           decoration-danger="state=='confirmed'"
+                       decoration-success="state=='done'"
+                />
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="account_payment_bank_macro_view_form"
+            model="ir.ui.view">
+        <field name="name">account.payment.bank.macro.form</field>
+        <field name="model">account.payment.bank.macro</field>
+        <field name="type">tree</field>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Pagos a Proveedores"  create="false" delete="false">
+                <header>
+
+
+
+                     <button name="%(report_account_payment_bank_macro_act)d" type="action"
+        string="Imprimir" icon="fa-print"
+        attrs="{'invisible':[('state','=','cancelled')]}"
+        groups="gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+                    <button name="action_generated" type="object"
+        string="Generar" icon="fa-lock"
+        attrs="{'invisible':[('state','!=','draft')]}"
+        groups="gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+    <button name="action_draft" type="object"
+        string="Reversar" icon="fa-rotate-left"
+        attrs="{'invisible':[('state','!=','generated')]}"
+                            groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+<button name="action_confirmed" type="object"
+        string="Confirmar" icon="fa-check"
+        attrs="{'invisible':[('state','!=','generated')]}"
+        groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+<button name="action_generated" type="object"
+        string="Generar" icon="fa-rotate-left"
+        attrs="{'invisible':[('state','!=','confirmed')]}"
+                          groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+                    <button name="generate_file_macro" type="object"
+        string="Generar Macro" icon="fa-file"
+        attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','in',('done','cancelled' ))]}"
+                            groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+                        <button name="download_file_macro" type="object"
+        string="Descargar Macro" icon="fa-download"
+        attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','not in',('done','cancelled'))]}"
+                            groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+
+                    <button name="action_done" type="object"
+        string="Pagar" icon="fa-cogs"
+        attrs="{'invisible':[('state','!=','confirmed')]}"
+                            groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+                                        <button name="action_cancel" type="object"
+        string="Anular" icon="fa-times"
+        attrs="{'invisible':[('state','not in',('draft','generated'))]}"
+                                                groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+  <button string="Enviar" type="object" name="send_mail" confirm="Al proceder, se enviará una notificación por correo electrónico a todos los proveedores con dirección de correo registrada, informándoles sobre el pago correspondiente.¿Estás seguro?"
+                                            icon="fa-envelope-o" invisible="context.get('hide_financial',0)"
+                                            attrs="{'invisible':['|','|',('type_module','=','payslip'),('send_mail_batch','=',True),('state','!=','done')]}"
+  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+  />
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+
+                    <div name="button_box" class="oe_button_box">
+                            <field name="number_invoices" invisible="1"/>
+                         <field name="number_orders" invisible="1"/>
+                         <field name="number_payments" invisible="1"/>
+                         <field name="number_requests" invisible="1"/>
+                           <field name="number_mail_requests" invisible="1"/>
+                        <field name="number_employee_payments" invisible="1"/>
+<field name="send_mail_batch" invisible="1" />
+<field name="number_payslip_payments" invisible="1" />
+                        <field name="number_movement_payments" invisible="1" />
+
+                        <field name="number_reembolsos" invisible="1" />
+                        <field name="number_caja_chicas" invisible="1" />
+   <field name="number_liquidation_payments" invisible="1" />
+
+                        <button name="action_open_requests"
+                                    class="oe_stat_button" icon="fa-tasks"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                attrs="{'invisible':[('number_requests','&lt;=',0)]}"
+                                    string="Solicitudes">
+                            </button>
+                             <button name="action_open_employee_payments"
+                                     type="object"  groups="base.group_system"
+                                     class="oe_stat_button" icon="fa-users"
+                                attrs="{'invisible':[('number_employee_payments','&lt;=',0)]}"
+                                    string="Sol. Nóminas">
+                            </button>
+                            <button name="action_open_purchase_orders"
+                                    class="oe_stat_button" icon="fa-book"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                     attrs="{'invisible':[('number_orders','&lt;=',0)]}"
+                                    string="O.C.">
+                            </button>
+                            <button name="action_open_invoices"
+                                    class="oe_stat_button" icon="fa-copy"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                    attrs="{'invisible':[('number_invoices','&lt;=',0)]}"
+                                    string="Facturas">
+                            </button>
+
+                        <button name="action_open_reembolsos"
+                                    class="oe_stat_button" icon="fa-search-plus"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                    attrs="{'invisible':[('number_reembolsos','&lt;=',0)]}"
+                                    string="Reembolsos">
+                            </button>
+
+                        <button name="action_open_caja_chicas"
+                                    class="oe_stat_button" icon="fa-search-plus"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                    attrs="{'invisible':[('number_caja_chicas','&lt;=',0)]}"
+                                    string="Cajas Chicas">
+                            </button>
+
+                        <button name="action_open_payments"
+                                    class="oe_stat_button" icon="fa-money"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                attrs="{'invisible':[('number_payments','&lt;=',0)]}"
+                                    string="Pagos">
+                            </button>
+ <button name="action_open_payslips"
+                                    class="oe_stat_button" icon="fa-list-ul"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                attrs="{'invisible':[('number_payslip_payments','&lt;=',0)]}"
+                                    string="Nóminas">
+                            </button>
+ <button name="action_open_movements"
+                                    class="oe_stat_button" icon="fa-list-ol"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                attrs="{'invisible':[('number_movement_payments','&lt;=',0)]}"
+                                    string="Préstamos">
+                            </button>
+
+
+ <button name="action_open_liquidations"
+                                    class="oe_stat_button" icon="fa-ellipsis-v"
+                                    type="object"  groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                                attrs="{'invisible':[('number_liquidation_payments','&lt;=',0)]}"
+                                    string="Liq. de Haberes">
+                            </button>
+
+
+                         <button name="action_open_mail_requests"
+                                    class="oe_stat_button" icon="fa-envelope-o"
+                                    type="object"
+
+
+                                    attrs="{'invisible':['|','|',('type_module','=','payslip'),('number_mail_requests','&lt;=',0),('state','!=','done')]}"
+                                    string="Notificaciones">
+                            </button>
+
+                        </div>
+
+                <group>
+                    <group>
+                        <field name="enable_value_payments" invisible="1"/>
+                        <field name="id" string="# ID" readonly="1"/>
+                <field name="company_id" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                               <field name="default_mode_payment" readonly="1" />
+
+                           <field name="macro_bank_type" readonly="1" attrs="{'invisible':[('default_mode_payment','!=','bank')]}" />
+
+                                        <field name="journal_id"
+                                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                               readonly="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                         <div colspan="2" attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('generate_macro','!=',True)]}" class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+                        <b>Este diario</b>  generará un archivo de carga al banco
+                    </div>
+
+                        <field name="mode_macro" widget="radio" attrs="{'readonly':[('enable_value_payments','!=',True)]}"/>
+                       <field name="comments"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                      </group>
+                    <group>
+                <field name="date_request"  readonly="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                          <field name="number_week" string="# Sem."  readonly="1" attrs="{'readonly':[('state','!=','draft')],'invisible':['|',('date_payment','=',None),('date_payment','=',False)]}" />
+
+                <field name="date_payment"  readonly="1" attrs="{'readonly':[('state','!=','draft')],'invisible':['|',('date_payment','=',None),('date_payment','=',False)]}" />
+
+                                                    <field name="max_amount_payments" force_save="1"
+                                                     attrs="{'readonly':[('enable_value_payments','!=',True)]}"/>
+
+ <field name="conf_payment_id" required="1"  invisible="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                           <field name="generate_macro" invisible="1"  />
+
+     <field name="pending" readonly="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="amount" readonly="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="dif_max_amount_payments"  readonly="1"  decoration-success="dif_max_amount_payments&gt;=0.00"  decoration-danger="dif_max_amount_payments&lt;0.00" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                <field name="ref" attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','!=','done')]}" placeholder="REFERENCIA..."/>
+                        <field name="type_module"  force_save="1" invisible="1" />
+                    </group>
+                </group>
+                <newline/>
+                    <notebook>
+<page string="Detalle">
+                <field name="line_ids" force_save="1" attrs="{'readonly':[('enable_value_payments','!=',True)]}"
+                context="{'form_view_ref':'gps_bancos.account_payment_bank_macro_line_view_form'}"
+                >
+                        <tree string="Detalle" editable="bottom" create="false" delete="false"
+                        decoration-muted="not apply"
+                              decoration-danger="apply and amount!=pending"
+                              decoration-success="apply and amount==pending"
+                              decoration-bf="default_mode_payment=='bank' and not bank_account_id"
+                              decoration-it="amount&gt;pending"
+                        >
+                            <field name="default_mode_payment" optional="hide" readonly="1"/>
+                            <field name="id" string="# ID" optional="hide" />
+                    <field name="request_id"      readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="partner_id"      readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="original_pending"   sum="total"   readonly="1" optional="hide"/>
+                                                         <field name="original_amount" sum="total"     readonly="1" optional="hide"/>
+                      <field name="pending"   sum="total"   readonly="1" />
+                                                         <field name="amount" sum="total"
+                                                         attrs="{'readonly':[('type','in',('hr.employee.payment',))]}"
+                                                                force_save="1"
+                                                         />
+<field name="apply" widget="boolean_toggle" attrs="{'readonly':[('parent.enable_value_payments','!=',True)]}"/>
+
+
+                            <field name="is_prepayment" readonly="1"/>
+                                                        <field name="prepayment_account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+            attrs="{'required':[('is_prepayment','=',True)],'invisible':[('is_prepayment','!=',True)]}"
+
+            />
+
+        <field name="bank_account_id" domain="[('partner_id','=',partner_id)]"  optional="hide"
+               options="{'no_create':True,'no_edit':True,'no_open':True}"
+        attrs="{'readonly':[('parent.enable_value_payments','!=',True)]}"
+        />   <field name="payment_id" optional="hide" readonly="1" force_save="1"
+               options="{'no_create':True,'no_edit':True,'no_open':True}" />
+
+  <field name="payment_account_id" options="{'no_create':True,'no_edit':True,'no_open':True}" optional="hide"/>
+
+                            <field name="document_ref" optional="show" />
+<field name="type" invisible="1" />
+                        </tree>
+                </field>
+
+</page>
+                        <page string="Resumen">
+                            <group>
+                                <button name="show_summary" type="object" coslpan="1"
+        string="Act. Referencias" icon="fa-edit"
+        attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','!=','done')]}"
+                          groups="gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+ <button name="show_summary" type="object" coslpan="1"
+        string="Act. Referencias" icon="fa-edit"
+        attrs="{'invisible':['|',('default_mode_payment','=','bank'),('state','not in',('done','confirmed'))]}"
+                          groups="gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+
+                            </group>
+                            <newline/>
+                            <field name="summary_ids" readonly="1" force_save="1">
+                                <tree string="Resumen" decoration-it="not ref" create="false" delete="false" edit="false">
+                            <field name="name" optional="hide"/>
+                             <field name="partner_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="bank_account_id"  options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                  <field name="bank_id"  optional="hide" force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                           <field name="bank_acc_number" optional="hide" force_save="1"    readonly="1"/>
+           <field name="bank_tipo_cuenta" optional="hide" force_save="1"    readonly="1"/>
+               <field name="tercero" optional="hide" force_save="1"    readonly="1"/>
+              <field name="identificacion_tercero" optional="hide" force_save="1"    readonly="1"
+              attrs="{'invisible':[('tercero','!=',True)]}"
+              />
+                                      <field name="nombre_tercero" optional="hide" force_save="1"    readonly="1"
+                                      attrs="{'invisible':[('tercero','!=',True)]}"
+
+                                      />
+                                      <field name="l10n_latam_identification_tercero_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                             attrs="{'invisible':[('tercero','!=',True)]}"
+                                             optional="hide" force_save="1"    readonly="1"/>
+
+  <field name="amount" sum="total" force_save="1"    readonly="1"/>
+<field name="line_ids" force_save="1"  invisible="1" />
+                                    <field name="ref" optional="hide"/>
+                                    <field name="comments" />
+
+                                     <field name="is_intercompany" optional="hide"/>
+                                     <field name="accredited_other_company" optional="hide"/>
+                                     <field name="intercompany_payment_ref" optional="hide"/>
+
+
+<button name="%(action_account_payment_request_workflow_wizard)d"
+                        help="Reversar"
+                        type="action"
+        icon="fa-rotate-left" attrs="{'invisible':['|',('reversed','=',True),('parent.state','!=','done')]}"
+                         />
+
+                                    <button help="Enviar" type="object" name="send_mail"
+                                            icon="fa-envelope-o"
+                                          confirm="Al proceder, se enviará una notificación por correo electrónico al proveedor a la dirección de correo registrada, informándoles sobre el pago correspondiente.¿Estás seguro?"
+                                            attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"/>
+   <field name="reversed" optional="hide" />
+             <field name="reversed_motive_id" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                <field name="reversed_comments" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+                     <field name="reversed_date" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+      <field name="reversed_ref" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+
+<button name="%(gps_bancos.action_report_detalle_pago)d"
+        type="action"
+        attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"
+        help="Imprimir" icon="fa-print"
+        context="{'active_ids': [active_id]}"/>
+
+
+                        </tree>
+                                      <form string="Resumen">
+                                          <header>
+                                              <button name="%(gps_bancos.action_report_detalle_pago)d"
+        type="action"
+        attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"
+        string="Imprimir" icon="fa-print"
+        context="{'active_ids': [active_id]}"/>
+                                          </header>
+                                          <group>
+                                          <group>
+                            <field name="name" string="# ID"/>
+                             <field name="partner_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="bank_account_id" force_save="1"    readonly="1"  domain="[('partner_id','=',partner_id)]" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                                          </group>
+                                              <group>
+                  <field name="bank_id"  optional="hide" force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                           <field name="bank_acc_number" optional="hide" force_save="1"    readonly="1"/>
+           <field name="bank_tipo_cuenta" optional="hide" force_save="1"    readonly="1"/>
+
+                                                             <field name="tercero" optional="hide" force_save="1"    readonly="1"/>
+              <field name="identificacion_tercero" optional="hide" force_save="1"    readonly="1"
+              attrs="{'invisible':[('tercero','!=',True)]}"
+              />
+                                      <field name="nombre_tercero" optional="hide" force_save="1"    readonly="1"
+                                      attrs="{'invisible':[('tercero','!=',True)]}"
+
+                                      />
+                                      <field name="l10n_latam_identification_tercero_id"
+                                             attrs="{'invisible':[('tercero','!=',True)]}"
+                                             optional="hide" force_save="1"    readonly="1"/>
+
+                                                         <field name="amount" sum="total" force_save="1"    readonly="1"/>
+                                       <field name="ref" readonly="1"/>
+
+                                                                <field name="reversed" optional="hide" />
+             <field name="reversed_motive_id" attrs="{'invisible':[('reversed','!=',True)]}" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                <field name="reversed_comments" attrs="{'invisible':[('reversed','!=',True)]}" />
+                     <field name="reversed_date" attrs="{'invisible':[('reversed','!=',True)]}" />
+      <field name="reversed_ref" attrs="{'invisible':[('reversed','!=',True)]}" />
+<field name="type_module" invisible="1"/>
+                                          </group>
+                                           </group>
+                                          <newline/>
+                 <notebook>
+                     <page string="Solicitudes">
+                           <field name="line_ids" readonly="1" force_save="1" colspan="4"
+                                          context="{'form_view_ref':'gps_bancos.account_payment_bank_macro_line_view_form','tree_view_ref':'gps_bancos.account_payment_bank_macro_line_view_tree'}"
+                                               />
+                 <newline/>
+                     </page>
+                     <page string="Liquidación" attrs="{'readonly':[('type_module','!=','financial')]}">
+                               <field name="detalle_pago_html" colspan="4" nolabel="1"/>
+                     </page>
+                 </notebook>
+
+                        </form>
+                            </field>
+                        </page>
+                           <page name="pge_history" string="Historial" attrs="{'invisible':[('id','&lt;=',0)]}">
+                            <group>
+                                <group>
+                                    <field name="create_uid" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                           readonly="1" string="Usuario Creado"/>
+                                    <field name="create_date" readonly="1" string="Fecha Creacion"/>
+
+                                </group>
+                                <group>
+
+                                    <field name="write_uid" readonly="1" string="Ult. Usuario Act."
+                                           options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                                    <field name="write_date" readonly="1"  string="Fecha Actualizacion"/>
+<field name="attachment_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"
+attrs="{'invisible':[('attachment_id','=',False)]}"
+/>
+
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+<newline/>
+
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+
+            </form>
+        </field>
+    </record>
+
+
+    <!--  -->
+
+    <record id="account_payment_bank_macro_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Pagos a Proveedores</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment.bank.macro</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="domain">[('type_module','=','financial')]</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_generated':1,'search_default_is_confirmed':1,'hide_parent':False}</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="search_view_id"
+               ref="account_payment_bank_macro_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_view_form_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_form"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_view_action"/>
+    </record>
+
+<record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_view_calendar_action">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">calendar</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_calendar"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_view_action"/>
+    </record>
+ 
+<!-- -->
+
+
+        <record id="account_payment_bank_macro_nomina_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Pagos de Nómina</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment.bank.macro</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="domain">[('type_module','=','payslip')]</field>
+        <field name="context">{'search_default_is_generated':1,'hide_parent':False}</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="search_view_id"
+               ref="account_payment_bank_macro_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_nomina_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_nomina_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_nomina_view_form_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_form"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_nomina_view_action"/>
+    </record>
+
+<record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_nomina_view_calendar_action">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">calendar</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_calendar"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_nomina_view_action"/>
+    </record>
+
+    </data>
+
+
+</odoo>

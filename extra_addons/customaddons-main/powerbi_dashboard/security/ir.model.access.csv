@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_powerbi_dashboard_admin,powerbi.dashboard.admin,model_powerbi_dashboard_gen,powerbi_dashboard.group_dashboard_admin,1,1,1,1
+access_powerbi_dashboard_gerente,powerbi.dashboard.gerente,model_powerbi_dashboard_gen,powerbi_dashboard.group_dashboard_gerente,1,0,0,0
+access_powerbi_dashboard_presidente,powerbi.dashboard.presidente,model_powerbi_dashboard_gen,powerbi_dashboard.group_dashboard_presidente,1,0,0,0

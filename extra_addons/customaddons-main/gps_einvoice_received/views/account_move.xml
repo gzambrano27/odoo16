@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_account_move_inht_ref" model="ir.ui.view">
+        <field name="name">account.move.inht.ref.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_uom_id']" position="before">
+                <field name="ref2" optional="hide"/>
+                <field name="locked" invisible="1" />
+                 <field name="imported_code" optional="hide" readonly="1" force_save="1"
+                 attrs="{'invisible':[('locked','!=',True)]}"
+                        invisible="context.get('default_move_type','') not in ('in_invoice','in_refund')"
+                 />
+                 <field name="imported_description" optional="hide" readonly="1" force_save="1"
+                 attrs="{'invisible':[('locked','!=',True)]}"
+                        invisible="context.get('default_move_type','') not in ('in_invoice','in_refund')"
+                 />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+

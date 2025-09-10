@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record id="account_payment_bank_macro_line_view_tree_editable"
+                model="ir.ui.view">
+            <field name="name">account.payment.bank.macro.line.tree.editable</field>
+            <field name="model">account.payment.bank.macro.line</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Pagos a Proveedores" edit="true" create="false" delete="false"
+                      decoration-muted="not apply"
+                      decoration-danger="apply and amount!=pending"
+                      decoration-success="apply and amount==pending"
+                >
+                    <field name="id" string="# ID" optional="hide"/>
+                    <field name="request_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    <field name="partner_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    <field name="original_pending" sum="total" readonly="1" optional="hide"/>
+                    <field name="original_amount" sum="total" readonly="1" optional="hide"/>
+                    <field name="pending" sum="total" readonly="1"/>
+                    <field name="amount" sum="total" optional="hide"/>
+                    <field name="apply" invisible="1"/>
+                    <field name="comments"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_payment_bank_macro_line_view_tree"
+                model="ir.ui.view">
+            <field name="name">account.payment.bank.macro.line.tree</field>
+            <field name="model">account.payment.bank.macro.line</field>
+            <field name="type">tree</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Pagos a Proveedores" edit="false" create="false" delete="false"
+                      decoration-muted="not apply"
+                      decoration-danger="apply and amount!=pending"
+                      decoration-success="apply and amount==pending"
+                >
+                    <field name="id" string="# ID" optional="hide"/>
+                    <field name="request_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    <field name="partner_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    <field name="original_pending" sum="total" readonly="1" optional="hide"/>
+                    <field name="original_amount" sum="total" readonly="1" optional="hide"/>
+                    <field name="pending" sum="total" readonly="1"/>
+                    <field name="amount" sum="total" readonly="1" optional="hide"/>
+                    <field name="apply" invisible="1"/>
+                    <field name="payment_id" optional="hide"/>
+                    <field name="comments"/>
+
+                     <field name="document_ref" optional="show" />
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="account_payment_bank_macro_line_view_form"
+                model="ir.ui.view">
+            <field name="name">account.payment.bank.macro.line.form</field>
+            <field name="model">account.payment.bank.macro.line</field>
+            <field name="type">tree</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Pagos a Proveedores" create="false" delete="false" edit="false">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+
+                                <field name="id" string="# ID" readonly="1"/>
+                                <field name="request_id" readonly="1"
+                                       options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                                <field name="partner_id" readonly="1"
+                                       options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+
+                            </group>
+                            <group>
+                                <field name="original_pending" readonly="1"/>
+                                <field name="original_amount" readonly="1"/>
+                                <field name="pending" readonly="1"/>
+                                <field name="amount" readonly="1"/>
+                                <field name="apply" invisible="1"/>
+                            </group>
+                             <group>
+                            <field name="payment_id" readonly="1" groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_analistas_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos,gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"/>
+                            <field name="comments" readonly="1"/>
+                            <field name="payment_account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                   readonly="1"/>
+ </group>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+<menuitem id="l10n_ec_account_report_payments_cxp_menu" sequence="998"
+name="Reporte de Cuentas por Pagar"
+action="l10n_ec_account_report_payments_cxp_view_action"
+parent="gps_bancos.document_bank_informes_view_conf_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+    <menuitem id="l10n_ec_account_report_flujo_caja_view_menu" sequence="999"
+name="Reporte de Flujo de Caja"
+action="l10n_ec_account_report_flujo_caja_view_action"
+parent="gps_bancos.document_bank_informes_view_conf_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+<menuitem id="l10n_ec_account_report_payments2_view_menu" sequence="1000"
+name="Reporte de Vencidos por Pagar"
+action="l10n_ec_account_report_payments_view_action"
+parent="gps_bancos.document_bank_informes_view_conf_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+<menuitem id="l10n_ec_account_report_payments_prepayment_supplier_menu" sequence="1001"
+name="Reporte de Pagos Anticipados"
+action="l10n_ec_account_report_payments_prepayment_supplier_view_action"
+parent="gps_bancos.document_bank_informes_view_conf_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+    <menuitem id="l10n_ec_account_report_payments_prepayment_supplier_menu2" sequence="1001"
+name="Reporte de Pagos Anticipados"
+action="l10n_ec_account_report_payments_prepayment_supplier_view_action"
+parent="account_reports.account_reports_partners_reports_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+     <menuitem id="l10n_ec_account_report_payments_cobros_view_menu" sequence="1002"
+name="Reporte de Cobros Anticipados"
+action="l10n_ec_account_report_payments_cobros_view_action"
+parent="account_reports.account_reports_partners_reports_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+
+</odoo>

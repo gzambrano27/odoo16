@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_module_api_config_manager,module.api.config,model_module_api_config,module_info_api.group_module_api_manager,1,1,1,1
+access_module_api_field_manager,module.api.field,model_module_api_field,module_info_api.group_module_api_manager,1,1,1,1
+access_module_api_config_user,module.api.config,model_module_api_config,module_info_api.group_module_api_user,1,0,0,0
+access_module_api_field_user,module.api.field,model_module_api_field,module_info_api.group_module_api_user,1,0,0,0

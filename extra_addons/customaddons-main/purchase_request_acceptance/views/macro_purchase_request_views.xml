@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Search RFQ -->
+    <record id="view_macro_purchase_request_filter" model="ir.ui.view">
+        <field name="name">macro.purchase.request.select</field>
+        <field name="model">macro.purchase.request</field>
+        <field name="inherit_id" ref="macro_purchase_request.view_macro_purchase_request_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//search/separator[1]" position="after">
+                <filter
+                    name="pr_accepted"
+                    string="PR Accepted"
+                    domain="[('pr_accepted', '=', True)]"
+                />
+                <filter
+                    name="pr_not_accepted"
+                    string="PR Not Accepted"
+                    domain="[('pr_accepted', '=', False)]"
+                />
+                <separator />
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="macro_purchase_request_form_inherit" model="ir.ui.view">
+        <field name="name">macro.purchase.request.form.inherit</field>
+        <field name="model">macro.purchase.request</field>
+        <field name="inherit_id" ref="macro_purchase_request.view_macro_purchase_request_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_to_approve']" position="after">
+                <button
+                    name="action_view_pr"
+                    string="Generar PR"
+                    type="object"
+                    class="oe_highlight"
+                    context="{'create_pr':True}"
+                    groups="purchase_request_acceptance.group_enable_pr_on_mpr"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('approved')), ('pr_accepted', '=', True)]}"
+                />
+                <!-- <button name="action_open_generate_pr_wizard"
+                    type="object"
+                    string="Generar PRNEW"
+                    class="btn-primary"
+                    context="{'create_pr': True}"
+                    groups="purchase_request_acceptance.group_enable_pr_on_mpr"
+                    attrs="{'invisible': [('state', 'not in', ['approved']), ('pr_accepted', '=', True)]}"/> -->
+            </xpath>
+            <xpath expr="//sheet/group[1]" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button
+                        type="object"
+                        name="action_view_pr"
+                        class="oe_stat_button"
+                        icon="fa-clipboard"
+                        attrs="{'invisible':[('pr_ids','=',[])]}"
+                        groups="macro_purchase_request.group_macro_purchase_request_user"
+                    >
+                        <field name="pr_count" widget="statinfo" string="PR" />
+                        <field name="pr_ids" invisible="1" />
+                    </button>
+                </div>
+            </xpath>
+            
+            <xpath expr="//field[@name='line_ids']/tree" position="inside">
+                <field name="pr_line_ids" invisible="1" />
+            </xpath>
+
+            <xpath
+                expr="//field[@name='line_ids']/tree//field[@name='product_qty']"
+                position="after"
+            >
+                <field name="qty_to_accept" string="To Accept" invisible="1" />
+                <field
+                    name="qty_accepted"
+                    string="Accepted"
+                    attrs="{'column_invisible': [('parent.state', 'not in', ('approved'))]}"
+                />
+            </xpath>
+
+            <field name="group_id" position="after">
+                <field
+                    name="pr_accepted"
+                    groups="purchase_request_acceptance.group_enable_pr_on_mpr"
+                    attrs="{'invisible': [('state', 'not in', ('approved'))]}"
+                />
+            </field>
+        </field>
+    </record>
+
+</odoo>

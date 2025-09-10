@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+forestdbs_tipo_roles,tipo_roles,model_tipo_roles,hr.group_hr_manager,1,1,1,1
+forestdbs_establecimientos,establecimientos,model_establecimientos,hr.group_hr_manager,1,1,1,1
+forestdbs_hr_sectores,hr_sectores,model_hr_sectores,hr.group_hr_manager,1,1,1,1

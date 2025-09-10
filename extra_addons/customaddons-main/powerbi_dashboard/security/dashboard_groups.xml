@@ -1,0 +1,28 @@
+
+<odoo>
+
+    <record id="module_category_dashboard_management" model="ir.module.category">
+        <field name="name">Dashboards PowerBI</field>
+        <field name="description">Permite administrar los informes de Power BI.</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <record id="group_dashboard_gerente" model="res.groups">
+        <field name="name">Dashboard Gerente</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_category_dashboard_management"/>
+    </record>
+    
+    <record id="group_dashboard_presidente" model="res.groups">
+        <field name="name">Dashboard Presidente</field>
+        <field name="category_id" ref="module_category_dashboard_management"/>
+        <field name="implied_ids" eval="[(4, ref('group_dashboard_gerente'))]"/>
+    </record>
+
+    <record id="group_dashboard_admin" model="res.groups">
+        <field name="name">Dashboard Administrador</field>
+        <field name="category_id" ref="module_category_dashboard_management"/>
+        <field name="implied_ids" eval="[(4, ref('group_dashboard_presidente'))]"/>
+    </record>
+
+</odoo>

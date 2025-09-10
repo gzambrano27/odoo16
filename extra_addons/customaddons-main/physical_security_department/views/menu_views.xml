@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú raíz para el módulo -->
+    <menuitem id="menu_physical_security_root" name="Seguridad Física" sequence="10" web_icon="physical_security_department,static/src/img/logo.png"/>
+
+    <!-- Menú para Lista de Solicitud -->
+    <menuitem id="menu_lista_solicitud" name="Lista de Solicitud" parent="menu_physical_security_root" sequence="1" action="action_lista_solicitud"/>
+
+    <!-- Menú para Pruebas Doping -->
+    <menuitem id="menu_pruebas_doping" name="Pruebas Doping" parent="menu_physical_security_root" sequence="2" action="action_pruebas_doping"/>
+
+    <!-- Menú para Personal Contratista -->
+    <menuitem id="menu_personal_contratista" name="Personal Contratista" parent="menu_physical_security_root" sequence="3" action="action_personal_contratista"/>
+</odoo>

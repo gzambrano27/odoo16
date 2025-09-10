@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<record id="calendar_month_view_filter" model="ir.ui.view">
+			<field name="name">calendar.month.filter</field>
+			<field name="model">calendar.month</field>
+			<field name="arch" type="xml">
+				<search string="Meses del Año">
+					<field name="name" />
+				</search>
+			</field>
+		</record>
+
+		<record id="calendar_month_view_tree" model="ir.ui.view">
+			<field name="name">calendar.month.tree</field>
+			<field name="model">calendar.month</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Meses del Año" edit="false" create="false" delete="false">
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="calendar_month_view_form" model="ir.ui.view">
+			<field name="name">calendar.month.form</field>
+			<field name="model">calendar.month</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Meses del Año" version="16.0">
+					<group colspan="4" col="2"  edit="false" create="false" delete="false">
+						<group colspan="2">
+							<field name="name" colspan="2" readonly="1"/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>		
+
+	</data>
+</odoo>

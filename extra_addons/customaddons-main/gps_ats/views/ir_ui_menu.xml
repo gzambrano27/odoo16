@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+
+
+
+
+
+<menuitem id="ats_act_view_menu" sequence="99" 
+name="ATS"
+action="l10n_ec_ats_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+<menuitem id="ats_ventas_act_view_menu" sequence="1000" 
+name="Reportes de Ventas"
+action="l10n_ec_ats_reporte_sales_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+<menuitem id="ats_compras_act_view_menu" sequence="1001" 
+name="Reportes de Compras"
+action="l10n_ec_ats_reporte_purchases_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+<menuitem id="ats_taxes_act_view_menu" sequence="1002" 
+name="Reportes de Impuestos"
+action="l10n_ec_ats_reporte_taxes_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+<menuitem id="ats_compras_acct_act_view_menu" sequence="1002"
+name="Reportes de Compras por Cuentas"
+action="l10n_ec_ats_reporte_purchases_account_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
+
+/>
+
+
+
+
+</odoo>

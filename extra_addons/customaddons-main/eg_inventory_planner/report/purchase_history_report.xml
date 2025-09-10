@@ -1,0 +1,92 @@
+<odoo>
+    <template id="purchase_history_report_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=lang)"/>
+            <div class="mt-4">
+                <h1>Purchase History Report</h1>
+            </div>
+            <div class="page">
+                <div class="oe_structure"/>
+                <div>
+                    <table class="table table-sm" name="purchase_history_table">
+                        <thead>
+                            <tr>
+                                <th name="th_from_date">
+                                    <strong>From Date</strong>
+                                </th>
+                                <th name="th_to_date">
+                                    <strong>To Date</strong>
+                                </th>
+                                <th name="th_day">
+                                    <strong>Duration of Days</strong>
+                                </th>
+                                <th name="th_product">
+                                    <strong>Product</strong>
+                                </th>
+                                <th name="th_qty">
+                                    <strong>Quantity</strong>
+                                </th>
+                                <th name="th_purchase_order">
+                                    <strong>Purchase Order</strong>
+                                </th>
+                                <th name="th_avg_daily_purchase">
+                                    <strong>Average Daily Purchase</strong>
+                                </th>
+                                <th name="th_max_daily_purchase_qty">
+                                    <strong>Maximum Daily Purchase Quantity</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="stock_tbody">
+                            <tr t-foreach="doc.product_purchase_history_ids" t-as="line">
+                                <td>
+                                    <span t-field="line.from_date"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.to_date"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.duration_in_day"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_id"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.quantity"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.total_purchase_order"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.average_daily_purchase"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.maximum_daily_purchase_qty"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+
+    <template id="purchase_history_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="eg_inventory_planner.purchase_history_report_document"/>
+            </t>
+        </t>
+    </template>
+     <record id="action_po_history_report" model="ir.actions.report">
+        <field name="name">Purchase Order History</field>
+        <field name="model">inv.plan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">eg_inventory_planner.purchase_history_report_template</field>
+        <field name="report_file">eg_inventory_planner.purchase_history_report_template</field>
+        <field name="binding_model_id" ref="model_inv_plan"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

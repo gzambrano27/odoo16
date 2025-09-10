@@ -1,0 +1,78 @@
+<odoo>
+    <!-- Vista de Formulario -->
+    <record id="view_reserva_sala_form" model="ir.ui.view">
+        <field name="name">reserva.sala.form</field>
+        <field name="model">reserva.sala</field>
+        <field name="arch" type="xml">
+            <form string="Reserva de Sala">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved,rejected"/>
+                    <button name="action_submit" type="object" string="Enviar" states="draft" class="oe_highlight" groups="base.group_system"/>
+                    <button name="action_approve" type="object" string="Aprobar" states="pending" class="oe_highlight" groups="reserva_salas.group_admin_reservas"/>
+                    <button name="action_reject" type="object" string="Rechazar" states="pending" class="oe_highlight" groups="reserva_salas.group_admin_reservas"/>
+                    <button name="action_reset_draft" type="object" string="Revertir a Borrador" states="rejected" class="oe_highlight" groups="reserva_salas.group_admin_reservas"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="sala_id"/>
+                        <field name="motivo"/>
+                        <field name="fecha_desde" string="Fecha Desde" required="1"/>
+                        <field name="fecha_hasta" string="Fecha Hasta" required="1"/>
+                        <field name="duracion"/>
+                        <field name="empleado_responsable_id" readonly="1"/>
+                        <field name="empleados_invitados_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Árbol con colores en función del estado -->
+    <record id="view_reserva_sala_tree" model="ir.ui.view">
+        <field name="name">reserva.sala.tree</field>
+        <field name="model">reserva.sala</field>
+        <field name="arch" type="xml">
+            <tree string="Reservas de Salas">
+                <field name="name"/>
+                <field name="empleado_responsable_id"/>
+                <field name="sala_id"/>
+                <field name="fecha_desde"/>
+                <field name="fecha_hasta"/>
+                <field name="state" widget="badge"
+                    decoration-danger="state=='rejected'"
+                    decoration-muted="state=='draft'"
+                    decoration-warning="state=='pending'"
+                    decoration-success="state=='approved'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_reserva_sala_search" model="ir.ui.view">
+        <field name="name">reserva.sala.search</field>
+        <field name="model">reserva.sala</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reservas">
+                <!-- Filtro predeterminado: Mis Reservas (filtra por el empleado del usuario actual) -->
+                <filter string="Mis Reservas" name="mis_reservas" domain="[('empleado_responsable_id.user_id','=', [uid])]"/>
+                <field name="empleado_responsable_id"/>
+                <field name="fecha_desde"/>
+                <field name="sala_id"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción que incluye la vista de búsqueda -->
+    <record id="action_reserva_sala" model="ir.actions.act_window">
+        <field name="name">Reservas de Salas</field>
+        <field name="res_model">reserva.sala</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reserva_sala_search"/>
+        <field name="context">{'search_default_mis_reservas': 1}</field>
+    </record>
+
+    <menuitem id="menu_reserva_sala_root" name="Reservas de Salas" web_icon="reserva_salas,static/description/icon.png"/>
+    <menuitem id="menu_reserva_sala" name="Reservas" parent="menu_reserva_sala_root" action="action_reserva_sala" sequence="10"/>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_request_history_view_user,purchase.request.history.view,model_purchase_request_history_view,account_payment_purchase.group_analytic_user,1,1,1,1
+access_purchase_state_log_sync_wizard_analytic_user,purchase.state.log.sync.wizard analytic user,model_purchase_state_log_sync_wizard,account_payment_purchase.group_analytic_user,1,1,1,1

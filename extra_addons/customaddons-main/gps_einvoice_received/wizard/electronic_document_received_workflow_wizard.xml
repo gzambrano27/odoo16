@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="electronic_document_received_workflow_wizard_view_form"
+			model="ir.ui.view">
+			<field name="name">electronic.document.received.workflow.wizard.form</field>
+			<field name="model">electronic.document.received.workflow.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Documentos Recibidos"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+						<field name="state" invisible="1" />
+						<field name="confirmed_state" invisible="1" />
+						<field name="document_code" invisible="1" />
+							<field name="company_id" readonly="1" force_save="1"
+								   options="{'no_create':True,'no_edit':True,'no_open':True,}"  />
+						 <field name="invoice_type" 
+						attrs="{'invisible':[('document_code','=','07')]}" 
+						invisible="not context.get('only_update',False)" 
+						 />
+						 <field name="service_id" 
+						attrs="{'invisible':['|',('document_code','=','07'),('invoice_type','!=','service')],'required':[('invoice_type','=','service')]}"
+						options="{'no_create':True,'no_edit':True,'no_open':True,}" 
+						invisible="not context.get('only_update',False)"
+								domain="[('detailed_type','=','service'),'|',('company_id','=',False),('company_id','=',company_id)]"
+						 />
+						 <field name="order_id" 
+						attrs="{'invisible':['|',('document_code','!=','01'),('invoice_type','=','service')]}" 
+						domain="[('partner_id','=',partner_id),('state','=','purchase')]" 
+						invisible="not context.get('only_update',False)"  
+						 />
+						<field name="partner_id" invisible="1" />
+						
+						<field name="comments" required="context.get('only_update',False)"
+							on_change="onchange_upper(comments,'comments')"
+							placeholder="COMENTARIOS..."
+							attrs="{'required':['|',('state','in',('confirmed','annulled','draft','closed')),('confirmed_state','in',('verified','rejected'))]}" />
+					</group>
+					<newline />
+					<footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		
+		<record
+			id="electronic_document_received_workflow_wizard_view_annulled_action"
+			model="ir.actions.act_window">
+			<field name="name">Anular</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">electronic.document.received.workflow.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="electronic_document_received_workflow_wizard_view_form" />
+			<field name="context">{'default_state':'annulled','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+		<record
+			id="electronic_document_received_workflow_wizard_view_2rejected_action"
+			model="ir.actions.act_window">
+			<field name="name">Recepción: Rechazar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">electronic.document.received.workflow.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="electronic_document_received_workflow_wizard_view_form" />
+			<field name="context">{'update_table':False,'pass_validate':True,'default_confirmed_state':'rejected','only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+		<record
+			id="electronic_document_received_workflow_wizard_view_2verified_action"
+			model="ir.actions.act_window">
+			<field name="name">Recepción: Verificar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">electronic.document.received.workflow.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="electronic_document_received_workflow_wizard_view_form" />
+			<field name="context">{'update_table':False,'pass_validate':True,'default_confirmed_state':'verified','only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+		<record
+			id="electronic_document_received_workflow_wizard_view_update_action"
+			model="ir.actions.act_window">
+			<field name="name">Actualizar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">electronic.document.received.workflow.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="electronic_document_received_workflow_wizard_view_form" />
+			<field name="context">{'only_update':True,'update_table':False,'pass_validate':True}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+		
+		
+	</data>
+</odoo>

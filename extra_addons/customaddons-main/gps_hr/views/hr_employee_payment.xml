@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_employee_payment_view_search"
+            model="ir.ui.view">
+        <field name="name">hr.employee.payment.search</field>
+        <field name="model">hr.employee.payment</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Pagos de Nómina">
+
+                 <group expand="0" string="Filtrar...">
+						<filter string="Preliminar" name="is_draft"
+							domain="[('state','=','draft')]" />
+                     <filter string="Enviado" name="is_sended"
+							domain="[('state','=','sended')]" />
+                        <filter string="Realizado" name="is_approved"
+							domain="[('state','=','approved')]" />
+                        <filter string="Anulado" name="is_cancelled"
+							domain="[('state','=','cancelled')]" />
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+						<filter string="Estados"
+							context="{'group_by':'state'}" name='grp_state' />
+						<filter string="Compañia"
+							context="{'group_by':'company_id'}" name='grp_company_id' />
+                         <filter string="Fecha"
+							context="{'group_by':'date_process'}" name='grp_date_process' />
+
+					</group>
+
+                <field name="id"/>
+                <field name="company_id"/> 
+                <field name="name"/>
+                <field name="date_process"/>
+                   <field name="ref"  />
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_employee_payment_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.employee.payment.tree</field>
+        <field name="model">hr.employee.payment</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Pagos de Nómina">
+                <field name="id" string="# ID" optional="hide"/>
+                <field name="company_id"/>
+                  <field name="name"/>
+                <field name="date_process"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total" sum="total"  />
+                  <field name="ref"  />
+                <field name="filter_iess" optional="hide" />
+                  <field name="state" optional="show" widget="badge"
+                       decoration-muted="state=='cancelled'"
+                         decoration-warning="state=='sended'"
+                       decoration-info="state=='draft'"
+                       decoration-success="state=='approved'"
+                />
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_employee_payment_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.employee.payment.form</field>
+        <field name="model">hr.employee.payment</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Pagos de Nómina" create="false" delete="false" edit="true">
+                <header>
+                    <button
+                            name="action_sended"
+                            string="Enviar" type="object"
+                            attrs="{'invisible':[('state','!=','draft')]}"
+                            icon="fa-check"/>
+
+                    <button
+                            name="action_draft"
+                            string="Reversar" type="object"
+                            attrs="{'invisible':['|',('pay_with_transfer','=',True),('state','!=','sended')]}"
+                            icon="fa-rotate-left"/>
+
+                    <button
+                            name="action_approved"
+                            string="Pagar" type="object"
+                            attrs="{'invisible':['|',('pay_with_transfer','=',True),('state','!=','sended')]}"
+                            icon="fa-check"/>
+
+                    <button
+                            name="genera_archivo"
+                            string="Generar Archivo" type="object"
+                            attrs="{'invisible':['|',('pay_with_transfer','!=',True),('state','=','cancelled')]}"
+                            icon="fa-file-o"
+                            />
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                      <div name="button_box" class="oe_button_box">
+                        <button name="action_open_payments"
+                        attrs="{'invisible':[('state','!=','approved')]}"
+                                    class="oe_stat_button" icon="fa-tasks"
+                                    type="object" groups="gps_hr.group_contabilidad_rrhh"
+                                    string="Pagos">
+                            </button>
+</div>
+                <group>
+                    <group>
+                        <field name="id" string="# ID" attrs="{'invisible':[('id','&lt;=',0)]}"/>
+                        <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+<field name="partner_id" invisible="1"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+
+        <field name="pay_with_transfer"
+
+               attrs="{'readonly':[('state','!=','draft')]}" />
+        <field name="payment_journal_id"
+
+               placeholder="DIARIO DE PAGO..."
+               domain="[('company_id','=',company_id),('type','=','bank')]"
+               attrs="{'readonly':[('state','not in',('draft','sended','cancelled'))]}"
+               options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+
+
+                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                          <field name="filter_iess" readonly="1" />
+                        </group>
+                    <group>
+                        <field name="date_process" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        <field name="total" readonly="1" force_save="1"/>
+                        <field name="move_id" readonly="1"
+                                       force_save="1" groups="gps_hr.group_contabilidad_rrhh"
+                                       options="{'no_quick_create': True,'no_create': True,'no_create_edit': True}"
+                                       attrs="{'invisible':[('move_id','=',False)]}"
+                                />
+                                 <field name="ref"  groups="gps_hr.group_contabilidad_rrhh"
+                                 placeholder="REFERENCIA"
+                                 />
+
+                         <field name="bank_reference"  groups="gps_hr.group_contabilidad_rrhh"
+                         attrs="{'invisible':[('state','!=','approved')]}"
+                                placeholder="REFERENCIA BANCARIA"
+                         />
+
+                    </group>
+                </group>
+                <newline/>
+                <notebook>
+                    <page string="Lotes" name="page_lotes">
+                        <separator string="Movimientos" />
+                        <newline/>
+                        <field name="movement_ids" attrs="{'readonly':[('state','!=','draft')]}"
+                               context="{'show2paid':True,'show_employee':True,'default_type':'batch','default_category_code':'OUT','tree_view_ref':'gps_hr.hr_employee_movement_view_tree_readonly','form_view_ref':'gps_hr.hr_employee_movement_view_form_readonly'}"
+                        domain="[('company_id','=',company_id),('rule_id.payment','=',True),('state','=','approved'),('type','in',('batch','batch_automatic','discount')),('has_payment','!=',True)]"
+                        />
+                        <newline />
+                         <separator string="Roles" />
+                        <newline/>
+                        <field name="payslip_ids"  attrs="{'readonly':[('state','!=','draft')]}"
+                               domain="[('company_id','=',company_id),('state','=','close'),('has_payment','!=',True)]"
+                               context="{'tree_view_ref':'hr_payroll.hr_payslip_run_tree'}" />
+
+                     </page>
+
+                    <page string="Detalles" name="page_detalle">
+                        <separator string="Movimientos" />
+                        <newline/>
+                        <field name="movement_line_ids" attrs="{'readonly':[('state','!=','draft')]}"
+                               context="{'show_employee':True,'default_type':'batch','default_category_code':'OUT','tree_view_ref':'gps_hr.hr_employee_movement_line_view_tree','form_view_ref':'gps_hr.hr_employee_movement_line_view_form'}"
+                        domain="[('process_id','in',movement_ids),('pay_with_transfer','=',pay_with_transfer),('has_payment','!=',True),('id','not in',paid_movement_line_ids)]"
+                        />
+                        <newline />
+                         <separator string="Roles" />
+                        <newline/>
+                        <field name="payslip_line_ids"  attrs="{'readonly':[('state','!=','draft')]}"
+                               domain="[('payslip_run_id','in',payslip_ids),('pay_with_transfer','=',pay_with_transfer),('has_payment','!=',True)]"
+                               context="{'tree_view_ref':'hr_payroll.view_hr_payslip_tree'}" />
+
+                        <field name="paid_movement_line_ids" invisible="1">
+                                <tree string="Detalle">
+                                    <field name="id" />
+                                </tree>
+                        </field>
+                     </page>
+
+                     <page string="Resumen" name="page_detalle_payment">
+                    <field name="line_ids" readonly="1" force_save="1">
+                            <tree string="Detalle" edit="false" create="false" delete="false">
+                                <field name="name" />
+                                <field name="company_id" readonly="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" invisible="1" />
+                                <field name="currency_id" readonly="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" invisible="1" />
+                             <field name="employee_id"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                         <field name="total" sum="total" />
+                         <field name="bank_account_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" invisible="1" />
+                          <field name="bank_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="bank_acc_number"   />
+                          <field name="bank_tipo_cuenta"   />
+                          <field name="tercero"   />
+                                <field name="l10n_latam_identification_tercero_id"   />
+
+                          <field name="identificacion_tercero"   />
+                          <field name="nombre_tercero"   />
+
+                            </tree>
+ <form string="Detalle" edit="false" create="false" delete="false">
+     <group>
+         <group>
+             <field name="name" readonly="1" force_save="1" />
+                                <field name="company_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" readonly="1" invisible="1" />
+                                <field name="currency_id"  force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" readonly="1" invisible="1" />
+                             <field name="employee_id" readonly="1" force_save="1"
+                               options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+     </group>
+         <group>
+             <field name="total"  readonly="1" force_save="1"  />
+                         <field name="bank_account_id" readonly="1" force_save="1"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" invisible="1" />
+                          <field name="bank_id" readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="bank_acc_number" readonly="1" force_save="1"  />
+                          <field name="bank_tipo_cuenta"  readonly="1" force_save="1" />
+<field name="bank_acc_number"  readonly="1" force_save="1" />
+                          <field name="bank_tipo_cuenta" readonly="1" force_save="1"  />
+                          <field name="tercero" readonly="1" force_save="1"  />
+                                <field name="l10n_latam_identification_tercero_id" readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"  />
+
+                          <field name="identificacion_tercero" readonly="1" force_save="1"  />
+                          <field name="nombre_tercero"  readonly="1" force_save="1"  />
+     </group>
+
+     </group>
+
+
+                            </form>
+                    </field>
+
+                     </page>
+                     <page string="Asiento" name="page_move">
+                    <field name="move_ids" readonly="1" force_save="1">
+                            <tree string="Asiento" edit="false" create="false" delete="false">
+                                <field name="company_id"   invisible="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="currency_id"   invisible="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="account_id"          options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                                <field name="debit"   sum="total"            />
+                                                                                                                     <field name="credit"               />
+                                <field name="move_id"  optional="hide"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="move_line_id" invisible="1"     options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+   <field name="partner_id"  optional="hide" />
+
+                                   <field name="movement_line_id"  optional="hide" />
+                                   <field name="payslip_id"  optional="hide" />
+
+                            </tree>
+
+                         <form string="Asiento" edit="false" create="false" delete="false">
+                             <group>
+                             <group>
+                                <field name="company_id" readonly="1" force_save="1"   invisible="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="currency_id" readonly="1" force_save="1"  invisible="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="account_id"  readonly="1" force_save="1"        options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                             </group>
+
+                                 <group>
+                                <field name="move_id" readonly="1" force_save="1"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                     <field name="move_line_id" readonly="1" force_save="1"  options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="debit"       readonly="1" force_save="1"      />
+                                <field name="credit"    readonly="1" force_save="1"         />
+   <field name="partner_id" readonly="1" force_save="1" invisible="1"  />
+
+                                       <field name="movement_line_id" readonly="1" force_save="1"  invisible="1"  />
+                                       <field name="payslip_id"  readonly="1" force_save="1" invisible="1"  />
+
+                             </group>
+
+                             </group>
+                            </form>
+
+
+                    </field>
+                     </page>
+                    <page string="Otra Información" name="page_conf">
+                        <group>
+                            <group>
+                                <field name="currency_id" colspan="2"
+                                       options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="month_id" force_save="1" colspan="2"
+                                       options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+                                <field name="year" readonly="1" force_save="1" colspan="2"/>
+
+
+                            </group>
+                            <group>
+                           <field name="account_id" force_save="1" colspan="2" readonly="1"
+        options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+                <newline/>
+                <field name="comments" placeholder="OBSERVACIONES..." attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </sheet>
+                <newline/>
+
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_employee_payment_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Pagos de Nómina</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.payment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_is_sended':1,'search_default_is_approved':1}</field>
+        <field name="view_id"
+               ref="hr_employee_payment_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_employee_payment_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_payment_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_employee_payment_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_employee_payment_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_payment_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_employee_payment_view_form"/>
+        <field name="act_window_id"
+               ref="hr_employee_payment_view_action"/>
+    </record>
+
+    
+</odoo>

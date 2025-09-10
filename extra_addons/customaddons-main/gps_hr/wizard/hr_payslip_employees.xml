@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+<record id="hr_payroll.view_hr_payslip_by_employees" model="ir.ui.view">
+            <field name="name">hr_payroll_payslip_employees</field>
+            <field name="model">hr.payslip.employees</field>
+            <field name="arch" type="xml">
+                <form string="Nómina para Empleados">
+                    <span nolabel="1" colspan="2" invisible="1">This wizard will generate payslips for all selected employee(s) based on the dates and credit note specified on Payslips Run.</span>
+                    <separator invisible="1" string="Salary Structure"/>
+                    <div class="o_row" invisible="1">
+                        <p class="text-muted w-50">Set a specific structure if you wish to make an extra payslip (eg: End of the year bonus). If you leave this field empty, a regular payslip will be generated for all the selected employees, based on their contracts configuration.</p>
+                        <field name="structure_id" nolabel="1"/>
+                    </div>
+                    <separator invisible="1" string="Department" colspan="2"/>
+                    <div class="o_row" invisible="1">
+                        <p class="text-muted w-50">Set a specific department if you wish to select all the employees from this department (and subdepartments) at once.</p>
+                        <field name="department_id" nolabel="1"/>
+                    </div>
+                    <separator string="Empleados"/>
+                    <field name="employee_ids" nolabel="1" context="{}">
+                        <tree>
+                            <field name="name"/>
+                            <field name="work_email"/>
+                            <field name="department_id"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Generar" icon="fa-cogs" name="compute_sheet" type="object" class="oe_highlight" data-hotkey="q"/>
+                        <button string="Cancelar" icon="fa-times" class="btn btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view"
+                id="view_hr_payslip_by_employees_inherit">
+            <field name="name">view.hr.payslip.by.employees.inherit</field>
+             <field name="model">hr.payslip.employees</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_by_employees"/>
+            <field name="arch" type="xml">
+
+  <field name="department_id" position="after">
+
+    <field name="type_struct_id" invisible="1"/>
+      <field name="legal_iess" invisible="1"/>
+      <field name="date_end" invisible="1"/>
+<field name="date_start" invisible="1"/>
+</field>
+<field name="department_id" position="after">
+      <field name="inactive" invisible="1"/>
+</field>
+
+                <field name="employee_ids" position="attributes">
+
+                    <attribute name="context">{'inactive':inactive,'filter_date_start':date_start,'filter_date_process':date_end, 'filter_legal_iess':legal_iess, 'filter_type_struct_id':type_struct_id,'active_test':not inactive}</attribute>
+</field>
+
+
+            </field>
+        </record>
+
+
+    </data>
+
+</odoo>

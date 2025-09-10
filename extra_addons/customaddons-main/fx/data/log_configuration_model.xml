@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+<record id='log_config_dynamic_function' model='log.configuration.model'>
+			<field name='model_id' ref='model_dynamic_function' />
+			<field name='on_create' eval="1" />
+			<field name='on_write' eval="1" />
+			<field name='on_unlink' eval="1" />
+			<field name='locked' eval="1" />
+			</record>
+		
+	
+    
+		</data>
+		</odoo>

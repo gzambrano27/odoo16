@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_eg_inventory_planner">
+            <field name="sequence">7</field>
+            <field name="name">Inventory Planner</field>
+        </record>
+
+        <record id="group_planner_user" model="res.groups">
+            <field name="category_id" ref="module_eg_inventory_planner"/>
+            <field name="name">Planner User</field>
+        </record>
+
+        <record id="group_planner_manager" model="res.groups">
+            <field name="category_id" ref="module_eg_inventory_planner"/>
+            <field name="name">Planner Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_planner_user'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,1021 @@
+<?xml version="1.0" ?>
+<odoo>
+<data noupdate="1">
+
+	<!-- AFILIADOS -->
+        <record model='hr.salary.rule' id='rule_QUINCENA'>
+			<field name='name'>ANTICIPO DE QUINCENA</field>
+			<field name='code'>QUINCENA</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>1</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="True" />
+            <field name='locked_edit' eval="False" />
+            <field name='locked_compute' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result=compute_quincena(brw_contract,date_process)</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name='payment' eval="True" />
+			<field name='account' eval="True" />
+			<field name="unique_month"  eval="True" />
+			<field name="legal_iess" eval="True" />
+			<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+		</record>
+
+    <record model='hr.salary.rule' id='rule_PRESTAMOS'>
+			<field name='name'>PRESTAMOS</field>
+			<field name='code'>PRESTAMOS</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="0" />
+            <field name='sequence'>2</field>
+			<field name='type'>discount</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+	<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name='payment' eval="True" />
+		<field name='account' eval="True" />
+			<field name="legal_iess" eval="True" />
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+		</record>
+
+	<record model='hr.salary.rule' id='rule_OTROS_ANT_PRE'>
+			<field name='name'>OTROS ANTICIPOS,PRESTAMOS A EMPLEADOS</field>
+			<field name='code'>OTROS_ANT_PRE</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="0" />
+            <field name='sequence'>2</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+	<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name='payment' eval="False" />
+		<field name='account' eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	 <record model='hr.salary.rule' id='rule_OTRAS_DEDUCCIONES'>
+			<field name='name'>OTRAS DEDUCCIONES</field>
+			<field name='code'>OTR_DEDUC</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="0" />
+            <field name='sequence'>3</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		 	<field name="legal_iess" eval="True" />
+
+		 <field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_MULTAS'>
+			<field name='name'>MULTAS</field>
+			<field name='code'>MULTAS</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+           <field name='force_payslip' eval="0" />
+            <field name='sequence'>4</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+    <record model='hr.salary.rule' id='rule_PRESTAMOS_QUIROGRAFARIOS'>
+			<field name='name'>PRESTAMOS QUIROGRAFARIOS</field>
+			<field name='code'>PRE_QUI</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+           <field name='force_payslip' eval="1" />
+            <field name='sequence'>5</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PRESTAMOS_HIPOTECARIOS'>
+			<field name='name'>PRESTAMOS HIPOTECARIOS</field>
+			<field name='code'>PRE_HIP</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>6</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_SUBSIDIOS_ENFERMEDAD'>
+			<field name='name'>SUBSIDIOS ENFERMEDAD</field>
+			<field name='code'>SUB_ENF</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>7</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_SEGURO_SALUD'>
+			<field name='name'>SEGURO SALUD</field>
+			<field name='code'>SEG_SALUD</field>
+		<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+           <field name='force_payslip' eval="0" />
+            <field name='sequence'>8</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PLAN_EXEQUIAL'>
+			<field name='name'>PLAN EXEQUIAL</field>
+			<field name='code'>PLAN_EXE</field>
+		<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+           <field name='force_payslip' eval="0" />
+            <field name='sequence'>9</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_EXT_CONYUGUE'>
+			<field name='name'>EXTENSION CONYUGUE</field>
+			<field name='code'>EXT_CONY</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+		<field name='force_payslip' eval="0" />
+            <field name='sequence'>3</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_ext_conyugue(brw_payslip,True)
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_IESS945'>
+			<field name='name'>IESS 9.45%</field>
+			<field name='code'>IESS_945</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='sequence'>2</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_iess(brw_payslip,9.45)
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_IMPUESTO_RENTA'>
+			<field name='name'>IMPUESTO A LA RENTA</field>
+			<field name='code'>IMP_RENTA</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+           <field name='force_payslip' eval="1" />
+            <field name='sequence'>101</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_ANTICIPO_FACT'>
+			<field name='name'>ANTICIPO FACTURACION</field>
+			<field name='code'>ANTICIPO_FACTURACION</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>200</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="True" />
+            <field name='locked_edit' eval="False" />
+            <field name='locked_compute' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result=compute_quincena(brw_contract,date_process)</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name='payment' eval="True" />
+			<field name='account' eval="True" />
+			<field name="unique_month"  eval="True" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_RETENCION'>
+			<field name='name'>RETENCION</field>
+			<field name='code'>RETENCION</field>
+			<field name='active' eval="False" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='sequence'>201</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=(not brw_payslip.to_liquidate or True) and ((compute_total_ingresos_facturados(brw_payslip)*(brw_payslip.contract_id.retencion_fuente/100.00))+(brw_payslip.contract_id.calcula_iva and ( compute_total_ingresos_facturados(brw_payslip) *0.15)*(brw_payslip.contract_id.retencion_iva/100.00) or 0.00 )) or sum(brw_line.l10n_ec_withhold_tax_amount for brw_line in brw_payslip.invoice_ids.mapped('l10n_ec_withhold_ids').mapped('l10n_ec_withhold_line_ids'))
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+
+	<record model='hr.salary.rule' id='rule_RETENCION_IVA'>
+			<field name='name'>RETENCION IVA</field>
+			<field name='code'>RET_IVA</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='sequence'>202</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>PORCENTAJE_IMP_IVA=0.15
+test_withhold=True#(not brw_payslip.to_liquidate)
+amount=0.00
+if test_withhold:
+    if brw_payslip.contract_id.calcula_retencion:
+        if brw_payslip.contract_id.calcula_iva:
+            amount=(compute_total_ingresos_facturados(brw_payslip) *PORCENTAJE_IMP_IVA)*(brw_payslip.contract_id.retencion_iva/100.00)
+else:
+    amount=sum(brw_line.l10n_ec_withhold_tax_amount for brw_line in brw_payslip.invoice_ids.mapped('l10n_ec_withhold_ids').mapped('l10n_ec_withhold_line_ids').filtered(lambda x: x.tax_ids.tax_group_id.name=='Retención IVA en Compras')) or 0.00
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+
+	<record model='hr.salary.rule' id='rule_RETENCION_FTE'>
+			<field name='name'>RETENCION FUENTE</field>
+			<field name='code'>RET_FTE</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='sequence'>201</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>test_withhold=True#(not brw_payslip.to_liquidate)
+amount=0.00
+if brw_payslip.contract_id.calcula_retencion:
+    if test_withhold:
+        amount=compute_total_ingresos_facturados(brw_payslip)*(brw_payslip.contract_id.retencion_fuente/100.00)
+    else:
+        amount=sum(brw_line.l10n_ec_withhold_tax_amount for brw_line in brw_payslip.invoice_ids.mapped('l10n_ec_withhold_ids').mapped('l10n_ec_withhold_line_ids').filtered(lambda x: x.tax_ids.tax_group_id.name=='Retención Renta en Compras')) or 0.00
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+
+	<record model='hr.salary.rule' id='rule_OTROS_COBROS'>
+			<field name='name'>OTROS COBROS</field>
+			<field name='code'>OTROS_COBROS</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='sequence'>202</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>otros_cobros=0.00
+if False:#(not brw_payslip.to_liquidate):
+	retencion_ids=brw_payslip.invoice_ids.mapped('l10n_ec_withhold_ids').mapped('l10n_ec_withhold_line_ids').mapped('move_id')
+	move_line_ids=brw_payslip.mapped('input_line_ids').mapped('move_line_id').mapped('move_id')
+	for invoice in brw_payslip.invoice_ids:
+		reconciliaciones_parciales = self.env['account.partial.reconcile'].search([
+			    ('credit_move_id', 'in',invoice.line_ids.ids)   # Filtrar por líneas de débito de la factura
+		])
+		for reconciliacion in reconciliaciones_parciales:
+			linea_pago = reconciliacion.debit_move_id
+			if (linea_pago.move_id not in move_line_ids) and (linea_pago.move_id not in retencion_ids):
+				otros_cobros+=reconciliacion.amount
+amount=round(otros_cobros,2)
+amount_factor=-amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+
+
+	<record model='hr.salary.rule' id='rule_DEVOLUCIONES'>
+			<field name='name'>DEVOLUCIONES DE ROL</field>
+			<field name='code'>DEVOLUCIONES DE ROL</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>999999</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<!--- -->
+
+	<record model='hr.salary.rule' id='rule_SALARIO'>
+			<field name='name'>SALARIO</field>
+			<field name='code'>SALARIO</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>0</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_salario(brw_payslip)
+all_days,filter_days=compute_dias(self,brw_payslip,'hr_work_entry.work_entry_type_attendance')
+if all_days>0:
+  amount=(amount/all_days)*filter_days
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_VACACIONES_GOZADAS'>
+			<field name='name'>VACACIONES GOZADAS</field>
+			<field name='code'>VAC_GOZ</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>0</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_salario(brw_payslip)
+all_days,filter_days=compute_dias(self,brw_payslip,'gps_hr.work_entry_vacaciones_gozadas')
+if all_days>0:
+    amount=(amount/all_days)*filter_days
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_VACACIONES_PAGADAS'>
+			<field name='name'>VACACIONES PAGADAS</field>
+			<field name='code'>VAC_PAG</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>0</field>
+			<field name='type'>payslip</field>
+		<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_VACACIONES_ANTICIPADAS'>
+			<field name='name'>VACACIONES ANTICIPADAS</field>
+			<field name='code'>VAC_ANT</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>0</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_salario(brw_payslip)
+all_days,filter_days=compute_dias(self,brw_payslip,'gps_hr.work_entry_vacaciones_anticipadas')
+if all_days>0:
+    amount=(amount/all_days)*filter_days
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+
+	<record model='hr.salary.rule' id='rule_BONO_NO_GRAVADO'>
+			<field name='name'>BONO NO GRAVA</field>
+			<field name='code'>BONO_NO_GRAV</field>
+			<field name='active' eval="False" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>1</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_BONO'>
+			<field name='name'>BONO</field>
+			<field name='code'>BONO</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>2</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_HORAS50'>
+			<field name='name'>HORAS 50 %</field>
+			<field name='code'>HORAS_50</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+           <field name='force_payslip' eval="1" />
+            <field name='sequence'>3</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_HORAS100'>
+			<field name='name'>HORAS 100 %</field>
+			<field name='code'>HORAS_100</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>4</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_RECARGO_NOCTURNO'>
+			<field name='name'>RECARGO NOCTURNO 25%</field>
+			<field name='code'>REC_NOCT</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>5</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_VACACIONES_PAGADAS'>
+			<field name='name'>VACACIONES PAGADAS</field>
+			<field name='code'>VAC_PAG</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>6</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="add_iess" eval="True" />
+			<field name="legal_iess" eval="True" />
+
+			<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_provisions(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_OTROS_BENEFICIOS'>
+			<field name='name'>OTROS BENEFICIOS</field>
+			<field name='code'>OTROS_BEN</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+           <field name='force_payslip' eval="1" />
+            <field name='sequence'>7</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+		<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+
+
+
+
+
+	<record model='hr.salary.rule' id='rule_FACTURADO'>
+			<field name='name'>SERVICIOS PRESTADOS</field>
+			<field name='code'>SERV_PREST</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>300</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>DEC=2
+amount=round(compute_total_facturado(brw_payslip),DEC)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_FACTURADO_IVA'>
+			<field name='name'>IVA FACTURADO</field>
+			<field name='code'>IVA_FACT</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>301</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=(not brw_payslip.to_liquidate or True) and (brw_payslip.contract_id.calcula_iva and compute_total_ingresos_facturados(brw_payslip) *0.15 or 0.00 ) or sum(invoice.amount_tax for invoice in brw_payslip.invoice_ids)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_OTROS_INGR'>
+			<field name='name'>OTROS INGRESOS</field>
+			<field name='code'>OTROS_ING</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>302</field>
+			<field name='type'>batch</field>
+			<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="False" />
+		</record>
+
+
+	<!-- provision -->
+
+	<record model='hr.salary.rule' id='rule_IESS945_PROV'>
+			<field name='name'>IESS 9.45%</field>
+			<field name='code'>IESS_945_PAS</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>1</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_iess_basico(brw_payslip,9.45)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PROV_IESS_1215'>
+			<field name='name'>PROV. IESS 12.15%</field>
+			<field name='code'>PROV_IESS</field>
+			<field name='active' eval="False" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>2</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_iess(brw_payslip,12.15)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PROV_IESS_1760_PASANTIA'>
+			<field name='name'>PROV. IESS 17.60% PASANTIA</field>
+			<field name='code'>PROV_IESS_1760</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>3</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_iess_basico(brw_payslip,17.60)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PROV_IESS_1215_PASANTIA'>
+			<field name='name'>PROV. IESS 12.15% PASANTIA</field>
+			<field name='code'>PROV_IESS_PAS</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>3</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_iess_basico(brw_payslip,12.15)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_DEC_TERCERO_PROV'>
+			<field name='name'>PROVISION DECIMO TERCERO</field>
+			<field name='code'>PROV_TERCERO</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>4</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_dec_13(brw_payslip,False)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_DEC_CUARTO_PROV'>
+			<field name='name'>PROVISION DECIMO CUARTO</field>
+			<field name='code'>PROV_CUARTO</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>5</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_dec_14(brw_payslip,False)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+		<record model='hr.salary.rule' id='rule_PROV_FOND_RESERV'>
+			<field name='name'>PROVISION FONDO DE RESERVA</field>
+			<field name='code'>PROV_FOND</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+		<field name='force_payslip' eval="0" />
+            <field name='sequence'>6</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_fondo_reserva(brw_payslip,False)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+	<record model='hr.salary.rule' id='rule_DEC_CUARTO_TERCERO'>
+			<field name='name'>PAGO DECIMO TERCERO</field>
+			<field name='code'>DEC_TERCERO</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>200</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_dec_13(brw_payslip,True)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		<field name="unique_month" eval="True" />
+			<field name="for_liquidate_provision" eval="True" />
+		<field name="provision_rule_ids" eval="[(6,0,[ref('gps_hr.rule_DEC_TERCERO_PROV')])]" />
+		<field name="enable_for_documents" eval="True" />
+<field name="payment" eval="True" />
+	<field name="account" eval="True" />
+		<field name='domain_select'>result=brw_rule.get_default_yearly_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>provision_line_ids=self.env["hr.employee.historic.lines"].sudo().search([('year','in',(brw_document.year,brw_document.year-1)),('state','=','posted'),('company_id','=',brw_document.company_id.id),('employee_id','=',brw_document.employee_id.id),('rule_id','in',brw_rule.provision_rule_ids.ids)])
+total=0.00
+if provision_line_ids:
+	total=sum(provision_line_ids.mapped('amount'))
+	provision_line_ids.write({"movement_line_id":brw_document.id})
+else:
+	if brw_document.provision_line_ids:
+		brw_document.provision_line_ids.write({"movement_line_id":False,'total':0.00})
+result={"total":total}</field>
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_provisions(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_DEC_CUARTO_PAGO'>
+			<field name='name'>PAGO DECIMO CUARTO</field>
+			<field name='code'>DEC_CUARTO</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>201</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_dec_14(brw_payslip,True)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		<field name="unique_month" eval="True" />
+			<field name="for_liquidate_provision" eval="True" />
+		<field name="provision_rule_ids" eval="[(6,0,[ref('gps_hr.rule_DEC_CUARTO_PROV')])]" />
+		<field name="enable_for_documents" eval="True" />
+<field name="payment" eval="True" />
+	<field name="account" eval="True" />
+		<field name='domain_select'>result=brw_rule.get_default_yearly_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+					<field name='process_select'>provision_line_ids=self.env["hr.employee.historic.lines"].sudo().search([('year','in',(brw_document.year,brw_document.year-1)),('state','=','posted'),('company_id','=',brw_document.company_id.id),('employee_id','=',brw_document.employee_id.id),('rule_id','in',brw_rule.provision_rule_ids.ids)])
+total=0.00
+if provision_line_ids:
+	total=sum(provision_line_ids.mapped('amount'))
+	provision_line_ids.write({"movement_line_id":brw_document.id})
+else:
+	if brw_document.provision_line_ids:
+		brw_document.provision_line_ids.write({"movement_line_id":False,'total':0.00})
+result={"total":total}</field>
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_provisions(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+<record model='hr.salary.rule' id='rule_PAGO_FOND_RESERV'>
+			<field name='name'>PAGO FONDO DE RESERVA</field>
+			<field name='code'>PAGO_FOND</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_income' />
+		<field name='force_payslip' eval="0" />
+            <field name='sequence'>202</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>amount=compute_fondo_reserva(brw_payslip,True)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+			<field name="for_liquidate_provision" eval="True" />
+	<field name="provision_rule_ids" eval="[(6,0,[ref('gps_hr.rule_PROV_FOND_RESERV')])]" />
+				<field name="enable_for_documents" eval="False" />
+
+	<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<record model='hr.salary.rule' id='rule_PROV_VACACIONES'>
+			<field name='name'>PROVISION VACACIONES</field>
+			<field name='code'>PROV_VAC</field>
+			<field name='active' eval="True" />
+		<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_provision' />
+            <field name='sequence'>7</field>
+			<field name='type'>payslip</field>
+			<field name='condition_python'>DEC=2
+total_income_iess=compute_salario(brw_payslip)+compute_otros_ingresos_iess(brw_payslip)
+amount=round(total_income_iess/24.00,DEC)
+amount_factor=amount
+result=amount>0.00</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+
+		</record>
+
+	<!--    -->
+
+	<record model='hr.salary.rule' id='rule_DESAHUCIO'>
+			<field name='name'>DESAHUCIO</field>
+			<field name='code'>DESAHUCIO</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>99</field>
+			<field name='type'>liquidation</field>
+			<field name='condition_python'>amount=0.00
+amount_factor=amount
+result=False</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="process_liquidation_select">result=amount_factor</field>
+		<field name="domain_liquidation_select">DEC=2
+valor = brw_liquidation.last_payslip_id and brw_liquidation.last_payslip_id.total_salario or 0.00  # Este es el valor de la celda B21
+anios = brw_liquidation.anios_contrato         # Ya tienes el número de años completos
+# Cálculo equivalente a: =B21 * ROUNDDOWN(años, 0) * 0.25
+amount = round(valor * anios * 0.25,DEC)
+amount_factor=amount
+result=(amount_factor>;0.00)</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+
+
+	<record model='hr.salary.rule' id='rule_DESPIDO'>
+			<field name='name'>DESPIDO</field>
+			<field name='code'>DESPIDO</field>
+			<field name='active' eval="True" />
+			<field name='force_payslip' eval="0" />
+			<field name='category_id' ref='gps_hr.type_income' />
+            <field name='sequence'>9999998</field>
+			<field name='type'>liquidation</field>
+			<field name='condition_python'>amount=0.00
+amount_factor=amount
+result=False</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+		<field name="process_liquidation_select">result=amount_factor</field>
+		<field name="domain_liquidation_select">DEC=2
+amount=0.00
+if brw_liquidation.type_liquidation=='despido_intepestivo':
+    valor = brw_liquidation.last_payslip_id and brw_liquidation.last_payslip_id.total_salario or 0.00  # Este es el valor de la celda B21
+    anios = brw_liquidation.anios_contrato         # Ya tienes el número de años completos
+    # Cálculo equivalente a: =B21 * ROUNDDOWN(años, 0) * 0.25
+    factor_despido=	(3 if anios &lt;3 else anios)
+    amount = round(valor * factor_despido,DEC)
+amount_factor=amount
+result=(amount_factor>0.00)</field>
+			<field name="add_iess" eval="False" />
+			<field name="legal_iess" eval="True" />
+		</record>
+
+
+	<record model='hr.salary.rule' id='rule_PENSION_ALIMENTICIA'>
+			<field name='name'>PENSION ALIMENTICIA</field>
+			<field name='code'>PENSION_ALI</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>6</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+		</record>
+
+	<record model='hr.salary.rule' id='rule_ALCANCE_ALIMENTICIA'>
+			<field name='name'>ACUERDO DE PAGO PENSION ALIMENTICIA</field>
+			<field name='code'>ACUERDO_PENS_ALI</field>
+			<field name='active' eval="True" />
+			<field name='category_id' ref='gps_hr.type_expense' />
+            <field name='force_payslip' eval="1" />
+            <field name='sequence'>6</field>
+			<field name='type'>batch</field>
+            <field name='locked_import' eval="False" />
+			<field name='domain_select'>result=brw_rule.get_default_values(brw_company,brw_rule,brw_document,model_name,date_process,brw_employee=brw_employee,brw_contract=brw_contract)</field>
+			<field name='process_select'>result={"total":0.01}</field>
+<field name='condition_python'>result,amount,amount_factor=brw_payslip.compute_by_selected_rule(brw_rule)</field>
+			<field name='amount_python_compute'>result=amount_factor</field>
+			<field name="legal_iess" eval="True" />
+		<field name='domain_liquidation_select'>amount,amount_factor,result=brw_liquidation.sum_by_rules(brw_rule)</field>
+			<field name='process_liquidation_select'>result=amount_factor</field>
+		</record>
+
+
+</data>
+</odoo>

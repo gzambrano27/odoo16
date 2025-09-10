@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_purchase_transit_inventory_report" model="ir.actions.act_window">
+        <field name="name">Órdenes de Compra en Tránsito</field>
+        <field name="res_model">purchase.transit.inventory.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_purchase_transit_inventory_report_root"
+              name="Compras en Tránsito"
+              parent="purchase.purchase_report_main"
+              sequence="99"
+              groups="purchase.group_purchase_manager,purchase.group_purchase_user"
+              action="action_purchase_transit_inventory_report"/>
+</odoo>

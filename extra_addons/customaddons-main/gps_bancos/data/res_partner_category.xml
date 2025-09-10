@@ -1,0 +1,11 @@
+<odoo>
+    <data noupdate="1">
+
+ <record id="rp_contratista" model="res.partner.category">
+            <field name="name">Contratista</field>
+ </record>
+
+
+    </data>
+
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<odoo>
+
+        <report
+            id="report_formulario_104_xlsx"
+            model="account.report"
+            string="Formulario 104 XLSX"
+            report_type="xlsx"
+            name="gps_anexos.report_formulario_104_xlsx"
+            file="gps_anexos.report_formulario_104_xlsx"
+        />
+
+        <report
+            id="report_formulario_103_xlsx"
+            model="account.report"
+            string="Formulario 103 XLSX"
+            report_type="xlsx"
+            name="gps_anexos.report_formulario_103_xlsx"
+            file="gps_anexos.report_formulario_103_xlsx"
+        />
+
+</odoo>

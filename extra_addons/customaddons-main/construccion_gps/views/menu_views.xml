@@ -1,0 +1,41 @@
+<odoo>
+    <!-- Menú Raíz -->
+    <menuitem id="menu_budget_apu_root" name="Construcción BIM GPS" sequence="1" web_icon="construccion_gps,static/description/logo.png"/>
+
+    <!-- Menús de APU -->
+    <menuitem id="menu_apu" parent="menu_budget_apu_root" name="APUs" sequence="2"/>
+    <menuitem id="menu_apu_action" parent="menu_apu" name="APU" action="apu_apu_form_action" sequence="1"/>
+    <menuitem id="menu_sale_bim_form_action_ventas" action="sale_order_bim_action_orders_draft" parent="menu_apu" sequence="5" name="Borrador Presupuestos" groups="construccion_gps.group_apus_usuario"/>
+    <menuitem id="menu_sale_order_bim_orders_reviewed" action="sale_order_bim_action_orders_reviewed" parent="menu_apu"  sequence="6" name="Presupuestos Revisados"/>
+    <menuitem id="menu_sale_bim_form_action_draft" action="sale_order_bim_action_orders" parent="menu_apu" sequence="7" name="Presupuestos" groups="construccion_gps.group_apus_jefe,construccion_gps.group_apus_administrador,construccion_gps.group_apus_gerente"/>
+
+    <!-- Menú (ajusta el padre si prefieres otro) -->
+    <menuitem id="menu_sale_order_line_apu" name="Pedidos APU (Líneas)" parent="menu_budget_apu_root" action="action_sale_order_line_apu" sequence="3"/>
+    <!-- <menuitem id="menu_apu_line_hierarchy" name="Lineas APU Jerarquicas" parent="menu_apu" action="action_apu_line_hierarchy" sequence="4"/> -->
+
+    <!-- Menú de Configuración -->
+    <menuitem id="menu_apu_settings" parent="menu_budget_apu_root" name="Configuracion" sequence="5"/>
+
+    <!-- Otros menús de Configuración (rangos, tareas, etc.) -->
+    <menuitem id="menu_rangos_root" name="Rangos Semaforo" sequence="10" parent="menu_apu_settings"/>
+    <menuitem id="menu_rangos_valores_cab" parent="menu_rangos_root" name="Rangos de margenes Cab" sequence="1" action="construccion_gps.action_bim_configuracion_cab_margen"/>
+    <menuitem id="menu_rangos_valores_det" parent="menu_rangos_root" name="Rangos de margenes Det" sequence="2" action="construccion_gps.action_bim_configuracion"/>
+    <menuitem id="menu_tareas_root" name="Tareas" sequence="20" parent="menu_apu_settings"/>
+    <menuitem id="menu_tareas" name="Tareas" parent="menu_tareas_root" action="action_tareas"/>
+    <menuitem id="menu_apu_tareas" name="APU Tareas" parent="menu_tareas_root" action="action_apu_tareas"/>
+    <menuitem id="menu_plantilla_tareas" name="Plantilla Tareas" parent="menu_tareas_root" action="action_plantilla_tareas"/>
+
+    <!-- Menú de Categorías -->
+    <menuitem id="menu_categorias_root" name="Categorías" sequence="30" parent="menu_apu_settings"/>
+    <menuitem id="menu_apu_categoria" name="Categorías de APU" parent="menu_categorias_root" action="action_apu_categoria" sequence="1"/>
+    <menuitem id="menu_apu_subcategoria" name="Subcategorías de APU" parent="menu_categorias_root" action="action_apu_subcategoria" sequence="2"/>
+
+    <!-- Menú: dentro de Configuración -->
+    <menuitem id="menu_apu_apu_tags" name="Etiquetas de APU" parent="menu_apu_settings" action="action_apu_apu_tags" sequence="35"/>
+    <!-- (Opcional) Otros menús, por ejemplo de Proyecto, si se requieren -->
+    <!--
+    <menuitem id="menu_project" parent="menu_budget_apu_root" name="Gestión de Proyectos" sequence="3"/>
+    <menuitem id="menu_project_proyecto" parent="menu_project" name="Proyectos" action="action_project_proyecto" sequence="1"/>
+    <menuitem id="menu_project_subproyecto" parent="menu_project" name="Subproyectos" action="action_project_subproyecto" sequence="2"/>
+    -->
+</odoo>

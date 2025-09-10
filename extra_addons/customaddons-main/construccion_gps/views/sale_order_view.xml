@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_view_material_requisitions" model="ir.actions.act_window">
+            <field name="name">Macro Requisición de Servicios</field>
+            <field name="res_model">macro.purchase.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sale_order_id', '=', active_id),('request_type', '=', 'service')]</field>
+        </record>
+
+        <record id="action_view_purchase_requests" model="ir.actions.act_window">
+            <field name="name">Macro Requisición de Materiales</field>
+            <field name="res_model">macro.purchase.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sale_order_id', '=', active_id),('request_type', '=', 'product')]</field>
+        </record>
+
+        <record id="view_order_tree_inherit_priority" model="ir.ui.view">
+              <field name="name">sale.order.tree.inherit.priority</field>
+              <field name="model">sale.order</field>
+              <field name="inherit_id" ref="sale.view_order_tree"/>
+              <field name="arch" type="xml">
+                    <xpath expr="//field[@name='name']" position="after">
+                        <field name="tipo_pedido" invisible='1'/>
+                        <field name="referencia_analitica"/>
+                        <field name="proyecto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                    </xpath>
+                    <xpath expr="//field[@name='state']" position="replace">
+                        <field name="state" widget="badge"
+                            decoration-success="state == 'sale' or state == 'done'"
+                            decoration-info="state == 'draft' or state == 'sent'"
+                            optional="show"/>
+                    </xpath>
+              </field>
+        </record>
+
+        <record id="view_order_form_project" model="ir.ui.view">
+            <field name="name">sale.order.form.project</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="priority">9999</field>
+            <field name="arch" type="xml">
+                <!-- Agregar el campo después del grupo donde está la referencia analítica -->
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="tipo_pedido" invisible='1'/>
+                    <field name="es_alcance" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                    <field name="motivo_alcance" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')],'required': [('es_alcance', '=', True)]}"/>
+                    <field name="project_name" attrs="{'invisible': ['|',('tipo_pedido', '!=', 'apu'), ('state', '!=', 'generar_requisiciones')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="show_generate_project" invisible="1" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="plantilla_proyecto_xml" attrs="{'invisible': ['|',('state', '!=', 'generar_requisiciones'),('tipo_pedido', '!=', 'apu')]}"/>
+                    <field name="plantilla_proyecto_xml_filename" invisible="1"/>
+                    <field name="tiempo_entrega" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+
+
+                <xpath expr="//div[@class='oe_button_box' and @name='button_box']" position="inside">
+                    <!-- Botón para ver las requisiciones de material -->
+                    <button name="action_view_material_requisitions" type="object" string="R. Servicios"
+                            class="oe_stat_button"
+                            attrs="{'invisible': ['|',('purchase_requisition_ids', '=', False),('tipo_pedido', '!=', 'apu')]}"
+                            icon="fa-list-ul" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/> <!-- Icono para el botón "R. Servicios" -->
+
+                    <!-- Botón para ver las requisiciones de compra -->
+                    <button name="action_view_purchase_requests" type="object" string="R. Materiales"
+                            class="oe_stat_button"
+                            attrs="{'invisible': ['|',('purchase_request_ids', '=', False),('tipo_pedido', '!=', 'apu')]}"
+                            icon="fa-list-ul" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/> <!-- Icono para el botón "R. Materiales" -->
+                </xpath>
+
+                <xpath expr="//form" position="inside">
+                    <field name="purchase_requisition_ids" widget="one2many_list" options="{'no_create': True}" invisible="1" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="purchase_request_ids" widget="one2many_list" options="{'no_create': True}" invisible="1" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+
+                <xpath expr="//header//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,presupuesto_revisado,sent,sale,generar_requisiciones,generar_proyecto"/>
+                </xpath>
+
+                <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                    <field name="proyecto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="no_proyecto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="tipo_presupuesto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                    <field name="pmo_asignado" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
+                    <field name="superintendente" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
+                    <field name="supervisor" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
+                    <field name="macro_unificado" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="plantilla_tarea_id" invisible='1'  options="{'no_open':True,'no_create':True}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <field name="porcentaje_inicial_requisicion" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+                <xpath expr="//header/button[@name='action_quotation_send']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('tipo_pedido', '!=', 'apu')]}</attribute>
+                </xpath>
+                <!-- nuevo wgu -->
+                <xpath expr="//header/button[@name='action_confirm']" position="replace"/>
+                <xpath expr="//header/button[@name='action_confirm']" position="replace"/>
+
+                <!-- Agregar UNO solo con reglas APU / no APU -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_confirm"
+                            string="Confirmar"
+                            type="object"
+                            class="oe_highlight"
+                            context="{'validate_analytic': True}"
+                            states="draft,sent,presupuesto_revisado"
+                            attrs="{
+                            'invisible': [
+                                '|',
+                                '&amp;', ('tipo_pedido','=','apu'), ('state','!=','presupuesto_revisado'),
+                                '&amp;', ('tipo_pedido','!=','apu'), ('state','not in', ['draft','sent'])
+                            ]
+                            }"/>
+                </xpath>
+                <!-- fin wgu -->
+                <!-- Agregar el botón en la barra superior -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_send_informe_detallado"
+                        string="Enviar Informe Detallado"
+                        type="object"
+                        class="btn-primary"
+                        attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"
+                        groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <button name="action_generate_project" type="object" string="Generar Proyecto"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|',('state', '!=', 'generar_requisiciones'),('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                    <button name="export_sale_order_excel"
+                        type="object"
+                        string="Descargar Presupuesto"
+                        class="btn-primary" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="action_set_budget_reviewed"
+                        type="object"
+                        string="Marcar como revisado"
+                        class="oe_highlight"
+                        states="draft"
+                        attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                </xpath>
+                <!-- Agregar el botón en la barra superior -->
+                <xpath expr="//header//button[@name='action_generate_project']" position="after">
+                    <button name="export_excel" type="object" class="oe_highlight" string="Exportar Excel" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+
+                <xpath expr="//header//button[@name='export_excel']" position="before">
+                    <button name="generate_purchase_requisition" type="object" class="oe_highlight" string="Generar Requisiciones"
+                    confirm="¿Está seguro que desea generar las macro requisiciones de compra?"
+                    attrs="{'invisible': ['|',('state', '!=', 'sale'),('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree//field[@name='product_template_id']" position="before">
+                    <!-- <field name="apu_id" options="{'no_create': True}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/> -->
+                    <field name="apu_id"
+                        options="{'no_create': True}"
+                        attrs="{'invisible': [('parent.tipo_pedido', '!=', 'apu')]}"
+                        groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_order_form_chatter_bottom" model="ir.ui.view">
+            <field name="name">sale.order.chatter.bottom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Elimina el chatter actual (fuera del sheet) -->
+                <xpath expr="//div[@class='oe_chatter']" position="replace"/>
+
+                <!-- Agrégalo dentro del sheet, al final -->
+                <xpath expr="//sheet/notebook" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+        <!-- <record id="sale_order_bim_action_orders" model="ir.actions.act_window">
+            <field name="name">Pedido de Ventas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'default_tipo_pedido': 'apu'}</field>
+            <field name="domain">[('state', 'in', ('draft', 'sent', 'sale','done','generar_proyecto','generar_requisiciones')),
+                ('order_line.product_id.product_tmpl_id.apu_ids', '!=', False)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new quotation, the first step of a new sale!
+                </p><p>
+                    Once the quotation is confirmed, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+                </p>
+            </field>
+        </record> -->
+
+        <record id="sale_order_bim_action_orders_draft" model="ir.actions.act_window">
+            <field name="name">Presupuestos APUs en Borrador</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', '=', 'draft'), ('tipo_pedido', '=', 'apu')]</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'default_tipo_pedido': 'apu', 'default_user_id': uid}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new quotation, the first step of a new sale!
+                </p><p>
+                    Once the quotation is confirmed, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+                </p>
+            </field>
+        </record>
+
+        <record id="sale_order_bim_action_orders_reviewed" model="ir.actions.act_window">
+            <field name="name">Presupuestos Revisados</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', '=', 'presupuesto_revisado'), ('tipo_pedido', '=', 'apu')]</field>
+            <field name="context">{'default_tipo_pedido': 'apu', 'from_reviewed_menu': True}</field>
+            <!-- Usa la misma vista de búsqueda que tus otras acciones -->
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="groups_id" eval="[(4, ref('construccion_gps.group_apus_gerente')), (4, ref('construccion_gps.group_apus_administrador'))]"/>
+        </record>
+
+        <record id="sale_order_bim_action_orders" model="ir.actions.act_window">
+            <field name="name">Presupuestos Confirmados</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', 'in', ('sent', 'sale','done','generar_proyecto','generar_requisiciones')), ('tipo_pedido', '=', 'apu')]</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'default_tipo_pedido': 'apu', 'from_presupuesto_menu': True}</field>
+        </record>
+
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="domain">[('tipo_pedido', '!=', 'apu')]</field>
+        </record>
+
+        <!-- vista de orden de venta linea detalle con apu -->
+        <record id="view_sale_order_line_apu_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.apu.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+            <tree string="Líneas de pedidos APU" create="false" edit="false">
+                <field name="order_id"/>
+                <field name="product_id"/>
+                <field name="apu_id"/>
+                <field name="name" string="Descripción"/>
+                <field name="product_uom_qty"/>
+                <field name="product_uom"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal"/>
+                <button name="action_ver_apu_popup"
+                        type="object"
+                        string="Árbol APU"
+                        icon="fa-sitemap"
+                        class="btn-link"/>
+            </tree>
+            </field>
+        </record>
+
+        <record id="view_sale_order_line_apu_search" model="ir.ui.view">
+            <field name="name">sale.order.line.apu.search</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+            <search string="Líneas APU">
+                <field name="order_id"/>
+                <field name="product_id"/>
+                <field name="apu_id"/>
+                <filter name="only_apu_orders" string="Solo pedidos APU"
+                        domain="[('order_id.tipo_pedido','=','apu')]"/>
+                <group expand="0" string="Agrupar por…">
+                <filter string="Pedido" name="grp_order" context="{'group_by':'order_id'}"/>
+                <filter string="Cliente" name="grp_partner" context="{'group_by':'order_partner_id'}"/>
+                <filter string="Proyecto" name="order_referencia_analitica" context="{'group_by':'order_referencia_analitica'}"/>
+                </group>
+            </search>
+            </field>
+        </record>
+
+        <record id="action_sale_order_line_apu" model="ir.actions.act_window">
+            <field name="name">Pedidos APU (Líneas)</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('display_type','=',False),('order_id.tipo_pedido','=','apu')]</field>
+            <field name="search_view_id" ref="construccion_gps.view_sale_order_line_apu_search"/>
+        </record>
+
+    </data>
+</odoo>

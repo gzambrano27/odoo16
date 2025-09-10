@@ -1,0 +1,71 @@
+<odoo>
+    <data>
+
+        <!-- Vista de Formulario para configurationio de Pagos -->
+        <record id="view_account_group_report_form" model="ir.ui.view">
+            <field name="name">account.group.report.form</field>
+            <field name="model">account.group.report</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de Cuentas">
+                    <sheet>
+                        <group>
+                             <group>
+                            <!-- Campo de Compañía -->
+                            <field name="code" required="1" />
+                        </group>
+                        <group>
+                            <!-- Campo del Día -->
+                            <field name="name" required="1" />
+                        </group>
+                        </group>
+                       <newline/>
+                        <field name="line_ids">
+                            <tree string="Detalle">
+                                  <field name="name" />
+                            </tree>
+
+                            <form string="Detalle">
+                                <group>
+                                     <field name="name" />
+                                </group>
+                                 <newline/>
+                                <field name="template_ids">
+                                      <tree string="Plantilla">
+                                  <field name="code" />
+                                           <field name="name" />
+                            </tree>
+                                </field>
+                            </form>
+
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+
+        </record>
+
+        <!-- Vista de Lista para configurationio de Pagos -->
+        <record id="view_account_group_report_tree" model="ir.ui.view">
+            <field name="name">account.group.report.tree</field>
+            <field name="model">account.group.report</field>
+            <field name="arch" type="xml">
+                <tree string="Reporte de Cuentas">
+                    <field name="code"  />
+                    <field name="name"  />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción para acceder a la vista -->
+            <record id="action_account_group_report" model="ir.actions.act_window">
+            <field name="name">Reporte de Cuentas</field>
+            <field name="res_model">account.group.report</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+          <!-- Menú para acceder a la vista -->
+
+
+    </data>
+
+</odoo>

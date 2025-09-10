@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <record id="view_partner_bank_email_update_wizard_form" model="ir.ui.view">
+  <field name="name">res.partner.bank.email.update.wizard.form</field>
+  <field name="model">res.partner.bank.email.update.wizard</field>
+  <field name="arch" type="xml">
+    <form string="Actualizar Correo de Cuentas Bancarias">
+      <group>
+        <field name="bank_ids" widget="many2many_tags"/>
+        <field name="partner_email"/>
+      </group>
+      <footer>
+        <button name="action_update_email" type="object" string="Actualizar" icon="fa-cogs"/>
+        <button string="Cancelar" special="cancel" class="btn-secondary"/>
+      </footer>
+    </form>
+  </field>
+</record>
+
+<record id="action_open_partner_bank_email_wizard" model="ir.actions.act_window">
+  <field name="name">Actualizar Correo</field>
+  <field name="res_model">res.partner.bank.email.update.wizard</field>
+  <field name="view_mode">form</field>
+  <field name="target">new</field>
+  <field name="groups_id" eval="[(4, ref('gps_bancos.group_usr_documentos_bancarios')),(4, ref('gps_bancos.group_admin_documentos_bancarios')), (4, ref('gps_bancos.group_admin_sol_pagos'))]"/>
+</record>
+
+
+    <record id="action_multi_open_email_update_wizard" model="ir.actions.server">
+  <field name="name">Actualizar Correo</field>
+  <field name="model_id" ref="base.model_res_partner_bank"/>
+  <field name="binding_model_id" ref="base.model_res_partner_bank"/>
+  <field name="binding_type">action</field>
+  <field name="state">code</field>
+  <field name="code"><![CDATA[banks = records
+partner_ids = banks.mapped('partner_id')
+if len(set(partner_ids)) > 1:
+    raise UserError("Solo puedes actualizar correos de cuentas que pertenezcan al mismo proveedor.")
+action = {
+        'type': 'ir.actions.act_window',
+        'name': 'Actualizar Correo',
+        'res_model': 'res.partner.bank.email.update.wizard',
+        'view_mode': 'form',
+        'target': 'new',
+        'context': {
+            'active_ids': records.ids
+        }
+    }
+  ]]></field>
+  <field name="groups_id" eval="[(4, ref('gps_bancos.group_usr_documentos_bancarios')),
+                                  (4, ref('gps_bancos.group_admin_documentos_bancarios')),
+                                  (4, ref('gps_bancos.group_admin_sol_pagos'))]"/>
+</record>
+
+
+</odoo>

@@ -1,0 +1,20 @@
+<odoo>
+        <!-- Menú principal 'Permisos de Ingreso' -->
+    <menuitem id="menu_permisos_ingreso_root" name="Permisos de Ingreso" sequence="1" web_icon="permisos_ingreso,static/description/logo.png"/>
+
+    <!-- Submenú 'Gestión de Permisos de Ingreso' bajo el menú principal -->
+    <menuitem id="menu_gestion_permisos" name="Gestión de Permisos" parent="menu_permisos_ingreso_root" sequence="10"/>
+
+    <!-- Menú 'Permiso' bajo el submenú 'Gestión de Permisos' -->
+    <menuitem id="menu_permiso" name="Permisos" parent="menu_gestion_permisos" action="action_permisos" sequence="10"/>
+
+    <!-- Menú 'Personal' bajo el submenú 'Gestión de Permisos' -->
+    <menuitem id="menu_personal" name="Personal" parent="menu_gestion_permisos" action="action_personal" sequence="20"/>
+
+    <!-- Menú 'Lista negra' bajo el submenú 'Gestión de Permisos' -->
+    <menuitem id="menu_lista_negra" name="Lista negra" parent="menu_gestion_permisos" action="action_lista_negra" sequence="30"/>
+
+    <!-- Menú 'Proyectos' bajo el submenú 'Gestión de Permisos' -->
+    <menuitem id="menu_proyectos" name="Proyectos" parent="menu_gestion_permisos" action="action_proyectos" sequence="40"/>
+
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_importation_advance_tree" model="ir.ui.view">
+            <field name="name">view.importation.advance.tree</field>
+            <field name="model">importation.advance</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="date"/>
+                    <field name="amount"/>
+                    <field name="ref"/>
+                    <field name="account_id"/>
+                    <field name="account_dest_id"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state=='draft'"
+                           decoration-success="state=='done'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_importation_advance_form" model="ir.ui.view">
+            <field name="name">view.importation.advance.form</field>
+            <field name="model">importation.advance</field>
+            <field name="arch" type="xml">
+                <form string="Anticipo Importación">
+                    <header>
+                        <button name="confirmed_payment" type="object"
+                                string="Confirmar"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','=', 'done')]}"
+                                confirm="Está seguro de realizar esta transacción?"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <div class="oe_title">
+                        <span class="o_form_label">Anticipo Importación</span>
+                        <h1 class="d-flex">
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="partner_id" options="{'no_create':True}"/>
+                            <field name="journal_id" options="{'no_create':True}"/>
+                            <field name="amount"/>
+                            <field name="ref"/>
+                        </group>
+                        <group string="Seleccione la cuenta de origen y la cuenta de destino.">
+                            <field name="account_id" options="{'no_create':True}"/>
+                            <field name="account_dest_id" options="{'no_create':True}"/>
+                            <field name="move_conciliation" attrs="{'invisible': [('move_conciliation', '=', False)]}"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="foreign_importation_advance_action" model="ir.actions.act_window">
+            <field name="name">Pagos de Importaciones</field>
+            <field name="res_model">importation.advance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem id="purchase_importation_advance_menu"
+                  action="ecua_foreign_purchase.foreign_importation_advance_action"
+                  parent="purchase_foreign_menu"
+                  sequence="3"
+                  groups="ecua_foreign_purchase.foreign_group_manager"
+                  name="Pagos de Importaciones"/>
+
+    </data>
+</odoo>

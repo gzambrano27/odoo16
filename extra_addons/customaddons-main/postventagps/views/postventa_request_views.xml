@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- ===============================================
+         VISTA TREE (lista)
+    =============================================== -->
+    <record id="view_postventa_request_tree" model="ir.ui.view">
+      <field name="name">postventa.request.tree</field>
+      <field name="model">postventa.request</field>
+      <field name="arch" type="xml">
+        <tree string="Requerimientos PostVenta">
+          <field name="name"/>
+          <field name="partner_id"/>
+                <field name="user_id"
+                       string="Solicitante"
+                       readonly="1"/>
+          <field name="requester_department"
+                       string="Departamento"
+                       readonly="1"/>
+          <field name="date_create"
+                       string="Fecha de Creación"
+                       readonly="1"/>
+          <field name="stage" widget="badge"
+                       decoration-info="stage=='en_proceso'"
+                       decoration-muted="stage=='borrador'"
+                       decoration-danger="stage=='cancelado'"
+                       decoration-success="stage=='aprobado'"/>
+          <field name="prioridad" widget="priority" readonly="1"/>
+          <field name="categoria"/>
+          <field name="fecha_limite"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- ===============================================
+         VISTA FORMULARIO (ajustada para “Seguimiento”)
+    =============================================== -->
+    <record id="view_postventa_request_form" model="ir.ui.view">
+      <field name="name">postventa.request.form</field>
+      <field name="model">postventa.request</field>
+      <field name="arch" type="xml">
+        <form string="Requerimiento PostVenta">
+
+          <!-- ======================== HEADER ======================== -->
+          <header>
+            <button name="action_set_en_proceso"
+                    string="Enviar"
+                    type="object"
+                    attrs="{'invisible': [('stage','!=','borrador')]}"
+                    />
+            <button name="action_set_aprobado"
+                    string="Aprobar"
+                    type="object"
+                    groups="postventagps.group_postventa_jefe,postventagps.group_postventa_admin"
+                    attrs="{'invisible': [('stage','!=','en_proceso')]}"
+                    />
+            <button name="action_set_cancelado"
+                    string="Rechazar/Cancelar"
+                    type="object"
+                    groups="postventagps.group_postventa_jefe,postventagps.group_postventa_admin"
+                    attrs="{
+                      'invisible': [
+                        ('stage','!=','en_proceso')
+                      ]
+                    }"
+                    />
+
+            <!-- Barra de estado (statusbar) – se quitó 'pendiente' -->
+            <field name="stage"
+                   widget="statusbar"
+                   statusbar_visible="borrador,en_proceso,aprobado,cancelado"/>
+            <!-- Followers / Chatter en header -->
+          </header>
+
+          <!-- ======================== SHEET (primer bloque de campos) ======================== -->
+          <sheet>
+            <group>
+
+              <!-- Título encima de “Fecha de Creación” -->
+              <separator string="Descripción del Servicio" colspan="4"/>
+
+              <!-- 1) Fecha de Creación | Número de Referencia -->
+              <group>
+                <field name="date_create"
+                       string="Fecha de Creación"
+                       readonly="1"/>
+                <field name="name"
+                       string="Número de Referencia"
+                       readonly="1"/>
+              </group>
+
+              <!-- 2) Prioridad (estrellas) -->
+              <group>
+                <field name="prioridad" optional="show" widget="priority" groups="postventagps.group_postventa_jefe,postventagps.group_postventa_admin"/>
+              </group>
+
+              <!-- 3) Categoría | Fecha Límite -->
+              <group>
+                <field name="categoria"
+                       string="Categoría"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+                <field name="fecha_limite"
+                       string="Fecha Límite"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+              </group>
+
+              <!-- 4) Empresa / Cliente (bloqueado en aprobado) -->
+              <group>
+                <field name="partner_id"
+                       string="Empresa / Cliente"
+                       required="1"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+              </group>
+
+              <!-- 5) Solicitante -->
+              <group>
+                <field name="user_id"
+                       string="Solicitante"
+                       readonly="1"/>
+              </group>
+
+              <!-- 6) Compañía del solicitante -->
+              <group>
+                <field name="requester_company"
+                       string="Compañía"
+                       readonly="1"/>
+              </group>
+
+              <!-- 7) Email de Trabajo del solicitante -->
+              <group>
+                <field name="requester_email"
+                       string="Email de Trabajo"
+                       readonly="1"/>
+              </group>
+
+              <!-- 8) Departamento del solicitante -->
+              <group>
+                <field name="requester_department"
+                       string="Departamento"
+                       readonly="1"/>
+              </group>
+
+              <!-- 9) Referencia -->
+              <group>
+                <field name="reference_type"
+                       string="Referencia"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+              </group>
+
+              <!-- 10) Cuenta Analítica -->
+              <group>
+                <field name="analytic_account_id"
+                       string="Cuenta Analítica"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+              </group>
+
+              <separator string="Descripción:" colspan="4"/>
+
+                <field name="description"
+                       string="Descripción del Servicio"
+                       widget="html"
+                       attrs="{'readonly': [('stage','in',['en_proceso','aprobado','cancelado'])]}"/>
+
+            </group>
+
+            <!-- ======================== NOTEBOOK: pestañas ======================== -->
+            <notebook>
+              <!-- Pestaña “Seguimiento”: visible en EN PROCESO y en APROBADO -->
+              <page string="Seguimiento"
+                    attrs="{'invisible': [('stage','not in',['en_proceso','aprobado'])]}">
+
+                <!-- 1) Fecha automática cuando pase a En Proceso -->
+                <group>
+                  <field name="process_date"
+                         string="Fecha de Paso a Proceso"
+                        />
+                </group>
+
+                <!-- 2) Tipo de Servicio (bloqueado en aprobado) -->
+                <group>
+                  <field name="service_type"
+                         string="Tipo de Servicio"
+                         attrs="{'readonly': [('stage','=','aprobado')]}"/>
+                </group>
+
+
+                <!-- 3) Tabla One2many de Seguimiento (abajo de Tipo de Servicio) -->
+              <field name="line_ids"
+                     string="Tabla de Seguimiento"
+                     nolabel="1"
+                     attrs="{'readonly': [('stage','=','aprobado')]}">
+                <tree editable="bottom">
+                  <field name="product_id" string="Producto"/>
+                  <field name="descripcion" string="Descripción"/>
+                  <field name="cantidad" string="Cantidad"/>
+                  <field name="observacion" string="Observación"/>
+                </tree>
+              </field>
+
+              </page>
+
+              <!-- Pestaña “Aprobación”: visible en APROBADO -->
+              <page string="Aprobación"
+                    attrs="{'invisible': [('stage','!=','aprobado')]}">
+                <group>
+                  <field name="approver_id"
+                         string="Aprobado por"
+                         readonly="1"/>
+                </group>
+                <group>
+                  <field name="approval_date"
+                         string="Fecha de Aprobación"
+                         readonly="1"/>
+                </group>
+              </page>
+            </notebook>
+          </sheet>
+
+          <!-- ======================== CHATTER INFERIOR ======================== -->
+          <div class="oe_chatter">
+            <field name="message_ids"
+                   widget="mail_thread"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <!-- ===============================================
+         ACCIÓN y MENÚ
+    =============================================== -->
+    <record id="action_postventa_request" model="ir.actions.act_window">
+      <field name="name">Requerimientos PostVenta</field>
+      <field name="res_model">postventa.request</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="view_postventa_request_tree"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Crea tu primer requerimiento de servicio postventa
+        </p>
+      </field>
+    </record>
+
+    <menuitem id="menu_postventa_root" name="PostVenta" sequence="80" web_icon="postventagps,static/description/icono.png"/>
+    <menuitem id="menu_postventa_request"
+              name="Requerimientos"
+              parent="menu_postventa_root"
+              action="action_postventa_request"
+              sequence="10"/>
+  </data>
+</odoo>

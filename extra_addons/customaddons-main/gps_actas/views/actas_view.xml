@@ -1,0 +1,80 @@
+<odoo>
+    <!-- Vista del Formulario -->
+    <record id="view_acta_form" model="ir.ui.view">
+        <field name="name">acta.form</field>
+        <field name="model">actas.acta</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="Información del Acta">
+                        <field name="name"/>
+                        <field name="fecha_salida_equipo"/>
+                        <field name="fecha_recepcion_equipo"/>
+                        <field name="employee_ids" string="Jefe Directo:" widget="many2one"/>
+                    </group>
+                    <notebook>
+                        <page string="Modelos de Computadoras">
+                            <field name="computer_models">
+                                <tree editable="bottom">
+                                    <field name="model"/>
+                                    <field name="brand"/>
+                                    <field name="serial_number"/>
+                                    <field name="color"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Personal">
+                            <field name="personnel">
+                                <tree editable="bottom">
+                                    <field name="employee_id"/>
+                                    <field name="identification_id"/>
+                                    <field name="job_id"/>
+                                    <field name="department_id"/>
+                                    <field name="company_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="%(actas_report)d" type="action" class="btn btn-primary">
+                        Imprimir Acta
+                    </button>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Lista -->
+    <record id="view_acta_tree" model="ir.ui.view">
+        <field name="name">acta.tree</field>
+        <field name="model">actas.acta</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="fecha_salida_equipo"/>
+                <field name="fecha_recepcion_equipo"/>
+                <field name="employee_ids" string="Jefe Directo:"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_acta" model="ir.actions.act_window">
+        <field name="name">Actas</field>
+        <field name="res_model">actas.acta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Gestiona las actas para la autorización de salida de computadores.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú Principal -->
+    <menuitem id="menu_actas_root" name="Gestión de Actas" sequence="10" web_icon="gps_actas,static/src/img/icon.png"/>
+
+    <!-- Submenú -->
+    <menuitem id="menu_actas" name="Actas" parent="menu_actas_root" action="action_acta" sequence="10"/>
+</odoo>
+

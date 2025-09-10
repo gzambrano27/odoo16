@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_module_update_history,Update module history,model_modules_upgrade_history,base.group_system,1,1,1,1
+access_quick_model_upgrade,Update quick model upgrade,model_quick_model_upgrade,base.group_system,1,1,1,1

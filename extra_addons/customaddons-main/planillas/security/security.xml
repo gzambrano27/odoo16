@@ -1,0 +1,24 @@
+<odoo>
+    <!-- Definición de la categoría para Planillas -->
+    <record id="module_category_planillas" model="ir.module.category">
+        <field name="name">Planillas</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Definición de grupos para Planillas -->
+    <record id="planillas.group_planillas_admin" model="res.groups">
+        <field name="name">Administrador de Planillas</field>
+        <field name="category_id" ref="module_category_planillas"/>
+    </record>
+
+    <record id="planillas.group_planillas_user" model="res.groups">
+        <field name="name">Usuario de Planillas</field>
+        <field name="category_id" ref="module_category_planillas"/>
+    </record>
+
+    <record id="planillas.group_planillas_reader" model="res.groups">
+        <field name="name">Lector de Planillas</field>
+        <field name="category_id" ref="module_category_planillas"/>
+    </record>
+</odoo>
+

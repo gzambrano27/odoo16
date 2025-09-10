@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  	
+    	 <record id="report_lote_sol_cxp_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Lote de Solicitudes de Pagos</field>
+        <field name="model">account.payment.analysis.request.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_lote_sol_cxp_report_xlsx</field>
+        <field name="report_file">Reporte de Lote de Solicitudes de Pagos</field>
+    </record>
+
+    <record id="report_pagos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Pagos</field>
+        <field name="model">account.payment.reports.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_pagos_report_xlsx</field>
+        <field name="report_file">Reporte de Pagos</field>
+    </record>
+
+    <record id="report_oc_pagos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de OC con Pagos</field>
+        <field name="model">account.payment.reports.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_oc_pagos_report_xlsx</field>
+        <field name="report_file">Reporte de OC con Pagos</field>
+    </record>
+
+
+    <record id="report_account_payment_bank_macro_act" model="ir.actions.report">
+        <field name="name">Reporte de Pagos al Banco</field>
+        <field name="model">account.payment.bank.macro</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gps_bancos.report_payment_bank_macro</field>
+        <field name="report_file">Reporte de Pagos al Banco</field>
+        <field name="paperformat_id" ref="gps_bancos.paperformat_payment_bank_macro" />
+    </record>
+
+<record id="report_res_partner_bank_wizard_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cuentas Bancarias</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_res_partner_bank_wizard_report_xlsx</field>
+        <field name="report_file">Reporte de Cuentas Bancarias</field>
+    </record>
+
+    <record id="report_soli_pagos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Solicitudes de Pagos</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_soli_pagos_report_xlsx</field>
+        <field name="report_file">Reporte de Solicitudes de Pagos</field>
+    </record>
+
+
+
+    <record id="report_resumen_pagos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de OC con Pagos</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_resumen_pagos_report_xlsx</field>
+        <field name="report_file">Reporte de OC con Pagos</field>
+    </record>
+
+
+    <record id="report_resumen_pagos_macros_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Pagos a Proveedores desde Bancos</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_resumen_pagos_macros_report_xlsx</field>
+        <field name="report_file">Reporte de Pagos a Proveedores desde Bancos</field>
+    </record>
+
+    <record id="report_facturas_proveedores_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Factura de Proveedores</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_facturas_proveedores_report_xlsx</field>
+        <field name="report_file">Reporte de Factura a Proveedores</field>
+    </record>
+
+    <record id="report_pagos_proveedores_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Pagos de Proveedores</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_pagos_proveedores_report_xlsx</field>
+        <field name="report_file">Reporte de Pagos a Proveedores</field>
+    </record>
+
+    <record id="report_resumen_contratos_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Cartera por Cobrar Contratos</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_resumen_contratos_report_xlsx</field>
+        <field name="report_file">Reporte de Cartera por Cobrar Contratos</field>
+    </record>
+
+
+
+     <record id="report_document_bank_recon_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Conciliacion Bancaria</field>
+        <field name="model">document.bank.reconciliation</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_bancos.report_document_bank_recon_report_xlsx</field>
+        <field name="report_file">Reporte de Conciliacion Bancaria</field>
+    </record>
+
+
+    <report
+        id="action_report_detalle_pago"
+        model="account.payment.bank.macro.summary"
+        string="Resumen de Pago"
+        name="gps_bancos.report_detalle_pago"
+        file="gps_bancos.report_detalle_pago"
+        report_type="qweb-pdf"
+        print_report_name="'Resumen de Pago - %s' % (object.name or '')"
+         paperformat="gps_bancos.paperformat_payment_bank_macro" />
+
+
+     <report
+        id="gps_bancos.report_estado_cuenta_action"
+        model="res.partner"
+        string="Estado de Cuenta Proveedor"
+        name="gps_bancos.report_estado_cuenta"
+        file="gps_bancos.report_estado_cuenta"
+        report_type="qweb-pdf"
+        print_report_name="'Estado de Cuenta Proveedor - %s' % (object.name or '')"
+        paperformat="gps_bancos.paperformat_estados_cuenta" />
+
+    />
+
+    <report
+        id="gps_bancos.report_estado_cuenta_clte_action"
+        model="res.partner"
+        string="Estado de Cuenta Cliente"
+        name="gps_bancos.report_estado_cuenta_clte"
+        file="gps_bancos.report_estado_cuenta_clte"
+        report_type="qweb-pdf"
+        print_report_name="'Estado de Cuenta Cliente - %s' % (object.name or '')"
+        paperformat="gps_bancos.paperformat_estados_cuenta" />
+
+    />
+
+
+</odoo>
+        

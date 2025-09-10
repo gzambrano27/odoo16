@@ -1,0 +1,13 @@
+<odoo>
+    <data noupdate="1">
+
+
+ <record id="grp_report_flujo_caja" model="account.group.report">
+            <field name="name">Flujo de Caja</field>
+            <field name="code">FLUJO</field>
+        </record>
+
+    </data>
+
+
+</odoo>

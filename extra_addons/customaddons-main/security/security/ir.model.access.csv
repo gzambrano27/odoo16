@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+log_configuration_model,log_configuration_model,model_log_configuration_model,base.group_system,1,1,1,1
+log_configuration_model_users,log_configuration_model_users,model_log_configuration_model,base.group_user,1,0,0,0
+log_configuration_model_conf,log_configuration_model_conf,model_log_configuration_model,history.group_exec_security_conf,1,1,1,1
+log_configuration_model_read,log_configuration_model_read,model_log_configuration_model,history.group_exec_security_read,1,0,0,0

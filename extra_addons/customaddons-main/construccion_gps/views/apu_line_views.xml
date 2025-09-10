@@ -1,0 +1,48 @@
+<odoo>
+    <!-- APU Line Views -->
+    <record id="view_apu_line_form" model="ir.ui.view">
+        <field name="name">Formulario de Línea de APU</field>
+        <field name="model">apu.apu.line</field>
+        <field name="arch" type="xml">
+            <form string="Línea de APU">
+                <sheet>
+                    <group>
+                        <field name="product_qty"/>
+                <field name="precio_unit"/>
+                <field name="cost" readonly="1"/>
+                    </group>
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+    <record id="view_apu_line_tree_hierarchyXX" model="ir.ui.view">
+        <field name="name">apu.apu.line.tree.hierarchyXX</field>
+        <field name="model">apu.apu.line</field>
+        <field name="arch" type="xml">
+            <tree string="Jerarquia de Lineas APU" parent_field="parent_id" child_field="child_ids" default_order="sequence, id">
+                <field name="product_qty"/>
+                <field name="precio_unit"/>
+                <field name="cost" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_apu_line_tree" model="ir.ui.view">
+        <field name="name">Arbol de Lineas de APU</field>
+        <field name="model">apu.apu.line</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas de APU">
+                <field name="product_qty"/>
+                <field name="precio_unit"/>
+                <field name="cost" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_apu_line_hierarchy" model="ir.actions.act_window">
+        <field name="name">Líneas de APU</field>
+        <field name="res_model">apu.apu.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_apu_line_tree_hierarchXXy"/>
+    </record>
+</odoo>

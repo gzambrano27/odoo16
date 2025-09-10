@@ -1,0 +1,2 @@
+INVOICE ID,PARTNER,CURRENCY,PRODUCT,Account,QUANTITY,UOM,DESCRIPTION,PRICE,SALESPERSON,TAX,DATE,DISCOUNT,x_partner_id@name,x_partner_ids@name,x_color,x_notes,x_amount,x_bool,x_total_amount
+invoice16,Agrolait,EUR,Ink Pen,50000,1,Units,Ink Pen,500,Mitchell Admin,,2016-02-03,10,Agrolait,"Axeloer,Camptocamp",red,red,10000,1,10000

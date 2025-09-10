@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record model="ir.ui.view"
+            id="account_payment_tree_view_inherit">
+        <field name="name">account.payment.tree.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="account.view_account_payment_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ref" string="Memo"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="bank_reconciliation.view_account_payment_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.view.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_bank_id']" position="before">
+                <field name="bank_reference" invisible="1"/>
+            </xpath>
+            <button name="action_post" position="attributes">
+                <attribute name="icon">fa-check</attribute>
+            </button>
+            <button name="action_draft" position="attributes">
+                <attribute name="icon">fa-rotate-left</attribute>
+            </button>
+            <button name="action_cancel" position="attributes">
+                <attribute name="icon">fa-times</attribute>
+            </button>
+
+
+            <button name="action_cancel" position="after">
+                <button name="action_print"
+                        type="object"
+                        icon="fa-print" help="Imprimir"
+                        attrs="{'invisible':[('state','in',('cancel'))]}"
+                        string="Imprimir"/>
+            </button>
+
+            <field name="payment_method_line_id" position="after">
+                <field name="reversed_payment_id" readonly="1"
+                       attrs="{'invisible':[('reversed_payment_id','=',False)]}"
+                />
+            </field>
+
+            <button name="action_cancel" position="after">
+                <button name="%(action_account_payment_cancel_wizard)d" string="Reversar"
+                        type="action" icon="fa-rotate-right"
+                        attrs="{'invisible': ['|',('reversed_payment_id','!=',False),('state', '!=', 'posted')]}"/>
+            </button>
+
+              <button name="button_open_bills"  position="after">
+                   <button name="button_open_reversed_payments" type="object" class="oe_stat_button"
+                           icon="fa-bars" attrs="{'invisible': [('reversed_payment_count','=', 0)]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_text">
+                                        <field name="reversed_payment_count"/>
+                                        <span> Reversos</span>
+                                    </span>
+                                </div>
+                            </button>
+              </button>
+
+
+        </field>
+    </record>
+
+    <!-- account.payment form inherit view -->
+    <record id="account_payment_advance.view_account_payment_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.view.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_bank_id']" position="before">
+                <field name="is_prepayment" attrs="{'invisible': ['|', ('batch_payment', '=', True), ('is_internal_transfer', '=', True)]}" />
+                <field name="prepayment_account_id"
+                       options='{"no_create_edit": True, "no_open": True, "no_quick_create": True}'
+                       attrs="{'invisible': [('is_prepayment', '!=', True)], 'required': [('is_prepayment', '=', True)], }" />
+                <field name="available_invoices" invisible="1" />
+                <field name="batch_payment" attrs="{'invisible': ['|', ('is_prepayment', '=', True), ('is_internal_transfer', '=', True)]}"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <notebook attrs="{'invisible': [('batch_payment', '=', False)]}">
+                    <page string="Facturas" name="page_invoice" attrs="{'invisible': [('batch_payment', '=', False)]}">
+                        <field name="reconcile_invoice_ids">
+                            <tree editable="bottom" no_open="1" >
+                                <field name="available_invoices" invisible="1" />
+                                <field name="invoice_id" domain="available_invoices" string="Number" required="1"
+                                       options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more': true, 'no_open': true}" />
+                                <field name="amount_untaxed" readonly="1" force_save="1"/>
+                                <field name="amount_tax" readonly="1" force_save="1"/>
+                                <field name="amount_total" readonly="1" force_save="1"/>
+                                <field name="already_paid" readonly="1" force_save="1"/>
+                                <field name="amount_residual" readonly="1" force_save="1"/>
+                                <field name="amount_paid" sum="total" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view"
+            id="account_payment_form_view_inherit">
+        <field name="name">account.payment.offset.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account_payment_advance.view_account_payment_form_inherit"/>
+        <field name="arch" type="xml">
+
+            <field name="ref" position="after">
+                <field name="change_payment" attrs="{'readonly': [['state', 'not in', ('draft')]]}"/>
+            </field>
+
+
+
+    <field name="destination_journal_id" position="after">
+          <field name="purchase_id" string="# OC" readonly="0" domain="[('company_id','=',company_id),('partner_id','=',partner_id),('state','in',('purchase','done'))]" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+
+
+    </field>
+
+<xpath expr="//notebook" position="attributes">
+    <attribute name="attrs">{}</attribute>
+</xpath>
+    <page name="page_invoice" position="after">
+<page string="Contrapartidas" attrs="{'invisible':[('change_payment','!=',True)]}">
+                <group groups="account.group_account_readonly" name="account_contrapartida"
+                       colspan="4" attrs="{'invisible':[('change_payment','!=',True)]}">
+                    <div colspan="4" class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+                        <b>Cuentas en Contrapartida</b>
+                        siempre se visualizará para Pagos Manuales, no se mostrará cuando se realice Pagos Asociados a
+                        un Documento como Factura.
+                    </div>
+                    <field name="payment_line_ids" nolabel="1" attrs="{'readonly': [['state', 'not in', ['draft']]]}"
+                           context="{'default_partner_id': partner_id}">
+                        <tree editable="bottom">
+                            <field name="company_id" invisible="1"/>
+                            <field name="payment_id" invisible="1"/>
+                            <field name="account_id" string="Cuenta"
+                                   domain="[('company_id','=',company_id),('deprecated','=',False),('child_ids', '=', False)]"
+                                   options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                            />
+                            <field name="analytic_id" string="C. Analitica"
+                                   domain="[('company_id','=',company_id)]"
+                                   options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                            />
+                            <field name="partner_id" string="Empresa"
+                                   options="{'no_create':True,'no_open':True,'no_edit':True,}"/>
+                            <field name="debit" sum="total"/>
+
+                            <field name="credit" sum="total"/>
+
+
+                            <field name="amount" string="Monto" sum="total" optional="hide"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer" attrs="{'invisible':[('payment_line_ids','=',[])]}">
+                        <field name="other_debit_total" readonly="1" force_save="1"/>
+                        <field name="other_credit_total" readonly="1" force_save="1"/>
+                        <field name="other_amount_total" readonly="1" force_save="1" string="Total" invisible="1"/>
+                        <field name="other_amount_diference" attrs="{'invisible':[('other_amount_diference','=',0.00)]}"
+                               readonly="1" force_save="1" style="color:#c0392b;"/>
+                        <field name="other_amount_diference"
+                               attrs="{'invisible':[('other_amount_diference','!=',0.00)]}" readonly="1" force_save="1"
+                               style="color:green;"/>
+                    </group>
+                </group>
+</page>
+<page string="Detalle de Asiento">
+                    <field name="show_line_ids" mode="tree,kanban" context="{}" readonly="1" force_save="1">
+                    <tree editable="bottom" string="Journal Items"
+                          decoration-muted="display_type in ('line_section', 'line_note')" default_order="sequence, id">
+                        <!-- Displayed fields -->
+                        <field name="account_id" readonly="1" force_save="1"
+                               domain="[('company_id','=',company_id),('deprecated','=',False),('child_ids', '=', False)]"
+                               options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                        />
+                        <field name="partner_id" readonly="1" force_save="1"
+                               options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                        />
+                        <field name="name" widget="section_and_note_text" optional="show"/>
+
+                        <field name="date_maturity" optional="hide" invisible="context.get('view_no_maturity')"
+                               attrs="{'invisible': [('display_type', 'in', ('line_section', 'line_note'))]}"/>
+                        <field name="currency_id" options="{'no_create': True}" optional="hide" invisible="1"/>
+
+                        <field name="amount_currency" groups="base.group_multi_currency" optional="hide"/>
+                        <field name="debit" sum="Total Debit" readonly="1" force_save="1"/>
+                        <field name="credit" sum="Total Credit" readonly="1" force_save="1"/>
+
+                        <!-- Others fields -->
+                        <field name="tax_line_id" invisible="1"/>
+                        <field name="company_currency_id" invisible="1"/>
+                        <field name="display_type" force_save="1" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="sequence" invisible="1"/>
+                        <field name="id" invisible="1"/>
+                        <field name="account_internal_group" invisible="1"/>
+                        <field name="account_type" invisible="1"/>
+                    </tree>
+                    <!-- Form view to cover mobile use -->
+                    <form>
+                        <group>
+                            <group>
+                                <field name="account_id" readonly="1" force_save="1"
+                                       domain="[('company_id','=',company_id),('deprecated','=',False),('child_ids', '=', False)]"
+                                       options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                                />
+                                <field name="partner_id" readonly="1" force_save="1"
+                                       options="{'no_create':True,'no_open':True,'no_edit':True,}"
+                                />
+                                <field name="name" widget="section_and_note_text" optional="show"/>
+
+                                <field name="date_maturity" optional="hide" invisible="context.get('view_no_maturity')"
+                                       attrs="{'invisible': [('display_type', 'in', ('line_section', 'line_note'))]}"/>
+                                <field name="currency_id" options="{'no_create': True}" optional="hide" invisible="1"/>
+
+                            </group>
+                            <group>
+                                <field name="debit" sum="Total Debit" readonly="1" force_save="1"/>
+                                <field name="credit" sum="Total Credit" readonly="1" force_save="1"/>
+
+                                <!-- Others fields -->
+                                <field name="tax_line_id" invisible="1"/>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="display_type" force_save="1" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="sequence" invisible="1"/>
+                                <field name="id" invisible="1"/>
+                                <field name="account_internal_group" invisible="1"/>
+                                <field name="account_type" invisible="1"/>
+                            </group>
+                        </group>
+                    </form>
+                </field>
+
+</page>
+            </page>
+
+        </field>
+    </record>
+
+
+</odoo>

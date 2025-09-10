@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Views for tipo.roles Tree View -->
+
+        <record model="ir.ui.view" id="view_tipo_roles_tree">
+            <field name="name">tipo.roles.tree</field>
+            <field name="model">tipo.roles</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Tipo de Roles">
+                    <field name="name" string="Tipo de Rol"/>
+                    <field name="state" string="Estado"/>
+                </tree>
+            </field>
+        </record> 
+        
+        <record model="ir.ui.view" id="view_tipo_roles_form">
+            <field name="name">tipo.roles.form</field>
+            <field name="model">tipo.roles</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tipo de Roles">
+                    <group>
+                        <group>
+                            <field name="codigo" string="Código"/>
+                            <field name="name" string="Tipo de Rol"/>
+                        </group>
+                        <group>
+                            <field name="state" string="Estado"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>   
+        
+        <record id="action_tipo_roles_form" model="ir.actions.act_window">
+            <field name="name">Tipo de Roles</field>
+            <field name="res_model">tipo.roles</field>
+            <field name="view_mode">tree,form</field>       
+        </record>
+        
+        <menuitem name="Tipos de Roles" id="menu_tipo_roles_configuration" action="action_tipo_roles_form"
+            parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="70"/>
+    
+    </data>
+</odoo>

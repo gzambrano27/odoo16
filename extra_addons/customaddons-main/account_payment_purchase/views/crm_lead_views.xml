@@ -1,0 +1,22 @@
+<!-- views/crm_lead_views.xml -->
+<odoo>
+    <data noupdate="1">
+        <record id="crm_lead_sequence" model="ir.sequence">
+            <field name="name">CRM Lead Sequence</field>
+            <field name="code">crm.lead.sequence</field>
+            <field name="prefix">OPP</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <record id="view_crm_lead_form_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="opportunity_sequence" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

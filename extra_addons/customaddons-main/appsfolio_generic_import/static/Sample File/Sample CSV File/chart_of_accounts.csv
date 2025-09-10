@@ -1,0 +1,2 @@
+code,name,account_type,default tax,tag_ids,group,currency,reconsile,depreated
+0101,Demo,asset_current,Tax 15%,"Operating Activities,Financing Activities",dDemo Group1,INR,1,TRUE

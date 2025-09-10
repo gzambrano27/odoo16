@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_payment_report_user,access.account.payment.report.user,model_account_payment_report,group_payment_report_user,1,1,1,1
+access_account_payment_line_file_user,access.account.payment.line.file.user,model_account_payment_line_file,group_payment_report_user,1,1,1,1

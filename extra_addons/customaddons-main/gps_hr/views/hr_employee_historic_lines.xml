@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_employee_historic_lines_view_search"
+            model="ir.ui.view">
+        <field name="name">hr.employee.historic.lines.search</field>
+        <field name="model">hr.employee.historic.lines</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Pagos de Nómina">
+
+                 <group expand="0" string="Filtrar...">
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+
+					</group>
+
+                <field name="id"/>
+                <field name="company_id"/>
+                   <field name="employee_id"/>
+                <field name="rule_id"/>
+                <field name="year"/>
+                <field name="month_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_employee_historic_lines_view_tree"
+            model="ir.ui.view">
+        <field name="name">hr.employee.historic.lines.tree</field>
+        <field name="model">hr.employee.historic.lines</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Pagos de Nómina">
+                <field name="id" string="# ID" optional="hide" readonly="1"/>
+                <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="rule_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                 <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                 <field name="payslip_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="payslip_line_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                <field name="grouped" attrs="{'readonly':[('state','!=','draft')]}" />
+                <field name="year" attrs="{'readonly':[('state','!=','draft')]}"/>
+                <field name="month_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                  <field name="date_from"  attrs="{'readonly':[('state','!=','draft')]}" optional="hide"/>
+                  <field name="date_to"  attrs="{'readonly':[('state','!=','draft')]}" optional="hide"/>
+                <field name="amount" attrs="{'readonly':[('state','!=','draft')]}" sum="total"/>
+                 <field name="amount_to_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total" optional="hide"/>
+                 <field name="amount_paid" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide"/>
+                 <field name="amount_residual" attrs="{'readonly':[('state','!=','draft')]}" sum="total"  optional="hide" />
+                  <field name="state" attrs="{'readonly':[('state','!=','draft')]}" optional="show" widget="badge"
+                        decoration-info="state=='draft'"
+                       decoration-success="state=='posted'"
+                />
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_employee_historic_lines_view_form"
+            model="ir.ui.view">
+        <field name="name">hr.employee.historic.lines.form</field>
+            <field name="model">hr.employee.historic.lines</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Pagos de Nómina">
+                <header>
+                    <button string="Cambiar a Borrador" icon="fa-rotate-left"
+                            type="object" name="action_draft"
+                             attrs="{'invisible':['|',('payslip_id','!=',False),('state','=','draft')]}"
+                            />
+                    <button string="Publicar" icon="fa-check"
+                            type="object" name="action_posted"
+                             attrs="{'invisible':['|',('payslip_id','!=',False),('state','=','posted')]}"
+                            />
+                    <field name="state"  widget="statusbar"
+                />
+                </header>
+                <group>
+                     <group>
+                     <field name="id" string="# ID" readonly="1"/>
+                <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="rule_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+              <field name="payslip_line_id" attrs="{'invisible':[('payslip_line_id','=',False)],'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+              <field name="payslip_id" attrs="{'invisible':[('payslip_id','=',False)],'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+              <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+               <field name="grouped" attrs="{'readonly':[('state','!=','draft')]}" />
+                <field name="year" attrs="{'readonly':[('state','!=','draft')]}"/>
+                <field name="month_id" attrs="{'required':[('grouped','!=',True)],'invisible':[('grouped','=',True)],'readonly':[('state','!=','draft')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="date_from"  readonly="1"  attrs="{'readonly':[('state','!=','draft')]}" />
+                <field name="date_to"  readonly="1"   attrs="{'readonly':[('state','!=','draft')]}"/>
+                </group>
+                     <group>
+                    <field name="amount" attrs="{'readonly':[('state','!=','draft')]}" />
+                 <field name="amount_to_paid" readonly="1"  attrs="{'readonly':[('state','!=','draft')]}" />
+                 <field name="amount_paid"  readonly="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                 <field name="amount_residual"   readonly="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                </group>
+
+                </group>
+
+
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_employee_historic_lines_view_pivot"
+            model="ir.ui.view">
+        <field name="name">hr.employee.historic.lines.pivot</field>
+            <field name="model">hr.employee.historic.lines</field>
+        <field name="type">pivot</field>
+        <field eval="99999" name="priority"/>
+        <field name="arch" type="xml">
+            <pivot string="Pagos de Nómina">
+
+                <field name="employee_id" type="row"/>
+
+                <!-- Definir el campo order_id como columna -->
+                <field name="rule_id" type="col"/>
+
+                <!-- Definir los campos de margen como medidas -->
+                <field name="amount" type="measure"/>
+
+            </pivot>
+        </field>
+     </record>
+
+
+<record id="hr_employee_historic_lines_view_graph"
+            model="ir.ui.view">
+         <field name="name">hr.employee.historic.lines.graph</field>
+            <field name="model">hr.employee.historic.lines</field>
+        <field name="type">graph</field>
+        <field eval="99998" name="priority"/>
+        <field name="arch" type="xml">
+            <graph string="Detalle de Orden de Compra" >
+
+
+                    <field name="employee_id"/>
+                <!-- Definir los campos de margen como medidas -->
+                <field name="amount" type="measure"/>
+
+            </graph>
+        </field>
+     </record>
+
+
+    <record id="hr_employee_historic_lines_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Históricos de Rubros de Nómina</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.historic.lines</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="view_id"
+               ref="hr_employee_historic_lines_view_tree"/>
+        <field name="search_view_id"
+               ref="hr_employee_historic_lines_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_historic_lines_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="hr_employee_historic_lines_view_tree"/>
+        <field name="act_window_id"
+               ref="hr_employee_historic_lines_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_historic_lines_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="hr_employee_historic_lines_view_form"/>
+        <field name="act_window_id"
+               ref="hr_employee_historic_lines_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_historic_lines_view_pivot_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">pivot</field>
+        <field name="view_id"
+               ref="hr_employee_historic_lines_view_pivot"/>
+        <field name="act_window_id"
+               ref="hr_employee_historic_lines_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="hr_employee_historic_lines_view_graph_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">graph</field>
+        <field name="view_id"
+               ref="hr_employee_historic_lines_view_graph"/>
+        <field name="act_window_id"
+               ref="hr_employee_historic_lines_view_action"/>
+    </record>
+
+
+
+</odoo>

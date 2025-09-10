@@ -1,0 +1,161 @@
+<odoo>
+    <data>
+
+        <!-- Vista de Formulario para configurationio de Pagos -->
+        <record id="view_account_configuration_payment_form" model="ir.ui.view">
+            <field name="name">account.configuration.payment.form</field>
+            <field name="model">account.configuration.payment</field>
+            <field name="arch" type="xml">
+                <form string="Configuraciones de Pagos">
+                    <sheet><group>
+                        <group>
+                            <!-- Campo de Compañía -->
+                            <field name="company_id" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                        </group>
+                        <group>
+                            <!-- Campo del Día -->
+                            <field name="day_id" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                      <field name="journal_ids" placeholder="TODOS LOS DIARIOS HABILITADOS"
+                             domain="[('company_id','=',company_id),('type','in',('cash','bank'))]"
+                      required="0" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                       widget="many2many_tags"
+                      />
+                            <field name="validate_with_base_amount" />
+                            <field name="lock_payment_with_base_amount" />
+                        </group>
+                    </group>
+                        <notebook>
+                            <page string="Pagos con Macros">
+<field name="bank_conf_ids">
+    <tree string="Configuracion con Bancos" editable="bottom">
+        <field name="bank_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+        domain="[('use_macro_format','=',True)]"
+        />
+         <field name="journal_ids" options="{'no_create':True,'no_edit':True,'no_open':True}"
+         widget="many2many_tags"
+                 domain="[('type','in',('bank',)),('company_id','=',parent.company_id),('id','in',parent.journal_ids)]"
+         />
+    </tree>
+</field>
+                            </page>
+                            <page string="Valores por defecto">
+                                <group>
+
+                                    <group string="Emision de Obligaciones">
+                        <field name="first_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+                           <field name="second_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+   <field name="third_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+
+                                        <field name="int_first_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+                                        <field name="int_second_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+                                   <field name="int_third_bond_issuance_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','liability_current'),('deprecated','=',False)]"
+                                         />
+
+
+
+                                       <field name="payment_overdue_interest_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','expense'),('deprecated','=',False)]"
+                                         />
+                              <field name="payment_other_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','expense'),('deprecated','=',False)]"
+                                         />
+
+
+                                    </group>
+
+                                     <group string="Préstamos Bancarios">
+                        <field name="prestamo_capital_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','in',('liability_non_current','liability_current')),('deprecated','=',False)]"
+                                         />
+
+
+                                        <field name="prestamo_interes_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','expense'),('deprecated','=',False)]"
+                                         />
+                                        <field name="prestamo_interes_mora_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','expense'),('deprecated','=',False)]"
+                                         />
+                                <field name="prestamo_otros_acct_id"
+                               options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','expense'),('deprecated','=',False)]"
+                                         />
+
+
+                                    </group>
+
+
+                                        <group string="Anticipo">
+                                  <field name="local_prepayment_account_id"      options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','asset_prepayments'),('deprecated','=',False),('prepayment_account','=',True)]"
+                                         />
+                                              <field name="exterior_prepayment_account_id"      options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                         domain="[('company_id','=',company_id),('account_type','=','asset_prepayments'),('deprecated','=',False),('prepayment_account','=',True)]"
+
+                                         />
+                                    </group>
+
+                                    <group string="Nomina">
+                                     <field name="liquidation_account_id"   options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                        <newline/>
+                           <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                    </sheet>
+                </form>
+            </field>
+
+        </record>
+
+        <!-- Vista de Lista para configurationio de Pagos -->
+        <record id="view_account_configuration_payment_tree" model="ir.ui.view">
+            <field name="name">account.configuration.payment.tree</field>
+            <field name="model">account.configuration.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Configuraciones de Pagos">
+                    <field name="company_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                    <field name="day_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción para acceder a la vista -->
+        <record id="action_account_configuration_payment" model="ir.actions.act_window">
+            <field name="name">Configuraciones de Pagos</field>
+            <field name="res_model">account.configuration.payment</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+          <!-- Menú para acceder a la vista -->
+
+
+    </data>
+
+</odoo>

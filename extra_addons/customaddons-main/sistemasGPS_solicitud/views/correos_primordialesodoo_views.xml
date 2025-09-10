@@ -1,0 +1,58 @@
+<!-- views/correos_primordialesodoo_views.xml -->
+<odoo>
+  <data>
+
+    <!-- ========== VISTA FORMULARIO ========== -->
+    <record id="view_correos_primordialesodoo_form" model="ir.ui.view">
+      <field name="name">correos_primordialesodoo_form</field>
+      <field name="model">correos.primordialesodoo</field>
+      <field name="arch" type="xml">
+        <form string="Correos Primordiales (Odoo)">
+          <sheet>
+            <group>
+              <field name="empleado_id"/>
+              <field name="name"/>
+              <field name="email"/>
+              <field name="departamento_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ========== VISTA ÁRBOL ========== -->
+    <record id="view_correos_primordialesodoo_tree" model="ir.ui.view">
+      <field name="name">correos_primordialesodoo_tree</field>
+      <field name="model">correos.primordialesodoo</field>
+      <field name="arch" type="xml">
+        <tree string="Correos Primordiales">
+          <field name="empleado_id"/>
+          <field name="name"/>
+          <field name="email"/>
+          <field name="departamento_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- ========== ACCIÓN ========== -->
+    <record id="action_correos_primordialesodoo" model="ir.actions.act_window">
+      <field name="name">Correos Primordiales Odoo</field>
+      <field name="res_model">correos.primordialesodoo</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú de configuración, SOLO visible para administradores de solicitudes, por ejemplo. -->
+    <menuitem id="menu_config_correos_root"
+              name="Configuración"
+              parent="menu_solicitud_servicio_root"
+              sequence="20"
+              groups="sistemasGPS_solicitud.group_admin_solicitudes_new"/>
+
+    <menuitem id="menu_correos_primordialesodoo"
+              name="Correos Primordiales"
+              parent="menu_config_correos_root"
+              action="action_correos_primordialesodoo"
+              sequence="10"
+              groups="sistemasGPS_solicitud.group_admin_solicitudes_new"/>
+  </data>
+</odoo>

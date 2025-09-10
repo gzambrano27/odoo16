@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+		
+		<record id="param_date_from_anticipo_purchase_order" model="ir.config_parameter">
+            <field name="key">param.date.from.anticipo.purchase.order</field>
+            <field name="value">2025-01-01</field>
+        </record>
+
+	
+	</data>
+	
+	</odoo>

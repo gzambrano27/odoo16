@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.ChatterTopbar" t-inherit-mode="extension" owl="1">
+        <xpath expr="//button[@class='o_ChatterTopbar_button o_ChatterTopbar_buttonSendMessage btn text-nowrap me-2']" position="replace">
+             <t></t>
+        </xpath>
+    </t>
+</templates>
+
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.Composer" t-inherit-mode="extension">
+        <xpath expr="//*[hasclass('o_Composer_buttonAttachment')]" position="replace">
+            <t t-if="!composerView.composer.activeThread or !composerView.composer.activeThread.channel or composerView.composer.activeThread.channel.channel_type !== 'livechat'">$0</t>
+            <t>PRUEBAAAAAA</t>
+        </xpath>
+    </t>
+</templates>
+-->

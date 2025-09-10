@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+            id="generic_import_main_menu"
+            name="Generic Import"
+            web_icon="appsfolio_generic_import,static/description/icon.png"
+            sequence="1"/>
+
+
+    <menuitem id="dashboard_main_menu"
+              name="Dashboard"
+              action="action_kanban_view_import_dashboard"
+              parent="generic_import_main_menu"
+              sequence="25"/>
+
+    <menuitem
+            id="dashboard_root_menu"
+            name="Import Data"
+            parent="generic_import_main_menu"
+            sequence="26"/>
+
+    <menuitem
+            id="import_res_partner_gen"
+            action="action_res_partner_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="1"
+            name="Import Partner"/>
+
+    <menuitem
+            id="import_sale_order_gen"
+            action="action_sale_order_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="2"
+            name="Import Sale Order"
+            groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"/>
+
+    <menuitem
+            id="import_product_template_gen"
+            action="action_product_product_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="3"
+            name="Import Product"/>
+
+    <menuitem
+            id="import_invoice_gen"
+            action="action_account_move_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="4"
+            name="Import Invoice/Bills"/>
+
+    <menuitem
+            id="import_payment_gen"
+            action="action_account_payment_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="5"
+            name="Import Customer Payment"/>
+
+    <menuitem
+            id="import_mrp_bom_gen"
+            action="action_mrp_bom_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="6"
+            name="Import BOM"/>
+
+    <menuitem
+            id="import_pricelist_gen"
+            action="action_sale_pricelist_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="7"
+            name="Import Price list"/>
+
+    <menuitem
+            id="import_picking_gen"
+            action="action_stock_picking_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="8"
+            name="Import Picking"/>
+
+    <menuitem
+            id="import_product_template_gen"
+            action="action_product_product_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="9"
+            name="Import Product"/>
+
+    <menuitem
+            id="import_product_variant_gen"
+            action="action_product_variant_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="10"
+            name="Import Product Variant"/>
+
+    <menuitem
+            id="import_purchase_order_gen"
+            action="action_purchase_order_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="11"
+            name="Import Purchase Order"/>
+
+    <menuitem
+            id="import_inventory_gen"
+            action="action_stock_quant_wizard_view"
+            parent="dashboard_root_menu"
+            sequence="12"
+            name="Import Inventory"/>
+
+    <menuitem
+            id="import_chart_of_account"
+            action="action_chart_of_account_view"
+            parent="dashboard_root_menu"
+            sequence="13"
+            name="Import Chart of Account"/>
+
+</odoo>

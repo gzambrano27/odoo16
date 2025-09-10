@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Vista Formulario -->
+    <record id="view_solicitud_servicio_form" model="ir.ui.view">
+      <field name="name">solicitud_servicio_form</field>
+      <field name="model">solicitud.servicio</field>
+      <field name="arch" type="xml">
+        <form string="Solicitud de Servicio">
+          <header>
+            <field name="state"
+                   widget="statusbar"
+                   statusbar_visible="draft,pending,approved,rejected,in_process,pruebas,done"
+                   statusbar_colors="{'draft':'blue','pending':'orange','approved':'green','rejected':'red','in_process':'blue','pruebas':'purple','done':'green'}"/>
+
+            <!-- Botones de acción -->
+            <button name="action_submit"
+                    type="object"
+                    string="Enviar"
+                    states="draft"
+                    class="oe_highlight"
+                    groups="base.group_user"/>
+
+            <button name="action_approve"
+                    type="object"
+                    string="Aprobar"
+                    states="pending"
+                    class="oe_highlight"
+                    groups="sistemasGPS_solicitud.group_jefe_solicitudes_new,base.group_system"/>
+            <button name="action_reject"
+                    type="object"
+                    string="Rechazar"
+                    states="pending,approved"
+                    class="oe_highlight"
+                    groups="sistemasGPS_solicitud.group_jefe_solicitudes_new,base.group_system"/>
+
+            <button name="action_start_process"
+                    type="object"
+                    string="Iniciar Proceso"
+                    states="approved"
+                    class="oe_highlight"
+                    groups="base.group_system"/>
+            <button name="action_pruebas"
+                    type="object"
+                    string="Pasar a Pruebas"
+                    states="in_process"
+                    class="oe_highlight"
+                    groups="base.group_system"/>
+            <button name="action_done"
+                    type="object"
+                    string="Finalizar"
+                    states="pruebas"
+                    class="oe_highlight"
+                    groups="base.group_system"/>
+            <button name="action_reset_draft"
+                    type="object"
+                    string="Revertir a Borrador"
+                    states="rejected"
+                    class="oe_highlight"
+                    groups="base.group_system"/>
+            <button name="action_notify_rejected"
+                    type="object"
+                    string="Notificar Rechazo"
+                    states="rejected"
+                    class="oe_highlight"
+                    groups="base.group_system,sistemasGPS_solicitudes.group_admin_solicitudes_new,sistemasGPS_solicitudes.group_jefe_solicitudes_new"/>
+          </header>
+
+          <sheet>
+            <group>
+              <!-- name: siempre readonly -->
+              <field name="name" readonly="1"/>
+              <!-- date_solicitud: editable sólo en draft -->
+              <field name="date_solicitud"
+                     attrs="{'readonly':[('state','!=','draft')]}"/>
+            </group>
+            <group>
+              <!-- asunto: editable sólo en draft -->
+              <field name="asunto"
+                     attrs="{'readonly':[('state','!=','draft')]}"/>
+              <field name="department_id"
+                     attrs="{'readonly':[('state','not in',['draft','pending'])]}"/>
+              <field name="solicitante_id" readonly="1"/>
+              <field name="jefe_directo_id"/>
+            </group>
+            <group>
+              <!-- service_requested: editable sólo en draft/pending -->
+              <field name="service_requested"
+                     attrs="{'readonly':[('state','not in',['draft','pending'])]}"/>
+            </group>
+            <group>
+              <!-- description: editable sólo en draft/pending -->
+              <field name="description"
+                     attrs="{'readonly':[('state','not in',['draft','pending'])]}"/>
+              <!-- service_type: supongamos editable en draft/pending/approved. -->
+              <field name="service_type"
+                     attrs="{'readonly':[('state','not in',['draft','pending','approved'])]}"/>
+            </group>
+            <group>
+              <!-- Motivo: visible en rejected, editable. Notif. se hace con action_notify_rejected. -->
+              <field name="motivo"
+                     string="Motivo"
+                     attrs="{'invisible':[('state','!=','rejected')]}"/>
+              <!-- Aceptacion y fecha:
+                   visibles en 'approved', 'in_process', 'pruebas', 'done'.
+                   Editables en 'approved'; si quieres que en in_process aún sea editable, omite.
+                   Ej: readonly si state in ('pruebas','done','rejected') -->
+              <field name="aceptacion_de_riesgo"
+                     attrs="{'invisible':[('state','not in',['approved','in_process','pruebas','done'])],
+                             'readonly':[('state','in',['pruebas','done','rejected'])]}"/>
+              <field name="fecha_entrega_estimada"
+                     attrs="{'invisible':[('state','not in',['approved','in_process','pruebas','done'])],
+                             'readonly':[('state','in',['pruebas','done','rejected'])]}"/>
+            </group>
+            <group>
+              <!-- En 'pruebas' se pueden editar check_funciona, check_no_funciona, observaciones;
+                   en 'done', se vuelven readonly.
+                   invisible si state not in (pruebas, done). -->
+              <field name="check_funciona"
+                     attrs="{'invisible':[('state','not in',['pruebas','done'])],
+                             'readonly':[('state','==','done')]}"/>
+              <field name="check_no_funciona"
+                     attrs="{'invisible':[('state','not in',['pruebas','done'])],
+                             'readonly':[('state','==','done')]}"/>
+              <field name="pruebas_observaciones"
+                     attrs="{'invisible':[('state','not in',['pruebas','done'])],
+                             'readonly':[('state','==','done')]}"/>
+            </group>
+          </sheet>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" options="{'post_refresh':'recipients'}"/>
+            <field name="activity_ids"/>
+            <field name="message_ids" widget="mail.thread"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vista Árbol -->
+    <record id="view_solicitud_servicio_tree" model="ir.ui.view">
+      <field name="name">solicitud_servicio_tree</field>
+      <field name="model">solicitud.servicio</field>
+      <field name="arch" type="xml">
+        <tree string="Solicitudes de Servicio">
+          <field name="name"/>
+          <field name="date_solicitud"/>
+          <field name="asunto"/>
+          <field name="solicitante_id"/>
+          <field name="department_id"/>
+          <field name="state" widget="badge"
+                 decoration-info="state in ('pending','pruebas')"
+                 decoration-muted="state=='draft'"
+                 decoration-warning="state=='in_process'"
+                 decoration-success="state in ('done','approved')"
+                 decoration-danger="state=='rejected'"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="solicitud_servicio_search" model="ir.ui.view">
+      <field name="name">solicitud_servicio_search</field>
+      <field name="model">solicitud.servicio</field>
+      <field name="arch" type="xml">
+        <search string="Buscar Solicitudes">
+          <field name="name" string="Número de Solicitud"/>
+          <field name="asunto" string="Asunto"/>
+          <field name="description" string="Descripción"/>
+          <field name="date_solicitud" string="Fecha de Solicitud"/>
+          <field name="department_id" string="Departamento Solicitante"/>
+          <field name="state" string="Estado"/>
+          <filter string="Mis Solicitudes"
+                  name="my_requests"
+                  domain="[('solicitante_user_id','=',uid)]"/>
+        </search>
+      </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_solicitud_servicio" model="ir.actions.act_window">
+      <field name="name">Solicitudes de Servicio</field>
+      <field name="res_model">solicitud.servicio</field>
+      <field name="view_mode">tree,form</field>
+      <field name="search_view_id" ref="solicitud_servicio_search"/>
+      <field name="context">{'search_default_my_requests': 1}</field>
+    </record>
+
+    <!-- Menú -->
+    <menuitem id="menu_solicitud_servicio_root"
+              name="Servicio de Asistencia Odoo"
+              sequence="10"
+              web_icon="sistemasGPS_solicitud,static/description/ICONO.PNG"/>
+    <menuitem id="menu_solicitud_servicio"
+              name="Solicitudes"
+              parent="menu_solicitud_servicio_root"
+              action="action_solicitud_servicio"/>
+  </data>
+</odoo>

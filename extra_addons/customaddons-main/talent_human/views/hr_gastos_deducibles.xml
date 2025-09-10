@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="anio_deducible_tree">
+        <field name="name">Anio deducible tree</field>
+        <field name="model">anio.deducible</field>
+        <field name="arch" type="xml">
+            <tree string="Anios">
+                <field name="name" />
+                
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="anio_deducible_form">
+        <field name="name">Anio deducible form</field>
+        <field name="model">anio.deducible</field>
+        <field name="arch" type="xml">
+            <form string="Anio">
+              <sheet>
+                <group string="Anio Deducible">
+                    <group>
+                        <field name="name" help='Debe ingresar el anio que quiere configurar los gastos deducibles' placeholder='2020'/>
+                        <field name="active" />
+                    </group>
+                </group>
+                <group string="Gastos Deducibles" colspan="4">
+                    
+                    <field name="sections" widget="one2many_list" colspan="4" nolabel="1">
+                        <tree string="sections" editable="bottom">
+                            <field name="tipo_gasto" />
+                            <field name="valor" />
+                        </tree>
+                    </field>
+                </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_anio_deducible">
+        <field name="name">Anios Deducibles</field>
+        <field name="res_model">anio.deducible</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    
+    <menuitem name="Configuracion IR"  id="menu_hr_conf_gastos_deducibles" parent="hr.menu_hr_root" sequence="200"/>
+    <menuitem action="action_anio_deducible" id="menu_anios_deducibles" parent="menu_hr_conf_gastos_deducibles" sequence="10" />
+	
+	<!-- tabla de valores de impuesto a la renta -->
+	
+	 <record model="ir.ui.view" id="rango_valores_tree">
+        <field name="name">Rango valores tree</field>
+        <field name="model">rango.valores</field>
+        <field name="arch" type="xml">
+            <tree string="Rangos">
+                <field name="name" />
+                
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="rango_valores_form">
+        <field name="name">Rango Valores form</field>
+        <field name="model">rango.valores</field>
+        <field name="arch" type="xml">
+            <form string="Rangos">
+                <group string="Anio Deducible">
+                    <group>
+                        <field name="name" help='Debe ingresar el anio que quiere configurar los rangos de porcentajes' placeholder='2020'/>
+                        <field name="active" />
+                    </group>
+                </group>
+                <group string="Rangos SRI" colspan="4">
+                    
+                    <field name="line_ids" widget="one2many_list" colspan="4" nolabel="1">
+                        <tree string="line_ids" editable="bottom">
+                            <field name="fraccion_basica" />
+                            <field name="exceso_hasta" />
+                            <field name="impuesto_fraccion_basica" />
+                            <field name="porc_imp_fraccion_basica" />
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_rango_valores">
+        <field name="name">TABLA SRI IR</field>
+        <field name="res_model">rango.valores</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+	
+	<menuitem action="action_rango_valores" id="menu_rango_valores" parent="menu_hr_conf_gastos_deducibles" sequence="20" />
+	
+	
+	<!-- tabla de valores de cargas para impuesto a la renta -->
+	
+	 <record model="ir.ui.view" id="rango_valores_cargas_tree">
+        <field name="name">Rango valores cargas tree</field>
+        <field name="model">rango.valores.cargas</field>
+        <field name="arch" type="xml">
+            <tree string="Rangos">
+                <field name="name" />
+                
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="rango_valores_cargas_form">
+        <field name="name">Rango Valores Cargas form</field>
+        <field name="model">rango.valores.cargas</field>
+        <field name="arch" type="xml">
+            <form string="Rangos">
+                <group string="Anio Deducible">
+                    <group>
+                        <field name="name" help='Debe ingresar el anio que quiere configurar los rangos de cargas' placeholder='2022'/>
+                        <field name="active" />
+                    </group>
+                </group>
+                <group string="Rangos Cargas SRI" colspan="4">
+                    
+                    <field name="line_ids" widget="one2many_list" colspan="4" nolabel="1">
+                        <tree string="line_ids" editable="bottom">
+                            <field name="num_cargas" />
+                            <field name="num_canastas" />
+                            <field name="gasto_deducible_maximo" />
+                            <field name="rebaja_en_impuesto" />
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_rango_valores_cargas">
+        <field name="name">TABLA CARGAS FAMILIARES</field>
+        <field name="res_model">rango.valores.cargas</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+	
+	<menuitem action="action_rango_valores_cargas" id="menu_rango_valores_cargas" parent="menu_hr_conf_gastos_deducibles" sequence="22" />
+	
+</odoo>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Formato de papel -->
+        <record id="report_docs_format" model="report.paperformat">
+            <field name="name">Orden de trabajo</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+        </record>
+
+        <!-- Reporte QWeb -->
+        <record id="report_order_trabajo" model="ir.actions.report">
+            <field name="name">Orden de trabajo</field>
+            <field name="model">material.requisition.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">material_requisition_order_trabajo.order_trabajo</field>
+            <field name="report_file">material_requisition_order_trabajo.order_trabajo</field>
+            <!-- Corrección en binding_model_id -->
+            <field name="binding_model_id" ref="model_material_requisition_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="report_docs_format"/>
+        </record>
+
+        <!-- Template QWeb del Reporte -->
+        <template id="order_trabajo">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout">
+                        <div class="page" style="font-family:verdana; font-size:14px;">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" class="img-fluid" alt="Logo" style="width: 150px"/>
+                                    </td>
+                                    <td style="width:75%; text-align: center; vertical-align: middle; font-size:20px;" colspan="3">
+                                        <strong>ORDEN DE TRABAJO - <span t-field="doc.name"/></strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="background:#c0392b;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Departamento solicitante:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.department_id.name"/>
+                                    </td>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Cliente:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.cliente_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Departamento a realizar:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.department_carried_out"/>
+                                    </td>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Proyecto:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.proyecto"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Nombre del solicitante:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.employee_id"/>
+                                    </td>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>N° de Contrato:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.analytic_account_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Fecha de solicitud:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.request_date"/>
+                                    </td>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Estación:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.estacion"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: left; vertical-align: middle;">
+                                        <strong>Fecha de entrega:</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.receive_date"/>
+                                    </td>
+                                    <td colspan="2" style="width:25%"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="width:100%;">
+                                        <strong>Motivo:</strong><span t-field="doc.motivo"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="background:#c0392b;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <strong>Cantidad</strong>
+                                    </td>
+                                    <td style="width:50%; text-align: center; vertical-align: middle;" colspan="2">
+                                        <strong>Producto</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">
+                                        <strong>Observaciones</strong>
+                                    </td>
+                                </tr>
+                                <t t-if="doc.requisition_line_ids">
+                                    <t t-set="counter" t-value="0"/>
+                                    <t t-foreach="doc.requisition_line_ids" t-as="line">
+                                        <tr>
+                                            <td style="width:25%; text-align: center; vertical-align: middle;" class="text-right">
+                                                <span t-esc="line.qty"/>
+                                            </td>
+                                            <td style="width:50%; text-align: center; vertical-align: middle;" colspan="2">
+                                                <span t-field="line.product_id.display_name"/>
+                                            </td>
+                                            <t t-if="counter == 0">
+                                                <td style="width:25%; text-align: center; vertical-align: middle;" t-att-rowspan="len(doc.requisition_line_ids)">
+                                                    <span t-field="doc.observaciones_producto"/>
+                                                </td>
+                                            </t>
+                                            <t t-set="counter" t-value="counter + 1"/>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <tr>
+                                    <td colspan="4" style="background:#c0392b;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%; text-align: center; vertical-align: middle;" colspan="2">
+                                        <strong>ACTIVIDAD CONTEMPLADA EN EL CONTRATO</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">SI ___</td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">NO ___</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%; text-align: center; vertical-align: middle;" colspan="2">
+                                        <strong>ACTIVIDAD ADICIONAL AL CONTRATO</strong>
+                                    </td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">SI ___</td>
+                                    <td style="width:25%; text-align: center; vertical-align: middle;">NO ___</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="background:#c0392b;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle;" colspan="4">
+                                        <strong>INFORME Y DETALLES</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"><strong>DETALLE DE INFORMACIÓN DE ORDEN DE TRABAJO</strong></td>
+                                </tr>
+                                <t t-foreach="doc.detalles_ids" t-as="detalle">
+                                    <tr>
+                                        <td style="text-align: left; vertical-align: middle;" colspan="4">
+                                            - <t t-esc="detalle.descripcion"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="4"><strong>OBSERVACIONES</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:125px;" colspan="4">
+                                        <span t-field="doc.observaciones"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SOLICITANTE:</strong></td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.employee_id"/>
+                                    </td>
+                                    <td><strong>FIRMA:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>INGENIERIA:</strong></td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.ingenieria_id"/>
+                                    </td>
+                                    <td><strong>FIRMA:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DISEÑO:</strong></td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.diseno_id"/>
+                                    </td>
+                                    <td><strong>FIRMA:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>REVISADO:</strong></td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.revisado_id"/>
+                                    </td>
+                                    <td><strong>FIRMA:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>FABRICA:</strong></td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span t-field="doc.fabrica_id"/>
+                                    </td>
+                                    <td><strong>FIRMA:</strong></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

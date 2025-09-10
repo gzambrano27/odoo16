@@ -1,0 +1,211 @@
+<odoo>
+    <!-- =============== VISTA TREE =============== -->
+    <record id="view_ticket_gps_tree" model="ir.ui.view">
+        <field name="name">ticket.gps.tree</field>
+        <field name="model">ticket.gps</field>
+        <field name="arch" type="xml">
+            <tree string="Lista de Tickets"
+                        decoration-success="color_state == 'creator'"
+                        decoration-info="color_state == 'assigned'"
+                        decoration-warning="color_state == 'cc'"
+                        decoration-danger="color_state == 'delegado'">
+                <field name="color_state" invisible="1"/>
+                <field name="name"/>
+                <field name="creation_date"/>
+                <field name="asunto"/>
+                <field name="encargado" string="Encargado"/>
+                <field name="state" widget="badge"
+                       decoration-info="state=='sent'"
+                       decoration-muted="state=='draft'"
+                       decoration-warning="state=='progress'"
+                       decoration-success="state=='done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- =============== VISTA FORM =============== -->
+    <record id="view_ticket_gps_form" model="ir.ui.view">
+        <field name="name">ticket.gps.form</field>
+        <field name="model">ticket.gps</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sent,progress,done"
+                           statusbar_fold="done"/>
+
+                    <!-- Botones de estado -->
+                    <button name="action_send" type="object" string="Enviar"
+                            states="draft"
+                            attrs="{'invisible': [
+                                '|',
+                                ('show_send_button','=',False),
+                                ('state','!=','draft')
+                            ]}"/>
+
+                    <button name="action_draft" type="object" string="Volver a Borrador"
+                            states="sent"
+                            attrs="{'invisible': [
+                                '|',
+                                ('show_return_draft_button','=',False),
+                                ('state','!=','sent')
+                            ]}"/>
+
+                    <button name="action_progress" type="object" string="En Proceso"
+                            states="sent"
+                            attrs="{'invisible': [
+                                '|',
+                                ('show_assigned_buttons','=',False),
+                                ('state','!=','sent')
+                            ]}"/>
+
+                    <button name="action_done" type="object" string="Finalizado"
+                            states="progress"
+                            attrs="{'invisible': [
+                                '|',
+                                ('show_assigned_buttons','=',False),
+                                ('state','!=','progress')
+                            ]}"/>
+
+                    <!-- BOTONES DE NOTIFICACIÓN -->
+                    <button name="action_notify_delegado" type="object" string="Notificar Delegado"
+                            states="progress,done"
+                            attrs="{'invisible': [
+                                '|',
+                                ('is_encargado_user','=',False),
+                                ('delegar_personal','=',False)
+                            ]}"/>
+
+                    <button name="action_notify_final_cc" type="object" string="Notificar CC"
+                            states="done"/>
+
+                    <button name="action_notify_final_encargado" type="object" string="Notificar Encargado"
+                            states="done"/>
+                </header>
+
+                <sheet>
+                    <!-- Campos lógicos -->
+                    <field name="show_send_button" invisible="1"/>
+                    <field name="show_return_draft_button" invisible="1"/>
+                    <field name="show_assigned_buttons" invisible="1"/>
+                    <field name="resultado_readonly" invisible="1"/>
+                    <field name="is_encargado_user" invisible="1"/>
+
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="creation_date" readonly="1"/>
+                        <field name="asunto" attrs="{'readonly':[('state','!=','draft')]}" />
+                    </group>
+                    <group>
+                        <field name="creator_id" readonly="1"/>
+                        <field name="sending_user_id" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="date_sent" invisible="1"/>
+                        <field name="date_progress" invisible="1"/>
+                        <field name="date_done" groups="base.group_no_one"/>
+                    </group>
+
+                    <!-- Encargado, CC -->
+                    <group>
+                        <group>
+                            <field name="encargado"
+                                   attrs="{'readonly':[('state','!=','draft')]}" />
+                            <field name="department_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="user_name" readonly="1"/>
+                            <field name="email" readonly="1"/>
+                            <field name="phone" readonly="1"/>
+                            <field name="cc" widget="many2many_tags"
+                                   attrs="{'readonly':[('state','!=','draft')]}" />
+                        </group>
+                    </group>
+
+                    <!-- Descripción -->
+                    <group>
+                        <field name="description" type="html"
+                               attrs="{'readonly':[('state','!=','draft')]}" />
+                    </group>
+
+                    <!-- Delegar => Visible solo en progress, done; no editable en done -->
+                    <group attrs="{'invisible':[('state','not in',('progress','done'))]}">
+                        <field name="delegar_personal"
+                               attrs="{
+                                 'readonly':[('state','=','done')]
+                               }"/>
+                        <field name="delegacion_a"
+                               attrs="{
+                                 'invisible':[('delegar_personal','=',False)],
+                                 'readonly':[('state','=','done')]
+                               }"/>
+
+                        <!-- Resultado => visible en done, editable solo si resultado_readonly=False -->
+                        <field name="resultado" type="html" force_save="1"
+                               attrs="{
+                                 'invisible':[('state','!=','done')],
+                                 'readonly':[('resultado_readonly','=',True)]
+                               }"/>
+                    </group>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           groups="base.group_user"
+                           options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_ticket_gps_search" model="ir.ui.view">
+        <field name="name">ticket.gps.search</field>
+        <field name="model">ticket.gps</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tickets">
+                <field name="name" string="Código"/>
+                <field name="creation_date" string="Fecha Creación"/>
+                <field name="asunto" string="Asunto"/>
+                <field name="encargado" string="Encargado"/>
+                <field name="state" string="Estado"/>
+
+                <filter name="my_tickets"
+                        string="Mis Tickets"
+                        domain="[('creator_id','=',uid)]"/>
+                <newline/>
+                <filter name="asignados_a_mi"
+                        string="Tickets asignados a mí"
+                        domain="[('encargado.user_id','=',uid)]"/>
+                <newline/>
+                <filter name="delegados_a_mi"
+                        string="Tickets delegados a mí"
+                        domain="[('delegacion_a.user_id','=',uid)]"/>
+                <newline/>
+                <filter name="my_cc_tickets"
+                        string="Tickets con copia a mi"
+                        domain="[('cc.user_id','=',uid)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_ticket_gps" model="ir.actions.act_window">
+        <field name="name">Tickets GPS</field>
+        <field name="res_model">ticket.gps</field>
+        <field name="view_mode">tree,form,search</field>
+        <field name="context">{'search_default_my_tickets':1, 'search_default_asignados_a_mi':1, 'search_default_my_cc_tickets':1, 'search_default_delegados_a_mi':1}</field>
+    </record>
+
+    <!-- Menú con ícono -->
+    <menuitem id="menu_ticket_gps_root"
+              name="Tickets GPS"
+              web_icon="ticketera_gps,static/description/icono.png"/>
+    <menuitem id="menu_ticket_gps"
+              parent="menu_ticket_gps_root"
+              name="Tickets"
+              action="action_ticket_gps"/>
+</odoo>

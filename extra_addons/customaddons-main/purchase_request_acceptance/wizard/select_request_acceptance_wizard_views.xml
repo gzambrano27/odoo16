@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_select_request_acceptance_wizard" model="ir.ui.view">
+        <field name="name">select_request_acceptance_wizard</field>
+        <field name="model">select.request.acceptance.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Select Request Acceptance">
+                <group>
+                    <field name="require_pr" invisible="1" />
+                    <field
+                        name="pr_id"
+                        options="{'no_create': True}"
+                        attrs="{'required': [('require_pr','=', True)]}"
+                    />
+                    <field name="name_rs" invisible="0" />
+                    <field name="pr_ids" invisible="1" />
+                </group>
+                <footer>
+                    <!-- <button
+                        name="button_create_vendor_bill"
+                        string="Create Vendor Bill"
+                        type="object"
+                        class="oe_highlight"
+                    /> -->
+                    <button special="cancel" string="Cancel" class="oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

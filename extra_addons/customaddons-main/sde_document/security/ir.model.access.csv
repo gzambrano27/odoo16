@@ -1,0 +1,17 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_sse_document_user","SSE Document user","sde_document.model_sse_document","sde_document.group_sse_usuario",1,1,1,0
+"access_sse_document_manager","SSE Document manager","sde_document.model_sse_document","sde_document.group_sse_manager",1,1,1,0
+"access_sse_document_admin","SSE Document admin","sde_document.model_sse_document","sde_document.group_sse_admin",1,1,1,1
+"access_sse_line_user","SSE Line user","sde_document.model_sse_equipment_line","sde_document.group_sse_usuario",1,1,1,0
+"access_sse_line_manager","SSE Line manager","sde_document.model_sse_equipment_line","sde_document.group_sse_manager",1,1,1,0
+"access_sse_line_admin","SSE Line admin","sde_document.model_sse_equipment_line","sde_document.group_sse_admin",1,1,1,1
+"access_sse_location_user","SSE Location user","sde_document.model_sse_location","sde_document.group_sse_usuario",1,0,0,0
+"access_sse_location_manager","SSE Location manager","sde_document.model_sse_location","sde_document.group_sse_manager",1,0,0,0
+"access_sse_location_admin","SSE Location admin","sde_document.model_sse_location","sde_document.group_sse_admin",1,1,1,1
+"access_hr_department_sse_user","HR Department read (SSE user)","hr.model_hr_department","sde_document.group_sse_usuario",1,0,0,0
+"access_hr_department_sse_manager","HR Department read (SSE manager)","hr.model_hr_department","sde_document.group_sse_manager",1,0,0,0
+"access_hr_employee_sse_user","HR Employee read (SSE user)","hr.model_hr_employee","sde_document.group_sse_usuario",1,0,0,0
+"access_hr_employee_sse_manager","HR Employee read (SSE manager)","hr.model_hr_employee","sde_document.group_sse_manager",1,0,0,0
+"access_ir_actions_report_sse_user","ir.actions.report – lectura (user)","base.model_ir_actions_report","sde_document.group_sse_usuario",1,0,0,0
+"access_ir_actions_report_sse_manager","ir.actions.report – lectura (manager)","base.model_ir_actions_report","sde_document.group_sse_manager",1,0,0,0
+"access_ir_actions_report_sse_admin","ir.actions.report – lectura (admin)","base.model_ir_actions_report","sde_document.group_sse_admin",1,0,0,0

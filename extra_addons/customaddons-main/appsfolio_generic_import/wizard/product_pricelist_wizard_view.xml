@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<record id="product_pricelist_wizard_view" model="ir.ui.view">
+        <field name="name">product.pricelist.wizard.view</field>
+        <field name="model">product.pricelist.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Product Pricelist">
+                <group>
+                    <group>
+                        <field name="file_import_type" widget="radio" />
+                    </group>
+                    <group>
+                        <field name="file" filename="name" />
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="option_import_file_by" widget='radio'/>
+                    </group>
+                </group>
+                <footer>
+                    <button 
+                        name="import_product_pricelist" 
+                        type="object" 
+                        class="oe_highlight"
+                        string="Import" 
+                    />
+                    <div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                            Download Sample: 
+                        </strong>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/product_pricelist.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            CSV file
+                        </a>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/product_pricelist.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            Excel file
+                        </a>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_product_pricelist_wizard_view" model="ir.actions.act_window">
+        <field name="name">Product Pricelist Wizard</field>
+        <field name="res_model">product.pricelist.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem 
+        id="product_pricelist_wizard_menu"
+        name="Import Product Pricelist"
+        action="action_product_pricelist_wizard_view"
+        parent="sale.product_menu_catalog"
+        groups="sales_team.group_sale_salesman"
+        sequence="32"
+    />
+</odoo>

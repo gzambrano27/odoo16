@@ -1,0 +1,30 @@
+<odoo>
+    <data>
+
+        <record id="report_edocs_paperformat" model="report.paperformat">
+            <field name="name">Formato Acta</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">20</field>
+        </record>
+
+        <report
+            id="ec_guide_remission"
+            string="Guía de Remisión"
+            model="l10n_ec.guide.remission"
+            report_type="qweb-pdf"
+            name="l10_ec_guide_remission.guide_remission"
+            file="l10_ec_guide_remission.guide_remission"
+            paperformat="report_edocs_paperformat"
+            print_report_name="'Guía de Remisión - ' + (object.get_retention_number() or 'Sin número')"
+        />
+
+
+    </data>
+</odoo>

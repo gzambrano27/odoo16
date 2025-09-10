@@ -1,0 +1,25 @@
+<odoo>
+    <!-- Paquetes de Mantenimiento -->
+    <record id="package_correctivo_01" model="maintenance.package">
+        <field name="name">Correctivo 01</field>
+        <field name="maintenance_type">correctivo</field>
+    </record>
+    <record id="package_correctivo_02" model="maintenance.package">
+        <field name="name">Correctivo 02</field>
+        <field name="maintenance_type">correctivo</field>
+    </record>
+    <record id="package_preventivo_01" model="maintenance.package">
+        <field name="name">Preventivo 01</field>
+        <field name="maintenance_type">preventivo</field>
+    </record>
+
+    <!-- Servicios de Mantenimiento -->
+    <record id="service_planchado_pintado" model="maintenance.service">
+        <field name="name">Planchado y pintado</field>
+        <field name="package_id" ref="package_correctivo_01"/>
+    </record>
+    <record id="service_cambio_aceite" model="maintenance.service">
+        <field name="name">Cambio de Aceite y Filtro de Aceite</field>
+        <field name="package_id" ref="package_preventivo_01"/>
+    </record>
+</odoo>

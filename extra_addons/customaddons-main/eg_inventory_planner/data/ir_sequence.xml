@@ -1,0 +1,13 @@
+<odoo noupdate="1">
+    <data>
+        <record id="sequence_inv_plan" model="ir.sequence">
+            <field name="name">Inventory Plan</field>
+            <field name="code">inv.plan</field>
+            <field name="prefix">IP/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

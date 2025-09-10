@@ -1,0 +1,2 @@
+PRODUCT,QUANTITY,UOM,DESCRIPTION,PRICE,TAX,DISCOUNT,partner_id@name,partner_ids@name,x_color,x_notes,x_amount,x_bool
+Pen,1,Units,Ink Pen,500,,25,Addison Olson,"Douglas Fletcher,Lorraine Douglas",yellow,yellow,2000,3

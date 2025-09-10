@@ -1,0 +1,12 @@
+.o_badge.alta {
+    background-color: #e74c3c !important;  /* rojo */
+    color: white !important;
+}
+.o_badge.media {
+    background-color: #f39c12 !important;  /* naranja */
+    color: white !important;
+}
+.o_badge.baja {
+    background-color: #27ae60 !important;  /* verde */
+    color: white !important;
+}

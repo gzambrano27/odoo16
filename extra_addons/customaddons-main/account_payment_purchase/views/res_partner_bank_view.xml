@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright 2014-2016 Akretion (http://www.akretion.com/)
+  License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+
+    <record id="view_partner_bank_new_form_inh" model="ir.ui.view">
+        <field name="name">view.partner.bank.form.inh</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//page[@name='accounting']//field[@name='bank_ids']/tree" position="inside">
+                <field name="tipo_cuenta"/>
+            </xpath> -->
+            <xpath expr="//page[@name='accounting']//field[@name='bank_ids']/tree/field[@name='acc_number']" position="after">
+                <field name="tipo_cuenta"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_partner_bank_new_tree_inhe" model="ir.ui.view">
+        <field name="name">res.partner.bank.tree.inherit</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+        <field name="arch" type="xml">
+            <field name="acc_number" position="after">
+                <field name="tipo_cuenta" />
+            </field>
+        </field>
+    </record>
+    <record id="view_partner_bank_newform_inherit_account" model="ir.ui.view">
+        <field name="name">res.partner.bank.newform.inherit.account</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="account.view_partner_bank_form_inherit_account"/>
+        <field name="arch" type="xml">
+            <field name="acc_number" position="after">
+                <field name="tipo_cuenta" />
+            </field>
+        </field>
+    </record>
+</odoo>

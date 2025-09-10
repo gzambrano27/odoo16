@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+
+        <!-- Categoría del módulo -->
+        <record id="module_category_ajuste_inventario_management" model="ir.module.category">
+            <field name="name">Ajustes Inventario</field>
+            <field name="description">Permite administrar los usuarios de ajustes de inventario</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Grupo de usuario -->
+        <record id="group_ajuste_inventario_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_category_ajuste_inventario_management"/>
+        </record>
+        <!-- Grupo de contratista -->
+        <record id="group_ajuste_inventario_contratista" model="res.groups">
+            <field name="name">Contratista</field>
+            <field name="category_id" ref="module_category_ajuste_inventario_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_ajuste_inventario_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+        <record id="group_ajuste_inventario_supervisor" model="res.groups">
+            <field name="name">Supervisor</field>
+            <field name="category_id" ref="module_category_ajuste_inventario_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_ajuste_inventario_contratista'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+        <!-- Grupo de administrador -->
+        <record id="group_ajuste_inventario_manager" model="res.groups">
+            <field name="name">Administrador</field>
+            <field name="category_id" ref="module_category_ajuste_inventario_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_ajuste_inventario_supervisor'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+
+         <record id="group_ajuste_inventario_costo_manager" model="res.groups">
+            <field name="name">Acceso a Costos Ajustes</field>
+            <field name="category_id" ref="module_category_ajuste_inventario_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_ajuste_inventario_manager'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+
+
+         <record id="group_categorias_manager" model="res.groups">
+            <field name="name">Acceso a crear categorias</field>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+
+    </data>
+
+</odoo>

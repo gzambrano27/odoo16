@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista de Árbol (Tree) para Lista de Solicitud -->
+    <record id="view_lista_solicitud_tree" model="ir.ui.view">
+        <field name="name">lista.solicitud.tree</field>
+        <field name="model">physical_security.lista_solicitud</field>
+        <field name="arch" type="xml">
+            <tree string="Lista de Solicitud">
+                <field name="codigo" widget="badge" decoration-info="1"/>
+                <field name="fecha_actual"/>
+                <field name="fecha_estimada"/>
+                <field name="responsable" widget="many2one_avatar_user"/>
+                <field name="contratista"/>
+                <field name="cuenta_analitica" widget="badge" decoration-info="1"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="state" string="Estado" widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-info="state == 'solicitud_enviada'"
+                    decoration-success="state == 'solicitud_revisada'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario para Lista de Solicitud -->
+    <record id="view_lista_solicitud_form" model="ir.ui.view">
+        <field name="name">lista.solicitud.form</field>
+        <field name="model">physical_security.lista_solicitud</field>
+        <field name="arch" type="xml">
+            <form string="Lista de Solicitud">
+                <header>
+                    <button name="action_envia_solicitud" type="object" string="Enviar Solicitud"
+                            states="draft" class="btn-primary"
+                            groups="physical_security_department.group_physical_security_solicitante"/>
+
+                    <button name="action_revisar_solicitud" type="object" string="Aprobar"
+                            states="solicitud_enviada" class="btn-primary"
+                            groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+
+                    <button name="action_reset_draft" type="object" string="Regresar a Borrador"
+                            states="solicitud_enviada,solicitud_revisada" class="btn-primary"
+                            groups="physical_security_department.group_physical_security_solicitante,physical_security_department.group_physical_security_seguridad_fisica"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="codigo" readonly="1"/>
+                        <field name="fecha_actual" attrs="{'readonly': [('state', 'in', ['solicitud_enviada', 'solicitud_revisada'])]}"/>
+                        <field name="fecha_estimada" attrs="{'readonly': [('state', 'in', ['solicitud_enviada', 'solicitud_revisada'])]}"/>
+                        <field name="responsable" widget="many2one_avatar_user" attrs="{'readonly': [('state', 'in', ['solicitud_enviada', 'solicitud_revisada'])]}"/>
+                        <field name="contratista" attrs="{'readonly': [('state', 'in', ['solicitud_enviada', 'solicitud_revisada'])]}"/>
+                        <field name="cuenta_analitica" attrs="{'readonly': [('state', 'in', ['solicitud_enviada', 'solicitud_revisada'])]}"/>
+                    </group>
+                    <notebook>
+                        <page string="Personas">
+                            <field name="line_ids" attrs="{'readonly': [('state', '=', 'solicitud_revisada')]}">
+                                <tree editable="bottom">
+                                    <field name="personal_id" options="{'no_create': True}" domain="[('id','not in',parent.personal_ids)]"/>
+                                    <field name="cargo"/>
+                                    <button name="action_open_enlace_documento"
+                                        type="object"
+                                        icon="fa-file"/>
+                                    <field name="aprobado_seguridad" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                    <field name="generar_doping" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                    <field name="fecha_doping" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                    <button name="action_send_to_blacklist" type="object" string="Enviar a Lista Negra" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                </tree>
+                                <form string="Línea de Solicitud">
+                                    <group col="12">
+                                        <group colspan="12">
+                                            <field name="personal_id" options="{'no_create': True}" domain="[('id','not in',parent.personal_ids)]"/>
+                                            <field name="cargo"/>
+                                            <field name="aprobado_seguridad" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                            <field name="generar_doping" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                            <field name="fecha_doping" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                        </group>
+                                    </group>
+                                    <footer>
+                                        <button name="action_open_enlace_documento"
+                                                type="object"
+                                                icon="fa-file"/>
+                                        <button name="action_send_to_blacklist" type="object" string="Enviar a Lista Negra" class="btn-primary" groups="physical_security_department.group_physical_security_seguridad_fisica"/>
+                                    </footer>
+                                </form>
+                            </field>
+                            <newline/>
+                            <field name="personal_ids" invisible="1"/>
+                        </page>
+                    </notebook>
+                    <group col="12" class="oe_center">
+                        <group colspan="12" string="Gestión de Fiscalías">
+                            <iframe src="https://www.gestiondefiscalias.gob.ec/siaf/informacion/web/noticiasdelito/index.php" width="800" height="500" frameborder="0"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="message_ids" colspan="4" nolabel="1" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Acción para Lista de Solicitud -->
+    <record id="action_lista_solicitud" model="ir.actions.act_window">
+        <field name="name">Lista de Solicitud</field>
+        <field name="res_model">physical_security.lista_solicitud</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

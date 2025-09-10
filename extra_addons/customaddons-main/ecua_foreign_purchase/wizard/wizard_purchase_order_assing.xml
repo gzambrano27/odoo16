@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_purchase_asign_invoice_ft_form" model="ir.ui.view">
+            <field name="name">view.purchase.asign.invoice.ft.form</field>
+            <field name="model">purchase.asign.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Relacionar Importación">
+                    <group string="Select the import to load this invoice.">>
+                        <field name="importation_id" domain="[('state','not in',['liquidacion','completed'])]"
+                               options="{'no_open': True, 'no_create': True}" required="1"/>
+
+                        <field name="concept_id" options="{'no_open': True, 'no_create': True}" required="1"/>
+
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Cancel" class="oe_right"/>
+                        <button name="action_asign" type="object" class="oe_right" icon="fa-arrow-circle-right"
+                                string="Relate" confirm="Safe to assign this document?"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

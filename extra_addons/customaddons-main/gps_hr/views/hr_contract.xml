@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+        <record model="ir.ui.view"
+                id="hr_contract_form_view_inherit">
+            <field name="name">hr.contract.form.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_contract_types.hr_contract_form_view_inherit"/>
+            <field name="arch" type="xml">
+
+<field name="type_id" position="attributes">
+    <attribute name="invisible">1</attribute>
+</field>
+
+            </field>
+        </record>
+
+
+
+         <record model="ir.ui.view"
+                id="hr_contract_entry_form_view_inherit">
+            <field name="name">hr.contract.entry.form.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_work_entry_contract.hr_contract_view_form_inherit_work_entry"/>
+            <field name="arch" type="xml">
+
+<field name="work_entry_source" position="attributes">
+    <attribute name="invisible">1</attribute>
+</field>
+
+            </field>
+        </record>
+
+
+
+        <record id="hr_work_entry_contract_planning.hr_contract_view_form_inherit_work_entry_planning" model="ir.ui.view">
+        <field name="name">hr.contract.view.form.inherit.work.entry.planning</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Make it visible now since we have more than one choice -->
+            <xpath expr="//field[@name='work_entry_source']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+            <field name="structure_type_id" position="replace">
+
+            </field>
+
+             <field name="structure_type_id" position="replace">
+  <field name="structure_type_id"  groups="!hr_contract.group_hr_contract_manager" domain="['|', ('country_id', '=', False), ('country_id', '=', company_country_id)]" options="{'no_open': True, 'no_create': True,'no_edit':True}"/>
+                                <field name="structure_type_id" groups="hr_contract.group_hr_contract_manager" domain="['|', ('country_id', '=', False), ('country_id', '=', company_country_id)]" options="{'no_open': True, 'no_create': True,'no_edit':True}"/>
+
+            </field>
+
+
+				<label for="resource_calendar_id" position="attributes">
+	<attribute name="invisible">1</attribute>
+				</label>
+
+                                <div id="resource_calendar_warning"  position="attributes">
+	<attribute name="invisible">1</attribute>
+				</div>
+
+
+
+
+        </field>
+    </record>
+
+
+
+        <record model="ir.ui.view"
+                id="hr_contract_form_talent_human_view_inherit">
+            <field name="name">hr.contract.form.talent.human.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="talent_human.custom_view_contract_form"/>
+            <field name="arch" type="xml">
+
+<field name="fifty_percent_hour" position="attributes">
+
+    <attribute name="invisible">1</attribute>
+</field>
+                <field name="one_hundred_percent_hour" position="attributes">
+
+    <attribute name="invisible">1</attribute>
+</field>
+
+
+                <group name="add_retencion_judicial" position="attributes">
+
+    <attribute name="invisible">1</attribute>
+					</group>
+
+					<group name="add_retenciones" position="attributes">
+
+    <attribute name="invisible">1</attribute>
+					</group>
+
+<field name="provincia_inicio"  position="attributes">
+       <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True,}</attribute>
+    <attribute name="domain">[('country_id.code','=','EC')]</attribute>
+</field>
+
+                <field name="provincia_fin"  position="attributes">
+     <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True,}</attribute>
+    <attribute name="domain">[('country_id.code','=','EC')]</attribute>
+
+</field>
+
+
+                 <field name="provincia_fin" position="after">
+                     <field name="legal_iess" invisible="1" />
+                 </field>
+            <group name="configuration_pay" position="attributes">
+                <attribute name="attrs">{'invisible':[('legal_iess','!=',True)]}</attribute>
+            </group>
+
+
+
+                   <xpath expr="//page[@name='information']" position="after">
+
+                <page string="Gastos Deducibles" name="page_deductible_expense">
+
+							<field name="deductible_expenses_ids" nolabel="1" colspan="2">
+
+								<tree string="Gastos Deducibles" editable="bottom">
+									<field name="period_id" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                                    <field name="vivienda" sum="total"/>
+                                    <field name="alimentacion" sum="total"/>
+                                    <field name="vestimenta" sum="total"/>
+                                    <field name="salud" sum="total"/>
+                                    <field name="turismo" sum="total"/>
+                                    <field name="educacion" sum="total"/>
+								</tree>
+
+							</field>
+
+                </page>
+
+            </xpath>
+
+
+
+
+
+            </field>
+        </record>
+
+        <record id="hr_payroll_view_contract_form" model="ir.ui.view">
+			<field name="name">hr.payroll.hr.contract.form</field>
+			<field name="model">hr.contract</field>
+			<field name="inherit_id" ref="hr_payroll.hr_contract_form_inherit"/>
+			<field name="arch" type="xml">
+<page  name="part_time" position="attributes">
+	<attribute name="invisible">1</attribute>
+</page>
+<field  name="wage_type" position="attributes">
+	<attribute name="invisible">1</attribute>
+</field>
+  <group name="salary"  position="inside">
+      <field name="bonus_grav" />
+      <field name="bonus" />
+
+           <field name="tiene_pension_alimenticia"  attrs="{'invisible':[('legal_iess','!=',True)]}"  />
+                          <field name="pension_alimenticia" attrs="{'invisible':['|',('legal_iess','!=',True),('tiene_pension_alimenticia','!=',True)],'required':['|',('legal_iess','!=',True),('tiene_pension_alimenticia','=',True)]}" />
+
+
+      <field name="tiene_ruc" />
+      <field name="calcula_iva" />
+      <field name="calcula_retencion" />
+      <field name="retencion_fuente"  attrs="{'invisible':[('calcula_retencion','!=',True)]}"/>
+      <field name="retencion_iva" attrs="{'invisible':['|',('calcula_iva','!=',True),('calcula_retencion','!=',True)]}" />
+<newline/>
+      <separator string="Contabilidad"/>
+<newline/>
+       <field name="partner_id"  />
+      <field name="ruc_partner_id"  />
+  </group>
+			</field>
+		</record>
+
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="module_category_fleet_cronograma" model="ir.module.category">
+    <field name="name">Cronograma de Maniobras</field>
+    <field name="sequence">75</field>
+  </record>
+
+  <record id="group_cronograma_usuario" model="res.groups">
+    <field name="name">Maniobras Vehículos Pesados – Usuario</field>
+    <field name="category_id" ref="fleet_gps_cronograma.module_category_fleet_cronograma"/>
+  </record>
+
+  <record id="group_cronograma_admin" model="res.groups">
+    <field name="name">Maniobras Vehículos Pesados – Administrador</field>
+    <field name="implied_ids"
+           eval="[(4, ref('fleet_gps_cronograma.group_cronograma_usuario'))]"/>
+    <field name="category_id" ref="fleet_gps_cronograma.module_category_fleet_cronograma"/>
+  </record>
+</odoo>

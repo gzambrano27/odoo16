@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<!-- views/hr_vacation_period_line_views.xml -->
+<odoo>
+    <record id="view_hr_vacation_period_line_tree" model="ir.ui.view">
+        <field name="name">hr.vacation.period.line.tree</field>
+        <field name="model">hr.vacation.period.line</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas de Vacaciones" create="false" delete="false" edit="false"
+             decoration-info="payment_state == 'draft'" decoration-warning="payment_state in ('confirm','validate1')" decoration-success="payment_state == 'validate'"
+                  decoration-muted="payment_state in ('refuse','cancel')"
+            >
+
+
+                   <field name="company_id" readonly="1" invisible="context.get('hide_employee',False)"  />
+                <field name="type" readonly="1" optional="hide" />
+
+                <field name="employee_id" readonly="1" invisible="context.get('hide_employee',False)"  />
+                <field name="contract_id" readonly="1" invisible="context.get('hide_employee',False)" />
+
+										<field name="name" readonly="1"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										<field name="date" readonly="1" />
+                                        <field name="date_start" readonly="1" optional="hide"
+                                        invisible="context.get('hide_payment',False)"
+                                        />
+										<field name="date_stop" readonly="1" optional="hide"
+                                        invisible="context.get('hide_payment',False)"
+                                        />
+										<field name="days" readonly="1" sum="total" />
+										<field name="payment_state" readonly="1" optional="show"/>
+
+
+                                          <field name="wage" invisible="context.get('hide_payment',False)"/>
+                        <field name="total" invisible="context.get('hide_payment',False)"/>
+                        <field name="comments" required="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_hr_vacation_period_line_form" model="ir.ui.view">
+        <field name="name">hr.vacation.period.line.form</field>
+        <field name="model">hr.vacation.period.line</field>
+        <field name="arch" type="xml">
+            <form string="Detalle de Vacaciones" create="false" delete="false"  >
+<header>
+    <button string="Confirmar" name="action_confirm" type="object" icon="fa-check"
+            attrs="{'invisible':['|',('type','!=','payment'),('payment_state','!=','draft')]}"
+
+
+            />
+
+     <button string="Anulado" name="action_cancel" type="object" icon="fa-times"
+            attrs="{'invisible':['|',('type','!=','payment'),('payment_state','not in',('draft','confirm') )]}"
+
+
+            />
+
+
+      <button name="action_pagar_vacaciones"
+                    string="Pagar"
+                    type="object" attrs="{'invisible':['|',('type','!=','payment'),('payment_state','!=','confirm')]}"
+                    icon="fa-money"
+                    context="{}"/>
+
+ <field name="payment_state" widget="statusbar" attrs="{'invisible':[('type','!=','payment')]}"/>
+                        <field name="state" widget="statusbar" attrs="{'invisible':[('type','!=','request')]}"/>
+                    </header>
+                <sheet>
+
+
+                    <group>
+
+ <group>
+                          <field name="type" readonly="1"  />
+                            <field name="employee_id" readonly="1" invisible="context.get('hide_employee',False)"  />
+                <field name="contract_id" readonly="1" invisible="context.get('hide_employee',False)" />
+
+      <field name="period_id" readonly="1"/>
+
+										<field name="name" readonly="1"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+
+
+
+                        <field name="request_id" readonly="1" attrs="{'invisible':[('request_id','=',False)]}"/>
+                         <field name="date" readonly="1"/>
+                                        <field name="date_start" invisible="context.get('hide_payment',False)" readonly="1" attrs="{'invisible':[('type','!=','request')]}"/>
+										<field name="date_stop" invisible="context.get('hide_payment',False)" readonly="1" attrs="{'invisible':[('type','!=','request')]}"/>
+
+
+      </group>
+
+           <group>
+
+                    <field name="days" readonly="1"
+                        />
+
+
+
+
+
+
+                        <field name="wage"
+                               readonly="1"
+                               invisible="context.get('hide_payment',False)" attrs="{'readonly':[('state','!=','draft')],'invisible':[('type','!=','payment')]}"/>
+                        <field name="total"
+                               readonly="1"
+                               invisible="context.get('hide_payment',False)" attrs="{'readonly':[('state','!=','draft')],'invisible':[('type','!=','payment')]}"/>
+                 <field name="comments" required="1"
+                 attrs="{'readonly':[('state','!=','draft')]}"
+                 />
+
+                 <field name="liquidated" invisible="1" />
+                </group>
+
+                    </group>
+                    <notebook>
+                        <page string="Detalle" attrs="{'invisible':[('detail_ids','=',[])]}">
+                            <field name="detail_ids" readonly="1">
+                                <tree editable="bottom">
+                                    <field name="request_id"/>
+                                    <field name="payslip_id"/>
+
+                                    <field name="date_start"/>
+                                    <field name="date_stop"/>
+                                       <field name="days" sum="total"/>
+                                </tree>
+                                 <form>
+                                     <group>
+                                         <group>
+                                          <field name="request_id"/>
+                                    <field name="payslip_id"/>
+                                     </group>
+                                         <group>
+                                         <field name="date_start"/>
+                                    <field name="date_stop"/>
+                                       <field name="days" sum="total"/>
+                                     </group>
+                                     </group>
+
+
+
+                                </form>
+
+                            </field>
+                        </page>
+                    </notebook>
+
+                </sheet>
+                <newline/>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_hr_vacation_period_line" model="ir.actions.act_window">
+    <field name="name">Vacaciones por Pagar</field>
+    <field name="res_model">hr.vacation.period.line</field>
+    <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','payment')]</field>
+        <field name="context">{'hide_employee':False,'hide_payment':False}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Crea nuevas líneas de vacaciones.
+        </p>
+    </field>
+</record>
+
+<record id="action_hr_vacation_period_line_confirm" model="ir.actions.server">
+    <field name="name">Confirmar Vacaciones por Pagar</field>
+    <field name="model_id" ref="gps_hr.model_hr_vacation_period_line"/>
+    <field name="binding_model_id" ref="gps_hr.model_hr_vacation_period_line"/>
+    <field name="state">code</field>
+    <field name="binding_view_types">list</field>
+    <field name="code">
+        for record in records:
+            record.action_confirm()
+    </field>
+</record>
+
+    <record id="action_hr_vacation_period_line_cancel" model="ir.actions.server">
+    <field name="name">Cancelar Vacaciones por Pagar</field>
+    <field name="model_id" ref="gps_hr.model_hr_vacation_period_line"/>
+    <field name="binding_model_id" ref="gps_hr.model_hr_vacation_period_line"/>
+    <field name="state">code</field>
+    <field name="binding_view_types">list</field>
+    <field name="code">
+        for record in records:
+            record.action_cancel()
+    </field>
+</record>
+
+
+    
+</odoo>

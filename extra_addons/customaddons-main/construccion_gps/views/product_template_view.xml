@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_product_form_apu" model="ir.ui.view">
+            <field name="name">product.template.form.apu</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_button_box']" position="inside">
+                    <button name="action_view_apu"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="construccion_gps.group_apus_usuario,
+                            construccion_gps.group_apus_jefe,
+                            construccion_gps.group_apus_gerente,
+                            construccion_gps.group_apus_administrador">
+                        <field name="apu_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_product_form_categoria" model="ir.ui.view">
+            <field name="name">product.template.form.categoria</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_tag_ids']" position="after">
+                    <field name="subcategoria_id" string="Subcategoría APU" options="{'no_open':True,'no_create':True}"
+                           groups="construccion_gps.group_apus_usuario,
+                           construccion_gps.group_apus_jefe,
+                           construccion_gps.group_apus_gerente,
+                           construccion_gps.group_apus_administrador"/>
+                </xpath>
+                <xpath expr="//field[@name='detailed_type']" position="before">
+                    <field name="notas_descripcion" readonly="1"/>
+                </xpath>
+                <xpath expr="//page[@name='invoicing']" position="after">
+                    <!-- Pestaña APU -->
+                    <page name="apus_tab" string="APUs"
+                          groups="construccion_gps.group_apus_usuario,
+                                  construccion_gps.group_apus_jefe,
+                                  construccion_gps.group_apus_gerente,
+                                  construccion_gps.group_apus_administrador">
+                        <field name="apu_custom_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="apu_line_id" readonly="1"/>
+                                <field name="fecha_modificacion" readonly="1"/>
+                                <field name="cantidad" readonly="1"/>
+                                <field name="precio_unitario" readonly="1"/>
+                                <field name="precio_total" readonly="1"/>
+                                <field name="costo_unitario" readonly="1"/>
+                                <field name="costo_total" readonly="1"/>
+                            </tree>
+                            <form string="APU Detalle">
+                                <sheet>
+                                    <group>
+                                        <field name="apu_line_id" readonly="1"/>
+                                        <field name="fecha_modificacion" readonly="1"/>
+                                        <field name="cantidad" readonly="1"/>
+                                        <field name="precio_unitario" readonly="1"/>
+                                        <field name="precio_total" readonly="1"/>
+                                        <field name="costo_unitario" readonly="1"/>
+                                        <field name="costo_total" readonly="1"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <!-- Pestaña Actividades -->
+                    <page name="actividades_tab" string="Actividades"
+                          groups="construccion_gps.group_apus_usuario,
+                                  construccion_gps.group_apus_jefe,
+                                  construccion_gps.group_apus_gerente,
+                                  construccion_gps.group_apus_administrador">
+                        <field name="actividad_custom_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="apu_line_tareas_id" readonly="1"/>
+                                <field name="fecha_modificacion" readonly="1"/>
+                                <field name="cantidad" readonly="1"/>
+                                <field name="precio_unitario" readonly="1"/>
+                                <field name="costo_hora_actividad" readonly="1"/>
+                                <field name="rendimiento" readonly="1"/>
+                                <field name="costo_final_actividad" readonly="1"/>
+                            </tree>
+                            <form string="Actividad Detalle">
+                                <sheet>
+                                    <group>
+                                        <field name="apu_line_tareas_id" readonly="1"/>
+                                        <field name="fecha_modificacion" readonly="1"/>
+                                        <field name="cantidad" readonly="1"/>
+                                        <field name="precio_unitario" readonly="1"/>
+                                        <field name="costo_hora_actividad" readonly="1"/>
+                                        <field name="rendimiento" readonly="1"/>
+                                        <field name="costo_final_actividad" readonly="1"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

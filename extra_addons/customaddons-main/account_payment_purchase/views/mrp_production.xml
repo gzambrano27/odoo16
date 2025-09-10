@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Secuencia para el tipo de orden de producción A -->
+        <record id="seq_production_order_type_A" model="ir.sequence">
+            <field name="name">Production Order Consumible</field>
+            <field name="code">mrp.production.order.consumible</field>
+            <field name="prefix">CONS/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <record id="mrp_bom_form_inherit" model="ir.ui.view">
+		<field name="name">mrp.bom.form.inherit</field>
+		<field name="model">mrp.bom</field>
+		<field name="inherit_id" ref='mrp.mrp_bom_form_view' />
+		<field name="arch" type="xml">              
+	         <!-- <field name="product_tmpl_id" position="before">  
+	            <field name="inter_transfer" />  
+	         </field> -->
+	         <field name="product_qty" position="before">  
+	            <field name="total_cost" groups="account_payment_purchase.group_costo_usuario, base.group_no_one" />  
+	         </field>
+		</field>
+	</record>
+    <record id="view_mrp_production_form_inherit_custom" model="ir.ui.view">
+        <field name="name">mrp.production.form.inherit.custom</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <field name="date_start" position="after"> 
+                <field name="production_type"/>
+	            <field name="total_cost" groups="account_payment_purchase.group_costo_usuario, base.group_no_one" readonly='1'/>
+	        </field>
+            <!-- Modificamos la pestaña de componentes -->
+            <xpath expr="//page[@name='components']/field[@name='move_raw_ids']/tree/field[@name='product_id']" position="after">
+                <field name="referencia_anterior" string="Ref Anterior"/>
+                <field name="default_code" string="Ref Interna"/>
+            </xpath>
+            <xpath expr="//page[@name='components']/field[@name='move_raw_ids']/tree/field[@name='product_uom_qty']" position="after">
+                <field name="cost" groups="account_payment_purchase.group_costo_usuario, base.group_no_one"/>
+			    <field name="subtotal" groups="account_payment_purchase.group_costo_usuario, base.group_no_one"/>
+            </xpath>
+            <xpath expr="//field[@name='analytic_account_id']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_bom_form_inherit_custom" model="ir.ui.view">
+        <field name="name">mrp.bom.form.inherit.custom</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Modificamos la pestaña de componentes en la lista de materiales -->
+            <xpath expr="//page[@name='components']/field[@name='bom_line_ids']/tree/field[@name='product_id']" position="after">
+                <field name="referencia_anterior" string="Ref Anterior"/>
+                <field name="default_code" string="Ref Interna"/>
+            </xpath>
+            <xpath expr="//page[@name='components']/field[@name='bom_line_ids']/tree/field[@name='product_uom_id']" position="after">
+                <field name="cost" groups="account_payment_purchase.group_costo_usuario, base.group_no_one"/>
+			    <field name="subtotal" groups="account_payment_purchase.group_costo_usuario, base.group_no_one"/>
+            </xpath> 
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,47 @@
+<odoo>
+    <!-- Vista de formulario para Correos Primordiales -->
+    <record id="view_correos_primordiales_form" model="ir.ui.view">
+        <field name="name">correos.primordiales.form</field>
+        <field name="model">correos.primordiales</field>
+        <field name="arch" type="xml">
+            <form string="Correos Primordiales">
+                <sheet>
+                    <field name="empleado_id"/>
+                    <field name="name" readonly="1"/>
+                    <field name="email" readonly="1"/>
+                    <field name="departamento_id" readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de árbol para Correos Primordiales -->
+    <record id="view_correos_primordiales_tree" model="ir.ui.view">
+        <field name="name">correos.primordiales.tree</field>
+        <field name="model">correos.primordiales</field>
+        <field name="arch" type="xml">
+            <tree string="Correos Primordiales">
+                <field name="empleado_id"/>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="departamento_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción para Correos Primordiales -->
+    <record id="action_correos_primordiales" model="ir.actions.act_window">
+        <field name="name">Correos Primordiales</field>
+        <field name="res_model">correos.primordiales</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú raíz para Configuración -->
+    <menuitem id="menu_configuracion_root" name="Configuración" parent="menu_reserva_sala_root" sequence="30"/>
+
+    <!-- Menú para Salas dentro de Configuración -->
+    <menuitem id="menu_salas_configuracion" name="Salas" action="action_sala" parent="menu_configuracion_root"/>
+
+    <!-- Menú para Correos Primordiales dentro de Configuración -->
+    <menuitem id="menu_correos_primordiales" name="Correos Primordiales" action="action_correos_primordiales" parent="menu_configuracion_root" />
+</odoo>

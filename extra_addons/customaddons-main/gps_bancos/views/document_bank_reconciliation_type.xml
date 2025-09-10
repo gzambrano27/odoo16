@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+    <!-- Tree View -->
+    <record id="view_document_bank_reconciliation_type_tree" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.type.tree</field>
+        <field name="model">document.bank.reconciliation.type</field>
+        <field name="arch" type="xml">
+            <tree string="Tipos de Documento de Reconciliación">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="descriptions"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_document_bank_reconciliation_type_form" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.type.form</field>
+        <field name="model">document.bank.reconciliation.type</field>
+        <field name="arch" type="xml">
+            <form string="Tipo de Documento de Reconciliación">
+                <group>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="descriptions"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_document_bank_reconciliation_type_search" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.type.search</field>
+        <field name="model">document.bank.reconciliation.type</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tipos">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="descriptions"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_document_bank_reconciliation_type" model="ir.actions.act_window">
+        <field name="name">Tipos de Documentos Bancarios</field>
+        <field name="res_model">document.bank.reconciliation.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_document_bank_reconciliation_type_search"/>
+    </record>
+
+
+
+</data>
+
+</odoo>

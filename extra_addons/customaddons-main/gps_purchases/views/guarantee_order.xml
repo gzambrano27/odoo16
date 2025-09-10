@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="guarantee_order_tree_view">
+        <field name="name">guarantee.order.tree</field>
+        <field name="model">guarantee.order</field>
+        <field name="arch" type="xml">
+            <tree string="Guarantee">
+                <field name="name" />
+                <field name="insured_value" />
+                <field name="type_of_contract" />
+                <field name="validity" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="guarantee_order_form_view">
+        <field name="name">guarantee.order.form</field>
+        <field name="model">guarantee.order</field>
+        <field name="arch" type="xml">
+            <form string="Guarantee">
+                <sheet string="Guarantee">
+                    <label for="name" />
+                    <h2><field name="name" /></h2>
+                    <group col="4">
+                        <field name="name" />
+                        <field name="insured_value" />
+                        <field name="type_of_contract" />
+                        <field name="validity" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_guarantee_order_view" model="ir.actions.act_window">
+        <field name="name">Guarantee</field>
+        <field name="res_model">guarantee.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="guarantee_order_tree_view"/>
+    </record>
+
+    <menuitem id="action_guarantee_order_menu"
+        name="Guarantee Order"
+        parent="purchase.menu_purchase_config"
+        groups="purchase.group_purchase_manager"
+        action="action_guarantee_order_view"
+    />
+
+</odoo>

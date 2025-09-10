@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <menuitem name="Reportes"
+			id="reportes_menu" parent="base.menu_custom" sequence="9999"
+			/>
+
+     <menuitem id="menu_security_group_wizard" name="Exportar Seguridad"
+              parent="reportes_menu" action="action_security_group_wizard"/>
+
+
+
+</odoo>

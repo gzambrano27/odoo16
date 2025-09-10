@@ -1,0 +1,12 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_postventa_request_user","access_postventa_request_user","model_postventa_request","postventagps.group_postventa_user",1,1,1,0
+"access_postventa_request_jefe","access_postventa_request_jefe","model_postventa_request","postventagps.group_postventa_jefe",1,1,1,1
+"access_postventa_request_admin","access_postventa_request_admin","model_postventa_request","postventagps.group_postventa_admin",1,1,1,1
+
+"access_postventa_request_note_user","access_postventa_request_note_user","model_postventa_request_note","postventagps.group_postventa_user",1,1,1,0
+"access_postventa_request_note_jefe","access_postventa_request_note_jefe","model_postventa_request_note","postventagps.group_postventa_jefe",1,1,1,1
+"access_postventa_request_note_admin","access_postventa_request_note_admin","model_postventa_request_note","postventagps.group_postventa_admin",1,1,1,1
+
+"access_postventa_request_line_user","access_postventa_request_line_user","model_postventa_request_line","postventagps.group_postventa_user",1,1,1,0
+"access_postventa_request_line_jefe","access_postventa_request_line_jefe","model_postventa_request_line","postventagps.group_postventa_jefe",1,1,1,1
+"access_postventa_request_line_admin","access_postventa_request_line_admin","model_postventa_request_line","postventagps.group_postventa_admin",1,1,1,1

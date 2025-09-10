@@ -1,0 +1,89 @@
+<odoo>
+  <data>
+
+        <!-- Acción de reuniones -->
+        <record id="action_calendar_event" model="ir.actions.act_window">
+            <field name="name">Reuniones</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="search_view_id" ref="calendar.view_calendar_event_search"/>
+            <field name="domain">[('tarea_id', '=', active_id)]</field>
+            <field name="context">{'search_default_tarea_id': [active_id],'default_tarea_id': active_id}</field>
+            <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                    Programa una nueva reunión
+                  </p>
+            </field>
+        </record>
+
+        <!-- Heredar vista para agregar reunión -->
+        <record id="task_form_schedule_meeting" model="ir.ui.view">
+              <field name="name">project.task.form.inherit</field>
+              <field name="model">project.task</field>
+              <field name="inherit_id" ref="project.view_task_form2"/>
+              <field name="arch" type="xml">
+                  <button name="action_assign_to_me" position="after">
+                        <button name="action_ver_reuniones_tarea" type="object" string="Programar Reunión" class="oe_highlight"/>
+                        <button name="%(action_calendar_event)d" type="action" string="Reuniones" class="oe_highlight" attrs="{'invisible': [('conteo_reuniones', '=', 0)]}"/>
+                  </button>
+                  <button name="action_open_parent_task" position="after">
+                      <button class="oe_stat_button" icon="fa-calendar" name="%(action_calendar_event)d" type="action" attrs="{'invisible': [('conteo_reuniones', '=', 0)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Reunión</span>
+                                <field name="conteo_reuniones"/>
+                            </div>
+                      </button>
+                  </button>
+                <field name="user_ids" position="after">
+                  <field name="reunion_id"/>
+                </field>
+              </field>
+        </record>
+
+      <!-- Acción de tareas con reuniones -->
+      <record id="act_project_project_2_project_task_all" model="ir.actions.act_window">
+          <field name="name">Tareas con Reuniones</field>
+          <field name="res_model">project.task</field>
+          <field name="view_mode">tree,form,calendar,pivot,graph,activity</field>
+          <field name="domain">[('reunion_id', '=', active_id)]</field>
+          <field name="context">{'search_default_reunion_id': [active_id],'default_reunion_id': active_id}</field>
+          <field name="search_view_id" ref="project.view_task_search_form"/>
+          <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                  Haz clic en <i>Crear</i> para iniciar una nueva tarea.
+              </p>
+          </field>
+      </record>
+
+      <!-- Heredar evento de calendario para agregar tarea -->
+      <record id="view_calendar_event_form_inherit" model="ir.ui.view">
+            <field name="name">view.calendar.form.inherit</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                    <button name="action_open_calendar_event" position="replace">
+                        <button class="oe_stat_button"
+                                icon="fa-tasks"
+                                type="action"
+                                name="%(act_project_project_2_project_task_all)d"
+                                attrs="{'invisible': [('conteo_tareas', '=', 0)]}">
+                          <span class="o_stat_text">Tarea</span>
+                          <field name="conteo_tareas" invisible="True"/>
+                        </button>
+                        <button string="Documento"
+                                  class="oe_stat_button float-right"
+                                  icon="fa-bars"
+                                  type="object"
+                                  name="action_open_calendar_event"
+                                  attrs="{'invisible': ['|', ('res_model', '=', False), ('res_id', '=', False)]}"/>
+                        </button>
+                <field name="location" position="after">
+                    <field name="tarea_id"/>
+                    <field name="proyecto_id"/>
+                </field>
+            </field>
+        </record>
+
+  </data>
+</odoo>

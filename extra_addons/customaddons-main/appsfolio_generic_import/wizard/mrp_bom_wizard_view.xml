@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="mrp_bom_wizard_view" model="ir.ui.view">
+        <field name="name">mrp.bom.wizard.view</field>
+        <field name="model">mrp.bom.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import BOM">
+                <group>
+                    <group>
+                        <field name="file_import_type" widget='radio' />
+                    </group>
+                    <group>
+                        <group>
+                            <field name="bom_type" widget="radio"/>
+                        </group>
+                    </group>
+                </group>
+				<group>
+					<group>
+                        <field name="option_import_file_by" widget="radio"/>
+                    </group>
+                    <group>
+                    	<group>
+                        	<field name="import_material_prod_option" widget="radio"/>
+                        </group>
+                    </group>
+                </group>
+                <group>
+                    <field name="file" filename="name"/>
+                </group>
+                <footer>
+                    <button 
+                        name="import_mrp_bom_file" 
+                        type="object" 
+                        class="oe_highlight"
+                        string="Import" 
+                    />
+                    <div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                            Download Sample: 
+                        </strong>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/bom.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            CSV file
+                        </a>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/bom.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            Excel file
+                        </a>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_mrp_bom_wizard_view" model="ir.actions.act_window">
+        <field name="name">Mrp BOM Wizard</field>
+        <field name="res_model">mrp.bom.wizard</field>           
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem 
+        id="mrp_bom_wizard_menu"
+        action="action_mrp_bom_wizard_view"
+        parent="mrp.menu_mrp_bom"
+    />
+</odoo>

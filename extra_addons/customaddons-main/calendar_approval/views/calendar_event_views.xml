@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista de Formulario: calendar.event.form (Vista de eventos) -->
+    <record id="view_calendar_event_form_custom" model="ir.ui.view">
+        <field name="name">calendar.event.form.custom</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Crear un <header> dentro del formulario para los botones y estado -->
+            <xpath expr="//sheet" position="before">
+                <header>
+
+                    <field name="approval_state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved,rejected"
+                           string="Estado de la Reserva"/>
+
+                    <button name="action_send" string="Enviar" type="object"
+                            class="btn-primary"
+                            attrs="{'invisible':[('approval_state','!=','draft')]}"/>
+
+                    <!-- Botones de Aprobar y Rechazar solo visibles si el estado es 'pending' -->
+                    <button name="action_approve" type="object" string="Aprobar"
+                            attrs="{'invisible': [('approval_state', '!=', 'pending')]}"
+                            groups="custom_calendar.group_responsable,calendar_approval.group_calendar_approval_manager"/>
+
+                    <button name="action_reject" type="object" string="Rechazar"
+                            attrs="{'invisible': [('approval_state', '!=', 'pending')]}"
+                            groups="custom_calendar.group_responsable,calendar_approval.group_calendar_approval_manager"/>
+                </header>
+            </xpath>
+                <xpath expr="//field[@name='location']" position="before">
+                <field name="attendee_count" invisible="1"/>
+            </xpath>
+
+            <!-- Reemplazar 'location' con 'room_id' -->
+                <xpath expr="//field[@name='location']" position="replace">
+                <field name="room_id"
+                       domain="[('capacidad_maxima','&lt;=', attendee_count)]"/>
+
+            </xpath>
+            <xpath expr="//field[@name='categ_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Hacer que los campos sean solo lectura cuando el estado no sea 'pending' -->
+            <field name='start' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='stop' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='partner_ids' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='description' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='duration' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='allday' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='user_id' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='name' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='alarm_ids' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='room_id' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='recurrency' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='privacy' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='show_as' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name='videocall_location' position="attributes">
+                <attribute name="attrs">{'readonly': [('approval_state', 'in', ['approved', 'rejected'])]}</attribute>
+            </field>
+
+            <field name="categ_ids" position="attributes">
+                <attribute name="attrs">{'invisible': [('approval_state', 'in', ['approved', 'rejected', 'pending'])]}</attribute>
+            </field>
+
+
+        </field>
+    </record>
+
+    <!-- Vista de Calendario: calendar.event.calendar (Vista de calendario para eventos) -->
+    <record id="view_calendar_event_calendar_custom2" model="ir.ui.view">
+        <field name="name">calendar.event.calendar.custom2</field>
+        <field name="model">calendar.event</field>
+        <!-- Heredamos la vista base de calendario -->
+        <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
+        <field name="arch" type="xml">
+
+            <!-- Aseguramos que los eventos no puedan ser movidos (readonly) -->
+            <xpath expr="//calendar" position="attributes">
+                <attribute name="date_start">start_readonly</attribute>
+                <attribute name="date_stop">stop_readonly</attribute>
+            </xpath>
+
+            <!-- Hacer que los campos sean solo lectura (no editables) -->
+            <xpath expr="//calendar" position="inside">
+                <field name="name" readonly="True"/>
+                <field name="approval_state" readonly="True"/>
+                <field name="room_id" readonly="True"/>
+                <field name="start" readonly="True"/>
+                <field name="stop" readonly="True"/>
+                <field name="partner_ids" readonly="True"/>
+                <field name="description" readonly="True"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+
+   <record id="view_calendar_event_form_bi_meeting_from_task" model="ir.ui.view">
+        <field name="name">calendar.event.form.bi_meeting</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="bi_meeting_from_task.view_calendar_event_form_inherit"/>
+        <field name="arch" type="xml">
+
+  <xpath expr="//field[@name='tarea_id']"   position="attributes">
+                <attribute name="invisible">1</attribute>
+                     </xpath>
+
+                    <xpath  expr="//field[@name='proyecto_id']"  position="attributes">
+                <attribute name="invisible">1</attribute>
+                     </xpath>
+
+
+                     </field>
+    </record>
+
+
+
+</odoo>

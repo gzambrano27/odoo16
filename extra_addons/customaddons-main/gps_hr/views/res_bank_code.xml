@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+        
+         <record id="res_bank_code_view_search"
+            model="ir.ui.view">
+        <field name="name">res.bank.code.search</field>
+        <field name="model">res.bank.code</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Código de macros de banco">
+
+                 <group expand="0" string="Filtrar...">
+						 
+
+					</group>
+					<group expand="0" string="Agrupar por...">
+						   <filter string="Banco Generador de Macro"
+							context="{'group_by':'bank_main_id'}" name='grp_bank_main_id' />
+                      <filter string="Banco"
+							context="{'group_by':'bank_id'}" name='grp_bank_id' />
+
+					</group>
+
+               
+            </search>
+        </field>
+    </record>
+
+
+    <record id="res_bank_code_view_tree"
+            model="ir.ui.view">
+        <field name="name">res.bank.code.tree</field>
+        <field name="model">res.bank.code</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Código de macros de banco" edit="false"  create="false" delete="false">
+             	<field name="bank_main_id" readonly="1"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										
+										<field name="bank_id" readonly="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+									<field name="code" readonly="1"/> 
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="res_bank_code_view_form"
+            model="ir.ui.view">
+        <field name="name">res.bank.code.form</field>
+        <field name="model">res.bank.code</field>
+        <field name="type">tree</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            
+              <form string="Cuentas" edit="false"  create="false" delete="false">
+                                         <group>
+                                        <group>
+                                       	<field name="bank_main_id" readonly="1"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										
+								
+                                        </group>
+                                        <group>
+                                         		<field name="bank_id" readonly="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+									<field name="code" readonly="1"/> 
+                                        </group>
+                                         </group>
+ 
+										</form>
+            
+        </field>
+    </record>
+
+    <record id="res_bank_code_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Código de macros de banco</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.bank.code</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('bank_main_id.use_macro_format','=',True)]</field>
+        <field name="context">{'search_default_grp_bank_main_id':1}</field>
+        <field name="view_id"
+               ref="res_bank_code_view_tree"/>
+        <field name="search_view_id"
+               ref="res_bank_code_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="res_bank_code_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="res_bank_code_view_tree"/>
+        <field name="act_window_id"
+               ref="res_bank_code_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="res_bank_code_view_form_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="res_bank_code_view_form"/>
+        <field name="act_window_id"
+               ref="res_bank_code_view_action"/>
+    </record>
+
+        
+        
+        
+        
+        
+        
+    </data>
+    
+</odoo>

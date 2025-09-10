@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="hr_employee_report_wizard_form"
+			model="ir.ui.view">
+			<field name="name">hr.employee.report.wizard.form</field>
+			<field name="model">hr.employee.report.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes de Empleados"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+					<field name="company_ids" widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}" required="1"/>
+<field name="type_report" readonly="1" />
+
+
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+						context="{'default_report':context.get('type_report','')}"
+						/>
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+		<record
+			id="hr_employee_report_wizard_cargas_familiares_action"
+			model="ir.actions.act_window">
+			<field name="name">Reportes de Cargas Familiares</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.report.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_report_wizard_form" />
+			<field name="context">{'default_type_report':'cargas_familiares','update_table':False,'pass_validate':True,'only_update':False}</field>
+			<field name="target">new</field>
+
+		</record>
+
+<record
+			id="hr_employee_report_wizard_cumpleanios_action"
+			model="ir.actions.act_window">
+			<field name="name">Reportes de Cumpleaños</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.report.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_report_wizard_form" />
+			<field name="context">{'default_type_report':'cumpleanios','update_table':False,'pass_validate':True,'only_update':False}</field>
+			<field name="target">new</field>
+
+		</record>
+
+
+	</data>
+</odoo>

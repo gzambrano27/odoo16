@@ -1,0 +1,44 @@
+<odoo>
+    <record id="view_planillas_seccion_tree" model="ir.ui.view">
+        <field name="name">planillas.seccion.tree</field>
+        <field name="model">planillas.seccion</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="codigo" widget="badge" decoration-muted="codigo"/>
+                <field name="name"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="estado" widget="badge" optional="show"
+                       decoration-success="estado == 'activo'"
+                       decoration-danger="estado == 'inactivo'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_planillas_seccion_form" model="ir.ui.view">
+        <field name="name">planillas.seccion.form</field>
+        <field name="model">planillas.seccion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="codigo"/>
+                        <field name="name" required="1"/>
+                        <field name="estado" required="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_planillas_secciones" model="ir.actions.act_window">
+        <field name="name">Secciones</field>
+        <field name="res_model">planillas.seccion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

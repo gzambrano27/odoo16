@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- stock.product.request search view -->
+    <record id="view_stock_product_request_search" model="ir.ui.view">
+        <field name="name">stock.product.request.view.search</field>
+        <field name="model">stock.product.request</field>
+        <field name="arch" type="xml">
+            <search string="Product Request">
+                <field name="warehouse_id" />
+                <field name="type" />
+                <field name="product_id" />
+                <field name="route_id" />
+                <separator />
+                <filter name="progress" string="In Progress" domain="[('state', 'in', ['draft', 'open'])]" />
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="status" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Warehouse" name="warehouse" domain="[]" context="{'group_by':'warehouse_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- stock.product.request tree view -->
+    <record id="view_stock_product_request_tree" model="ir.ui.view">
+        <field name="name">stock.product.request.view.tree</field>
+        <field name="model">stock.product.request</field>
+        <field name="arch" type="xml">
+            <tree string="Product Request" decoration-info="state=='draft'" decoration-success="state=='done'" decoration-muted="state=='cancel'">
+                <field name="name" />
+                <field name="warehouse_id" />
+                <field name="date_from" />
+                <field name="date_to" />
+                <field name="expected_date"/>
+                <field name="requested_by" groups="stock_product_request.group_stock_request_manager" />
+                <field name="move_type"/>
+                <field name="type" />
+                <field name="priority" />
+                <field name="origin" />
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- stock.product.request form view -->
+    <record id="view_stock_product_request_form" model="ir.ui.view">
+        <field name="name">stock.product.request.view.form</field>
+        <field name="model">stock.product.request</field>
+        <field name="arch" type="xml">
+            <form string="Product Request">
+                <header>
+                    <button name="action_confirm" states="draft" class="btn-primary"
+                            string="Confirm" type="object" />
+                    <button name="action_check_assign_all" class="btn-primary"
+                            string="Confirm Transfers" type="object"
+                            attrs="{'invisible': ['|',('type', '!=', 'send'),('state', '!=', 'open')]}"/>
+                    <!-- <button name="action_print_stock_request" states="open,done" -->
+                    <!--         string="Print Stock Request" type="object" class="btn-primary"/> -->
+                    <button name="action_print_delivery" states="open,done"
+                            string="Print Delivery" type="object" />
+                    <button name="action_cancel" states="draft,open"
+                            type="object" string="Cancel"/>
+                    <button name="action_draft" states="cancel" type="object"
+                            string="Set to Draft"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="picking_ids" invisible="1"/>
+                        <button type="object"
+                                name="action_view_transfer"
+                                class="oe_stat_button"
+                                icon="fa-truck"
+                                attrs="{'invisible': [('picking_count', '=', 0)]}"
+                                groups="stock.group_stock_user">
+                            <field name="picking_count" widget="statinfo"
+                                   string="Transfers"/>
+                        </button>
+                        <field name="backorder_ids" invisible="1"/>
+                        <button type="object"
+                                name="action_view_backorder"
+                                class="oe_stat_button"
+                                icon="fa-box"
+                                attrs="{'invisible': [('backorder_count', '=', 0)]}"
+                                groups="stock.group_stock_user">
+                            <field name="backorder_count" widget="statinfo"
+                                   string="Backorders"/>
+                        </button>
+                        <button type="object"
+                                name="action_view_moves"
+                                class="oe_stat_button"
+                                icon="fa-boxes"
+                                attrs="{'invisible': [('move_count', '=', 0)]}"
+                                groups="stock.group_stock_user" >
+                            <field name="move_count" widget="statinfo"
+                                   string="Operations"/>
+                        </button>
+                        <button type="object"
+                                name="action_view_request_product_line"
+                                class="oe_stat_button"
+                                icon="fa-list"
+                                attrs="{'invisible': [('line_count', '=', 0)]}">
+                            <field name="line_count" widget="statinfo"
+                                   string="Request"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="warehouse_id"
+                                   options="{'no_open': True, 'no_quick_create':True,'no_create_edit':True}" />
+                            <field name="move_type"/>
+                            <field name="priority" />
+                            <field name="allow_negative" groups="stock_product_request.group_negative_product_request" />
+                        </group>
+                        <group>
+                            <field name="type" />
+                            <field name="date_from" />
+                            <field name="date_to" />
+                            <field name="expected_date"/>
+                            <field name="origin" />
+                            <field name="company_ids"
+                                   groups="base.group_multi_company"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   invisible="1" />
+                            <field name="company_id"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"
+                                   readonly="1"
+                                   force_save="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Product Request">
+                            <field name="line_ids" context="{'default_warehouse_id': warehouse_id, 'default_type': type, 'default_expected_date': expected_date}" />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- stock.product.request action -->
+    <record id="action_stock_product_request" model="ir.actions.act_window">
+        <field name="name">Product Request</field>
+        <field name="res_model">stock.product.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                                     (0, 0, {'view_mode': 'tree', 'view_id': ref('stock_product_request.view_stock_product_request_tree')}),
+                                     (0, 0, {'view_mode': 'form', 'view_id': ref('stock_product_request.view_stock_product_request_form')})]"/>
+        <field name="context">{'default_search_progress': 1, 'force_company': 1}</field>
+    </record>
+
+    <!-- stock.product.request menu -->
+    <menuitem id="menu_stock_product_request"
+              name="Product Request"
+              parent="stock.menu_stock_warehouse_mgmt"
+              action="action_stock_product_request"
+              sequence="10" />
+
+
+    <!-- <record id="stock_request_product_form_helper_view" model="ir.ui.view"> -->
+    <!--     <field name="name">stock.request.product.form.helper.view</field> -->
+    <!--     <field name="model">stock.request.product</field> -->
+    <!--     <field name="arch" type="xml"> -->
+    <!--         <form string="Stock Request Product"> -->
+    <!--             <header> -->
+    <!--                 <field name="state" widget="statusbar"/> -->
+    <!--             </header> -->
+    <!--             <sheet> -->
+    <!--                 <div class="oe_title"> -->
+    <!--                     <label for="name" string="Stock Request" class="oe_edit_only"/> -->
+    <!--                     <h1> -->
+    <!--                         <field name="name" readonly="1"/> -->
+    <!--                     </h1> -->
+    <!--                 </div> -->
+    <!--                 <group> -->
+    <!--                     <group> -->
+    <!--                         <field name="warehouse_id" -->
+    <!--                                readonly="1" -->
+    <!--                                force_save="1" -->
+    <!--                                options="{'no_open': true, 'limit': 20, 'create': false, 'create_edit': false}" /> -->
+    <!--                         <field name="picking_policy"/> -->
+    <!--                         <field name="priority" /> -->
+    <!--                         <field name="allow_negative" groups="stock_request_product.group_negative_product_request"/> -->
+    <!--                     </group> -->
+    <!--                     <group> -->
+    <!--                         <field name="type" /> -->
+    <!--                         <field name="date_from" /> -->
+    <!--                         <field name="date_to" /> -->
+    <!--                         <field name="expected_date"/> -->
+    <!--                         <field name="origin" /> -->
+    <!--                     </group> -->
+    <!--                 </group> -->
+    <!--                 <notebook> -->
+    <!--                     <page string="Product Request"> -->
+    <!--                         <field name="line_ids" context="{'default_warehouse_id': warehouse_id, 'default_type': type, 'default_expected_date': expected_date}"> -->
+    <!--                             <tree string="Product Request" editable="bottom"> -->
+    <!--                                 <field name="company_id" invisible="1" /> -->
+    <!--                                 <field name="product_id" -->
+    <!--                                        domain="[('type', 'in', ['consu', 'product'])]" -->
+    <!--                                        options="{'no_open': true, 'limit': 20, 'create': false, 'create_edit': false}" /> -->
+    <!--                                 <field name="route_ids" -->
+    <!--                                        widget="many2many_tags" -->
+    <!--                                        invisible="1" /> -->
+    <!--                                 <field name="route_id" -->
+    <!--                                        options="{'no_open': true, 'limit': 20, 'create': false, 'create_edit': false}"/> -->
+    <!--                                 <field name="product_uom_qty" /> -->
+    <!--                                 <field name="product_uom_qty_current" /> -->
+    <!--                                 <field name="product_uom_qty_residual" /> -->
+    <!--                                 <field name="product_uom" -->
+    <!--                                        options="{'no_open': true, 'limit': 20, 'create': false, 'create_edit': false}" /> -->
+    <!--                                 <field name="expected_date" /> -->
+    <!--                                 <field name="warehouse_id" invisible="1" /> -->
+    <!--                                 <field name="type" invisible="1" /> -->
+    <!--                                 <field name="location_id" invisible="1" /> -->
+    <!--                                 <field name="location_src_id" invisible="1" /> -->
+    <!--                                 <field name="location_dest_id" invisible="1" /> -->
+    <!--                                 <field name="location_trans_id" invisible="1" /> -->
+    <!--                                 <field name="out_picking_type_id" invisible="1" /> -->
+    <!--                                 <field name="in_picking_type_id" invisible="1" /> -->
+    <!--                                 <field name="state" invisible="1" /> -->
+    <!--                             </tree> -->
+    <!--                             <form string="Product Request"> -->
+    <!--                                 <div class="oe_title"> -->
+    <!--                                     <h1> -->
+    <!--                                         <field name="product_id" placeholder="Product"/> -->
+    <!--                                     </h1> -->
+    <!--                                 </div> -->
+    <!--                                 <group> -->
+    <!--                                     <group> -->
+    <!--                                         <field name="product_uom" /> -->
+    <!--                                         <field name="route_ids" invisible="1" /> -->
+    <!--                                         <field name="route_id" /> -->
+    <!--                                     </group> -->
+    <!--                                     <group> -->
+    <!--                                         <field name="type" /> -->
+    <!--                                         <field name="product_uom_qty" /> -->
+    <!--                                         <field name="product_uom_qty_current" /> -->
+    <!--                                         <field name="product_uom_qty_residual" /> -->
+    <!--                                     </group> -->
+    <!--                                 </group> -->
+    <!--                             </form> -->
+    <!--                         </field> -->
+    <!--                     </page> -->
+    <!--                 </notebook> -->
+    <!--             </sheet> -->
+    <!--             <footer> -->
+    <!--                 <button name="action_confirm" states="draft" -->
+    <!--                         string="Confirm" type="object" -->
+    <!--                         class="oe_highlight" /> -->
+    <!--             </footer> -->
+    <!--         </form> -->
+    <!--     </field> -->
+    <!-- </record> -->
+
+    <!-- stock.product.request.line tree view -->
+    <record id="view_stock_product_request_line_tree" model="ir.ui.view">
+        <field name="name">stock.product.request.line.view.tree</field>
+        <field name="model">stock.product.request.line</field>
+        <field name="arch" type="xml">
+            <tree string="Request Product Detail" editable="bottom">
+                <field name="company_ids" invisible="1" />
+                <field name="company_id" invisible="1" />
+                <field name="product_id"
+                       domain="[('type', 'in', ['consu', 'product'])]"
+                       options="{'no_open': True, 'no_quick_create':True,'no_create_edit':True}"/>
+                <field name="route_ids"
+                       widget="many2many_tags"
+                       invisible="1" />
+                <field name="route_id"
+                       options="{'no_open': True, 'no_quick_create':True,'no_create_edit':True}"/>
+                <field name="product_uom_qty" sum="total" />
+                <field name="product_uom_qty_current" />
+                <field name="product_uom_qty_residual" />
+                <field name="product_uom"
+                       options="{'no_open': True, 'no_quick_create':True,'no_create_edit':True}" />
+                <field name="expected_date"/>
+                <field name="warehouse_id" invisible="1" />
+                <field name="type" invisible="1" />
+                <field name="location_id" invisible="1" />
+                <field name="location_src_id" invisible="1" />
+                <field name="location_dest_id" invisible="1" />
+                <field name="location_trans_id" invisible="1" />
+                <field name="out_picking_type_id" invisible="1" />
+                <field name="in_picking_type_id" invisible="1" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- stock.product.request.line search view -->
+    <record id="view_stock_product_request_line_search" model="ir.ui.view">
+        <field name="name">stock.product.request.line.view.search</field>
+        <field name="model">stock.product.request</field>
+        <field name="arch" type="xml">
+            <search string="Product Request">
+                <field name="product_id" />
+                <field name="route_id" />
+            </search>
+        </field>
+    </record>
+
+    <!-- stock.product.request.line form view -->
+    <record id="view_stock_product_request_line_form" model="ir.ui.view">
+        <field name="name">stock.product.request.line.view.form</field>
+        <field name="model">stock.product.request.line</field>
+        <field name="arch" type="xml">
+            <form string="Request Product">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="product_id" placeholder="Product"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="route_ids" invisible="1" />
+                            <field name="route_id" />
+                            <label for="product_uom" string="Quantity" />
+                            <div>
+                                <field name="product_uom_qty" class="eo_inline"/> -
+                                <field name="product_uom" class="eo_inline" />
+                            </div>
+                            <field name="product_uom_qty_current" />
+                            <field name="product_uom_qty_residual" />
+                        </group>
+                        <group>
+                            <field name="type" />
+                            <field name="expected_date"/>
+                            <field name="warehouse_id" invisible="1" />
+                            <field name="location_id" invisible="1" />
+                            <field name="location_src_id" invisible="1" />
+                            <field name="location_dest_id" invisible="1" />
+                            <field name="location_trans_id" invisible="1" />
+                            <field name="out_picking_type_id" invisible="1" />
+                            <field name="in_picking_type_id" invisible="1" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- for button -->
+    <record id="action_stock_request_product_line" model="ir.actions.act_window">
+        <field name="name">Request Product</field>
+        <field name="res_model">stock.product.request.line</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <!-- stock.picking tree inherit view -->
+    <record id="view_stock_picking_tree_inherit" model="ir.ui.view">
+        <field name="name">stock.picking.view.tree.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="route_request" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- stock.picking form inherit view -->
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">view.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_type_id']" position="after">
+                <field name="route_request"
+                       readonly="1"
+                       attrs="{'invisible': [('route_request', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

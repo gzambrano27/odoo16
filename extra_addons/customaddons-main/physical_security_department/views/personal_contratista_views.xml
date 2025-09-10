@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista Árbol para Personal Contratista -->
+    <record id="view_personal_contratista_tree" model="ir.ui.view">
+        <field name="name">personal.contratista.tree</field>
+        <field name="model">physical_security.personal_contratista</field>
+        <field name="arch" type="xml">
+            <tree string="Personal Contratista">
+                <field name="cedula"/>
+                <field name="apellidos"/>
+                <field name="nombres"/>
+                <field name="cargo"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Formulario para Personal Contratista -->
+    <record id="view_personal_contratista_form" model="ir.ui.view">
+        <field name="name">personal.contratista.form</field>
+        <field name="model">physical_security.personal_contratista</field>
+        <field name="arch" type="xml">
+            <form string="Personal Contratista">
+                <sheet>
+                    <group>
+                        <field name="cedula"/>
+                        <field name="apellidos"/>
+                        <field name="nombres"/>
+                        <field name="cargo"/>
+                        <field name="enlace_documento"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="message_ids" colspan="4" nolabel="1" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para Personal Contratista -->
+    <record id="action_personal_contratista" model="ir.actions.act_window">
+        <field name="name">Personal Contratista</field>
+        <field name="res_model">physical_security.personal_contratista</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_personal_contratista_tree"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+	
+		<record
+			id="l10n_ec_account_report_reports_view_form"
+			model="ir.ui.view">
+			<field name="name">l10n_ec.account.report.reports.form</field>
+			<field name="model">l10n_ec.account.report</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+					
+					<field name="company_ids" required="1"  widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"/>
+                              
+             <field name="type_report"  required="1" readonly="1"/>
+                 <field name="range_days"  attrs="{'invisible':  [('type_report','not in',('vencidos_pagar','flujo_caja'))],'required':  [('type_report','in',('vencidos_pagar','flujo_caja'))]}"  />
+						 <field name="periods" attrs="{'invisible':  [('type_report','!=','vencidos_pagar')],'required':  [('type_report','=','vencidos_pagar')]}"/>
+
+					<field name="type_view_balance"  widget="radio" attrs="{'invisible':  [('type_report','not in',('pagos_anticipados',))]}"/>
+						<field name="date_from" placeholder="FECHA DE INICIO" attrs="{'invisible':  [('type_report','not in',('pagos_anticipados','flujo_caja','cobros_anticipados'))],'required':  [('type_report','in',('flujo_caja'))]}"/>
+						<field name="date_to"  placeholder="FECHA DE FIN"  attrs="{'invisible':  [('type_report','not in',('pagos_anticipados','flujo_caja','cobros_anticipados'))],'required':  [('type_report','in',('flujo_caja'))]}"/>
+
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+							/>
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record
+			id="l10n_ec_account_report_payments_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Vencidos por Pagar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n_ec.account.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_account_report_reports_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'vencidos_pagar','update_table':False,'pass_validate':True,'only_update':False}</field>
+			<field name="target">new</field>
+			
+		</record>
+
+		<record
+			id="l10n_ec_account_report_reports_cxp_view_form"
+			model="ir.ui.view">
+			<field name="name">l10n_ec.account.report.cxp.reports.form</field>
+			<field name="model">l10n_ec.account.report</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes">
+					<header>
+
+					</header>
+					<group>
+
+					<field name="company_ids" required="1"  widget="many2many_tags"
+                               options="{'no_open': True, 'no_create': True}"/>
+
+             <field name="type_report"  readonly="1" force_save="1"/>
+ 						</group>
+					<newline/>
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+							/>
+						<button special="cancel" name="cancel" string="Salir"
+							type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record
+			id="l10n_ec_account_report_payments_cxp_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Cuentas por Pagar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n_ec.account.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_account_report_reports_cxp_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'cuentas_pagar','update_table':False,'pass_validate':True,'only_update':False}</field>
+			<field name="target">new</field>
+
+		</record>
+
+
+		<record
+			id="l10n_ec_account_report_payments_prepayment_supplier_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Pagos Anticipados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n_ec.account.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_account_report_reports_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'pagos_anticipados','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+		<record
+			id="l10n_ec_account_report_payments_cobros_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Cobros Anticipados</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n_ec.account.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_account_report_reports_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'cobros_anticipados','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+
+		<record
+			id="l10n_ec_account_report_flujo_caja_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Flujo de Caja</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n_ec.account.report</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_account_report_reports_view_form" />
+			<field name="context">{'is_report':True,'default_type_report':'flujo_caja','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+		
+	</data>
+</odoo>

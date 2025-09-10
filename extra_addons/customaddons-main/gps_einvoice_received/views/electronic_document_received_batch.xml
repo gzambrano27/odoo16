@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+
+	<record id="electronic_document_received_batch_view_filter"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.batch.filter</field>
+		<field name="model">electronic.document.received.batch</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+			<search string="Lote de Documentos Recibidos">
+				<group expand="0" string="Agrupar por...">
+				</group>
+				<field name="company_id" />
+				<field name="name" />
+				<field name="date" />
+				<field name="year" />
+				<field name="month_id" />
+				
+			</search>
+		</field>
+	</record>
+
+
+ 
+
+
+	<record id="electronic_document_received_batch_view_tree"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.batch.tree</field>
+		<field name="model">electronic.document.received.batch</field>
+		<field name="type">tree</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<tree string="Lote de Documentos Recibidos" decoration-info="state=='draft'" decoration-success="state=='ended'"
+decoration-danger="state=='started'" decoration-warning="state=='in_progress'" decoration-muted="state=='annulled'">
+				<field name="company_id" />
+				<field name="name" />
+				<field name="date" />
+				<field name="year" />
+				<field name="month_id" />
+				<field name="comments" />
+<field name="state" />
+ 
+ 
+ 
+			</tree>
+		</field>
+	</record>
+
+	<record id="electronic_document_received_batch_view_form"
+		model="ir.ui.view">
+		<field name="name">electronic.document.received.batch.form</field>
+		<field name="model">electronic.document.received.batch</field>
+		<field name="type">form</field>
+		<field eval="8" name="priority" />
+		<field name="arch" type="xml">
+			<form string="Lote de Documentos Recibidos" version="16.0">
+				<header>
+	<button string="Procesar" icon="fa-cogs" type="object" name="process_file"
+	attrs="{'invisible':[('state','!=','draft')]}"
+	 />
+	
+	<button string="Recuperar Pendientes" icon="fa-download" type="object" name="action_recover" 
+	attrs="{'invisible':[('state','in',('draft','ended','annulled'))]}"
+	/>
+	
+	<button string="Actualizar Documentos" icon="fa-refresh" type="object" name="update_documents"
+	attrs="{'invisible':[('has_pendings','!=',True)]}"
+	 />
+	 
+	<field name="state" widget="statusbar" />
+				</header>
+				 <sheet>
+				<group colspan="4" cols="2">
+					<group>
+						<field name="company_id" colspan="2"
+							options="{'no_create':True,'no_open':True,'no_edit':True}"
+							required="1" 
+							attrs="{'readonly':[('state','!=','draft')]}"
+							/>
+						<field name="name" required="1" colspan="2" attrs="{'readonly':[('state','!=','draft')]}" />
+
+<field name="file" colspan="2" filename="file_name"
+								 required="1"  attrs="{'readonly':[('state','!=','draft')]}" />
+
+					</group>
+					<group>
+						<field name="date" readonly="1" colspan="2"  attrs="{'readonly':[('state','!=','draft')]}" />	
+						<label for="year" string="Periodo"/>
+						<div>
+							<field name="year" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" required="1"/>
+							-
+							<field name="month_id" attrs="{'readonly':[('state','!=','draft')]}" 
+							style="width:50%"
+							options="{'no_create':True,'no_open':True,'no_edit':True}"
+							/>
+						</div>						
+						<field name="file_name" invisible="1" colspan="2"  />
+						<field name="comments" required="1" colspan="2"  attrs="{'readonly':[('state','!=','draft')]}"/>
+						<field name="has_pendings" invisible="1" />
+					</group>
+				</group>
+				<newline />
+				<notebook>
+				<page string="Documentos">
+				<field name="document_ids" readonly="1"/>
+				</page>
+				<page string="Historial">
+						<group>
+							<group>
+								<field name="create_uid"
+									options="{'no_create':True,'no_open':True}" colspan="2"
+									readonly="1" string="Usuario Creación" />
+								<field name="create_date" colspan="2" readonly="1"
+									string="Fecha de  Creación" />
+							</group>
+							<group>
+								<field name="write_uid"
+									options="{'no_create':True,'no_open':True}" colspan="2"
+									readonly="1" string="Ult. Usuario Actualización" />
+								<field name="write_date" colspan="2" readonly="1"
+									string="Ult. Fecha de Actualización" />
+								
+							</group>
+						</group>
+					</page>
+				</notebook>
+				 </sheet>
+				
+
+			</form>
+		</field>
+	</record>
+
+
+	<record id="electronic_document_received_batch_view_action"
+		model="ir.actions.act_window">
+		<field name="name">Lote de Documentos Recibidos</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">electronic.document.received.batch</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{}</field>
+		<field name="view_id"
+			ref="electronic_document_received_batch_view_tree" />
+		<field name="search_view_id"
+			ref="electronic_document_received_batch_view_filter" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_batch_view_tree_action">
+		<field name="sequence" eval="1" />
+		<field name="view_mode">tree</field>
+		<field name="view_id"
+			ref="electronic_document_received_batch_view_tree" />
+		<field name="act_window_id"
+			ref="electronic_document_received_batch_view_action" />
+	</record>
+
+	<record model="ir.actions.act_window.view"
+		id="electronic_document_received_batch_view_form_action">
+		<field name="sequence" eval="2" />
+		<field name="view_mode">form</field>
+		<field name="view_id"
+			ref="electronic_document_received_batch_view_form" />
+		<field name="act_window_id"
+			ref="electronic_document_received_batch_view_action" />
+	</record>
+
+
+
+
+
+
+
+</odoo>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="odc_template_form" model="ir.ui.view">
+            <field name="name">odc_template_form</field>
+            <field name="model">odc.template</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_download_odc_template" type="object"
+                                class="btn-primary btn-warning" icon="fa-download"
+                                string="Download ODC"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="model" readonly="context.get('default_model', False)" force_save="1"/>
+                            </group>
+                            <group>
+                                <field name="domain"/>
+                            </group>
+                        </group>
+                        <group>
+                            <label for="web_data_url"/>
+                            <div class="o_row">
+                                <span attrs="{'invisible':[('web_data_url', '=', False)]}">
+                                    <field name="web_data_url" widget="url"/>
+                                </span>
+                                <span attrs="{'invisible':[('web_data_url', '!=', False)]}">
+                                    Will be created after saving the template
+                                </span>
+                            </div>
+                        </group>
+                        <notebook>
+                            <page name="fields" string="Fields">
+                                <field name="field_ids" nolabel="1" context="{'default_model': model}">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="model" invisible="True"/>
+                                        <field name="field_id"/>
+                                        <field name="name"/>
+                                        <field name="field_name"/>
+                                        <field name="related_property"/>
+                                        <field name="export_type"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="model" invisible="True"/>
+                                            <field name="field_id"/>
+                                            <field name="name"/>
+                                            <field name="field_name"/>
+                                            <field name="related_property"/>
+                                            <field name="export_type"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group groups="base.group_no_one">
+                            <field name="user_id"/>
+                            <field name="access_token" force_save="1"/>
+                            <field name="date_last_use"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="odc_template_tree" model="ir.ui.view">
+            <field name="name">odc_template_tree</field>
+            <field name="model">odc.template</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="model"/>
+                    <field name="user_id"/>
+                    <field name="date_last_use"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="odc_template_act_window" model="ir.actions.act_window">
+            <field name="name">ODC Templates</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">odc.template</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="odc_template_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No template found. Let's create one!
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+                id="odc_template_menuitem"
+                name="ODC Templates"
+                action="odc_template_act_window"
+                parent="base.menu_custom"
+                sequence="20"
+        />
+
+        <record id="odc_template_modal_window" model="ir.actions.act_window">
+            <field name="name">ODC Template</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">odc.template</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

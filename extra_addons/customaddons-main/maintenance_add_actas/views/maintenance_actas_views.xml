@@ -1,0 +1,75 @@
+<odoo>
+    <record id="action_maintenance_actas" model="ir.actions.act_window">
+        <field name="name">Actas</field>
+        <field name="res_model">maintenance.acta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea y administra tus actas de entrega y recepción aquí.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vista formulario de Actas -->
+    <record id="view_form_maintenance_acta" model="ir.ui.view">
+        <field name="name">maintenance.acta.form</field>
+        <field name="model">maintenance.acta</field>
+        <field name="arch" type="xml">
+            <form string="Acta">
+                <header>
+                    <button name="action_set_draft" type="object" string="Marcar como borrador" states="open,closed,damaged" class="btn-primary"/>
+                    <button name="action_open" type="object" string="Marcar abierto" attrs="{'invisible': ['|',('tipo', '!=', 'entrega'),('state', '!=', 'draft')]}"/>
+                    <button name="action_close" type="object" string="Marcar cerrado" states="draft,open"/>
+                    <button name="action_damage" type="object" string="Marcar dañado" attrs="{'invisible': ['|',('tipo', '!=', 'recepcion'),('state', '!=', 'draft')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,closed,damaged"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="codigo" readonly="1" string="Código de Acta"/>
+                        <field name="tipo" widget="radio" required="1" attrs="{'readonly': [('state', 'in', ['open', 'closed', 'damaged'])]}"/>
+                        <field name="fecha" required="1"/>
+                        <field name="equipo_recibe" required="1"/>
+                    </group>
+                    <group attrs="{'invisible': [('tipo', '=', 'recepcion')]}">
+                        <field name="empleado_recibe" attrs="{'required': [('empleado_recibe', '!=', False)]}"/>
+                        <field name="persona_entrega" attrs="{'required': [('persona_entrega', '!=', False)]}"/>
+                        <field name="observacion" attrs="{'required': [('observacion', '!=', False)]}"/>
+                        <field name="ubicacion" attrs="{'required': [('ubicacion', '!=', False)]}"/>
+                    </group>
+                    <group attrs="{'invisible': [('tipo', '=', 'entrega')]}">
+                        <field name="persona_entrega" attrs="{'required': [('persona_entrega', '!=', False)]}"/>
+                        <field name="empleado_recibe" attrs="{'required': [('empleado_recibe', '!=', False)]}"/>
+                        <field name="observacion" attrs="{'required': [('observacion', '!=', False)]}"/>
+                        <field name="ubicacion" attrs="{'required': [('ubicacion', '!=', False)]}"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista árbol de Actas -->
+    <record id="view_tree_maintenance_acta" model="ir.ui.view">
+        <field name="name">maintenance.acta.tree</field>
+        <field name="model">maintenance.acta</field>
+        <field name="arch" type="xml">
+            <tree string="Actas">
+                <field name="codigo" string="Código de Acta"/>
+                <field name="tipo" optional="show"/>
+                <field name="fecha"/>
+                <field name="empleado_recibe"/>
+                <field name="persona_entrega"/>
+                <field name="equipo_recibe"/>
+                <field name="state" widget="badge" string="Estado" optional="show"
+                       decoration-muted="state == 'draft'"
+                       decoration-success="state == 'open'"
+                       decoration-warning="state == 'closed'"
+                       decoration-danger="state == 'damaged'"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

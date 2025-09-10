@@ -1,0 +1,289 @@
+<odoo>
+
+    <record id="document_type_remission_06" model="l10n_latam.document.type">
+        <field name="name">Guia de Remision</field>
+        <field name="code">06</field>
+        <field name="doc_code_prefix">GR</field>
+        <field name="country_id" ref="base.ec"/>
+        <!-- <field name="l10n_ec_require_payment_term" eval="False"/> -->
+        <field name="internal_type">remission</field>
+        <field name="report_name">Guia de Remision</field>
+        <field name="l10n_ec_check_format" eval="True"/>
+    </record>
+
+    <!-- <record id="remission_journal" model="account.journal">
+        <field name="name">Remission Journal</field>
+        <field name="code">REM</field>
+        <field name="type">sale</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="l10n_latam_use_documents" eval="True"/>
+        <field name="l10n_latam_document_type_id" ref="l10n_ec.document_type_remission"/>
+    </record> -->
+
+    <record id="std_referral_guide_line_view_form" model="ir.ui.view">
+            <field name="name">std.referral.guide.line.form</field>
+            <field name="model">l10n_ec.guide.remission.line</field>
+            <field name="type">form</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Detalle de remisión">
+                    
+                    <group>
+                    	<field name="product_id" domain="[('type','!=','service')]" options='{"limit": 10, "no_create": True, "no_open": True, "no_create_edit": True}'/>
+                        <field name="name" /> 
+                        <field name="code" /> 
+                        <field name="qty" />
+                        <field name="details" />        
+                    </group>
+                    
+                </form>
+            </field>
+        </record>
+
+        <record id="std_referral_guide_line_view_tree" model="ir.ui.view">
+            <field name="name">std.referral.guide.line.tree</field>
+            <field name="model">l10n_ec.guide.remission.line</field>
+            <field name="type">tree</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Detalle de remisión">
+						<field name="product_id" domain="[('type','!=','service')]" options='{"limit": 10, "no_create": True, "no_create_edit": True}'/>
+                        <field name="name" /> 
+                        <field name="code" /> 
+                        <field name="qty" />
+                        <field name="details" /> 
+                </tree>
+            </field>
+        </record>
+
+        <record id="std_referral_guide_line_view_filter" model="ir.ui.view">
+            <field name="name">std.referral.guide.line.view.filter</field>
+            <field name="model">l10n_ec.guide.remission.line</field>
+            <field name="type">search</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Detalle de remisión">
+                    <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record id="std_referral_guide_line_view_action" model="ir.actions.act_window">
+            <field name="name">Detalle de remisión</field>
+            <field name="res_model">l10n_ec.guide.remission.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('std_referral_guide_line_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('std_referral_guide_line_view_form')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new record.
+                </p>
+            </field>
+        </record>
+
+    <!-- Vista de Formulario para la Guía de Remisión -->
+    
+    <record id="std_referral_guide_view_form" model="ir.ui.view">
+        <field name="name">l10n_ec.guide.remission.form</field>
+        <field name="model">l10n_ec.guide.remission</field>
+        <field name="type">form</field>
+        <field eval="2" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Guia de remisión">
+
+                <header>
+                    <button name="action_confirm" type="object" string="Confirmar"
+                            class="oe_highlight" states="draft"/>
+
+                    <button name="action_draft" type="object" string="Preliminar"
+                            class="oe_highlight" states="cancel" invisible="1"/>
+
+                    <button name="action_cancel" type="object" string="Cancelar"
+                            class="oe_highlight" states="draft,done"/>
+
+<button string="Enviar Sri" icon="fa-cogs" type="object" name="send_sri" 
+attrs="{'invisible':[('to_send_state','!=',True)]}"
+/>
+                    <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,done,cancel"/>
+
+                </header>
+
+                <sheet>
+                    <group name="grp_dtl1">
+                        <div class="oe_left" style="width: 500px;">
+                            <div class="oe_title" style="width: 390px;">
+                                <label class="" for="name"/>
+                                <h1>
+                                    <field name="name" class="oe_inline" readonly="True"
+                                            attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                                </h1>
+                            </div>
+                        </div>
+                    </group>
+
+                    <group name="grp_main" col="2" colspan="4">
+
+                        <group name="grp_dtl1"> 
+
+                            <field name="company_id" required="1" olspan="2" options='{"limit": 10, "no_create": True, "no_create_edit": True, "no_open": true}'
+                            attrs="{'readonly':[('state','!=','draft')]}"
+                            />
+                            
+                            <field name="journal_id"   attrs="{'readonly':[('state','not in',['draft'])]}"  colspan="2" options='{"limit": 10, "no_create": True, "no_create_edit": True, "no_open": true}'/>
+                            <field name="l10n_latam_document_type_id"    attrs="{'readonly':[('state','not in',['draft'])]}"
+                                colspan="2" options='{"limit": 10, "no_create": True, "no_create_edit": True, "no_open": true}'
+                                domain="[('internal_type','=','remission')]"
+                                />
+                            <field name="number" colspan="2"  invisible="1"/>
+                            <field name="transporte_externo" colspan="2"  />
+                            <field name="tipo_identificacion_transportista" colspan="2"  attrs="{'required':[('transporte_externo','!=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','!=',True)]}"/>
+                            <field name="ruc_transportista" colspan="2"  attrs="{'required':[('transporte_externo','!=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','!=',True)]}"/>
+                            <field name="razon_social_transportista" colspan="2"  attrs="{'required':[('transporte_externo','!=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','!=',True)]}"/>
+                            <field name="placa_externo" colspan="2"  attrs="{'required':[('transporte_externo','!=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','!=',True)]}"/>
+                            <field name="partner_carrier_id"   attrs="{'required':[('transporte_externo','=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','=',True)]}" 
+                                colspan="2"  options='{"limit": 10, "no_create": True, "no_create_edit": True, "no_open": True}'
+                                context="{'default_carrier_partner':True}"  domain="[('country_id','!=',False)]" />
+
+                            <field name="vehicle_id" colspan="2"  attrs="{'required':[('transporte_externo','=',False)],'readonly':[('state','not in',['draft'])],'invisible':[('transporte_externo','=',True)]}"
+                                context="{'default_driver_id':partner_carrier_id}"
+                                    domain="[('driver_id','=',partner_carrier_id)]"
+                                    options='{"limit": 10, "no_create": True, "no_create_edit": True,"no_open":true}'/>
+                            <field name="reason_document_id" colspan="2"  
+                                attrs="{'readonly':[('state','not in',['draft'])]}"
+                                required="1" options='{"limit": 10, "no_create_edit": True, "no_create": True}'/>
+                                    <!-- <field name="journal_doc_id" invisible="1"/>  -->
+                            <field name="sequence" invisible="1"/> 
+                            
+                            <field name="to_send_state"  invisible="1"/> 
+                        </group>
+                        <group name="grp_dtl2">
+
+                            <field name="electronic" colspan="2"  invisible="1"/>
+
+                            <field name="date" colspan="2"  required="1"   attrs="{'readonly':[('state','not in',['draft'])]}" />
+                            
+                            <field name="date_initial" colspan="2"    attrs="{'readonly':[('state','not in',['draft'])]}" required="1"/>
+                            <field name="date_end" colspan="2"   attrs="{'readonly':[('state','not in',['draft'])]}"  required="1"/>
+
+                            <field name="address_destination"  attrs="{'readonly':[('state','not in',['draft'])]}"  colspan="2"  required="1"/>
+<field name="address_origin" colspan="2"  required="1"   attrs="{'readonly':[('state','not in',['draft'])]}" />
+                            <field name="reference" colspan="2"  attrs="{'required':[('invoice_reference','=',False)]}"/>
+
+                            <field name="partner_id"  colspan="2" options='{"limit": 10, "no_create": True, "no_create_edit": True, "no_open":true}'
+                            domain="[('country_id','!=',False)]" 
+                                attrs="{'readonly':[('state','not in',['draft'])]}"
+                            />
+                            <!-- <field name="invoice_id" colspan="2"  domain="[('move_type','=','out_invoice'),('partner_id','=',partner_id),('state','=','posted')]"
+                                    options='{"limit": 10, "create": false, "create_edit": true}' 
+                                        attrs="{'readonly':[('state','not in',['draft'])]}"
+                                        /> -->
+                            <field name="invoice_id" colspan="2"  domain="[('move_type','=','out_invoice'),('partner_id','=',partner_id),('state','=','posted')]"
+                                    options='{"limit": 10, "no_create": True, "no_create_edit": True}'
+                                    attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('reason_document_id', '=', 1)],'invisible': [('reason_document_id', '!=', 1)]}"
+                            />
+                            <!-- attrs="{'readonly':[('state','not in',['draft'])],'required': [('reason_document_id', '=', 'VENTA')], 'invisible': [('reason_document_id', '!=', 'VENTA')]}" -->
+                            <field name="invoice_reference" invisible="1"/>
+
+                <field name="l10n_ec_authorization_number" readonly="1"
+                attrs="{'readonly':[('state','not in',['draft'])],'invisible':['|','|',('l10n_ec_authorization_number','=',None),('l10n_ec_authorization_number','=',''),('l10n_ec_authorization_number','=',False)]}"
+                />
+                <field name="l10n_ec_authorization_date" readonly="1" 
+                attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('l10n_ec_authorization_date','=',None)]}"
+                />
+                
+                        </group>
+                    </group>
+
+                    <notebook colspan="4">
+
+                        <page string="Detalle">
+
+                            <field name="line_guide_ids" nolabel="1" colspan="4"    attrs="{'readonly':[('state','not in',['draft'])]}" 
+                                       context="{'tree_view_ref':'l10_ec_guide_remission.view_std_referral_guide_line_tree',
+                    	'form_view_ref':'l10_ec_guide_remission.view_std_referral_guide_line_form'}"/>
+
+                        </page>
+                        <page string="Otra Información">
+                            <group>
+                                <group>
+                                    <field name="user_id"   attrs="{'readonly':[('state','not in',['draft'])]}" options="{'no_open': True, 'no_create':True}"/>
+                                    <field name="documento_requisicion" options="{'no_open': True, 'no_create':True}"/>
+                                    <field name="cuenta_analitica_id" options="{'no_open': True, 'no_create':True}"/>
+                                </group>
+                                <group>
+                                    <field name="type" invisible="1"/>
+                                </group>
+                            </group>
+
+
+                        </page>
+
+                    </notebook>
+
+                    <field name="comment" nolabel="1" placeholder="Notas"/>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="std_referral_guide_view_tree" model="ir.ui.view">
+        <field name="name">l10n_ec.guide.remission.tree</field>
+        <field name="model">l10n_ec.guide.remission</field>
+        <field name="type">tree</field>
+        <field eval="2" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Guia de remisión" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" >
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="address_origin"/>
+                <field name="address_destination"/>
+                    <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'" optional="show" on_change="1" modifiers="{&quot;readonly&quot;: true, &quot;required&quot;: true}"/>
+                
+                <field name="edi_state" optional="hide" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="std_referral_guide_view_filter" model="ir.ui.view">
+        <field name="name">l10n_ec.guide.remission.filter</field>
+        <field name="model">l10n_ec.guide.remission</field>
+        <field name="type">search</field>
+        <field eval="2" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Guia de remisión">
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <separator/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_guide_remission" model="ir.actions.act_window">
+        <field name="name">Guia de remisión</field>
+        <field name="res_model">l10n_ec.guide.remission</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('std_referral_guide_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('std_referral_guide_view_form')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new record.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Menú de Guía de Remisión bajo el menú de Inventario -->
+    <menuitem id="menu_guide_remission_root" name="Guide Remissions"
+              parent="stock.menu_stock_root" 
+              action="action_guide_remission" sequence="30"/>
+
+    
+</odoo>

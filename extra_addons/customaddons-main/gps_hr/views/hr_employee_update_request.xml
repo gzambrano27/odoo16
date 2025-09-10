@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Vista tipo árbol -->
+    <record id="view_hr_employee_update_request_tree" model="ir.ui.view">
+        <field name="name">hr.employee.update.request.tree</field>
+        <field name="model">hr.employee.update.request</field>
+        <field name="arch" type="xml">
+            <tree string="Solicitudes de Actualización" create="false" delete="false"
+            decoration-info="state=='draft'"
+                   decoration-muted="state=='annulled'"
+
+                  decoration-danger="state=='sended'"
+
+                  decoration-success="state=='updated'"
+
+            >
+                <field name="id" optional="hide"/>
+                <field name="send_date" />
+                <field name="deadline_date" />
+                <field name="employee_id"/>
+                <field name="private_email"/>
+                <field name="phone"/>
+                <field name="state"/>
+                <field name="create_date" string="Creado en"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista tipo formulario -->
+    <record id="view_hr_employee_update_request_form" model="ir.ui.view">
+        <field name="name">hr.employee.update.request.form</field>
+        <field name="model">hr.employee.update.request</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de Actualización" create="false" delete="false" >
+                <header>
+
+                    <button name="action_send" type="object" string="Enviar"
+                             icon="fa-rotate-right" groups="gps_hr.group_empleados_usuarios,hr_payroll.group_hr_payroll_manager"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+
+                    />
+
+                    <button name="action_draft" type="object" string="Reversar"
+                             icon="fa-rotate-left" groups="hr_payroll.group_hr_payroll_manager"
+                            attrs="{'invisible': [('state', '!=', 'sended')]}"
+
+                    />
+                    <button name="action_update" type="object" string="Actualizar"
+                             icon="fa-cogs" groups="hr_payroll.group_hr_payroll_manager"
+                            attrs="{'invisible': [('state', '!=', 'sended')]}"
+
+                    />
+                    <button name="action_annul" type="object" string="Anular"
+                             icon="fa-times" groups="hr_payroll.group_hr_payroll_manager"
+                            attrs="{'invisible': [('state', 'in', ['updated','annulled'])]}"
+
+                    />
+                      <field name="state" readonly="1" widget="statusbar"/>
+                </header>
+                <sheet>
+                     <group>
+                    <group>
+                        <field name="employee_id" readonly="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+
+                         <field name="country_id" readonly="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+                         <field name="l10n_latam_identification_type_id" readonly="1" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+
+                           <field name="identification_id" readonly="1" />
+                        <field name="gender" readonly="1" />
+                        <field name="birthday" readonly="1" />
+
+                    </group>
+
+                    <group string="Datos Privados">
+                        <field name="private_street" attrs="{'readonly': [('state', '!=','draft')]}" />
+                        <field name="private_street2" attrs="{'readonly': [('state', '!=','draft')]}"/>
+                        <field name="phone" attrs="{'readonly': [('state', '!=','draft')]}"/>
+                        <field name="private_email" attrs="{'readonly': [('state', '!=','draft')]}"/>
+                    </group>
+                     </group>
+<newline/>
+                <notebook>
+                	<page string="Educación">
+								<field name="education_ids" nolabel="1" colspan="4" attrs="{'readonly': [('state', '!=','draft')]}">
+										<tree string="Nivel de Educacion" editable="bottom">
+												<field name="title" required="1"/>
+												<field name="institution" required="1"/>
+												<field name="start_date" required="1"/>
+												<field name="status" required="1"/>
+												<field name="end_date"
+												attrs="{'invisible':[('status','!=','graduated')],'required':[('status','=','graduated')]}"
+												/>
+												<field name="level"  required="1"/>
+
+										</tree>
+										<form string="Education Level">
+												<label for="title"/>
+												<h2><field name="title"/></h2>
+												<group col="4">
+														<separator string="Location" colspan="4"/>
+														<field name="institution"/>
+														<field name="country_id" widget="selection"/>
+														<separator string="Period" colspan="4"/>
+														<field name="start_date" colspan="2"/>
+														<field name="end_date" colspan="2"/>
+														<separator string="Info" colspan="4"/>
+														<field name="level"/>
+														<field name="education_area_id" widget="selection" colspan="2"/>
+														<field name="status" required="1"/>
+												</group>
+										</form>
+								</field>
+							</page>
+
+							<page string="Cargas Familiares" name="page_family_burden">
+								<field name="family_burden_ids" nolabel="1" colspan="4" attrs="{'readonly': [('state', '!=','draft')]}">
+										<tree string="family burdens" editable="bottom">
+											<field name="name" required="1" string='Apellidos y Nombres'/>
+												<field name="relationship" required="1"/>
+												<field name="birth_date" required="1"/>
+												<field name="age" string='Edad' readonly="1"/>
+												<field name="bonus" invisible='1'/>
+										</tree>
+								</field>
+							</page>
+
+<page string="Contactos" name="page_contactos">
+								<separator string="Contactos" />
+								<field name="contact_ids" nolabel="1" colspan="4" attrs="{'readonly': [('state', '!=','draft')]}">
+									<tree string="Contactos" editable="bottom">
+										<field name="name_contact" required='1'/>
+										<field name="parentesco" required='1'/>
+										<field name="direccion" required='1'/>
+										<field name="personal_email"/>
+										<field name="emergency_home_phone"/>
+										<field name="emergency_home_mobile" required='1'/>
+									</tree>
+									<form string="Contactos">
+										<group col="4">
+											<field name="name_contact" required='1'/>
+											<field name="parentesco" required='1'/>
+											<field name="direccion" colspan="2" invisible='1'/>
+											<field name="personal_email" colspan="2" invisible='1'/>
+											<field name="home_phone" invisible='1'/>
+											<field name="home_mobile" colspan="2" invisible='1'/>
+											<field name="emergency_home_phone"/>
+											<field name="emergency_home_mobile" required='1'/>
+										</group>
+									</form>
+								</field>
+
+							</page>
+
+                    <page string="Cuentas Bancarias" name="page_cuentas_bancarias">
+
+                        <group> <group>
+<field name="enable_bank_account" colspan="2" readonly="1" />
+                            <field name="bank_id" colspan="2" options="{'no_open': True, 'no_create': True}"
+       attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)]}"
+     />
+
+<field name="bank_type" widget="radio"  colspan="2"
+ attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)]}"/>
+
+<field name="account_number"  colspan="2"
+ attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)]}"/>
+
+<field name="tercero"  colspan="2"
+ attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)]}"/>
+
+<field options="{'no_create': True, 'no_edit': True, 'no_open': True}"  colspan="2"
+       name="l10n_latam_identification_tercero_id" 
+       attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)],'invisible': [  ('tercero', '!=', True)], 'required': [('enable_bank_account', '=', True), ('tercero', '=', True)]}"
+       />
+
+<field name="identificacion_tercero" colspan="2"
+       attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)],'invisible': [  ('tercero', '!=', True)], 'required': [('enable_bank_account', '=', True), ('tercero', '=', True)]}"/>
+
+<field name="nombre_tercero" colspan="2"
+       attrs="{'readonly':['|',('state', '!=','draft'),('enable_bank_account','!=',True)],'invisible': [  ('tercero', '!=', True)], 'required': [('enable_bank_account', '=', True), ('tercero', '=', True)]}"/>
+
+
+                            
+                        </group>
+
+                          <group>
+                    <field name="certificado_bancario_attch_ids" colspan="2" widget="many2many_binary"
+       options="{'no_create': True}"
+                    attrs="{'readonly':[('enable_bank_account','!=',True)]}"
+                    />
+                          </group>
+                          </group>
+                    </page>
+
+                </notebook>
+                         </sheet>
+       </form>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda -->
+    <record id="view_hr_employee_update_request_search" model="ir.ui.view">
+        <field name="name">hr.employee.update.request.search</field>
+        <field name="model">hr.employee.update.request</field>
+        <field name="arch" type="xml">
+            <search string="Buscar solicitudes">
+                <field name="employee_id"/>
+                <field name="private_email"/>
+                <filter name="filter_draft" string="Borrador" domain="[('state','=','draft')]" />
+                <filter name="filter_sended" string="Enviado" domain="[('state','=','sended')]" />
+                <filter name="filter_updated" string="Actualizado" domain="[('state','=','updated')]" />
+                <filter name="filter_annulled" string="Anulado" domain="[('state','=','annulled')]" />
+                <group expand="1" string="Agrupar por...">
+                    <filter name="group_by_employee" string="Empleado" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_state" string="Estado" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_hr_employee_update_request" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Actualización</field>
+        <field name="res_model">hr.employee.update.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_hr_employee_update_request_search"/>
+    </record>
+
+    <record id="action_hr_employee_update_request_empl" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Actualización</field>
+        <field name="res_model">hr.employee.update.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'create':False,'delete':False,'edit':True,'only_user':True}</field>
+        <field name="search_view_id" ref="view_hr_employee_update_request_search"/>
+    </record>
+
+
+
+</odoo>

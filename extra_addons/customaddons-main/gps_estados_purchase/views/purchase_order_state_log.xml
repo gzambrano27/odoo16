@@ -1,0 +1,82 @@
+<odoo>
+    <record id="view_purchase_state_log_sync_wizard" model="ir.ui.view">
+        <field name="name">purchase.state.log.sync.wizard.form</field>
+        <field name="model">purchase.state.log.sync.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sincronizar Historial de Estados">
+                <group>
+                    <field name="date"/>
+                    
+                </group>
+                <footer>
+                    <button name="action_sync" type="object" string="Sincronizar" class="btn-primary"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_open_purchase_state_log_sync_wizard"
+                name="Sincronizar Historial de Estados"
+                res_model="purchase.state.log.sync.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem id="menu_purchase_state_log_sync"
+            name="Sincronizar historial de estados"
+            parent="purchase.purchase_report_main"
+            groups="account_payment_purchase.group_analytic_user"
+            action="action_open_purchase_state_log_sync_wizard"/>
+
+    <record id="view_purchase_request_history_tree" model="ir.ui.view">
+        <field name="name">purchase.request.history.view.tree</field>
+        <field name="model">purchase.request.history.view</field>
+        <field name="arch" type="xml">
+            <tree string="Historial de Requisiciones y OC" editable="bottom">
+                <field name="documento_requisicion"/>
+                <field name="fecha_creacion_req"/>
+                <field name="usuario_creacion_req"/>
+                <field name="estado_creacion_req"/>
+                <field name="fecha_envio_aprobacion_req"/>
+                <field name="usuario_envio_aprobacion_req"/>
+                <field name="estado_envio_aprobacion_req"/>
+                <field name="fecha_aprobacion_req"/>
+                <field name="usuario_aprobacion_req"/>
+                <field name="estado_aprobacion_req"/>
+
+                <field name="documento_oc"/>
+                <field name="fecha_creacion_oc"/>
+                <field name="usuario_creacion_oc"/>
+                <field name="estado_creacion_oc"/>
+
+                <field name="fecha_creacion_sdp"/>
+                <field name="usuario_creacion_sdp"/>
+                <field name="estado_creacion_sdp"/>
+
+                <field name="fecha_control_presupuesto"/>
+                <field name="usuario_control_presupuesto"/>
+                <field name="estado_control_presupuesto"/>
+
+                <field name="fecha_envio_aprobacion_oc"/>
+                <field name="usuario_envio_aprobacion_oc"/>
+                <field name="estado_envio_aprobacion_oc"/>
+
+                <field name="fecha_aprobacion_oc"/>
+                <field name="usuario_aprobacion_oc"/>
+                <field name="estado_aprobacion_oc"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_purchase_state_log" model="ir.actions.act_window">
+        <field name="name">Historial de Estados de Compra</field>
+        <field name="res_model">purchase.request.history.view</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="menu_purchase_state_log_root"
+            name="Historial de Estados"
+            parent="purchase.purchase_report_main"
+            groups="account_payment_purchase.group_analytic_user"
+            action="action_purchase_state_log"/>
+</odoo>

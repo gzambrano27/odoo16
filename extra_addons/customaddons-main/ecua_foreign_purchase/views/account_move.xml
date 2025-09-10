@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="invoice_relacionar_importacion_view" model="ir.ui.view">
+            <field name="name">Relacionar.Importacion</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="importation_id" invisible="1"/>
+                    <button name="visualizar_relacionar_importacion" string="Relacionar Importación" type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible':['|', '|', ('state', '=', 'draft'),
+                            ('move_type', 'not in', ('in_receipt', 'in_invoice')),
+                            ('importation_id', '!=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="es_importacion" attrs="{'invisible': [('move_type', '!=', 'in_invoice')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

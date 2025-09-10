@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- Heredando la vista del formulario de inventario -->
+        <record model="ir.ui.view" id="view_inventory_form_inherit">
+            <field name="name">view.inventory.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="groups_id" eval="[(4, ref('stock.group_stock_manager'))]"/>
+            <field name="arch" type="xml">
+                <!-- Insertar botones después del botón de cancelar borrador -->
+                <xpath expr="//button[@name='action_cancel_draft']" position="after">
+                    <button name="%(action_import_inventory)s"
+                            string="Load File"
+                            attrs="{'invisible': ['|', ('state', '!=', 'draft')]}"
+                            class="oe_highlight"
+                            type="action"/>
+                    <button name="process_import_lines"
+                            string="Process File Lines"
+                            attrs="{'invisible': ['|', ('state', 'in', ('draft', 'done'))]}"
+                            class="oe_highlight"
+                            type="object"/>
+                </xpath>
+                <!-- Agregar página de líneas importadas -->
+                <xpath expr="//page[@name='inventory_lines']" position="after">
+                    <page string="Imported Lines" name ='imported_lines'
+                          attrs="{'invisible': ['|', ('state', '=', 'draft')]}">
+                        <field name="processed" invisible="1"/>
+                        <field name="import_lines">
+                            <tree editable="bottom">
+                                <field name="product"/>
+                                <field name="code"/>
+                                <field name="quantity"/>
+                                <field name="location_id"/>
+                                <field name="lot"/>
+                                <field name="fail"/>
+                                <field name="fail_reason"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

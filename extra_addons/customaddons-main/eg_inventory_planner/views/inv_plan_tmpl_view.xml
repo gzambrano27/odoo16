@@ -1,0 +1,92 @@
+<odoo>
+    <record model="ir.ui.view" id="inv_plan_tmpl_tree_view">
+        <field name="name">inv.plan.tmpl.tree.view</field>
+        <field name="model">inv.plan.tmpl</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="generate_report"/>
+                <field name="duration"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inv_plan_tmpl_from_view">
+        <field name="name">inv.plan.tmpl.from.view</field>
+        <field name="model">inv.plan.tmpl</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="auto_generate_inventory_planner" type="object" string="Generate Inventory plan"
+                            class="oe_highlight"/>
+                    <field name="state" widget="statusbar" invisible="1"
+                           statusbar_visible="draft,report_generated,request,approved,confirm,cancel"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="extra_stock_days" required="1"/>
+                            <field name="lead_time"/>
+                            <field name="growth_multiplier"/>
+                            <field name="vendor_selection"/>
+                            <field name="vendor_ids"
+                                   attrs="{'invisible':[('vendor_selection', 'in' ,['cheapest_vendor' ,'quickest_vendor'])]}"
+                                   widget="many2many_tags" options='{"no_create": 1, "no_create_edit": 1}'/>
+                            <field name="generate_report"/>
+                            <field name="velocity_manual"/>
+                            <field name="from_date"
+                                   attrs="{'invisible': [('velocity_manual', '!=', True)],'required': [('velocity_manual', '=',True)]}"/>
+                            <field name="to_date"
+                                   attrs="{'required': [('velocity_manual','=',True)],'invisible': [('velocity_manual','!=',True)]}"/>
+                            <field name="days"
+                                   attrs="{'required': [('velocity_manual','=',True)],'invisible': [('velocity_manual','!=',True)]}"
+                                   readonly="1" force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="categ_ids" widget="many2many_tags"
+                                   options='{"no_create": 1, "no_create_edit": 1}'/>
+                            <field name="sub_categ_ids" widget="many2many_tags"
+                                   options='{"no_create": 1, "no_create_edit": 1}'/>
+                            <field name="warehouse_ids" widget="many2many_tags"
+                                   options='{"no_create": 1, "no_create_edit": 1}'/>
+                            <field name="create_po"/>
+                            <label for="duration" string="Report Generate Interval"
+                                   attrs="{'invisible':[('generate_report', '!=' ,True)]}"/>
+                            <div attrs="{'invisible':[('generate_report', '!=' ,True)]}">
+                                <field name="duration" class="oe_inline"/>
+                                <field name="interval_type" class="oe_inline"/>
+                            </div>
+                            <field name="cron_id" attrs="{'invisible':[('generate_report', '!=' ,True)]}" options='{"no_create": 1, "no_create_edit": 1,"no_open": True}'
+                                   readonly="1"/>
+                            <field name="nextcall" readonly="1" attrs="{'invisible':[('generate_report', '!=' ,True)]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Inventory Plans">
+                            <field name="inv_plan_ids" readonly="1"
+                                   options='{"no_create": 1, "no_create_edit": 1,"no_open": True}'>
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="create_uid"/>
+                                    <field name="po_ids"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_inv_plan_tmpl">
+        <field name="name">Inventory Planner Template</field>
+        <field name="res_model">inv.plan.tmpl</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Inventory Planner Template" action="action_inv_plan_tmpl"
+              id="inv_plan_tmpl" parent="eg_inventory_planner.inv_plan"
+              groups="group_planner_user"/>
+</odoo>

@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+        <record id="view_form_bim_configuracion" model="ir.ui.view">
+            <field name="name">bim.configuracion.form</field>
+            <field name="model">bim.rangos.margen</field>
+            <field name="arch" type="xml">
+            <form string="Margen para APUS">
+                <sheet>
+                    <group>
+                        <group>
+                        <field name="company_id" required="1"/>
+                        <field name="type" required="1"/>
+                        <field name="margin_from" required="1"/>
+                        <field name="margin_to" required="1"/>
+                        </group>
+                    <group>
+                    <field name="color"/>
+                    <field name="action" invisible="1"/>
+                    </group>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record id="view_tree_bim_configuracion" model="ir.ui.view">
+            <field name="name">bim.configuracion.tree</field>
+            <field name="model">bim.rangos.margen</field>
+            <field name="arch" type="xml">
+            <tree string="Margen para APUS">
+            <field name="company_id"/>
+            <field name="type"/>
+            <field name="margin_from"/>
+            <field name="margin_to"/>
+            <field name="color"/>
+            <field name="action" invisible="1"/>
+            </tree>
+            </field>
+        </record>
+        <record id="action_bim_configuracion" model="ir.actions.act_window">
+            <field name="name">Margen para Det APUS</field>
+            <field name="res_model">bim.rangos.margen</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','margen-apu')]</field>
+            <field name="context">{'default_type':'margen-apu'}</field>
+            <field name="view_id" ref="view_tree_bim_configuracion"/>
+        </record>
+
+        <record id="action_bim_configuracion_cab_margen" model="ir.actions.act_window">
+            <field name="name">Margen para Cab APUS</field>
+            <field name="res_model">bim.rangos.margen</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','margen-apu-cab')]</field>
+            <field name="context">{'default_type':'margen-apu-cab'}</field>
+            <field name="view_id" ref="view_tree_bim_configuracion"/>
+        </record>
+        
+    </data>
+</odoo>

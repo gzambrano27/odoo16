@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Definir la categoría propia para el módulo Control de Fallas y Garantías -->
+    <record id="module_category_quality_control_fallas" model="ir.module.category">
+      <field name="name">Control de Fallas y Garantías</field>
+      <field name="sequence">10</field>
+    </record>
+
+    <!-- Grupo Supervisor -->
+    <record id="group_supervisor_quality_control" model="res.groups">
+      <field name="name">Supervisor</field>
+      <field name="category_id" ref="module_category_quality_control_fallas"/>
+    </record>
+
+    <!-- Grupo Revisor -->
+    <record id="group_usuario_quality_control" model="res.groups">
+      <field name="name">Usuario</field>
+      <field name="category_id" ref="module_category_quality_control_fallas"/>
+    </record>
+  </data>
+</odoo>

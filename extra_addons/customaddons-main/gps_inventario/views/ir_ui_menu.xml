@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<menuitem id="inventory_menu_inv_root"
+		name="Inventarios" sequence="54"
+		parent="stock.menu_stock_root"
+	groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+	/>
+	
+	<menuitem id="inventory_document_transference_view_menu"
+		name="Solicitud de Material/Transferencia" sequence="-1"
+		parent="inventory_menu_inv_root"
+		action="inventory_document_transference_view_action"
+	groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+	/>
+		
+		
+ 	<menuitem id="inventory_document_adjust_view_menu"
+		name="Inventario Ciclico" sequence="0"
+		parent="inventory_menu_inv_root"
+		action="inventory_document_adjust_view_action"
+	groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+	/>
+
+
+	<menuitem id="inventory_document_reports_adjust_view_menu"
+		name="Reporte de Ajustes" sequence="9"
+		parent="inventory_menu_inv_root"
+		action="stock_inventory_report_adjust_view_action"
+	groups="gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+	/>
+
+	<!-- Menú en Inventario -->
+    <menuitem id="menu_stock_quant_history" name="Historial de Stock"
+              parent="stock.menu_warehouse_report"
+              action="action_stock_quant_history"
+              sequence="999999998	"/>
+
+	<menuitem id="menu_stock_cost_history" name="Historial de Costos"
+              parent="stock.menu_warehouse_report"
+              action="action_stock_cost_history"
+              sequence="999999999	"/>
+
+	<menuitem id="report_kardex_report_menu"
+		name="Reporte de Kardex" sequence="0"
+		parent="stock.menu_warehouse_report"
+		action="stock_inventory_report_kardex_view_action" />
+
+	<menuitem id="stock_inventory_report_all_movement_menu"
+		name="Reporte de Movimientos de Inventario" sequence="-1"
+		parent="stock.menu_warehouse_report"
+		action="stock_inventory_report_all_movement_view_action" />
+
+	<menuitem id="stock_inventory_report_date_inventory_menu"
+		name="Reporte de Inventario a la fecha" sequence="-2"
+		parent="stock.menu_warehouse_report"
+		action="stock_inventory_report_date_inventory_view_action" />
+
+
+
+	<data noupdate="1">
+        <!-- Categoría: Stock -->
+        <record id="module_category_stock" model="ir.module.category">
+            <field name="name">Inventario</field>
+            <field name="description">Categoría para grupos relacionados con el inventario y devoluciones y costos</field>
+            <field name="sequence">10</field>
+        </record>
+    </data>
+
+
+	<!-- Grupo: Devoluciones -->
+	<record id="group_devoluciones" model="res.groups">
+		<field name="name">Grupo de Devoluciones</field>
+		<field name="category_id" ref="gps_inventario.module_category_stock" /> <!-- Categoría del grupo -->
+	</record>
+
+	<!-- Grupo: Costos -->
+	<record id="group_costos" model="res.groups">
+		<field name="name">Grupo de Costos</field>
+		<field name="category_id" ref="gps_inventario.module_category_stock" /> <!-- Categoría del grupo -->
+	</record>
+
+	<!-- Grupo: Transferencias -->
+	<record id="group_transferencias" model="res.groups">
+		<field name="name">Grupo de Transferencias</field>
+		<field name="category_id" ref="gps_inventario.module_category_stock" /> <!-- Categoría del grupo -->
+	</record>
+	<!-- Grupo: Despachos -->
+	<record id="group_despachos" model="res.groups">
+		<field name="name">Grupo de Despachos</field>
+		<field name="category_id" ref="gps_inventario.module_category_stock" /> <!-- Categoría del grupo -->
+	</record>
+
+	<!-- Permisos del grupo para el modelo stock.picking -->
+	<record id="access_stock_picking_devoluciones" model="ir.model.access">
+		<field name="name">access_stock_picking_devoluciones</field>
+		<field name="model_id" ref="stock.model_stock_picking" />
+		<field name="group_id" ref="gps_inventario.group_devoluciones" />
+		<field name="perm_read" eval="1" />
+		<field name="perm_write" eval="1" />
+		<field name="perm_create" eval="0" />
+		<field name="perm_unlink" eval="0" />
+	</record>
+
+	<!-- Permisos del grupo para el modelo product.product
+	<record id="access_product_product_costos" model="ir.model.access">
+		<field name="name">access_product_product_costos</field>
+		<field name="model_id" ref="stock.model_stock_picking" />
+		<field name="group_id" ref="gps_inventario.group_devoluciones" />
+		<field name="perm_read" eval="1" />
+		<field name="perm_write" eval="1" />
+		<field name="perm_create" eval="0" />
+		<field name="perm_unlink" eval="0" />
+	</record>
+	-->
+</odoo>

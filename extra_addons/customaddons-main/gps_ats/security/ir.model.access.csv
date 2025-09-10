@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+l10n_ec_ats_document1,l10n_ec_ats_document1,gps_ats.model_l10n_ec_ats,base.group_system,1,1,1,1
+l10n_ec_ats_document2,l10n_ec_ats_document2,gps_ats.model_l10n_ec_ats,account.group_account_invoice,1,1,1,1
+l10n_ec_ats_document3,l10n_ec_ats_document3,gps_ats.model_l10n_ec_ats,account.group_account_manager,1,1,1,1
+l10n_ec_ats_document4,l10n_ec_ats_document4,gps_ats.model_l10n_ec_ats,account.group_account_invoice,1,1,1,1

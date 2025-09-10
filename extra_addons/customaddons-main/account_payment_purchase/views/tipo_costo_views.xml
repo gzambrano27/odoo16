@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+   <!-- Views for clase  de importacion Tree View -->
+
+    <record model="ir.ui.view" id="view_tipo_costo_tree">
+        <field name="name">tipo.costo.tree</field>
+        <field name="model">tipo.costo</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <tree string="tipocosto">
+                <field name="code" string="Codigo"/>
+                <field name="name" string="Descripcion"/>
+                <field name="estado" string="Estado"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_tipo_costo_form">
+        <field name="name">tipo.costo.form</field>
+        <field name="model">tipo.costo</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <form string="zona">
+	            <separator string="Tipo Costo" />
+	            	<group>
+           	            <group>
+                           <field name="code" string="Codigo"/>
+                           <field name="estado" string="Estado"  style="width: 20%%"/>
+                        </group>
+		                <group>
+	                    	<field name="name" string="Descripcion"/>
+	                    </group>
+	                </group>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_tipo_costo_form" model="ir.actions.act_window">
+        <field name="name">Tipo Costo</field>
+        <field name="res_model">tipo.costo</field>
+        <field name="view_mode">tree,form</field>       
+   </record>
+   
+   <menuitem id="menu_action_tipo_costo" action="action_tipo_costo_form" parent="account.menu_analytic_accounting"/>
+
+</data>
+</odoo>

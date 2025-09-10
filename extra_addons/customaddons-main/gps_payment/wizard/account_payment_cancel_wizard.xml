@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+    <!-- Vista del wizard -->
+    <record id="view_account_payment_cancel_wizard" model="ir.ui.view">
+        <field name="name">account.payment.cancel.wizard.form</field>
+        <field name="model">account.payment.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Anular Pago">
+                <group>
+                    <group>
+                         <field name="date" required="1" colspan="2"/>
+                    <field name="comments" required="1" colspan="2"/>
+                    <field name="payment_id" invisible="1" colspan="2"/>
+                    </group>
+                     <group>
+                          <field invisible="1"  name="full_reversed" />
+                          <field readonly="1" force_save="1" name="amount" required="1" colspan="2"/>
+
+                     </group>
+                </group>
+                <footer>
+                    <button string="Procesar" icon="fa-cogs" type="object" name="action_reverse_payment" />
+                    <button string="Salir" icon="fa-times" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <record id="action_account_payment_cancel_wizard" model="ir.actions.act_window">
+        <field name="name">Reversar Pago</field>
+        <field name="res_model">account.payment.cancel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    </data>
+
+</odoo>

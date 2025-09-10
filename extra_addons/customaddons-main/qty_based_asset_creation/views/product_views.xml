@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="qty_based_asset_product_template_search_view" model="ir.ui.view">
+            <field name="name">qty.based.asset.product.template.search</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <!-- <filter string="Activo Fijo" name="filter_can_be_tracking" domain="[('tracking', '=', 'serial')]"/> -->
+                    <filter string="Activo Fijo" name="filter_can_be_tracking" domain="[('tracking', '=', 'serial'), ('asset_category_id', '!=', False)]"/>                </xpath>
+            </field>
+        </record>
+
+<!--
+        <record id="qty_based_asset_product_template_search_view" model="ir.ui.view">
+            <field name="name">product.template.search</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <search string="Product">
+                <filter string="Product Category" name="categ_id" context="{'group_by':'categ_id'}"/>
+        </record>
+-->
+    </data>
+</odoo>

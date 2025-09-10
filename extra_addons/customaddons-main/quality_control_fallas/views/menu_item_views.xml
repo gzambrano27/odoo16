@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú principal -->
+    <menuitem
+        id="quality_control_fallas_menu"
+        name="Control de Calidad"
+        sequence="10"
+         web_icon="quality_control_fallas,static/description/icon.png"
+    />
+
+    <!-- Submenú para Reporte de Fallas -->
+    <menuitem
+        id="quality_control_fallas_submenu"
+        name="Reporte de Fallas"
+        parent="quality_control_fallas_menu"
+        sequence="20"
+    />
+
+    <!-- Acción que abre la vista tree/form -->
+    <record id="action_quality_control_fallas" model="ir.actions.act_window">
+        <field name="name">Reportes de Fallas</field>
+        <field name="res_model">quality.control.fallas</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú item que vincula la acción -->
+    <menuitem
+        id="quality_control_fallas_menuitem"
+        name="Reportes de Fallas"
+        parent="quality_control_fallas_submenu"
+        action="action_quality_control_fallas"
+        sequence="30"
+    />
+</odoo>

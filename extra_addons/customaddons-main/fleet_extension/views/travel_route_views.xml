@@ -1,0 +1,84 @@
+<odoo>
+    <!-- Vista tipo árbol para Rutas de Viaje -->
+    <record id="view_travel_route_tree" model="ir.ui.view">
+        <field name="name">travel.route.tree</field>
+        <field name="model">travel.route</field>
+        <field name="arch" type="xml">
+            <tree string="Rutas de Viaje">
+                <field name="name"/>
+                <field name="departure_date"/>
+                <field name="arrival_date"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="destination_place"/>
+                <field name="origin_place"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista tipo formulario para Rutas de Viaje -->
+    <record id="view_travel_route_form" model="ir.ui.view">
+        <field name="name">travel.route.form</field>
+        <field name="model">travel.route</field>
+        <field name="arch" type="xml">
+            <form string="Rutas de Viaje">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="departure_date"/>
+                        <field name="arrival_date"/>
+                        <field name="vehicle_id"/>
+                        <field name="driver_id"/>
+                        <field name="origin_address_id"/>
+                        <field name="origin_place"/>
+                        <field name="destination_address_id"/>
+                        <field name="destination_place"/>
+                    </group>
+                    <notebook>
+                        <!-- Pestaña Odómetro -->
+                        <page string="Odómetro">
+                            <group>
+                                <field name="odometer_start"/>
+                                <field name="odometer_end"/>
+                                <field name="kms_traveled" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Pestaña Carga -->
+                        <page string="Carga">
+                            <group>
+                                <field name="cargo_weight"/>
+                                <field name="cost_per_kg"/>
+                                <field name="total_income" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Pestaña Gastos -->
+                        <page string="Gastos">
+                            <group>
+                                <field name="fuel_station"/>
+                                <field name="fuel_type"/>
+                                <field name="price_per_gallon"/>
+                                <field name="total_fuel_cost"/>
+                            </group>
+                            <group>
+                                <field name="toll_expense"/>
+                                <field name="food_expense"/>
+                                <field name="other_expenses"/>
+                                <field name="total_expenses" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Pestaña Observaciones -->
+                        <page string="Observaciones">
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
+

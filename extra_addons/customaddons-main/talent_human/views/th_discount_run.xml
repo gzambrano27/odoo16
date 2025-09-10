@@ -1,0 +1,136 @@
+<odoo>
+    <data>
+        <!-- Vista en árbol para Descuentos Generales -->
+        <record id="hr_discount_run_tree" model="ir.ui.view">
+            <field name="name">th.discount.run.tree</field>
+            <field name="model">th.discount.run</field>
+            <field name="arch" type="xml">
+                <tree string="Descuentos Generales">
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Acción de ventana para Pago de Anticipo Quincena -->
+        <!-- <record id="act_payment_drun_wizard" model="ir.actions.act_window">
+            <field name="name">Pago de Anticipo Quincena</field>
+            <field name="res_model">payment.drun.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record> -->
+
+        <!-- Vista en formulario para Discount Run -->
+        <record id="hr_discount_run_form" model="ir.ui.view">
+            <field name="name">Discount Run Form</field>
+            <field name="model">th.discount.run</field>
+            <field name="arch" type="xml">
+                <form string="Discount Run">
+                    <header>
+                        <button name="button_approve" states="draft" string="Approve" type="object" class="oe_highlight" confirm="¿Estás seguro de confirmar este registro?"/>
+                        <button name="button_canceled" states="approve" string="Cancel" class="oe_highlight" type="object" />
+						<button name="button_canceled" string="Cancelar" type="object" states="paid"  groups="base.group_system"/>
+                        <button name="button_set_draft" string="Set to Draft" states="cancel" type="object" />
+                        <button name="%(action_hr_advance_by_employees)d" type="action" states="draft" string="Genera Anticipos" class="oe_highlight" context="{'date_start': date_start, 'date_end': date_end, 'anticipo_agricola':anticipo_agricola,'anticipo_serv_prestados':anticipo_serv_prestados,'anticipo_empaque':anticipo_empaque,'journal_id':journal_id, 'id':id}"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,approve,cancel,paid" statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+	                    	<button class="oe_stat_button" name="button_payments_anticipos" string="Pagos" type="object"
+	                            attrs="{'invisible':[('has_pagos','=',False)]}" icon="fa-bars"/>
+	                    </div>
+                        <label for="reference" class="oe_edit_only"/>
+                        <h1>
+                            <field name="reference" placeholder="Pago de Quincena"/>
+                        </h1>
+                        <field name="has_pagos" invisible="1"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="anticipo_agricola" invisible='1'/>
+                            <field name="anticipo_empaque" invisible='1'/>
+                            <field name="anticipo_serv_prestados"/>
+                            <field name="transaction_type_id" required="1" domain="[('type','=','expenses'),('type_expense','=','advance'),('generate_lines_employee','=',0)]"/>
+                            <field name="type" invisible="1"/>
+                        </group>
+                        <group string="Fechas">
+                            <field name="date_registro" required="1" string="Fecha de Registro"/>
+                            <field name="date_start" string="Fecha desde"
+                                attrs="{
+                                    'invisible': [('anticipo_agricola','=', False),('anticipo_serv_prestados','=', False),('anticipo_empaque','=', False)],
+                                    'required': ['|', '|', ('anticipo_agricola','!=', False), ('anticipo_serv_prestados','!=', False), ('anticipo_empaque','!=', False)]
+                                }"
+                            />
+                            <field name="date_end" required="1" string="Fecha hasta" on_change="onchange_date(date_end,company_id)"/>
+                            <field name="company_id" widget="selection" groups="base.group_system"/>
+                        </group>
+                        <notebook>
+                            <page string="Anticipos">
+                                <!-- <button name="check_all_uncheck_all" string="Marcar/Desmarcar" type="object"/> -->
+                                <field name="discount_ids">
+                                    <tree string="Discount" editable="bottom">
+                                        <field name="employee_id"/>
+                                        <field name="name"/>
+                                        <field name="ref"/>
+                                        <field name="date"/>
+                                        <field name="date_from" invisible="1"/>
+                                        <field name="collection_form" invisible="1"/>
+                                        <!-- <field name="amount_to_paid" readonly="0" sum="total"/> -->
+                                        <field name="amount_to_paid" readonly="0"/>
+                                        <field name="number_of_quotas"/>
+                                        <field name="state"/>
+                                        <field name="transferencia" string="Pago/Archivo"/>
+                                    </tree>
+                                </field>
+                                <group>
+                                    <group class="oe_subtotal_footer oe_right">
+                                        <field name="total_quincena"/>
+                                        <field name="val_pagado" readonly="0"/>
+                                        <field name="payments_widget" colspan="2" nolabel="1" widget="payment"/>
+                                        <field name="residual" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Otra información">
+                                <group>
+                                    <field name="user_id" required="1"/>
+                                    <field name="journal_id"/>
+                                    <field name="move_id"/>
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                    <field name="type" invisible="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción de ventana para Discount Run Employee -->
+        <record id="action_hr_discount_run" model="ir.actions.act_window">
+            <field name="name">Discount Run Employee</field>
+            <field name="res_model">th.discount.run</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click para crear un nuevo Anticipo General.
+              </p>
+            </field>
+        </record>
+        
+        <record id="action_hr_discount_run_view_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_discount_run_tree"/>
+            <field name="act_window_id" ref="action_hr_discount_run"/>
+        </record>
+
+        <record id="action_hr_discount_run_view_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_discount_run_form"/>
+            <field name="act_window_id" ref="action_hr_discount_run"/>
+        </record>
+        
+    </data>
+</odoo>

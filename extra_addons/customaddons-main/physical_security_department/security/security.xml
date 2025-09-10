@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Definición de la categoría -->
+        <record id="module_category_physical_security" model="ir.module.category">
+            <field name="name">Seguridad Física</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Grupo de Permisos: Solicitante -->
+        <record id="group_physical_security_solicitante" model="res.groups">
+            <field name="name">Solicitante</field>
+            <field name="category_id" ref="module_category_physical_security"/>
+        </record>
+
+        <!-- Grupo de Permisos: Seguridad Física -->
+        <record id="group_physical_security_seguridad_fisica" model="res.groups">
+            <field name="name">Seguridad Física</field>
+            <field name="category_id" ref="module_category_physical_security"/>
+        </record>
+
+    </data>
+</odoo>

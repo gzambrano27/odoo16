@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="0">
+
+    <record model="ir.module.category" id="module_category_postventa_gps">
+        <field name="name">Postventa GPS</field>
+        <field name="description">Postventa GPS</field>
+        <field name="sequence">90</field>
+    </record>
+
+
+    <!-- Grupo Usuario Postventa -->
+    <record id="group_postventa_user" model="res.groups">
+      <field name="name">Usuario Postventa</field>
+      <field name="category_id" ref="postventagps.module_category_postventa_gps"/>
+      <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo Jefe Postventa (hereda Usuario) -->
+    <record id="group_postventa_jefe" model="res.groups">
+      <field name="name">Jefe Postventa</field>
+      <field name="category_id" ref="postventagps.module_category_postventa_gps"/>
+      <field name="implied_ids" eval="[(4, ref('postventagps.group_postventa_user'))]"/>
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo Administrador Postventa (hereda Jefe + base.group_system) -->
+    <record id="group_postventa_admin" model="res.groups">
+      <field name="name">Administrador Postventa</field>
+      <field name="category_id" ref="postventagps.module_category_postventa_gps"/>
+      <field name="implied_ids" eval="[
+          (4, ref('postventagps.group_postventa_jefe')),
+          (4, ref('base.group_system'))
+      ]"/>
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+  </data>
+</odoo>

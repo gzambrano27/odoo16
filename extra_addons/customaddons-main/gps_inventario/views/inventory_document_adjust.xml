@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ajuste_inventario_user_rule" model="ir.rule">
+            <field name="name">Registro de Ajuste Inventario: Solo propios</field>
+            <field name="model_id" ref="model_inventory_document_adjust"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/> <!-- Grupo de usuarios regulares -->
+            <field name="domain_force">['|',('user_id', '=', user.id),('user_ids', 'in', user.id)]
+            </field> <!-- Solo ver registros donde el campo user_id coincide con el usuario conectado -->
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Regla para permitir acceso total al administrador -->
+        <record id="ajuste_inventario_admin_rule" model="ir.rule">
+            <field name="name">Regla de Ajuste Inventario: Acceso total para administradores de los ajustes</field>
+            <field name="model_id" ref="model_inventory_document_adjust"/>
+            <field name="groups"
+                   eval="[(4, ref('gps_inventario.group_ajuste_inventario_manager'))]"/> <!-- Grupo de administradores de reembolsos -->
+            <field name="domain_force">[(1, '=', 1)]</field> <!-- Sin restricción, acceso total -->
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="inventory_document_adjust_view_filter"
+                model="ir.ui.view">
+            <field name="name">inventory.document.adjust.filter</field>
+            <field name="model">inventory.document.adjust</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Ajustes de Inventario">
+
+                    <group expand="0" string="Agrupar por...">
+
+                        <filter name="group_by_date_from"
+                                string="Fecha Inventario"
+                                context="{'group_by':'date_from'}"/>
+
+                    </group>
+                    <group expand="0" string="Filtrar por...">
+                    </group>
+                    <field name="id" string="# ID"/>
+                    <field name="stock_location_id"/>
+                    <field name="date_from"/>
+                    <field name="name"/>
+                    <filter string="Mis ajustes" name="miso_ajustes" domain="[('user_id', '=', uid)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="inventory_document_adjust_view_tree"
+                model="ir.ui.view">
+            <field name="name">inventory.document.adjust.tree</field>
+            <field name="model">inventory.document.adjust</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Ajustes de Inventario"
+                      decoration-info="state=='draft'"
+                      decoration-danger="state=='started'"
+                      decoration-warning="state=='ended'"
+                      decoration-success="state=='applied'"
+                      decoration-muted="state=='annulled'"
+                >
+                  <field name="id" string="# ID" readonly="1"
+						attrs="{'invisible':[('id','&lt;=',0)]}" />
+					<field name="company_id" />
+                    <field name="stock_location_id"/>
+                    <field name="name"/>
+                    <field name="user_ids" widget="many2many_tags"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="inventory_document_adjust_view_form"
+                model="ir.ui.view">
+            <field name="name">inventory.document.adjust.form</field>
+            <field name="model">inventory.document.adjust</field>
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Ajustes de Inventario" version="16.0">
+                    <header>
+                        <button string="Iniciar" type="object" icon="fa-play"
+                                name="action_start"
+                                attrs="{'invisible':[('state','!=','draft')]}"
+                        />
+                        <button string="Reiniciar" type="object"
+                                icon="fa-rotate-left" name="action_restart"
+                                attrs="{'invisible':[('state','!=','ended')]}"
+                                        groups="gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+                        />
+                        <button string="Finalizar" type="object" icon="fa-check"
+                                name="action_end"
+                                attrs="{'invisible':[('state','!=','started')]}"
+                        />
+                        <button string="Ajustar" type="object" icon="fa-cogs"
+                                name="action_adjust"
+                                attrs="{'invisible':[('state','!=','ended')]}" invisible="1"
+                                groups="gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+                        />
+
+                        <button string="Ajustar por Picking" type="object" icon="fa-cogs"
+                                name="action_adjust_picking"
+                                attrs="{'invisible':[('state','!=','ended')]}"
+                                groups="gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+
+                        />
+
+                        <button string="Anular" type="object" icon="fa-times"
+                                name="action_cancel"
+                                attrs="{'invisible':[('state','in',('applied','annulled'))]}"
+                               groups="gps_inventario.group_ajuste_inventario_manager,gps_inventario.group_ajuste_inventario_costo_manager"
+                        />
+                        <button name="%(action_report_inventory_adjust)d" type="action" string="Imprimir Ajuste"
+                                icon="fa-print"
+                                attrs="{'invisible':[('state','in',('annulled'))]}"
+                        />
+                        <!-- <button name="%(report_inventory_document_template_report_xlsx_act)d" type="action"
+                                string="Descargar Plantilla"
+                                icon="fa-download" attrs="{'invisible':[('state','not in',('started',))]}"
+                        /> -->
+                        <button string="Descargar New" type="object" 
+                                name="generate_excel_file"
+                                icon="fa-download"
+                        />
+                        <button name="%(inventory_document_adjust_wizard_view_file_action)d" type="action"
+                                string="Importar Inventario"
+                                icon="fa-upload" attrs="{'invisible':[('state','not in',('started',))]}"
+                        />
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <group colspan="4" cols="2">
+                        <group>
+                            	<field name="company_id"
+								attrs="{'readonly':[('state','!=','draft')]}"
+												options="{'no_create':True,'no_edit':True,'no_open':True}" />
+
+                            <field name="id" string="# ID" readonly="1"
+                                   attrs="{'invisible':[('id','&lt;=',0)]}"/>
+                            <field name="date_from"
+                                   attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="count" />
+
+
+ <label for="count_adjust_in" class="custom_allign"/>
+                    <div>
+                      <field name="count_adjust_in" style="width:30%"/> por
+        <field name="total_adjust_in" style="width:60%"/>
+                    </div>
+
+                            <label for="count_adjust_out" class="custom_allign"/>
+                    <div>
+                      <field name="count_adjust_out" style="width:30%"/> por
+        <field name="total_adjust_out" style="width:60%"/>
+                    </div>
+
+                            <field name="count_adjust" />
+                            <field name="count_equal" />
+
+                            <field name="currency_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                   invisible="1" />
+                        </group>
+                        <group>
+                            <field name="stock_location_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                   attrs="{'readonly':[('state','!=','draft')]}"
+                                  domain="[('company_id','=',company_id),('usage','=','internal')]"
+                            />
+                            <field name="name"
+                                   attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="user_ids"
+                                   attrs="{'readonly':[('state','in',('applied','ended','annulled'))]}"
+                                   widget="many2many_tags"
+                                   options="{'no_create':True,'no_edit':True,'no_open':True}"
+                            />
+                            <field name="account_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                    domain="[('company_id','=',company_id)]"
+                                   attrs="{'invisible':[('state','not in',('applied','ended'))],'readonly':[('state','!=','ended')]}"
+                            />
+                            <field name="partner_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                   attrs="{'invisible':[('state','not in',('applied','ended'))],'readonly':[('state','!=','ended')]}"
+                            />
+
+                            <field name="picking_in_id" readonly="1" attrs="{'invisible':[('picking_in_id','=',False)]}"/>
+                            <field name="picking_out_id" readonly="1" attrs="{'invisible':[('picking_in_id','=',False)]}"/>
+
+                        </group>
+                    </group>
+                    <newline/>
+                    <notebook>
+                        <page name="pge_ad" string="Ajustes">
+                            <group>
+                                <button string="Actualizar"
+                                        attrs="{'invisible':[('state','in',('applied','annulled'))]}"
+                                        type="object"
+                                        icon="fa-list-ol" name="action_update_stock"/>
+                                <button string="Ver"
+                                        attrs="{'invisible':[('state','in',('draft','annulled'))]}"
+                                        type="object"
+                                        icon="fa-search" name="filter_movements"/>
+
+
+
+                            </group>
+                            <newline/>
+                            <field name="line_ids"
+                                   attrs="{'readonly':[('state','in',('applied','annulled'))]}">
+
+                                <tree string="Detalle" editable="bottom"
+                                      create="false" delete="false"
+                                      decoration-muted="force_apply==True"
+                                      decoration-it="origin!='original'"
+                                >
+                                     <field name="id" readonly="1" string="# ID" optional="hide" />
+                                    <field name="stock_location_id" readonly="1"
+                                           options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+
+                                     <field name="referencia_anterior"  readonly="1" optional="hide" />
+
+
+                                    <field name="product_id" readonly="1"
+                                           options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                                    <field name="stock" sum="total" readonly="1"
+                                           groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager"/>
+                                    <field name="quantity" sum="total"/>
+                                    <field name="adjust" sum="total"
+                                           readonly="1" force_save="1" decoration-danger="adjust&lt;0" decoration-warning="adjust&gt;0" decoration-success="adjust==0 or not adjust"
+                                           groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager"/>
+                                    <field name="apply"
+                                           widget="boolean_toggle"
+                                           groups="gps_inventario.group_ajuste_inventario_manager"
+                                           attrs="{'readonly':[('parent.state','in',('applied','annulled'))]}"
+                                    />
+                                    <field name="comments"/>
+                                    <field name="force_apply" invisible="1"/>
+                                    <field name="origin" optional="hide"/>
+                                </tree>
+
+
+                                <form string="Detalle">
+                                    <group>
+                                        <group>
+                                            <field name="product_id"
+                                                   readonly="1"
+                                                   options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                                            <field name="stock" sum="total"
+                                                   readonly="1"/>
+                                            <field name="quantity" sum="total"/>
+                                            <field name="adjust" sum="total"
+                                                   readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="apply"
+                                                   widget="boolean_toggle"
+                                                   attrs="{'readonly':[('parent.state','in',('applied','annulled'))]}"
+                                            />
+                                            <field name="comments"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page name="pge_pro" string="Productos" groups="gps_inventario.group_ajuste_inventario_user,gps_inventario.group_ajuste_inventario_manager">
+                            <field name="product_ids"
+                                   attrs="{'readonly':[('state','!=','draft')]}"
+                                   options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                        </page>
+
+                        <page name="pge_history" string="Historial" attrs="{'invisible':[('id','&lt;=',0)]}">
+                            <group>
+                                <group>
+                                    <field name="create_uid" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                           readonly="1"/>
+                                    <field name="create_date" readonly="1"/>
+
+                                </group>
+                                <group>
+
+                                    <field name="write_uid" readonly="1"
+                                           options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                                    <field name="write_date" readonly="1"/>
+
+                                </group>
+                            </group>
+                        </page>
+
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="inventory_document_adjust_view_action"
+                model="ir.actions.act_window">
+            <field name="name">Ajustes de Inventario</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">inventory.document.adjust</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="inventory_document_adjust_view_tree"/>
+            <field name="context">{'search_default_mis_ajustes': 1}</field>
+            <field name="search_view_id"
+                   ref="inventory_document_adjust_view_filter"/>
+        </record>
+
+
+
+        <!-- <record model="ir.actions.act_window.view"
+            id="inventory_document_adjust_view_tree_action">
+            <field name="sequence" eval="1" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="inventory_document_adjust_view_tree" />
+            <field name="act_window_id"
+                ref="inventory_document_adjust_view_action" />
+        </record>
+
+        <record model="ir.actions.act_window.view"
+            id="inventory_document_adjust_view_form_action">
+            <field name="sequence" eval="2" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="inventory_document_adjust_view_form" />
+            <field name="act_window_id"
+                ref="inventory_document_adjust_view_action" />
+        </record> -->
+
+
+    </data>
+
+
+</odoo>

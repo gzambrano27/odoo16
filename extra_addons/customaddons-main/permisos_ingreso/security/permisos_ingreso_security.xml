@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Definición de la categoría -->
+    <record id="module_category_permisos_ingreso" model="ir.module.category">
+        <field name="name">Permisos de ingreso</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Definición de grupos -->
+    <record id="group_permiso_seguridad" model="res.groups">
+        <field name="name">Seguridad Fisica</field>
+        <field name="category_id" ref="module_category_permisos_ingreso"/>
+    </record>
+
+    <record id="group_permiso_superior" model="res.groups">
+        <field name="name">Superior</field>
+        <field name="category_id" ref="module_category_permisos_ingreso"/>
+    </record>
+
+    <record id="group_permiso_medio" model="res.groups">
+        <field name="name">Medio</field>
+        <field name="category_id" ref="module_category_permisos_ingreso"/>
+    </record>
+
+    <record id="group_permiso_bajo" model="res.groups">
+        <field name="name">Bajo</field>
+        <field name="category_id" ref="module_category_permisos_ingreso"/>
+    </record>
+
+    <!-- Nuevo grupo: Registro de Permiso -->
+    <record id="group_registro_permiso" model="res.groups">
+        <field name="name">Registro de Permiso</field>
+        <field name="category_id" ref="module_category_permisos_ingreso"/>
+    </record>
+</odoo>

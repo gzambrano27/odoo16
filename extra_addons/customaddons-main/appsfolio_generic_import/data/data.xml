@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <data>
+        
+        <record id="sale_order_menu" model="import.dashboard">
+            <field name="name">Sale Orders</field>
+            <field name="state">sale.order</field>
+        </record>
+
+        <record id="purchase_order_menu" model="import.dashboard">
+            <field name="name">Purchase Orders</field>
+            <field name="state">purchase.order</field>
+        </record>
+
+        <record id="invoice_menu" model="import.dashboard">
+            <field name="name">Invoice / Bill</field>
+            <field name="state">account.move</field>
+        </record>
+
+        <record id="stock_picking_menu" model="import.dashboard">
+            <field name="name">Picking</field>
+            <field name="state">stock.picking</field>
+        </record>
+
+        <record id="mrp_bom_menu" model="import.dashboard">
+            <field name="name">MRP</field>
+            <field name="state">mrp.bom</field>
+        </record>
+
+        <record id="res_partner_menu" model="import.dashboard">
+            <field name="name">Partner</field>
+            <field name="state">res.partner</field>
+        </record>
+
+        <record id="product_pricelist_menu" model="import.dashboard">
+            <field name="name">Price list</field>
+            <field name="state">product.pricelist</field>
+        </record>
+
+        <record id="product_template_menu" model="import.dashboard">
+            <field name="name">Product Template</field>
+            <field name="state">product.template</field>
+        </record>
+
+        <record id="product_product_menu" model="import.dashboard">
+            <field name="name">Product Variant</field>
+            <field name="state">product.product</field>
+        </record>
+
+        <record id="stock_quant_menu" model="import.dashboard">
+            <field name="name">Inventory</field>
+            <field name="state">stock.quant</field>
+        </record>
+
+        <record id="account_payment_menu" model="import.dashboard">
+            <field name="name">Payment</field>
+            <field name="state">account.payment</field>
+        </record>
+
+        <record id="import_chart_of_account_menu" model="import.dashboard">
+            <field name="name">Import Chart of Account</field>
+            <field name="state">account.account</field>
+        </record>
+
+    </data>
+</odoo>

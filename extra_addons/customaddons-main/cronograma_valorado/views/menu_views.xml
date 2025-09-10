@@ -1,0 +1,5 @@
+<odoo>
+    <menuitem id="menu_planillas_root" name="Cronograma valorado" sequence="10" web_icon="cronograma_valorado,static/description/logo.png"/>
+    <menuitem id="menu_planillas_configuracion" name="Configuración" parent="menu_planillas_root" sequence="10"/>
+    <menuitem id="menu_planillas" name="Planillas" parent="menu_planillas_configuracion" action="action_planillas_planillas"/>
+</odoo>

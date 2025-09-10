@@ -1,0 +1,156 @@
+<odoo>
+    <!-- Definir la acción de servidor -->
+    <record id="action_export_to_excel" model="ir.actions.server">
+        <field name="name">Exportar a Excel</field>
+        <field name="model_id" ref="model_permisos_ingreso_permiso"/>
+        <field name="binding_model_id" ref="model_permisos_ingreso_permiso"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['permisos_ingreso.permiso'].browse(env.context.get('active_ids')).export_to_excel()
+        </field>
+    </record>
+
+    <!-- Vista de formulario para el modelo 'Permiso' -->
+    <record id="view_form_permiso" model="ir.ui.view">
+        <!-- Nombre de la vista de formulario -->
+        <field name="name">permiso.form</field>
+        <!-- Modelo al que está asociada la vista -->
+        <field name="model">permisos_ingreso.permiso</field>
+        <!-- Estructura XML de la vista de formulario -->
+        <field name="arch" type="xml">
+            <form string="Permiso de Ingreso">
+                <header>
+                    <!-- Botón de enviar para aprobación (solo para grupo medio y superior) -->
+                    <button name="action_submit" type="object" string="Enviar para aprobación"
+                            states="draft" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_medio,permisos_ingreso.group_permiso_superior"/>
+
+                    <!-- Botón de aprobar (solo para grupo superior) -->
+                    <button name="action_approve" type="object" string="Aprobar"
+                            states="to_approve" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_superior"/>
+
+                    <!-- Botón de cancelar (solo para grupo medio y superior) -->
+                    <button name="action_cancel" type="object" string="Cancelar"
+                            states="to_approve,approved" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_medio,permisos_ingreso.group_permiso_superior"/>
+
+                    <!-- Botón de reiniciar a borrador (solo para grupo superior) -->
+                    <button name="action_reset_to_draft" type="object" string="Reiniciar a borrador"
+                            states="cancelled,approved,to_approve" class="btn-primary"
+                            groups="permisos_ingreso.group_permiso_superior"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <!-- Campo para ingresar la fecha del permiso -->
+                        <field name="fecha_permiso" attrs="{'readonly': [('state', '=', 'approved')]}"/>
+                        <!-- Campo para seleccionar el proyecto asociado al permiso -->
+                        <field name="proyecto_id" attrs="{'readonly': [('state', '=', 'approved')]}"/>
+                    </group>
+                    <!-- Tabla de líneas de permiso personal asociadas al permiso -->
+                    <field name="permiso_personal_ids" attrs="{'readonly': [('state', '=', 'approved')]}">
+                        <tree string="Personal" editable="bottom">
+                            <!-- Campo para seleccionar el personal asociado al permiso -->
+                            <field name="personal_id" options="{'no_create': True}"
+                            domain="[('id','not in',parent.personal_ids), ('estado','=','aprobado_sf')]"
+                            />
+                            <!-- Campo para ingresar la actividad del personal en el permiso -->
+                            <field name="actividad"/>
+                            <!-- Campo para ingresar el número de ingreso del personal -->
+                            <field name="numero_ingreso"/>
+                            <!-- Campo para ingresar la placa del vehículo del personal -->
+                            <field name="placa_vehiculo"/>
+                            <field name="usuario_creador" widget="many2one_avatar_user"/>
+                        </tree>
+                    </field>
+                    <newline/>
+                    <field name="personal_ids" invisible="1"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda para el modelo 'Permiso' -->
+    <record id="view_search_permiso" model="ir.ui.view">
+        <field name="name">permiso.search</field>
+        <field name="model">permisos_ingreso.permiso</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Filtro y agrupamiento por fecha del permiso -->
+                <filter string="Agrupar por Fecha"
+                        name="fecha_filter"
+                        domain="[('fecha_permiso', '!=', False)]"
+                        context="{'group_by': 'fecha_permiso'}"/>
+
+                <!-- Filtro y agrupamiento por proyecto -->
+                <filter string="Agrupar por Proyecto"
+                        name="proyecto_filter"
+                        domain="[('proyecto_id', '!=', False)]"
+                        context="{'group_by': 'proyecto_id'}"/>
+
+                <!-- Filtro y agrupamiento por fecha de creacion -->
+                <filter string="Agrupar por Fecha de creación"
+                        name="creacion_filter"
+                        domain="[('create_date', '!=', False)]"
+                        context="{'group_by': 'create_date'}"/>
+
+                <!-- Filtro y agrupamiento por estado -->
+                <filter string="Agrupar por Estado"
+                        name="estado_filter"
+                        domain="[('state', '!=', False)]"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista de lista para el modelo 'Permiso' -->
+    <record id="view_tree_permiso" model="ir.ui.view">
+        <!-- Nombre de la vista de lista -->
+        <field name="name">permiso.tree</field>
+        <!-- Modelo al que está asociada la vista -->
+        <field name="model">permisos_ingreso.permiso</field>
+        <!-- Estructura XML de la vista de lista -->
+        <field name="arch" type="xml">
+            <tree string="Permisos" default_order="fecha_permiso desc">
+                <header>
+                    <!-- Botón para enviar correo con permisos -->
+                    <button name="action_send_email_with_permissions"
+                            type="object"
+                            string="Enviar Correos"
+                            class="btn-primary"
+                            icon="fa-envelope"
+                            groups="permisos_ingreso.group_permiso_superior"
+                    />
+                </header>
+                <!-- Campo para mostrar la fecha del permiso en la lista -->
+                <field name="fecha_permiso"/>
+                <!-- Campo para mostrar el proyecto asociado al permiso en la lista -->
+                <field name="proyecto_id"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="state" widget="badge" string="Estado"
+                   decoration-muted="state == 'draft'"
+                   decoration-info="state == 'to_approve'"
+                   decoration-success="state == 'approved'"
+                   decoration-danger="state == 'cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista del modelo 'Permiso' -->
+    <record id="action_permisos" model="ir.actions.act_window">
+        <!-- Nombre de la acción que aparecerá en el menú -->
+        <field name="name">Permisos</field>
+        <!-- Modelo que se abrirá con esta acción -->
+        <field name="res_model">permisos_ingreso.permiso</field>
+        <!-- Modo de vista (lista y formulario) al abrir la acción -->
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_search_permiso"/>  <!-- Vincula la vista de búsqueda -->
+    </record>
+</odoo>

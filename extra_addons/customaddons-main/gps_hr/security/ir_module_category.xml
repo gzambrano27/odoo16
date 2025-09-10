@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+		
+		<record model="ir.module.category" id="group_module_categ_hr">
+            <field name="name">Recursos Humanos GPS</field>
+        </record>
+        
+        
+		
+        
+        
+        
+	</data>
+	
+</odoo>

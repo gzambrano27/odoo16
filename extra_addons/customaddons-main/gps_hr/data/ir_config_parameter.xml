@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+		
+		<record id="param_mail_test_rrhh_enable" model="ir.config_parameter">
+            <field name="key">mail.test.rrhh.enable</field>
+            <field name="value">True</field> 
+        </record>
+        
+		<record id="param_mail_test" model="ir.config_parameter">
+            <field name="key">mail.test.rrhh</field>
+            <field name="value">lajonnercrespin@gmail.com</field> 
+        </record>
+        
+        <record id="param_liquidate_invoice_with_inv" model="ir.config_parameter">
+            <field name="key">liquidate.invoice.with.inv</field>
+            <field name="value">True</field>
+        </record>
+
+        <record id="param_download_url" model="ir.config_parameter">
+            <field name="key">param.download.bancos.url</field>
+            <field name="value">https://produccion.gpsgroup.ec</field>
+        </record>
+
+
+        <record id="param_allow_multiple_profiles" model="ir.config_parameter">
+            <field name="key">allow.multiple.profiles</field>
+            <field name="value">1</field>
+        </record>
+
+
+	</data>
+	
+	</odoo>

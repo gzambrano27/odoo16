@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_purchase_product_period_report" model="ir.actions.act_window">
+        <field name="name">Productos por Órdenes de Compra</field>
+        <field name="res_model">purchase.product.period.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_purchase_product_period_report_root"
+              name="Productos por Órdenes de Compra"
+              parent="purchase.purchase_report_main"
+              sequence="99"
+              groups="purchase.group_purchase_manager,purchase.group_purchase_user"
+              action="action_purchase_product_period_report"/>
+
+</odoo>

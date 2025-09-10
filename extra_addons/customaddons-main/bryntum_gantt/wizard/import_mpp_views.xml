@@ -1,0 +1,39 @@
+<odoo>
+    <record id="view_import_mpp_wizard_form" model="ir.ui.view">
+        <field name="name">import.mpp.wizard.form</field>
+        <field name="model">import.mpp.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importar Proyecto desde MPP" enctype="multipart/form-data">
+                <group>
+                    <field name="file_mpp" filename="filename"/>
+                    <field name="filename"/>
+                    <field name="project_id"/>
+                </group>
+                <footer>
+                    <button string="Importar" type="object" name="action_import" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_mpp_wizard" model="ir.actions.act_window">
+        <field name="name">Importar .MPP</field>
+        <field name="res_model">import.mpp.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="button_import_mpp_project" model="ir.ui.view">
+        <field name="name">project.project.form.inherit.mpp</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_import_mpp_wizard)d" type="action"
+                        string="Importar .XML" class="btn-primary"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,69 @@
+<odoo>
+    <record id="payment_report_wizard" model="ir.ui.view">
+        <field name="name">payment_report_wizard</field>
+        <field name="model">account.payment.report</field>
+        <field name="arch" type="xml">
+            <form string="Generar Archivo de Pagos">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="banco" string="Banco" placeholder="Selecciona un banco"/>
+                        </group>
+                        <!-- <group>
+                            <field name="agrupar_cta" string="¿Agrupar por cuenta?" widget="boolean_toggle"/>
+                        </group> -->
+                        <group attrs="{'invisible': [('banco','!=','internacional')]}">
+                            <button string="Descargar ZIP" type="object" icon="fa-download" name="download_zip"/>
+                            <button string="Descargar TXT Principal" type="object" icon="fa-download" name="download_txt"/>
+                            <button string="Descargar TXT LB" type="object" icon="fa-download" name="download_txt_lb"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Pagos Detallados"/>
+                        <field name="payment_ids" no_label='1'>
+                            <tree>
+                                <field name="currency" string="Moneda"/>
+                                <field name="amount" sum="TOT" string="Monto Total"/>
+                                <field name="partner_bank_acc_type" string="Tipo de Cuenta"/>
+                                <field name="partner_bank_number" string="Número de Cuenta"/>
+                                <field name="circular" string="Circular"/>
+                                <field name="partner_ci_type" string="Tipo de Identificación"/>
+                                <field name="partner_ci" string="Identificación"/>
+                                <field name="gloss" string="Glosa"/>
+                                <field name="partner_name" string="Proveedor"/>
+                                <field name="bank_code" string="Código del Banco"/>
+                                <field name="bank_name" string="Nombre del Banco"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="export_txt" string="Descargar" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_payment_report_wizard" model="ir.actions.act_window">
+        <field name="name">Archivo de Pagos</field>
+        <field name="res_model">account.payment.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_banco_id': active_id, 'banco': active_id}</field>
+        <field name="binding_model_id" ref="model_account_payment"/>
+        <field name="binding_view_types">form</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_payment_report_user')])]"/>
+    </record>
+
+    <record id="act_payment_multi_report_wizard" model="ir.actions.act_window">
+        <field name="name">Descargar TXT Pagos</field>
+        <field name="res_model">account.payment.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_type">action</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_payment_report_user')])]"/>
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

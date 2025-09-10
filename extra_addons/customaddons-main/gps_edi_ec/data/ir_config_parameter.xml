@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+    
+    
+    
+     <record id="ir_config_time_account_edi_document" model="ir.config_parameter">
+            <field name="key">time.account.edi.document</field>
+            <field name="value">300</field>
+        </record>
+    
+    
+    
+    
+    
+    
+    </data>
+    
+    
+    </odoo>

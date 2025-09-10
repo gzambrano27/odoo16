@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+    <template id="report_estado_cuenta">
+    <t t-name="gps_bancos.report_estado_cuenta">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+             <t t-set="doc" t-value="doc.sudo()" />
+
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family:verdana; font-size:14px;">
+
+
+                   <table style="width: 100%; margin-bottom: 20px; font-size: 14px;">
+    <tr>
+        <!-- Columna del logo -->
+        <td style="width: 30%; vertical-align: top; text-align: left;">
+            <img t-if="doc.company_id.logo"
+                 t-att-src="image_data_uri(doc.company_id.logo)"
+                 alt="Logo"
+                 width="120"
+                 style="margin-right: 10px;" />
+        </td>
+
+        <!-- Columna de datos del proveedor -->
+        <td style="width: 70%; vertical-align: top; padding-left: 10px;">
+            <p style="margin: 0;"><strong>PROVEEDOR #:</strong> <t t-esc="doc.name"/></p>
+            <p style="margin: 0;"><strong>RUC / CI:</strong> <t t-esc="doc.vat"/></p>
+            <p style="margin: 0;"><strong>DIRECCIÓN:</strong> <t t-esc="doc.street"/></p>
+        </td>
+    </tr>
+</table>
+
+
+
+                    <t t-set="companies" t-value="doc.env.companies" />
+
+<t t-foreach="companies" t-as="company">
+    <t t-set="lines" t-value="doc.get_balance_partner_lines(company.id)" />
+
+    <div style="page-break-after: always;">
+        <h2 style="text-align: center; margin: 20px 0;">Estado de Cuenta de Proveedor</h2>
+        <h3 style="text-align: center;">Compañía: <t t-esc="company.name" /></h3>
+
+        <div style="margin: 30px 0 10px 0; padding: 10px; background-color: #f0f0f0; border-left: 5px solid #3c8dbc;">
+    <h3 style="margin: 0; font-size: 16px;">Cuentas por Pagar</h3>
+</div>
+
+        <table class="table table-sm" style="width:100%; border-collapse: collapse;" border="1">
+            <thead>
+                <tr style="background-color: #eee;">
+                    <th style="width:10%">Fecha</th>
+                    <th style="width:20%">Documento</th>
+                    <th style="width:30%">Descripción</th>
+                    <th style="width:10%">Débito</th>
+                    <th style="width:10%">Crédito</th>
+                    <th style="width:10%">Saldo</th>
+                    <th style="width:10%">Acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                <t t-foreach="lines" t-as="line">
+    <!-- Línea principal (factura, asiento, etc.) -->
+    <tr style="background-color:#e6f2ff; font-weight: bold;">
+        <td style="text-align:left"><t t-esc="line['date']"/></td>
+        <td style="text-align:left"><t t-esc="line['move_name']"/></td>
+        <td style="text-align:left"><t t-esc="line['ref']"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['debit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['credit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['amount_residual'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['saldo_acumulado'])"/></td>
+    </tr>
+
+    <!-- Subdetalle de pagos / retenciones -->
+    <t t-if="line.get('doc_id')">
+        <t t-set="invoice" t-value="env['account.move'].browse(line['doc_id'])"/>
+        <t t-set="conciliaciones" t-value="invoice.line_ids.mapped('matched_debit_ids') + invoice.line_ids.mapped('matched_credit_ids')"/>
+
+        <t t-if="conciliaciones">
+            <t t-foreach="conciliaciones" t-as="reconc">
+                <t t-set="line_rec" t-value="reconc.debit_move_id if reconc.debit_move_id.move_id != invoice else reconc.credit_move_id"/>
+                <t t-set="move" t-value="line_rec.move_id"/>
+                <t t-set="withholds" t-value="invoice.get_withholds()" />
+                <t t-set="payment_descr" t-value="move.get_payment_dscr_summary()"/>
+
+                <!-- Línea de retención -->
+                <t t-if="move in withholds">
+                    <tr style="font-style: italic;">
+                        <td><t t-esc="move.date"/></td>
+                        <td><t t-esc="move.name"/></td>
+                        <td>RETENCIÓN</td>
+                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(reconc.amount)"/></td>
+                        <td colspan="3" style="text-align:right"></td>
+                    </tr>
+                </t>
+
+                <!-- Línea de pago -->
+                <t t-if="move not in withholds">
+                    <tr style="font-style: italic;">
+                        <td><t t-esc="move.date"/></td>
+                        <td><t t-esc="move.name"/></td>
+                        <td><t t-esc="payment_descr[1]"/></td>
+                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(reconc.amount)"/></td>
+                        <td colspan="3" style="text-align:right"></td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </t>
+
+    <!-- Separador visual entre facturas -->
+    <tr><td colspan="7"><hr style="border: none; border-top: 1px dashed #ccc; margin: 4px 0;"/></td></tr>
+</t>
+
+            </tbody>
+        </table>
+
+<t t-set="anticipos_lines" t-value="doc.get_anticipo_balance_partner_lines(company.id)" />
+        <t t-if="anticipos_lines">
+        <div style="margin: 30px 0 10px 0; padding: 10px; background-color: #f0f0f0; border-left: 5px solid #3c8dbc;">
+    <h3 style="margin: 0; font-size: 16px;">Anticipos Pendientes por Aplicar</h3>
+</div>
+
+            <table class="table table-sm" style="width:100%; border-collapse: collapse;" border="1">
+            <thead>
+                <tr style="background-color: #eee;">
+                    <th style="width:10%">Fecha</th>
+                    <th style="width:20%">Documento</th>
+                    <th style="width:30%">Descripción</th>
+                    <th style="width:10%">Débito</th>
+                    <th style="width:10%">Crédito</th>
+                    <th style="width:10%">Saldo</th>
+                    <th style="width:10%">Acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                <t t-foreach="anticipos_lines" t-as="anticipo_line">
+    <!-- Línea principal (factura, asiento, etc.) -->
+    <tr>
+        <td style="text-align:left"><t t-esc="anticipo_line['date']"/></td>
+        <td style="text-align:left"><t t-esc="anticipo_line['move_name']"/></td>
+        <td style="text-align:left"><t t-esc="anticipo_line['ref']"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['debit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['credit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['amount_residual'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['saldo_acumulado'])"/></td>
+    </tr>
+                </t>
+          </tbody>
+            </table>
+        </t>
+
+
+    <t t-set="por_pagar" t-value="doc.get_balance_partner(lines)"/>
+<t t-set="anticipos" t-value="doc.get_balance_partner(anticipos_lines)"/>
+<t t-set="saldo_final" t-value="por_pagar - anticipos"/>
+
+<!-- Tabla resumen -->
+<table style="width: 40%; float: right; margin-top: 20px; font-size: 14px; border-collapse: collapse;">
+    <tr>
+        <td style="text-align: left; padding: 5px;"><strong>Por Pagar:</strong></td>
+        <td style="text-align: right; padding: 5px;">
+            <t t-esc="'{:,.2f}'.format(por_pagar)"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 5px;"><strong>Anticipos:</strong></td>
+        <td style="text-align: right; padding: 5px;">
+            <t t-esc="'{:,.2f}'.format(anticipos)"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 5px; border-top: 1px solid #ccc;"><strong>Saldo:</strong></td>
+        <td style="text-align: right; padding: 5px; border-top: 1px solid #ccc;">
+            <t t-esc="'{:,.2f}'.format(saldo_final)"/>
+        </td>
+    </tr>
+</table>
+
+    </div>
+</t>
+
+
+
+                </div>
+            </t>
+        </t>
+    </t>
+    </t>
+
+           </template>
+
+
+    <template id="report_estado_cuenta_clte">
+    <t t-name="gps_bancos.report_estado_cuenta_clte">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+             <t t-set="doc" t-value="doc.sudo()" />
+
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family:verdana; font-size:14px;">
+
+
+                   <table style="width: 100%; margin-bottom: 20px; font-size: 14px;">
+    <tr>
+        <!-- Columna del logo -->
+        <td style="width: 30%; vertical-align: top; text-align: left;">
+            <img t-if="doc.company_id.logo"
+                 t-att-src="image_data_uri(doc.company_id.logo)"
+                 alt="Logo"
+                 width="120"
+                 style="margin-right: 10px;" />
+        </td>
+
+        <!-- Columna de datos del proveedor -->
+        <td style="width: 70%; vertical-align: top; padding-left: 10px;">
+            <p style="margin: 0;"><strong>CLIENTE #:</strong> <t t-esc="doc.name"/></p>
+            <p style="margin: 0;"><strong>RUC / CI:</strong> <t t-esc="doc.vat"/></p>
+            <p style="margin: 0;"><strong>DIRECCIÓN:</strong> <t t-esc="doc.street"/></p>
+        </td>
+    </tr>
+</table>
+
+
+
+                    <t t-set="companies" t-value="doc.env.companies" />
+
+<t t-foreach="companies" t-as="company">
+    <t t-set="lines" t-value="doc.get_balance_partner_clte_lines(company.id)" />
+
+    <div style="page-break-after: always;">
+        <h2 style="text-align: center; margin: 20px 0;">Estado de Cuenta de Cliente</h2>
+        <h3 style="text-align: center;">Compañía: <t t-esc="company.name" /></h3>
+
+        <div style="margin: 30px 0 10px 0; padding: 10px; background-color: #f0f0f0; border-left: 5px solid #3c8dbc;">
+    <h3 style="margin: 0; font-size: 16px;">Cuentas por Cobrar</h3>
+</div>
+
+        <table class="table table-sm" style="width:100%; border-collapse: collapse;" border="1">
+            <thead>
+                <tr style="background-color: #eee;">
+                    <th style="width:10%">Fecha</th>
+                    <th style="width:20%">Documento</th>
+                    <th style="width:30%">Descripción</th>
+                    <th style="width:10%">Débito</th>
+                    <th style="width:10%">Crédito</th>
+                    <th style="width:10%">Saldo</th>
+                    <th style="width:10%">Acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                <t t-foreach="lines" t-as="line">
+    <!-- Línea principal (factura, asiento, etc.) -->
+    <tr style="background-color:#e6f2ff; font-weight: bold;">
+        <td style="text-align:left"><t t-esc="line['date']"/></td>
+        <td style="text-align:left"><t t-esc="line['move_name']"/></td>
+        <td style="text-align:left"><t t-esc="line['ref']"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['debit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['credit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['amount_residual'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(line['saldo_acumulado'])"/></td>
+    </tr>
+
+    <!-- Subdetalle de pagos / retenciones -->
+    <t t-if="line.get('doc_id')">
+        <t t-set="invoice" t-value="env['account.move'].browse(line['doc_id'])"/>
+       <t t-set="conciliaciones"
+     t-value="(invoice.line_ids.mapped('matched_debit_ids') | invoice.line_ids.mapped('matched_credit_ids')).sorted(key=lambda r: r.id)"/>
+
+        <t t-if="conciliaciones">
+            <t t-foreach="conciliaciones" t-as="reconc">
+                <t t-set="line_rec" t-value="reconc.credit_move_id if reconc.credit_move_id.move_id != invoice else reconc.debit_move_id"/>
+                <t t-set="move" t-value="line_rec.move_id"/>
+                <t t-set="withholds" t-value="invoice.get_withholds()" />
+                <t t-set="payment_descr" t-value="move.get_payment_dscr_summary()"/>
+
+                <!-- Línea de retención -->
+                <t t-if="move in withholds">
+                    <tr style="font-style: italic;">
+                        <td><t t-esc="move.date"/></td>
+                        <td><t t-esc="move.name"/></td>
+                        <td>RETENCIÓN</td>
+                        <td colspan="1" style="text-align:right"></td>
+                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(reconc.amount)"/></td>
+                        <td colspan="2" style="text-align:right"></td>
+                    </tr>
+                </t>
+
+                <!-- Línea de pago -->
+                <t t-if="move not in withholds">
+                    <tr style="font-style: italic;">
+                        <td><t t-esc="move.date"/></td>
+                        <td><t t-esc="move.name"/></td>
+                        <td><t t-esc="payment_descr[1]"/></td>
+                        <td colspan="1" style="text-align:right"></td>
+                        <td class="text-end">$ <t t-esc="'{:,.2f}'.format(reconc.amount)"/></td>
+                        <td colspan="2" style="text-align:right"></td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </t>
+
+    <!-- Separador visual entre facturas -->
+    <tr><td colspan="7"><hr style="border: none; border-top: 1px dashed #ccc; margin: 4px 0;"/></td></tr>
+</t>
+
+            </tbody>
+        </table>
+
+<t t-set="anticipos_lines" t-value="doc.get_anticipo_balance_partner_clte_lines(company.id)" />
+        <t t-if="anticipos_lines">
+        <div style="margin: 30px 0 10px 0; padding: 10px; background-color: #f0f0f0; border-left: 5px solid #3c8dbc;">
+    <h3 style="margin: 0; font-size: 16px;">Anticipos Pendientes por Aplicar</h3>
+</div>
+
+            <table class="table table-sm" style="width:100%; border-collapse: collapse;" border="1">
+            <thead>
+                <tr style="background-color: #eee;">
+                    <th style="width:10%">Fecha</th>
+                    <th style="width:20%">Documento</th>
+                    <th style="width:30%">Descripción</th>
+                    <th style="width:10%">Débito</th>
+                    <th style="width:10%">Crédito</th>
+                    <th style="width:10%">Saldo</th>
+                    <th style="width:10%">Acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                <t t-foreach="anticipos_lines" t-as="anticipo_line">
+    <!-- Línea principal (factura, asiento, etc.) -->
+    <tr>
+        <td style="text-align:left"><t t-esc="anticipo_line['date']"/></td>
+        <td style="text-align:left"><t t-esc="anticipo_line['move_name']"/></td>
+        <td style="text-align:left"><t t-esc="anticipo_line['ref']"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['debit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['credit'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['amount_residual'])"/></td>
+        <td style="text-align:right"><t t-esc="'{:,.2f}'.format(anticipo_line['saldo_acumulado'])"/></td>
+    </tr>
+                </t>
+          </tbody>
+            </table>
+        </t>
+
+
+    <t t-set="por_pagar" t-value="doc.get_balance_partner(lines)"/>
+<t t-set="anticipos" t-value="doc.get_balance_partner(anticipos_lines)"/>
+<t t-set="saldo_final" t-value="por_pagar - anticipos"/>
+
+<!-- Tabla resumen -->
+<table style="width: 40%; float: right; margin-top: 20px; font-size: 14px; border-collapse: collapse;">
+    <tr>
+        <td style="text-align: left; padding: 5px;"><strong>Por Cobrar:</strong></td>
+        <td style="text-align: right; padding: 5px;">
+            <t t-esc="'{:,.2f}'.format(por_pagar)"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 5px;"><strong>Anticipos:</strong></td>
+        <td style="text-align: right; padding: 5px;">
+            <t t-esc="'{:,.2f}'.format(anticipos)"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 5px; border-top: 1px solid #ccc;"><strong>Saldo:</strong></td>
+        <td style="text-align: right; padding: 5px; border-top: 1px solid #ccc;">
+            <t t-esc="'{:,.2f}'.format(saldo_final)"/>
+        </td>
+    </tr>
+</table>
+
+    </div>
+</t>
+
+
+
+                </div>
+            </t>
+        </t>
+    </t>
+    </t>
+
+           </template>
+
+
+</odoo>

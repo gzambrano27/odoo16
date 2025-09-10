@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+
+		<record id="dynamic_function_test_wizard_view_form" model="ir.ui.view">
+			<field name="name">dynamic.function.test.wizard.form</field>
+			<field name="model">dynamic.function.test.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Prueba" version="16.0">
+					<header>
+					
+					</header>
+					<group colspan="3" col="1" string="Definición">
+						<field name="name" colspan="3" readonly="1"  nolabel="1" />
+						<newline />
+						<group string="Argumentos"
+							attrs="{'invisible':[('required_arguments','!=',True)]}">
+							<field name="arguments" colspan="2" nolabel="1" widget="ace" options="{'mode': 'python'}"
+								attrs="{'required':[('required_arguments','=',True)],'invisible':[('required_arguments','!=',True)]}" />
+						</group>
+						<newline />
+						<field name="dynamic_id" invisible="1"
+							on_change="onchange_dynamic_id(dynamic_id)" options="{'no_open': True, 'no_create': True}" />
+						<field name="required_arguments" invisible="1" />
+					</group>
+					<newline />
+					<footer>
+						<button name="process" type="object" string="Procesar" icon='fa-cogs' />
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="dynamic_function_test_wizard_view_action" model="ir.actions.act_window">
+			<field name="name">Probar Función</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">dynamic.function.test.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dynamic_function_test_wizard_view_form" />
+			<field name="target">new</field>
+		</record>
+
+	</data>
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+<record id="view_hr_deductible_expenses_contract_period_template_tree" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.contract.period.template.tree</field>
+    <field name="model">hr.deductible.expenses.contract.period.template</field>
+    <field name="arch" type="xml">
+        <tree string="Proyección de gastos" create="false" delete="false" editable="bottom"
+              decoration-muted="state=='cancelled'"
+              decoration-info="state=='draft'"
+              decoration-danger="state=='confirmed'"
+              decoration-success="state=='updated'"
+        >
+            <field name="id" readonly="1" />
+            <field name="create_date" readonly="1" string="Creado en"/>
+            <field name="company_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+            <field name="period_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+            <field name="employee_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+    	    <field name="vivienda" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="alimentacion" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="vestimenta" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="salud" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="turismo" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="educacion" sum="total" attrs="{'readonly':[('state','!=','draft')]}"/>
+<field name="state" optional="hide" readonly="1" />
+
+             <button name="action_draft" type="object" attrs="{'invisible':[('state','not in',('confirmed'))]}"
+           icon="fa-rotate-left" help="Reversar"   groups="hr_payroll.group_hr_payroll_manager"       />
+             <button name="action_confirmed" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+       icon="fa-check" help="Confirmar"   groups="gps_hr.group_empleados_usuarios"              />
+
+             <button name="action_updated" type="object" attrs="{'invisible':[('state','not in',('confirmed'))]}"
+            icon="fa-cogs"  help="Actualizar"   groups="hr_payroll.group_hr_payroll_manager"        />
+
+             <button name="action_cancelled" type="object" attrs="{'invisible':[('state','not in',('draft','confirmed'))]}"
+          icon="fa-times"     help="Anular"  groups="hr_payroll.group_hr_payroll_manager"    />
+
+
+        </tree>
+    </field>
+</record>
+
+
+<record id="view_hr_deductible_expenses_contract_period_template_form" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.contract.period.template.form</field>
+    <field name="model">hr.deductible.expenses.contract.period.template</field>
+    <field name="arch" type="xml">
+        <form string="Proyección de gastos" create="false" delete="false">
+         <header>
+
+
+
+               <button name="action_draft" type="object" attrs="{'invisible':[('state','not in',('confirmed'))]}"
+           icon="fa-rotate-left" string="Reversar"  groups="hr_payroll.group_hr_payroll_manager"          />
+             <button name="action_confirmed" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+         icon="fa-check"  string="Confirmar"    groups="gps_hr.group_empleados_usuarios,hr_payroll.group_hr_payroll_manager"               />
+
+             <button name="action_updated" type="object" attrs="{'invisible':[('state','not in',('confirmed'))]}"
+            icon="fa-cogs"  string="Actualizar"   groups="hr_payroll.group_hr_payroll_manager"       />
+
+             <button name="action_cancelled" type="object" attrs="{'invisible':[('state','not in',('draft','confirmed'))]}"
+          icon="fa-times"     string="Anular"  groups="hr_payroll.group_hr_payroll_manager"    />
+             <field name="state" widget="statusbar" />
+            </header>
+            <sheet>
+
+                <group>
+                <group>
+
+             <field name="id" readonly="1" />
+            <field name="create_date" readonly="1" string="Creado en"/>
+            <field name="company_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+            <field name="period_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+            <field name="employee_id" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+
+
+
+                </group>
+                <group>
+
+    	    <field name="vivienda" attrs="{'readonly':[('state','!=','draft')]}" />
+            <field name="alimentacion" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="vestimenta" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="salud" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="turismo" attrs="{'readonly':[('state','!=','draft')]}"/>
+            <field name="educacion" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </group>
+
+                    </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+<record id="view_hr_deductible_expenses_contract_period_template_search" model="ir.ui.view">
+    <field name="name">hr.deductible.expenses.contract.period.template.search</field>
+    <field name="model">hr.deductible.expenses.contract.period.template</field>
+    <field name="arch" type="xml">
+        <search string="Proyección de gastos">
+          <field name="period_id" />
+        </search>
+    </field>
+</record>
+
+<record id="action_view_hr_deductible_expenses_contract_period_template" model="ir.actions.act_window">
+    <field name="name">Proyección de gastos</field>
+    <field name="res_model">hr.deductible.expenses.contract.period.template</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_hr_deductible_expenses_contract_period_template_tree"/>
+    <field name="context">{'only_user':True}</field>
+    <field name="domain">[]</field>
+</record>
+
+
+    </data>
+
+</odoo>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <template id="report_equipment_entrega">
+      <t t-call="web.basic_layout">
+        <t t-foreach="docs" t-as="o">
+          <div class="page" style="font-family: Verdana; font-size: 17px;">
+            <!-- Encabezado -->
+            <table class="table table-bordered">
+              <tr>
+                <!-- Primera columna: Logo -->
+                <td style="width: 25%; text-align: center; vertical-align: middle;">
+                  <img t-att-src="'/maintenance_add_actas/static/description/logo_gps.png'" style="max-height: 100px;"/>
+                </td>
+                <!-- Segunda columna: Título -->
+                <td style="width: 40%; text-align: center; vertical-align: middle;">
+                  <h5><strong>REPORTE DE ACTIVO FIJO</strong></h5>
+                </td>
+                <!-- Tercera columna: Información adicional -->
+                <td style="width: 35%; vertical-align: middle;">
+                  <div style="text-align: center;">
+                    <p><strong>Codigo:</strong> <span t-esc="o.presenta_codigo()"/></p>
+                    <div style="display: flex; justify-content: space-between;">
+                      <span><strong>Revisión:</strong> A</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <!-- Fila 1 -->
+                    <tr>
+                      <td style="width: 50%; text-align: left; vertical-align: middle;">
+                        <strong>Area/Departamento:</strong> <span t-esc="o.presenta_departamento_empleado_recibe()"/>
+                      </td>
+                      <td style="width: 50%; text-align: left; vertical-align: middle;">
+                        <strong>Ubicación:</strong> <span t-esc="o.presenta_ubicacion()"/>
+                      </td>
+                    </tr>
+                    <!-- Fila 2 -->
+                    <tr>
+                      <td style="width: 50%; text-align: left; vertical-align: middle;"><strong>Tipo reporte:</strong> Acta de entrega de Activo Fijo</td>
+                      <td style="width: 50%; text-align: left; vertical-align: middle;"><strong>Fecha:</strong> <span t-esc="o.formato_fecha()"/></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Información del producto -->
+            <div class="row">
+              <div class="col-12 text-justify">
+                <p class="text-justify">
+                  <strong><span t-esc="o.presenta_nombre_persona_entrega()" /></strong> con número de cedula
+                  <strong><span t-esc="o.presenta_identificacion_persona_entrega()"/></strong>, perteneciente al departamento de
+                  <strong><span t-esc="o.presenta_departamento_persona_entrega()"/></strong> de la compañía
+                  <strong><span t-esc="o.presenta_compania_persona_entrega()"/></strong> con RUC <strong><span t-esc="o.presenta_identificacion_compania_persona_entrega()"/></strong>
+                  , dejo constancia en la presente acta, que se ha realizado la entrega de manera personal al empleado
+                  <strong><span t-esc="o.presenta_nombre_empleado_recibe()"/></strong> con número de cedula <strong><span t-esc="o.presenta_identificacion_empleado_recibe()"/></strong>
+                  el siguiente equipo:
+                </p>
+              </div>
+            </div>
+
+            <!-- Características del equipo -->
+            <h5 class="mt-4"><strong>Información del producto:</strong></h5>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-center"><strong>Campo</strong></th>
+                  <th class="text-center"><strong>Detalle</strong></th>
+                </tr>
+              </thead>
+              <tbody style="vertical-align: middle;">
+                <!-- Fila para el nombre del equipo -->
+                <tr>
+                  <td class="text-center">EQUIPO</td>
+                  <td class="text-center"><span t-esc="o.presenta_nombre_equipo()"/></td>
+                </tr>
+                <tr>
+                  <td class="text-center">MODELO</td>
+                  <td class="text-center"><span t-esc="o.presenta_modelo_equipo()"/></td>
+                </tr>
+                <tr>
+                  <td class="text-center">SERIE</td>
+                  <td class="text-center"><span t-esc="o.presenta_serial_no_equipo()"/></td>
+                </tr>
+                <!-- Filas para las características -->
+                <t t-foreach="o.caracteristicas_ids" t-as="line">
+                  <tr>
+                    <td class="text-center" t-esc="line.name"/>
+                    <td class="text-center" t-esc="line.detalle"/>
+                  </tr>
+                </t>
+              </tbody>
+            </table>
+
+            <!-- Declaración del usuario -->
+            <div class="row" style="page-break-inside: avoid;">
+              <div class="col-12">
+                <p class="mt-4">
+                  <strong>CLAUSULA PRIMERA. - Compromiso de Buen Uso y Cuidado de Equipo:</strong>
+                  <strong><span t-esc="o.presenta_nombre_empleado_recibe()"/></strong>, en calidad de trabajador de
+                  <strong><span t-esc="o.presenta_compania_empleado_recibe()"/></strong>, recibe el equipo descrito en este documento, el cual puede ser nuevo o usado, y está conforme con las observaciones sobre su estado.
+                </p>
+                <ol>
+                  <li>Se compromete a dar un uso adecuado al equipo y a devolverlo en las mismas condiciones, salvo el desgaste normal por uso.</li><br></br>
+                  <li>En caso de pérdida o daño, autoriza descontar el valor correspondiente de sus salarios o liquidación final.</li><br></br>
+                </ol>
+                <p>
+                  Las observaciones del estado del equipo forman parte del compromiso de recepción.
+                </p>
+              </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div style="page-break-inside: avoid;">
+              <h5 class="mt-4" style="page-break-inside: avoid;"><strong>Observaciones:</strong></h5>
+              <table class="table table-bordered">
+                <tr>
+                  <td>
+                    <p class="text-justify" t-esc="o.presenta_observacion()" />
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Firma de las partes -->
+            <div class="row mt-3" style="page-break-inside: avoid;">
+              <div class="col-6 text-center">
+                <p><strong>Recibe el equipo:</strong></p>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p><strong><span t-esc="o.presenta_nombre_empleado_recibe()"/></strong></p>
+                <p>C.I.: <strong><span t-esc="o.presenta_identificacion_empleado_recibe()"/></strong></p>
+              </div>
+              <div class="col-6 text-center">
+                <p><strong>Entrega el equipo:</strong></p>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p><strong><span t-esc="o.presenta_compania_persona_entrega()" /></strong></p>
+                <p>C.I.: <strong><span t-esc="o.presenta_identificacion_compania_persona_entrega()"/></strong></p>
+              </div>
+            </div>
+          </div>
+        </t>
+      </t>
+    </template>
+  </data>
+</odoo>

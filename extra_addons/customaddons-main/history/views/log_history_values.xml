@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<record id="log_history_values_view_filter"
+			model="ir.ui.view">
+			<field name="name">log.history.values.filter</field>
+			<field name="model">log.history.values</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Valor(es)">
+					<group expand="0" string="Agrupar por...">
+						<filter string="Campo" context="{'group_by':'field_name'}" name="grp_field_name"  invisible="context.get('hide_field',True)"/>
+						<filter string="Valor" context="{'group_by':'value'}" name="grp_value" />
+					</group>
+					<field name="field_name" groups="base.menu_security"/>
+					<field name="field_string" />
+					<field name="value" />
+				</search>
+			</field>
+		</record>
+
+		<record id="log_history_values_view_tree"
+			model="ir.ui.view">
+			<field name="name">log.history.values.tree</field>
+			<field name="model">log.history.values</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Valor(es)" create="false" delete="false"
+					edit="false" decoration-danger="(state=='unlinked')"
+					decoration-success="(state=='created')"
+					decoration-primary="(state=='updated')" 
+					decoration-it="(state=='set')"  
+					 >
+					<field name="field_name" invisible="context.get('hide_field',True)"/>
+					<field name="field_string" />
+					<field name="value" />
+					<field name="state" invisible="1"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="log_history_values_view_form"
+			model="ir.ui.view">
+			<field name="name">log.history.values.form</field>
+			<field name="model">log.history.values</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Valor(es)" version="16.0" create="false"
+					delete="false" edit="false">
+					<header>
+				
+					</header>
+					<group colspan="4" cols="2">
+						<group>
+							<field name="field_name" colspan="2" invisible="context.get('hide_field',True)"/>
+							<field name="field_string" colspan="2" />
+						</group>
+						<group>
+							<field name="value" colspan="2" />
+							<field name="state" invisible="1" />
+						</group>
+					</group>
+					<newline />
+					<separator string="Valor(es)"
+						attrs="{'invisible':[('has_childs','=',False)]}" />
+					<newline />
+					<field name="child_ids"
+						attrs="{'invisible':[('has_childs','=',False)]}" />
+					<field name="has_childs" invisible="1" />
+				</form>
+			</field>
+		</record>
+		
+		
+	</data>
+</odoo>

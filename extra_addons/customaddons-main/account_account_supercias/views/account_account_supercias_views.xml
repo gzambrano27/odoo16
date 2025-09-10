@@ -1,0 +1,48 @@
+<odoo>
+    <record id="view_account_supercias_form" model="ir.ui.view">
+        <field name="name">account.account.supercias.form</field>
+        <field name="model">account.account.supercias</field>
+        <field name="arch" type="xml">
+            <form string="Grupo Supercia">
+                <sheet>
+                    <group>
+                        <field name="code" />
+                        <field name="name_base"/>
+                        <field name="name" readonly="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_supercias_tree" model="ir.ui.view">
+        <field name="name">account.account.supercias.tree</field>
+        <field name="model">account.account.supercias</field>
+        <field name="arch" type="xml">
+            <tree string="Grupos Supercia">
+                <field name="code" />
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_supercias" model="ir.actions.act_window">
+        <field name="name">Grupos Supercia</field>
+        <field name="res_model">account.account.supercias</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>Gestiona los grupos Supercia.</p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_account_supercias" name="Grupos Supercia" action="action_account_supercias"
+        parent="account.account_account_menu"
+        sequence="1" groups="account.group_account_manager" />
+
+</odoo>

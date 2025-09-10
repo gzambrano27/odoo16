@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crossovered_budget_view_form_inherit" model="ir.ui.view">
+        <field name="name">crossovered.budget.view.form.inherit</field>
+        <field name="model">crossovered.budget</field>
+        <field name="inherit_id" ref="account_budget.crossovered_budget_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='crossovered_budget_line']/tree" position="inside">
+                <field name="filename" invisible="1"/>
+                <field name="add_file" filename="file_name" optional="1"/>
+            </xpath>
+            <xpath expr="//field[@name='crossovered_budget_line']/form/group"
+                   position="inside">
+                <group>
+                    <field name="filename" invisible="1"/>
+                    <field name="add_file" filename="file_name"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='theoritical_amount']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='theoritical_amount']" position="after">
+                <field name="balance" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

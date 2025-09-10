@@ -1,0 +1,23 @@
+.bg-verde {
+    background-color: green !important;
+    color: white !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.bg-naranja {
+    background-color: orange !important;
+    color: black !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.bg-rojo {
+    background-color: red !important;
+    color: white !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+}

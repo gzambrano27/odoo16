@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+    <record id="view_document_bank_reconciliation_line_group_form" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.line.group.form</field>
+        <field name="model">document.bank.reconciliation.line.group</field>
+        <field name="arch" type="xml">
+                <form string="Grupo de Conciliación Bancaria" edit="true"  create="false" delete="false">
+                <header>
+
+                    </header>
+
+                <sheet>
+ <group>
+                    <group>
+
+
+                              <field name="date" readonly="1" force_save="1"/>
+                              <field name="reference" readonly="1" force_save="1" />
+                              <field name="transaction_type" readonly="1" force_save="1"/>
+<field name="full_reconciled" readonly="1"/>
+
+           <field name="parent_date_from" readonly="1" force_save="1" />
+                              <field name="parent_date_to" readonly="1" force_save="1"/>
+
+                    </group>
+      <group>
+   <field name="amount" readonly="1" force_save="1"/>
+                            <field name="signed_amount" readonly="1" force_save="1" />
+
+
+
+
+
+                                     <field name="description" readonly="1" force_save="1"/>
+      <field name="total_signed_related_amount"  readonly="1" force_save="1" />
+ <field name="difference_amount" readonly="1" force_save="1" />
+
+
+
+                            <field name="account_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+           <field name="journal_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+
+  <field name="company_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+
+        <field name="bank_macro_id"
+               domain="[('company_id','=',company_id),('journal_id','=',journal_id),('state','=','done'),('date_request','&gt;=',parent_date_from)]"
+               options="{'no_create': True,'no_edit': True,'no_open': True}"
+        context="{'tree_view_ref':'gps_bancos.account_payment_bank_macro_view_tree'}"
+        />
+            <field name="bank_employee_id"  options="{'no_create': True,'no_edit': True,'no_open': True}"
+            domain="[('company_id','=',company_id),('payment_journal_id','=',journal_id),('state','=','approved'),('date_process','&gt;=',parent_date_from)]"
+        context="{'tree_view_ref':'gps_hr.hr_employee_payment_view_tree'}"
+            />
+
+<field name="payment_ids"
+       widget="many2many_tags"
+       options="{'no_create': True,'no_edit': True,'no_open': True}"
+            domain="[('company_id','=',company_id),('journal_id','=',journal_id),('state','=','posted'),('date','&gt;=',parent_date_from)]"
+            />
+
+      </group>
+
+ </group>
+                    <notebook>
+                        <page string="Asientos">
+                            <separator string="Asientos" />
+  <field name="move_ids"  options="{'no_create': True,'no_edit': True,'no_open': True}"
+context="{ 'tree_view_ref':'account.view_in_invoice_tree' }"
+domain="[('company_id','=',company_id),('journal_id','=',journal_id),('state','=','posted'),('date','&gt;=',parent_date_from)]"
+                    >
+
+                    </field> <newline/>
+                                                        <separator string="Lineas de Asientos" />
+                    <newline/>
+                     <field name="move_line_ids"   options="{'no_create': True,'no_edit': True,'no_open': True}"
+                            domain="[('move_id','in',parent_move_ids),('move_id.company_id','=',company_id),('move_id.state','=','posted'),('account_id','=',account_id),(((transaction_type=='debit') and 'debit' or 'credit'),'!=',0.00)]"
+                           context="{'tree_view_ref':'gps_bancos.view_in_invoice_bill_line_tree' }"
+
+                            />
+
+                           <newline/>
+                                                        <separator string="Otras Lineas de Asientos" />
+                    <newline/>
+                     <field name="other_move_line_ids"   options="{'no_create': True,'no_edit': True,'no_open': True}"
+                            domain="[('move_id','in',parent_move_ids),('move_id.company_id','=',company_id),('move_id.state','=','posted'),('account_id','!=',account_id)]"
+                           context="{'tree_view_ref':'gps_bancos.view_in_invoice_bill_line_tree' }"
+
+                            />
+
+                        </page>
+                         <page string="Detalle">
+  <field name="line_ids" colspan="4" readonly="1" />
+                             <newline/>
+                             <field name="parent_move_ids" invisible="1" />
+                        </page>
+                    </notebook>
+
+
+                        </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_document_bank_reconciliation_line_group_tree" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.line.group.tree</field>
+        <field name="model">document.bank.reconciliation.line.group</field>
+        <field name="arch" type="xml">
+                 <tree string="Referencias" create="false" delete="false" edit="true"
+  decoration-danger="transaction_type=='credit'"
+                              decoration-success="transaction_type!='credit'"
+decoration-it="total_signed_related_amount!=0.00"
+decoration-bf="not full_reconciled"
+
+                        >
+                              <field name="date" readonly="1" force_save="1"/>
+                              <field name="reference" readonly="1" force_save="1"/>
+                              <field name="transaction_type" optional="hide" readonly="1" force_save="1"/>
+                           <field name="amount" readonly="1" force_save="1"
+
+                           />
+                            <field name="signed_amount" readonly="1" force_save="1" sum="total" optional="hide"/>
+
+  <field name="description" readonly="1" force_save="1"/>
+
+                 <field name="total_signed_related_amount" readonly="1" force_save="1" sum="total" optional="hide"/>
+ <field name="difference_amount" readonly="1" force_save="1" sum="total" optional="hide"/>
+
+                            <field name="account_id" invisible="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+  <field name="company_id" invisible="1" />
+<field name="full_reconciled" optional="hide" />
+                        </tree>
+        </field>
+    </record>
+
+
+    </data>
+
+
+</odoo>

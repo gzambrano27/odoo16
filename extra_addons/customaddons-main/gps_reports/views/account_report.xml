@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_account_report_form_inherit_add_main_model_name" model="ir.ui.view">
+            <field name="name">account.report.form.inherit.main_model_name</field>
+            <field name="model">account.report</field>
+            <field name="inherit_id" ref="account_reports.account_report_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Insertar main_model_name antes de load_more_limit -->
+                <field name="load_more_limit" position="before">
+                    <field name="main_model_name"
+                           placeholder="por defecto es account.move.line caso contrario para validar por otras entidades"
+                        required="0"
+                    />
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_solicitud_servicio_usuario,sistemasGPS_solicitud: Usuario - Solicitud de Servicio,model_solicitud_servicio,sistemasGPS_solicitud.group_usuario_solicitudes_new,1,1,1,0
+access_solicitud_servicio_jefe,sistemasGPS_solicitud: Jefe - Solicitud de Servicio,model_solicitud_servicio,sistemasGPS_solicitud.group_jefe_solicitudes_new,1,1,1,0
+access_solicitud_servicio_admin,sistemasGPS_solicitud: Administrador - Solicitud de Servicio,model_solicitud_servicio,sistemasGPS_solicitud.group_admin_solicitudes_new,1,1,1,1
+access_correos_primordialesodoo,Acceso a CorreosPrimordiales,model_correos_primordialesodoo,sistemasGPS_solicitud.group_admin_solicitudes_new,1,1,1,1

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_maintenance_equipment_form" model="ir.ui.view">
+			<field name="name">maintenance.equipment.form</field>
+			<field name="model">maintenance.equipment</field>
+			<field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+			<field name="arch" type="xml">
+			   <xpath expr="//field[@name='serial_no']/ancestor::group" position="after">
+				   <group>
+					   <field name="caracteristicas_ids" string="Especificaciones">
+							<tree string="Especificaciones" editable="bottom">
+								<field name="name"/>
+								<field name="detalle"/>
+							</tree>
+						</field>
+				   </group>
+			   </xpath>
+			</field>
+		</record>
+   </data>
+</odoo>

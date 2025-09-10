@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record id="document_financial_version_wizard_form"
+                model="ir.ui.view">
+            <field name="name">document.financial.version.wizard.form</field>
+            <field name="model">document.financial.version.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml" >
+                <form class="o_form_view_full_width">
+                     <group colspan="4">
+                        <group>
+                            <field name="name" colspan="2" readonly="1" force_save="1"/>
+                             <field name="date" colspan="2" readonly="1" force_save="1" />
+                            <field name="comments" colspan="2" required="1"/>
+                        </group>
+                        <group>
+                           <field name="total" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_to_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_pending" colspan="2"  readonly="1" force_save="1"/>
+
+                        </group>
+                    </group>
+                    <newline/>
+                    <field name="line_ids" nolabel="1" colspan="4"
+
+                    >
+                        <tree string="Detalle" editable="bottom"
+                        decoration-it="(total_paid&gt;0)"
+                      decoration-success="(total_pending&lt;=0.00)"
+                      decoration-danger="(total_pending&gt;0.00)"
+                        >
+                              <field name="quota"  force_save="1"  />
+                             <field name="date_process"  force_save="1" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="percentage_amortize" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="percentage_interest" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}" />
+                             <field name="payment_capital" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="payment_interest" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="payment_other" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                            <field name="payment_overdue_interest" sum="total" readonly="1" force_save="1"/>
+
+                             <field name="amount" sum="total" invisible="1"/>
+                             <field name="total" sum="total" invisible="1"/>
+                             <field name="total_to_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_pending" sum="total" readonly="1" force_save="1"/>
+                            <field name="parent_line_id" optional="hide" readonly="1" force_save="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <newline/>
+                  <footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs'  />
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+                </form>
+
+            </field>
+        </record>
+
+
+
+       <record
+                id="document_financial_version_wizard_form_wizard"
+                model="ir.actions.act_window">
+            <field name="name">Crear Version</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">document.financial.version.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="document_financial_version_wizard_form"/>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+
+        </record>
+
+<!-- -->
+
+
+         <record id="document_financial_version_in_wizard_form"
+                model="ir.ui.view">
+            <field name="name">document.financial.version.in.wizard.form</field>
+            <field name="model">document.financial.version.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml" >
+                <form class="o_form_view_full_width">
+                     <group colspan="4">
+                        <group>
+                            <field name="name" colspan="2" readonly="1" force_save="1"/>
+                             <field name="date" colspan="2" readonly="1" force_save="1" />
+                            <field name="comments" colspan="2" required="1"/>
+                        </group>
+                        <group>
+                           <field name="total" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_to_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_pending" colspan="2"  readonly="1" force_save="1"/>
+
+                        </group>
+                    </group>
+                    <newline/>
+                    <field name="line_ids" nolabel="1" colspan="4"
+
+                    >
+                        <tree string="Detalle" editable="bottom"
+                        >
+                              <field name="quota"  force_save="1"  />
+                             <field name="date_process"  force_save="1"  />
+
+                             <field name="amount" sum="total"  />
+<field name="amount_interes" sum="total"  />
+
+                             <field name="total" sum="total" invisible="1"/>
+                             <field name="total_to_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_pending" sum="total" readonly="1" force_save="1"/>
+
+                            <field name="parent_line_id" optional="hide" readonly="1" force_save="1"/>
+ <field name="company_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <newline/>
+                  <footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs'  />
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+                </form>
+
+            </field>
+        </record>
+
+
+
+       <record
+                id="document_financial_version_in_wizard_form_wizard"
+                model="ir.actions.act_window">
+            <field name="name">Actualizar Tabla</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">document.financial.version.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="document_financial_version_in_wizard_form"/>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+
+        </record>
+
+
+        <!-- -->
+
+                 <record id="document_financial_version_in_txt_wizard_form"
+                model="ir.ui.view">
+            <field name="name">document.financial.version.in.txt.wizard.form</field>
+            <field name="model">document.financial.version.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml" >
+                <form class="o_form_view_full_width">
+                     <group colspan="4">
+                        <group>
+                            <field name="name" colspan="2" readonly="1" force_save="1"/>
+                             <field name="date" colspan="2" readonly="1" force_save="1" />
+                            <field name="comments" colspan="2" required="1"/>
+<field name="import_type" required="1" invisible="0"/>
+                            		<field name="file_name" invisible="1" colspan="2" />
+									<field name="file" colspan="2" filename="file_name"
+									attrs="{'required':[('import_type','=','file')],'invisible':[('import_type','!=','file')]}"
+
+                                    />
+                              <field name="quotas_values" colspan="2" required="0"
+                              attrs="{'required':[('import_type','!=','file')],'invisible':[('import_type','=','file')]}"
+
+                              />
+
+                        </group>
+                        <group>
+                           <field name="total" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_to_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_paid" colspan="2"  readonly="1" force_save="1"/>
+                             <field name="total_pending" colspan="2"  readonly="1" force_save="1"/>
+
+                        </group>
+                    </group>
+                  <newline/>
+                    <field name="line_ids" nolabel="1" colspan="4"
+
+                    >
+                        <tree string="Detalle" editable="bottom"
+                        decoration-it="(total_paid&gt;0)"
+                      decoration-success="(total_pending&lt;=0.00)"
+                      decoration-danger="(total_pending&gt;0.00)"
+                        >
+                              <field name="quota"  force_save="1"  />
+                             <field name="date_process"  force_save="1" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="percentage_amortize" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="percentage_interest" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}" />
+                             <field name="payment_capital" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="payment_interest" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="payment_other" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                            <field name="payment_overdue_interest" sum="total" readonly="1" force_save="1"/>
+
+                             <field name="amount" sum="total" invisible="1"/>
+                             <field name="total" sum="total" invisible="1"/>
+                             <field name="total_to_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_paid" sum="total" readonly="1" force_save="1"/>
+                             <field name="total_pending" sum="total" readonly="1" force_save="1"/>
+                            <field name="parent_line_id" optional="hide" readonly="1" force_save="1"/>
+                             <field name="company_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <newline/>
+                  <footer>
+						<button name="process" type="object" string="Procesar"
+							icon='fa-cogs'  />
+
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+                </form>
+
+            </field>
+        </record>
+
+
+
+       <record
+                id="document_financial_version_in_txt_wizard_form_wizard"
+                model="ir.actions.act_window">
+            <field name="name">Actualizar Tabla</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">document.financial.version.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="document_financial_version_in_txt_wizard_form"/>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+
+        </record>
+
+
+
+    </data>
+
+</odoo>

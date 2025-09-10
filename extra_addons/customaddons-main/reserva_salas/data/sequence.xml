@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_reserva_sala" model="ir.sequence">
+        <field name="name">Reserva de Sala</field>
+        <field name="code">reserva.sala</field>
+        <field name="prefix">RESERVA-</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

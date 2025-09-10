@@ -1,0 +1,299 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="account_payment_analysis_request_wizard_view_tree" model="ir.ui.view">
+            <field name="name">account.payment.analysis.request.wizard.tree</field>
+            <field name="model">account.payment.analysis.request.wizard</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree  decoration-info="state=='draft'" create="true" edit="true"  decoration-success="state!='draft'" >
+                     <field name="company_id" />
+                    <field name="id" string="# ID" />
+                  <field name="create_uid" string="Usuario" />
+                 <field name="create_date" string="Creado en" />
+                <field name="date_request"  />
+                 <field name="date_from"  optional="hide"/>
+                 <field name="date_to"  optional="hide"/>
+                    <field name="state" optional="hide"  />
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="account_payment_analysis_request_wizard_view_form" model="ir.ui.view">
+            <field name="name">account.payment.analysis.request.wizard.form</field>
+            <field name="model">account.payment.analysis.request.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Buscar Cuentas por Pagar" version="16.0" copy="false" create="true" edit="true"   delete="false">
+                   <header>
+                       <button name="process" type="object" string="Procesar" icon='fa-cogs'
+attrs="{'invisible':[('state','!=','draft')]}"
+                               confirm="Estas seguro de continuar?"
+                        />
+                       <field name="state" widget="statusbar" />
+                    </header>
+                    <group>
+                        <group>
+                            <field name="id" readonly="1" string="# ID" />
+                            <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" colspan="2" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+   <field name="date_request" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+
+                             <field name="request_type_id" domain="[('type','=','registro'),('code','ilike','account.')]" options="{'no_create':True,'no_open':True,','no_edit':True}"  />
+ <field name="comments" placeholder="GLOSA ADICIONAL" />
+
+   <field name="id" invisible="1" colspan="2"/>
+                            <field name="show_options" widget="radio" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+<div colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','!=','show_lines')]}" class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+    <b>Seleccionar Líneas Contables por Vencimiento</b>
+    Permite seleccionar manualmente las cuotas a pagar dentro del rango consultado.
+</div>
+
+<div colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','!=','show_invoices')]}"  class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+    <b>Seleccionar Documentos por Vencimiento</b>
+    Permite seleccionar manualmente los documentos a pagar dentro del rango consultado.
+</div>
+                             </group>
+  <group string="Parametros">
+      <field name="filter_docs" invisible="1" />
+      <field name="date_from" required="1" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="date_to" required="1" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="filter_by_bank"  attrs="{'readonly':[('state','!=','draft')]}" colspan="2" />
+      <field name="filter_bank_ids" colspan="2"
+             attrs="{'readonly':[('state','!=','draft')],'required':[('filter_by_bank','=',True)],'invisible':[('filter_by_bank','!=',True)]}"
+                       widget="many2many_checkboxes" domain="[('use_macro_format','=',True)]" />
+      <field name="filter_partners" required="0" colspan="2" invisible="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="partner_ids" required="0" colspan="2" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
+      context="{'filter_by_bank':filter_by_bank,'filter_bank_ids':filter_bank_ids,'show_for_payment':filter_partners,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_show_options':'show_partners'}"
+      />
+      <field name="filter_invoices" required="0" colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_invoices')]}" />
+       <field name="filter_move_ids"  colspan="2"  nolabel="1"
+                            attrs="{'readonly':[('state','!=','draft')],'invisible':['|',('filter_invoices','!=',True),('show_options','=','show_invoices')]}"
+                    domain="[('company_id','=',company_id),('state','=','posted'),('payment_state', 'in', ('not_paid', 'partial'))]"
+                            context="{'filter_docs':filter_docs,'default_move_type': 'in_invoice','move_type': 'in_invoice','tree_view_ref':'account.view_in_invoice_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_invoices'}"
+                    >
+<tree>
+      <field name="move_type" optional="hide" />
+    <field name="name" />
+    <field name="journal_id" />
+                             <field name="partner_id" />
+    <field name="ref" />
+    <field name="amount_total_signed" />
+    <field name="amount_residual_signed" />
+<field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'"
+       decoration-warning="payment_state in ('partial', 'in_payment')"
+       decoration-success="payment_state in ('paid', 'reversed')" optional="show"
+       />
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'posted'"
+                           decoration-info="state == 'draft'" optional="show"
+                           />
+</tree>
+       </field>
+  </group>
+
+                    </group>
+                    <group>
+                        <field name="line_ids" nolabel="1" colspan="4"
+                    domain="[('move_id.company_id','=',company_id),('move_id.state','=','posted')]"
+                           context="{'filter_docs':filter_docs,'tree_view_ref':'gps_bancos.view_in_invoice_bill_line_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_lines'}"
+                               attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_invoices')]}"
+                    />
+                     <field name="move_ids" nolabel="1"   colspan="4"
+                            attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_lines')]}"
+                    domain="[('company_id','=',company_id),('state','=','posted')]"
+                            context="{'filter_docs':filter_docs,'default_move_type': 'in_invoice','move_type': 'in_invoice','tree_view_ref':'account.view_in_invoice_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_invoices'}"
+                    >
+                       <tree>
+    <field name="move_type" optional="hide" />
+    <field name="name" />
+    <field name="journal_id" />
+                             <field name="partner_id" />
+    <field name="ref" />
+      <field name="amount_total_signed" />
+    <field name="amount_residual_signed" />
+<field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'"
+       decoration-warning="payment_state in ('partial', 'in_payment')"
+       decoration-success="payment_state in ('paid', 'reversed')" optional="show"
+       />
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'posted'"
+                           decoration-info="state == 'draft'" optional="show"
+                           />
+
+</tree>
+       </field>
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+        <record
+                id="account_payment_analysis_request_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Crear Sol. de Pagos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.analysis.request.wizard</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id"
+                   ref="account_payment_analysis_request_wizard_view_tree"/>
+            <field name="target">current</field>
+             <field name="domain">[('create_uid','=',uid)]</field>
+    <field name="context">{'type_code':'account.cxp','fullscreen': True}</field>
+        </record>
+
+
+        <!-- -->
+
+        <record id="account_payment_analysis_request_wizard_view_liq_form" model="ir.ui.view">
+            <field name="name">account.payment.analysis.request.wizard.liq.form</field>
+            <field name="model">account.payment.analysis.request.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Buscar Cuentas por Pagar" version="16.0" copy="false" create="true" edit="true"   delete="false">
+                   <header>
+                        <button name="process" type="object" string="Procesar" icon='fa-cogs'
+attrs="{'invisible':[('state','!=','draft')]}"
+                           confirm="Estas seguro de continuar?"
+                        />
+                       <field name="state" widget="statusbar" />
+                    </header>
+                    <group>
+                        <group>
+                            <field name="id" readonly="1" string="# ID" />
+                            <field name="company_id" attrs="{'readonly':[('state','!=','draft')]}" colspan="2" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+   <field name="date_request" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+                             <field name="request_type_id" domain="[('type','=','registro'),('code','ilike','account.')]" options="{'no_create':True,'no_open':True,','no_edit':True}"  />
+ <field name="comments" placeholder="GLOSA ADICIONAL" />
+   <field name="id" invisible="1" colspan="2"/>
+                            <field name="show_options" readonly="1" widget="radio" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+<div colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','!=','show_lines')]}" class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+    <b>Seleccionar Líneas Contables por Vencimiento</b>
+    Permite seleccionar manualmente las cuotas a pagar dentro del rango consultado.
+</div>
+
+<div colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','!=','show_invoices')]}"  class="alert alert-info" role="alert" style="margin-bottom:0px;width:100%">
+    <b>Seleccionar Documentos por Vencimiento</b>
+    Permite seleccionar manualmente los documentos a pagar dentro del rango consultado.
+</div>
+                             </group>
+  <group string="Parametros">
+      <field name="filter_docs" invisible="1" />
+      <field name="date_from" required="1" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="date_to" required="1" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="filter_by_bank"  invisible="1" attrs="{'readonly':[('state','!=','draft')]}" colspan="2" />
+      <field name="filter_bank_ids" invisible="1"  colspan="2"
+             attrs="{'readonly':[('state','!=','draft')],'required':[('filter_by_bank','=',True)],'invisible':[('filter_by_bank','!=',True)]}"
+                       widget="many2many_checkboxes" domain="[('use_macro_format','=',True)]" />
+      <field name="filter_partners"    required="0" colspan="2" invisible="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+      <field name="partner_ids" invisible="1"  required="0" colspan="2" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
+      context="{'filter_by_bank':filter_by_bank,'filter_bank_ids':filter_bank_ids,'show_for_payment':filter_partners,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_show_options':'show_partners'}"
+      />
+      <field name="filter_invoices" invisible="1"  required="0" colspan="2" attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_invoices')]}" />
+       <field name="filter_move_ids"  invisible="1"   colspan="2"  nolabel="1"
+                            attrs="{'readonly':[('state','!=','draft')],'invisible':['|',('filter_invoices','!=',True),('show_options','=','show_invoices')]}"
+                    domain="[('company_id','=',company_id),('state','=','posted'),('payment_state', 'in', ('not_paid', 'partial'))]"
+                            context="{'filter_docs':filter_docs,'default_move_type': 'in_invoice','move_type': 'in_invoice','tree_view_ref':'account.view_in_invoice_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_invoices'}"
+                    >
+<tree>
+      <field name="move_type" optional="hide" />
+    <field name="name" />
+    <field name="journal_id" />
+                             <field name="partner_id" />
+    <field name="ref" />
+    <field name="amount_total_signed" />
+    <field name="amount_residual_signed" />
+<field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'"
+       decoration-warning="payment_state in ('partial', 'in_payment')"
+       decoration-success="payment_state in ('paid', 'reversed')" optional="show"
+       />
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'posted'"
+                           decoration-info="state == 'draft'" optional="show"
+                           />
+</tree>
+       </field>
+  </group>
+
+                    </group>
+                    <group>
+                        <field name="line_ids" nolabel="1" colspan="4"
+                    domain="[('move_id.company_id','=',company_id),('move_id.state','=','posted')]"
+                           context="{'filter_docs':filter_docs,'tree_view_ref':'gps_bancos.view_in_invoice_bill_line_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_lines'}"
+                               attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_invoices')]}"
+                    />
+                     <field name="move_ids" nolabel="1"   colspan="4"
+                            attrs="{'readonly':[('state','!=','draft')],'invisible':[('show_options','=','show_lines')]}"
+                    domain="[('company_id','=',company_id),('state','=','posted')]"
+                            context="{'filter_docs':filter_docs,'default_move_type': 'in_invoice','move_type': 'in_invoice','tree_view_ref':'account.view_in_invoice_tree','show_for_payment':True,'default_company_id':company_id,'default_date_from':date_from,'default_date_to':date_to,'default_partner_ids':partner_ids,'default_show_options':'show_invoices'}"
+                    >
+                       <tree>
+    <field name="move_type" optional="hide" />
+    <field name="name" />
+    <field name="journal_id" />
+                             <field name="partner_id" />
+    <field name="ref" />
+      <field name="amount_total_signed" />
+    <field name="amount_residual_signed" />
+<field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'"
+       decoration-warning="payment_state in ('partial', 'in_payment')"
+       decoration-success="payment_state in ('paid', 'reversed')" optional="show"
+       />
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'posted'"
+                           decoration-info="state == 'draft'" optional="show"
+                           />
+
+</tree>
+       </field>
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record
+                id="account_payment_analysis_request_liq_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Crear Sol. de Pagos para Liquidaciones</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.analysis.request.wizard</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id"
+                   ref="account_payment_analysis_request_wizard_view_tree"/>
+              <field name="domain">[('create_uid','=',uid)]</field>
+    <field name="context">{'type_code':'account.pagos.reembolso','fullscreen': True,'default_filter_docs':'03','default_show_options':'show_invoices'}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view"
+            id="account_payment_analysis_request_liq_tree_wizard_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="account_payment_analysis_request_wizard_view_tree"/>
+        <field name="act_window_id"
+               ref="account_payment_analysis_request_liq_wizard_action"/>
+    </record>
+
+        <record model="ir.actions.act_window.view"
+            id="account_payment_analysis_request_liq_form_wizard_action">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="account_payment_analysis_request_wizard_view_liq_form"/>
+        <field name="act_window_id"
+               ref="account_payment_analysis_request_liq_wizard_action"/>
+    </record>
+
+
+    </data>
+
+
+</odoo>

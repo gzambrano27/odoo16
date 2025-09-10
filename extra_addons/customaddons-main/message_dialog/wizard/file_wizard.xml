@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record id="file_wizard_form" model="ir.ui.view">
+			<field name="name">file.wizard.form</field>
+			<field name="model">file.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Mensaje" version="16.0">
+
+
+							<group class="oe_view_title" col="1">
+						<h2 class="oe_horizontal_separator oe_clear">
+							<field name="title" nolabel="1" readonly="1"
+								style="width:100%" />
+						</h2>
+						<newline />
+						<field name="name" nolabel="1" readonly="1"
+							style="width:100%" />
+						<newline />
+						<field name="file_name" invisible="1" readonly="1"
+							nolabel="1" />
+						<field name="file" nolabel="1" filename="file_name"
+							readonly="1" />
+					</group>
+
+					<newline />
+					<footer  >
+						<button special="cancel" string="Salir" type="object"
+							icon="fa-times" />
+					</footer>
+				</form>
+
+			</field>
+		</record>
+
+		<record id="file_wizard_action" model="ir.actions.act_window">
+			<field name="name">Archivo</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">file.wizard</field>
+			<field name="view_id" ref="file_wizard_form" />
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+			<field name="context">{}</field>
+		</record>
+
+	</data>
+</odoo>

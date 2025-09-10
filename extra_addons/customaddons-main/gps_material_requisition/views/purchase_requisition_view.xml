@@ -1,0 +1,82 @@
+<odoo>
+	<!-- Acción para abrir el wizard -->
+    <record id="action_import_requisition" model="ir.actions.act_window">
+        <field name="name">Importar Requisición</field>
+        <field name="res_model">material.requisition.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="purchase_requisition_form_inherit_import" model="ir.ui.view">
+        <field name="name">purchase.requisition.form.inherit.import</field>
+        <field name="model">material.purchase.requisition</field>
+        <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+        <field name="arch" type="xml">
+            <header>
+                <button name="button_descargar" type="object" string="Descargar Requisicion"
+                        class="btn-primary"/>
+                <button name="%(material_requisition_wizard_view_file_action)d" type="action"
+                                string="Importar Material de Requisicion"
+                                icon="fa-upload" 
+                        />
+
+            </header>
+            <xpath expr="//field[@name='analytic_account_id']" position="replace">
+                <field name="analytic_account_id" string="Cuenta Analitica" options="{'no_create': True}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='analytic_account_id']" position="after">
+                <!-- Campo Cliente -->
+                <field name="cliente_id" options="{'no_open': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='userreject_date']/ancestor::page" position="after">
+                <page string="Orden de trabajo">
+                    <group col="12">
+                        <group colspan="12">
+                            <field name="observaciones_producto" options="{'no_open': True}"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <!-- Agrupar elementos en dos columnas -->
+                        <group colspan="6">
+                            <!-- Campo Departamento -->
+                            <field name="department_carried_out" options="{'no_open': True}"/>
+                            <!-- Campo Proyecto -->
+                            <field name="proyecto" options="{'no_open': True}"/>
+                            <!-- Campo Estación -->
+                            <field name="estacion" options="{'no_open': True}"/>
+                        </group>
+                        <group colspan="6">
+                            <!-- Campo Ingeniería -->
+                            <field name="ingenieria_id" options="{'no_open': True}" placeholder="Seleccionar empleado"/>
+                            <!-- Campo Diseño -->
+                            <field name="diseno_id" options="{'no_open': True}" placeholder="Seleccionar empleado"/>
+                            <!-- Campo Revisado -->
+                            <field name="revisado_id" options="{'no_open': True}" placeholder="Seleccionar empleado"/>
+                            <!-- Campo Fábrica -->
+                            <field name="fabrica_id" options="{'no_open': True}" placeholder="Seleccionar empleado"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <group colspan="12">
+                            <!-- Campo Motivo -->
+                            <field name="motivo" options="{'no_open': True}"/>
+                            <!-- Campo Observaciones -->
+                            <field name="observaciones" options="{'no_open': True}"/>
+                        </group>
+                    </group>
+                    <field name="detalles_ids"  string="Informes y detalle">
+                        <tree editable="bottom">
+                            <field name="descripcion"  string="Informes y detalle"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='qty']" position="after">
+                <field name="asigna_custodio" optional="hide"/>
+                <field name="employees_ids" widget="many2many_tags"  attrs="{'readonly': [('asigna_custodio', '=', False)]}" options='{"limit": 10, "no_create": True, "no_create_edit": True}' optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+	
+</odoo>

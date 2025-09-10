@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+	 <record id="autofill_view_picking_form_inht" model="ir.ui.view">
+		<field name="name">autofill.stock.picking.form.inht</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock_move_line_auto_fill.stock_picking_form_view" />
+		 <field name="arch" type="xml">
+			<button name="action_pack_operation_auto_fill" position="attributes">
+				<attribute name="invisible">1</attribute>
+			</button>
+		 </field>
+	 </record>
+
+	 <record id="view_picking_tree_inht" model="ir.ui.view">
+		<field name="name">stock.picking.tree.inht</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock.vpicktree" />
+		 <field name="arch" type="xml">
+	<field name="company_id" position="before">
+		<field name="id" optional="hide" string="# ID"/>
+	</field>
+		 </field>
+	 </record>
+
+
+	<record id="stock_force_view_picking_form_inht" model="ir.ui.view">
+		<field name="name">stock.picking.form.inht</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock_force_date_app.stock_force_view_picking_form" />
+		<field name="arch" type="xml">
+			<field name="force_date" position="attributes">
+				<attribute name="groups" />
+				<attribute name="required">0</attribute>
+			</field>
+		</field>
+	</record>
+
+
+
+    <record id="product_template_form_inherit" model="ir.ui.view">
+		<field name="name">stock.picking.form.inherit</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock.view_picking_form" />
+		<field name="arch" type="xml">
+			<field name="scheduled_date" position="attributes">
+				<attribute name="attrs">{'readonly':['|',('state','=','done'),('backorder_id','!=',False)]}</attribute>
+			</field>
+			<field name="is_locked" position="after">
+			<field name="enable_import" invisible="1"/>
+			</field>
+				<button name="action_confirm"  position="after">
+				<button name="%(stock_picking_import_wizard_view_file_action)d" type="action"
+						icon="fa-upload" string="Importar"
+						attrs="{'invisible':['|','|',('is_locked','!=',True),('enable_import','!=',True),('state','!=','draft')]}"
+				/>
+				</button>
+			</field>
+	</record>
+
+	<record id="stock_picking_form_inherit" model="ir.ui.view">
+		<field name="name">stock.picking.form.inherit</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="stock.view_picking_form" />
+		<field name="arch" type="xml">
+			<field name="is_locked" position="after">
+				<field name="enable_import" invisible="1"/>
+			</field>
+		   	<button name="action_confirm"  position="after">
+			<button name="%(stock_picking_import_wizard_view_file_action)d" type="action"
+                    icon="fa-upload" string="Importar"
+                    attrs="{'invisible':['|','|',('is_locked','!=',True),('enable_import','!=',True),('state','!=','draft')]}"/>
+			</button>
+			<xpath expr="//field[@name='user_id']" position="after">
+				<field name="supervisor_id" attrs="{'readonly':[['state','in',['done','cancel']]]}"/>
+				<field name="recibido_por" attrs="{'readonly':[['state','in',['done','cancel']]]}"/>
+			</xpath>
+			<xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="replace">
+				<field name="product_id" required="1" context="{'default_detailed_type': 'product'}" attrs="{'readonly': ['|', '&amp;', ('state', '!=', 'draft'), ('additional', '=', False), ('move_lines_count', '&gt;', 0)]}" options='{"limit": 10, "no_create": True, "no_open": True, "no_create_edit": True}'/>
+			</xpath>
+			<xpath expr="//button[@name='%(stock.act_stock_return_picking)d']" position="replace">
+				<button name="%(stock.act_stock_return_picking)d" string="Devolver"
+						attrs="{'invisible': [('state', '!=', 'done')]}"
+						type="action" groups="gps_inventario.group_devoluciones" data-hotkey="k"/>
+			</xpath>
+		</field>
+	</record>
+</odoo>

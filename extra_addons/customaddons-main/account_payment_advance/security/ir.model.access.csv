@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_prepayment_assignment,access_account_prepayment_assignment,model_account_prepayment_assignment,base.group_user,1,1,1,1
+access_account_payment_reconcile,access_account_payment_reconcile,model_account_payment_reconcile,base.group_user,1,1,1,1
+access_account_payment_import_invoices,account.payment.import.invoices.user,model_account_payment_import_invoices,base.group_user,1,1,1,1

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_historical_gps,purchase.historical.gps,model_purchase_historical_gps,,1,1,1,1
+access_sale_historical_gps,sale.historical.gps,model_sale_historical_gps,,1,1,1,1
+access_inventory_historical_gps,inventory.historical.gps,model_inventory_historical_gps,,1,1,1,1

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_product_template_only_form_view" model="ir.ui.view">
+            <field name="name">product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+            	<!-- <field name="name" position="after">
+            		<field name="nombre_alterno"/>
+            	</field> -->
+            	<field name="categ_id" position="replace">
+            		<field name="categ_id" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+            	</field>
+
+                <field name="default_code" position="before">
+                	<field name="verificado"/>
+                	<field name="referencia_anterior" />
+                	<field name="referencia_company" />
+	            </field>
+
+	            
+                <xpath expr="//page[@name='inventory']" position="inside">
+					<group name='leadtime' string='Lead Time'>
+						<field name="es_importado"/>
+						<field name="lead_time_fabrica" required='1'/>
+						<field name="lead_time_transporte" required='1'/>
+						<field name="lead_time_total" />
+						<field name="cant_minimo_pedido" required='1'/>
+						<field name="pais_origen" options="{'no_quick_create': True, 'no_create_edit' : True}" required='0'/>
+					</group>
+					<group name='ubicaciones' string='Ubicaciones'>
+						<field name="corridor" string="Pasillo" groups="stock.group_stock_manager"/>
+						<field name="row" string="Fila" groups="stock.group_stock_manager"/>
+						<field name="rack" string="Rack" groups="stock.group_stock_manager"/>
+						<field name="level" string="Altura" groups="stock.group_stock_manager"/>
+						<field name="posx" string="Caja (X)" groups="stock.group_stock_manager"/>
+						<field name="posy" string="Caja (Y)" groups="stock.group_stock_manager"/>
+						<field name="posz" string="Caja (Z)" groups="stock.group_stock_manager"/>
+					</group>
+				</xpath>
+            </field>
+        </record>
+
+		<record id="view_product_template_tree_inherit" model="ir.ui.view">
+			<field name="name">product.template.tree.inherit</field>
+			<field name="model">product.template</field>
+			<field name="inherit_id" ref="product.product_template_tree_view"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='default_code']" position="before">
+					<field name="rack" string="Rack"/>
+					<field name="posx" string="Caja (X)"/>
+					<field name="posy" string="Caja (Y)"/>
+					<field name="referencia_anterior" string="Referencia Anterior"/>
+					<field name="referencia_company" string="Referencia Inter Company"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_product_template_search_inherit" model="ir.ui.view">
+			<field name="name">product.template.search.inherit</field>
+			<field name="model">product.template</field>
+			<field name="inherit_id" ref="product.product_template_search_view"/>
+			<field name="arch" type="xml">
+				<xpath expr="//search" position="inside">
+					<field name="referencia_anterior" string="Referencia Anterior"/>
+				</xpath>
+			</field>
+		</record>
+        
+        <record id="inherit_product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.product.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+            	<field name="name" position="attributes">
+            		<attribute name="attrs">{'readonly': 1}</attribute>
+            	</field>
+            	<field name="categ_id" position="replace">
+            		<field name="categ_id" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+            	</field>
+            	<field name="default_code" position="attributes">
+            		<attribute name="attrs">{'readonly': 0}</attribute>
+            	</field>
+                <field name="default_code" position="before">
+                	<field name="verificado"/>
+                	<field name="referencia_anterior" groups="base.group_no_one"/>
+                	<field name="referencia_company" groups="base.group_no_one"/>
+	            </field>
+                
+            </field>
+        </record>
+
+		<record id="view_product_product_stock_tree_inherit" model="ir.ui.view">
+			<field name="name">product.product.stock.tree.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="stock.product_product_stock_tree"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='display_name']" position="before">
+					<field name="default_code" string="Referencia Interna"/>
+					<field name="referencia_anterior" string="Referencia Anterior"/>
+					<field name="old_code" string="Codigo Anterior"/>
+				</xpath>
+			</field>
+		</record>
+		<menuitem
+			name="Marcas de Productos"
+			id="menu_product_brand"
+			action="product_brand.action_product_brand"
+			parent="purchase.menu_purchase_config"
+		/>
+
+	<record id="view_category_property_form_mrp" model="ir.ui.view">
+		<field name="name">product.category.stock.property.form.mrp.inherit</field>
+		<field name="model">product.category</field>
+		<field name="inherit_id" ref="account.view_category_property_form"/>
+		<field name="arch" type="xml">
+
+			<xpath expr="//group[@name='account_property']" position="inside">
+                <group string="Propiedades de Consumibles">
+                    <field name="property_stock_account_input_categ_id_consumible"/>
+					<field name="property_stock_account_output_categ_id_consumible"/>
+                </group>
+				<group string="Propiedades de Suministros">
+                    <field name="property_stock_account_input_categ_id_suministro"/>
+					<field name="property_stock_account_output_categ_id_suministro"/>
+                </group>
+            </xpath>
+			
+		</field>
+	</record>
+</odoo>

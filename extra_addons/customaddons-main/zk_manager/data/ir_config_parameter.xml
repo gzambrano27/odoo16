@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+		
+		<data noupdate="1">
+		
+	
+		
+		 	<record model="ir.config_parameter" id="parameter_lock_biometric_device_id">
+			<field name="key">lock.biometric.device.id</field>
+			<field name="value">True</field>
+		</record>    
+		
+
+		
+		
+		
+		
+		
+	</data>
+		
+</odoo>

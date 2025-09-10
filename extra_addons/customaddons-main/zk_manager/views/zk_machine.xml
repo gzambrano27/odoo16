@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+        <record id="zk_machine_view_form_inherit" model="ir.ui.view">
+       <field name="name">zk.machine.view.form.inherit</field>
+			<field name="model">zk.machine</field>
+        <field name="inherit_id" ref="hr_zk_attendance.view_zk_machine_form"/>
+        <field name="arch" type="xml">
+
+  <button name="clear_attendance" position="after">
+        <button name="recover_users"
+                            type="object" >
+                        <i class="fa fa-fw o_button_icon fa-users"/>
+                        Recuperar Usuarios
+                    </button>
+
+<button name="action_create_user"
+                            type="object" >
+                        <i class="fa fa-fw o_button_icon fa-user"/>
+                        Crear Usuario
+                    </button>
+ <button name="action_test_connection"
+                            type="object" >
+                        <i class="fa fa-fw o_button_icon fa-television"/>
+                        Test Connection
+                    </button>
+
+  </button>
+
+
+   <xpath expr="//group"  position="after">
+
+
+                     <field name="employee_ids">
+                    <tree string="Empleado" editable="bottom" delete="false" edit="false" create="false"
+                    decoration-danger="not employee_id"
+                    >
+                         <field name="device_id_num" string="ID Bio."/>
+                         <field name="name" />
+                         <field name="employee_id" />
+
+                        <field name="has_password" string="Pwd" optional="hide"/>
+<field name="fid0" string="M.I." optional="hide"/>
+                        <field name="fid1" string="A.I." optional="hide"/>
+                        <field name="fid2" string="Me.I." optional="hide"/>
+                        <field name="fid3" string="I.I." optional="hide"/>
+                        <field name="fid4" string="P.I." optional="hide"/>
+                        <field name="fid5" string="P.D." optional="hide"/>
+                        <field name="fid6" string="I.D." optional="hide"/>
+                        <field name="fid7" string="Me.D." optional="hide"/>
+                        <field name="fid8" string="A.D." optional="hide"/>
+                        <field name="fid9" string="M.D." optional="hide"/>
+
+                        <button help="Actualizar Usuario" name="action_update_user" type="object"
+    icon="fa-refresh"
+    />
+
+                        <button help="Eliminar Usuario" name="action_delete_user" type="object"
+    icon="fa-minus"
+    />
+
+                    </tree>
+
+                </field>
+            </xpath>
+
+        </field>
+    </record>
+
+    </data>
+
+
+</odoo>

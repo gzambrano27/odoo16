@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+		<menuitem id="log_configuration_model_view_menu"
+			name="Configuración de Log de Modificaciones" parent="base.menu_security"
+			sequence="590" groups="base.group_system,history.group_exec_security_conf"
+			action="log_configuration_model_view_action" />
+
+	</data>
+</odoo>

@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+
+
+  <record id="view_in_invoice_bill_line_tree" model="ir.ui.view">
+            <field name="name">account.move.line.bill.tree</field>
+            <field name="model">account.move.line</field>
+         <field name="priority">9999999</field>
+            <field name="arch" type="xml">
+                <tree string="Linea de Asientos Contable" delete="true" create="false" edit="false">
+
+                         <field name="journal_id" readonly="1" optional="hide" />
+   <field name="move_id" readonly="1"/>
+                          <field name="date" readonly="1" optional="hide" />
+                    <field name="date_maturity" readonly="1"/>
+ <field name="account_id" optional="show" />
+                        <field name="partner_id" />
+                     <field name="name" optional="show"/>
+                     <field name="debit"  sum="total" string="Débito" readonly="1" optional="hide"/>
+                    <field name="credit" string="Crédito" readonly="1" sum="total"/>
+                       <field name="balance" string="Balance" optional="hide" readonly="1" sum="total"/>
+                      <field name="amount_residual" sum="total" string="Residual"
+                             readonly="1" attrs="{'invisible':[('is_account_reconcile', '=', False)]}"/>
+                    <field name="is_account_reconcile" invisible="1" />
+
+                </tree>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

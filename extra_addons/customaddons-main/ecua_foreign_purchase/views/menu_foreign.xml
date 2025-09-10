@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="purchase_foreign_menu_root"
+                  name="Importations"
+                  groups="ecua_foreign_purchase.foreign_group_user"
+                  web_icon="ecua_foreign_purchase,static/icon.png"
+        />
+
+        <menuitem id="purchase_foreign_menu"
+                  name="General"
+                  sequence="1"
+                  groups="ecua_foreign_purchase.foreign_group_user"
+                  parent="purchase_foreign_menu_root"
+        />
+
+        <menuitem id="purchase_foreign_menu_1"
+                  name="Importations"
+                  sequence="1"
+                  groups="ecua_foreign_purchase.foreign_group_user"
+                  parent="purchase_foreign_menu"
+                  action="ecua_foreign_purchase.ecua_foreign_action_purchase"
+        />
+
+        <menuitem id="purchase_foreign_products"
+                  name="Importations products"
+                  sequence="2"
+                  groups="ecua_foreign_purchase.foreign_group_user"
+                  parent="purchase_foreign_menu"
+                  action="ecua_foreign_purchase.action_product_importation"/>
+
+        <menuitem id="purchase_foreign_config"
+                  name="Settings"
+                  sequence="3"
+                  groups="ecua_foreign_purchase.foreign_group_manager"
+                  parent="purchase_foreign_menu_root"
+        />
+
+        <menuitem id="type_arancel_menu"
+                  parent="purchase_foreign_config"
+                  name="Listado de Aranceles"
+                  sequence="1"
+                  groups="ecua_foreign_purchase.foreign_group_manager"
+                  action="ecua_foreign_purchase.type_arancel_action"/>
+
+        <menuitem id="purchase_tariff_menu"
+                  parent="purchase_foreign_config"
+                  name="Partidas Arancelarias"
+                  sequence="2"
+                  groups="ecua_foreign_purchase.foreign_group_manager"
+                  action="ecua_foreign_purchase.action_purchase_tariff"/>
+
+        <menuitem id="purchase_foreing_concept"
+                  action="ecua_foreign_purchase.foreign_concept_action"
+                  parent="purchase_foreign_config"
+                  sequence="3"
+                  groups="ecua_foreign_purchase.foreign_group_manager"
+                  name="Settlement Expenses"/>
+
+        <menuitem id="trade_management_config_regime" action="ecua_foreign_purchase.action_regime_form"
+                  parent="purchase_foreign_config" sequence="4" name="R&#233;gimen de Importaci&#243;n"/>
+
+        <menuitem id="trade_management_config_regime_type" action="ecua_foreign_purchase.action_regime_type_form"
+                  parent="purchase_foreign_config" sequence="5" name="Tipo de R&#233;gimen de Importaci&#243;n"/>
+
+        <menuitem id="trade_management_config_mean" action="ecua_foreign_purchase.action_mean_form"
+                  parent="purchase_foreign_config" sequence="8" name="Medios de Importaci&#243;n"/>
+
+        <menuitem id="trade_management_config_waypoint" action="ecua_foreign_purchase.action_waypoint_form"
+                  parent="purchase_foreign_config" sequence="9" name="Puntos de Embarque/Desembarque"/>
+
+        <menuitem id="trade_management_config_route" action="ecua_foreign_purchase.action_route_form"
+                  parent="purchase_foreign_config" sequence="7" name="Rutas de Importaci&#243;n"/>
+
+    </data>
+</odoo>

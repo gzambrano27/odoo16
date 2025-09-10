@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+        <function
+                model="purchase.concept.bill"
+                name="update_item"/>
+    </data>
+    <data>
+
+        <record id="view_importation_tree" model="ir.ui.view">
+            <field name="name">view.importation.tree</field>
+            <field name="model">trade.importation</field>
+            <field name="arch" type="xml">
+                <tree string="Importation list" sample="1">
+                    <field name="name"/>
+                    <field name="partner_ids" invisible='1'/>
+                    <field name="provider_names"/>
+                    <field name="partner_id"/>
+                    <field name="regime_type_id" optional="hide"/>
+                    <field name="country_id" optional="show"/>
+                    <field name="creation_date" optional="show"/>
+                    <field name="date_deadline" optional="hide"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="weight_net" optional="hide" sum="Total"/>
+                    <field name="amount_import" sum="Total"/>
+                    <field name="total_only_foreign" sum="Total"/>
+                    <!--        <field name="def_freight_distribution" sum="Total"/>-->
+                    <!--        <field name="def_insurance_distribution" sum="Total"/>-->
+                    <!--        <field name="total_amount_cost_import" sum="Total"/>-->
+                    <field name="dau_number" optional="hide"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state=='confirmed'"
+                           decoration-warning="state=='liquidacion'"
+                           decoration-info="state=='distribution'"
+                           decoration-success="state=='completed'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_purchase_tree">
+            <field name="context">{}</field>
+            <field name="domain">[('importation_id', '=', active_id), ('state', 'in', ['purchase', 'done'])]</field>
+            <field name="name">Purchases</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_id" ref="purchase.purchase_order_tree"/>
+        </record>
+
+        <record id="action_invoicing_all_tree" model="ir.actions.act_window">
+            <field name="name">Facturas Proveedor (Importación)</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('importation_id', '=', active_id)]</field>
+            <field name="context">
+                {'default_move_type': 'in_invoice', 'default_importation_id': active_id,
+                'journal_type':
+                'purchase'}
+            </field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+
+        <record id="view_trade_importation_form" model="ir.ui.view">
+            <field name="name">view.trade.importation.form</field>
+            <field name="model">trade.importation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirmed_importation" type="object"
+                                string="Confirmar"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','!=', 'draft')]}"
+                                groups="ecua_foreign_purchase.foreign_group_user"
+                                confirm="Está seguro de empezar el proceso de importación?"/>
+
+                        <button name="generar_distribucion_aranceles" type="object"
+                                string="Calcular Distribución de Aranceles"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','!=', 'confirmed')]}"
+                                groups="ecua_foreign_purchase.foreign_group_user"/>
+
+                        <button name="calcular_costos_importacion" type="object"
+                                string="Calcular Costos de Importación"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','not in',('distribution'))]}"
+                                groups="ecua_foreign_purchase.foreign_group_user"/>
+
+                        <button name="confirm_foreign" type="object" string="Completar Importación"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','not in',('liquidacion'))]}"
+                                groups="ecua_foreign_purchase.foreign_group_user"/>
+
+                        <button name="set_reset_foreign" string="Cancelar Liquidación de Costos"
+                                class="btn btn-secondary"
+                                type="object" groups="ecua_foreign_purchase.foreign_group_manager"
+                                icon="fa-thumbs-o-up" attrs="{'invisible': [('state','not in',('completed'))]}"/>
+
+                        <button name="set_print_report" string="Imprimir Detalle Importación"
+                                class="btn btn-secondary"
+                                type="object" groups="ecua_foreign_purchase.foreign_group_user"
+                                icon="fa-print" attrs="{'invisible': [('state','not in',('completed'))]}"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" string="Archive" class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'
+                                       invisible="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="%(action_purchase_tree)d" type='action'
+                                    icon="fa-credit-card">
+                                <field name="purchase_count" widget="statinfo" string="Compras"/>
+                                <field name="purchase_ids" invisible="1" store="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="action_view_picking" type='object'
+                                    icon="fa-truck">
+                                <field name="picking_count" widget="statinfo" string="Envíos"/>
+                                <field name="picking_ids" invisible="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="%(action_invoicing_all_tree)d" type='action'
+                                    icon="fa-pencil-square-o">
+                                <field name="invoice_ids" invisible="1" store="1"/>
+                                <field name="invoice_count" widget="statinfo" string="Facturas"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <span class="o_form_label">Orden de Importación</span>
+                            <h1 class="d-flex">
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="partner_id" options="{'no_create':True}"
+                                       attrs="{'readonly':[('state','not in',['draft'])]}" invisible='1'/>
+                                <field name="partner_ids" options="{'no_create':True}"
+                                       attrs="{'readonly':[('state','not in',['draft'])]}" widget="many2many_tags"/>
+                                <field name="purchase_ids" widget="many2many_tags" placeholder="Órdenes de compra"
+                                       required="0" 
+                                       options="{'no_create':True}"/>
+                                <field name="company_id" string="Empresa" readonly="1"/>
+                                <field name="liq_total_cost_s_iva"
+                                       attrs="{'invisible':[('liq_total_cost_s_iva','=', False)]}"/>
+                            </group>
+                            <group>
+                                <field name="creation_date" readonly="1"/>
+                                <field name="user_id" readonly="1" store="1"/>
+                                <field name="stock_input"
+                                       attrs="{'readonly': [('state','in',['liquidacion', 'completed'])]}"/>
+                                <field name="landed_cost_id" attrs="{'invisible': [('landed_cost_id', '=', False)]}"
+                                       readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page name="information" string="Información General">
+                                <group name="data" colspan="8">
+                                    <group>
+                                        <field name="country_id" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="regime_type_id" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="incoterm_id" string="INCOTERM" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="via_id" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="port_id" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="destination_port_id" options="{'no_create':True}"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                    </group>
+                                    <group attrs="{'readonly':[('state','in',['completed'])]}">
+                                        <field name="weight_net"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="container_info"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="date_deadline"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                        <field name="dau_number"
+                                               attrs="{'readonly':[('state','in',['completed'])]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="request_note" string="Detalle Pedido">
+                                <div>
+                                    <span class="text-info text-right">
+                                        La importación se realizará sobre la cantidad recibida que corresponde
+                                        a las ordenes de compra seleccionadas.
+                                    </span>
+                                </div>
+                                <field name="importation_rnote_ids"
+                                       attrs="{'readonly':[('state','not in',['draft','confirmed'])]}">
+                                    <tree create="false" editable="bottom">
+                                        <field name="product_id" readonly="1" force_save="1"
+                                               domain="[('from_trade','=',True),('type','=','product')]"/>
+                                        <field name="tariff_id"/>
+                                        <field name="qty_total" force_save="1" readonly="1"/>
+                                        <field name="product_qty" force_save="1"/>
+                                        <field name="price" force_save="1" readonly="1"/>
+                                        <field name="descuento" force_save="1" readonly="1"/>
+                                        <field name="price_subtotal" force_save="1" readonly="1"/>
+                                        <field name="importation_id" invisible="1" force_save="1"/>
+                                        <field name="purchase_line_id" invisible="1" force_save="1"/>
+                                        <field name="price_unit_import" force_save="1"/>
+                                        <field name="price_total_import" force_save="1" sum="Total costo"/>
+                                        <!--                                        <field name="def_adval_percents"/>-->
+                                    </tree>
+                                </field>
+
+                                <div class="oe_subtotal_footer oe_right">
+                                    <group>
+                                        <field name="total_only_foreign" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}" store="1"/>
+                                        <field name="amount_import" store="1" readonly="1"/>
+
+                                    </group>
+                                </div>
+
+                            </page>
+                            <page name="documentos_relacionados" string="Documentos Electrónicos"
+                                  class="bg-warning-full"
+                                  attrs="{'invisible': [('state', 'in', ('draft'))]}">
+                                <button name="carga_documentos_invoice" type="object" class="oe_right" icon="fa-arrow-circle-right"
+                                string="Cargar Documentos" confirm="Safe to assign this document?"/>
+
+                                <group string="Invoices">
+                                </group>
+                                <field name="invoices_ids" readonly="0" options='{"no_open": True}'>
+                                    <tree string="Invoices" editable="bottom">
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="concept_id"/>
+                                        <field name="invoice_id"/>
+                                        <field name="partner_id"/>
+                                        <field name="invoice_date"/>
+                                        <field name="invoice_number"/>
+                                        <field name="percent"/>
+                                        <field name="amount" widget="monetary" sum="amount_total"/>
+                                    </tree>
+                                </field>
+                                <group string="Receipts">
+                                </group>
+                                <field name="voucher_ids"
+                                       attrs="{'readonly': [('state', 'not in', ('draft', 'sent','purchase'))]}">
+                                    <tree string="Receipts" editable="bottom" create="false" delete="false">
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="concept_id" readonly="1"/>
+                                        <field name="partner_id" readonly="1"/>
+                                        <field name="voucher_id" readonly="1"/>
+                                        <field name="payment_date" string="Date" readonly="1"/>
+                                        <field name="exclude"/>
+                                        <field name="amount" widget="monetary" sum="amount" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="distribucion_aranceles" string="Distribución de Aranceles"
+                                  attrs="{'invisible': [('state', 'in', ('draft','confirmed'))]}">
+                                <group>
+                                    <group>
+                                        <field name="insurance_total"/>
+                                        <field name="freight_total"/>
+                                    </group>
+                                    <group>
+                                        <field name="factor_seguro"/>
+                                        <field name="factor_freight"/>
+                                    </group>
+                                </group>
+                                <field name="aranceles_line_ids" options='{"no_open": True}'
+                                       context="{'default_importation_id':active_id}"
+                                       >
+                                    <tree editable="bottom" create="true" delete="true">
+                                        <field name="importation_line" invisible="1"/>
+                                        <field name="product_id"/>
+                                        <field name="qty" sum="Quantity"/>
+                                        <field name="tariff_id" string="Tarifa Arancelaria"/>
+                                        <field name="def_adval_percents" readonly="0" force_save="1"/>
+                                        <field name="def_salva_percents" readonly="0" force_save="1" optional="hide"/>
+                                        <field name="def_fob_item" sum="FOB" readonly="1"/>
+                                        <field name="def_freight" sum="Freight"/>
+                                        <field name="def_insurance" sum="Insurance"/>
+                                        <field name="def_cif" sum="CIF"/>
+                                        <field name="def_fodinfa" sum="Fodinfa"/>
+                                        <field name="def_advalorem_usd" sum="Advalorem"/>
+                                        <field name="def_save_usd" sum="Safeguard" optional="hide"/>
+                                        <field name="def_saveadv_usd" sum="Tariffs"/>
+                                    </tree>
+                                </field>
+                                <div class="oe_subtotal_footer oe_right">
+                                    <group>
+                                        <field name="total_fob_amount_distribution" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="total_arancel_amount_distribution" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="total_cost_import" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+
+                                    <hr style="color:blue solid;"/>
+                                </div>
+
+                            </page>
+
+                            <page name="gastos_importacion" string="Liquidación de Costos"
+                                  class="bg-warning-full"
+                                  attrs="{'invisible': [('state', 'not in', ('liquidacion','completed'))]}">
+
+
+                                <group colspan="4">
+                                    <group col="2">
+                                        <field name="liq_fob"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="liq_flete" string="Flete"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="porcentaje_isd" />
+                                        <field name="clase_importacion" string="Clase Importacion"/>
+                                    </group>
+                                    <group col="2">
+                                        <field name="liq_insurance" string="Seguro"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="liq_cif"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="total_isd" />
+                                        <field name="liq_date" string="Fecha Liquidación"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                    </group>
+
+                                </group>
+
+                                <field name="liquidation_line_ids" options='{"no_open": True}'
+                                       >
+                                    <tree editable="bottom">
+                                        <field name="concept_id"/>
+                                        <field name="amount" sum="Amount"/>
+                                        <field name="tax_percent" readonly="1"/>
+                                        <field name="tax" sum="Taxes" readonly="1"/>
+                                        <field name="total_amount" sum="Total amount"/>
+                                        <field name="importation_id" invisible="1"/>
+                                        <field name="split_method"/>
+                                    </tree>
+                                </field>
+
+                                <div class="oe_subtotal_footer oe_right">
+                                    <group>
+                                        <field name="liq_total_cost_s_iva"/>
+                                        <field name="liq_cost_sa" invisible="1"/>
+                                        <field name="liq_iva_import" readonly="1" string="IVA Importación"/>
+                                        <field name="liq_iva" string="Total IVA"/>
+                                        <field name="liq_total_cost" string="Total"/>
+                                    </group>
+                                </div>
+
+
+                            </page>
+
+                            <!-- <page name="gastos_importacion" string="Liquidación de Costos"
+                                  class="bg-warning-full"
+                                  >
+
+
+                                <group colspan="4">
+                                    <group col="2">
+                                        <field name="liq_fob"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="liq_flete" string="Flete"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="porcentaje_isd" />
+                                        <field name="clase_importacion" string="Clase Importacion"/>
+                                    </group>
+                                    <group col="2">
+                                        <field name="liq_insurance" string="Seguro"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="liq_cif"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                        <field name="total_isd" />
+                                        <field name="liq_date" string="Fecha Liquidación"
+                                               attrs="{'readonly':[('state','not in',['liquidacion'])]}"/>
+                                    </group>
+
+                                </group>
+
+                                <field name="expenses_ids">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="invoice_number" />
+                                        <field name="proveedor"/>
+                                        <field name="value" sum="Valor" />
+                                    </tree>
+                                </field>
+
+                                <div class="oe_subtotal_footer oe_right">
+                                    <group>
+                                        <field name="liq_total_cost_s_iva"/>
+                                        <field name="liq_cost_sa" invisible="1"/>
+                                        <field name="liq_iva_import" readonly="1" string="IVA Importación"/>
+                                        <field name="liq_iva" string="Total IVA"/>
+                                        <field name="liq_total_cost" string="Total"/>
+                                    </group>
+                                </div>
+
+
+                            </page> -->
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" options="{'post_refresh':True}" groups="base.group_user"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+
+
+        <record id="ecua_foreign_action_purchase" model="ir.actions.act_window">
+            <field name="name">Importations</field>
+            <field name="res_model">trade.importation</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+
+
+</odoo>
+					
+

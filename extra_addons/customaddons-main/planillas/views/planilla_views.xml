@@ -1,0 +1,184 @@
+<odoo>
+    <!-- Vista de la lista (árbol) de las planillas -->
+    <record id="view_planillas_planilla_tree" model="ir.ui.view">
+        <field name="name">planillas.planilla.tree</field>
+        <field name="model">planillas.planilla</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" widget="badge" decoration-muted="name"/>
+                <field name="usuario_id" string="Usuario" widget="many2one_avatar_user" readonly="1"/>
+                <field name="cuenta_analitica_id" widget="badge" decoration-info="cuenta_analitica_id"/>
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total_subtotal" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                <field name="total_subtotal_descuento" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                <field name="total_subtotal_planilla" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                <field name="total_subtotal_planilla_descuento" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                <field name="create_uid" widget="many2one_avatar_user" string="Creado por" optional="show"/>
+                <field name="create_date" string="Fecha de creación" optional="show"/>
+                <field name="state" widget="badge" string="Estado" optional="show"
+                       decoration-muted="state == 'draft'"
+                       decoration-info="state == 'to_approve'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'cancel'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para las planillas -->
+    <record id="view_planillas_planilla_form" model="ir.ui.view">
+        <field name="name">planillas.planilla.form</field>
+        <field name="model">planillas.planilla</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Widget de estado para mostrar diferentes etapas -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,cancel"/>
+                    <!-- Botones con visibilidad condicionada a los grupos -->
+                    <!-- Solo visible para el grupo 'planillas.group_planillas_admin' y 'planillas.group_planillas_user' -->
+                    <button name="action_to_approve" type="object" string="Por Aprobar" states="draft"
+                            class="btn-primary" groups="planillas.group_planillas_admin,planillas.group_planillas_user"/>
+                    <!-- Solo visible para el grupo 'planillas.group_planillas_admin' -->
+                    <button name="action_approve" type="object" string="Aprobar" states="to_approve"
+                            class="btn-primary" groups="planillas.group_planillas_admin"/>
+                    <!-- Visible para 'planillas.group_planillas_admin' y 'planillas.group_planillas_user' -->
+                    <button name="action_cancel" type="object" string="Cancelar" states="draft,to_approve"
+                            class="btn-primary" groups="planillas.group_planillas_admin"/>
+                    <!-- Solo visible para el grupo 'planillas.group_planillas_admin' -->
+                    <button name="action_reset_to_draft" type="object" string="Reestablecer a Borrador" states="cancel,to_approve,approved"
+                        class="btn-primary" groups="planillas.group_planillas_admin,planillas.group_planillas_user"/>
+                    <button name="export_to_excel" type="object" string="Exportar Excel" class="btn-primary" groups="planillas.group_planillas_admin"/>
+                </header>
+                <sheet>
+                    <!-- Sección para cargar el archivo Excel -->
+                    <group col="12" class="mb-3">
+                        <group colspan="6">
+                            <field name="import_file" filename="import_filename" widget="binary" groups="planillas.group_planillas_admin"/>
+                        </group>
+                        <group colspan="6">
+                            <button name="import_from_excel" string="Importar" type="object" class="btn-primary" groups="planillas.group_planillas_admin"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <group colspan="6">
+                            <field name="name" readonly="1"/>
+                        </group>
+                        <group colspan="6">
+                            <field name="usuario_id" string="Usuario" readonly="1"/>
+                        </group>
+                    </group>
+                    <group col="12">
+                        <group colspan="8">
+                            <field name="cuenta_analitica_id"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="descuento"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Detalles">
+                            <field name="notebook_ids" context="{'default_descuento': descuento}">
+                                <tree>
+                                    <field name="rubro_id" required="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="descripcion"/>
+                                    <field name="unidad_medida"/>
+                                    <field name="precio_unitario" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                    <field name="cantidad"/>
+                                    <field name="descuento" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                    <field name="subtotal" readonly="1" groups="planillas.group_planillas_admin"/>
+                                    <field name="subtotal_descuento" readonly="1" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                    <field name="consumo" readonly="1"/>
+                                    <field name="diferencia_cantidad" readonly="1"/>
+                                    <field name="subtotal_planilla" readonly="1" groups="planillas.group_planillas_admin"/>
+                                    <field name="subtotal_planilla_descuento" readonly="1" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                    <field name="diferencia_subtotal" readonly="1" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                    <field name="diferencia_subtotal_descuento" readonly="1" optional="show" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                </tree>
+                                <form string="Línea de Detalle">
+                                    <sheet>
+                                        <group>
+                                            <field name="rubro_id" required="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="descripcion"/>
+                                            <field name="unidad_medida"/>
+                                            <field name="precio_unitario" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                            <field name="descuento" groups="planillas.group_planillas_admin,planillas.group_planillas_reader"/>
+                                        </group>
+                                        <group colspan="12" col="12" groups="planillas.group_planillas_admin,planillas.group_planillas_reader">
+                                            <group class="oe_subtotal_footer o_form_label_align_top" colspan="4">
+                                                <field name="cantidad"/>
+                                                <field name="subtotal" readonly="1"/>
+                                                <field name="subtotal_descuento" readonly="1"/>
+                                            </group>
+                                            <group class="oe_subtotal_footer o_form_label_align_top pt-2" colspan="4">
+                                                <field name="consumo" readonly="1"/>
+                                                <field name="subtotal_planilla" readonly="1"/>
+                                                <field name="subtotal_planilla_descuento" readonly="1"/>
+                                            </group>
+                                            <group class="oe_subtotal_footer o_form_label_align_top pt-2" colspan="4">
+                                                <field name="diferencia_cantidad" readonly="1"/>
+                                                <field name="diferencia_subtotal" readonly="1" optional="show"/>
+                                                <field name="diferencia_subtotal_descuento" readonly="1" optional="show"/>
+                                            </group>
+                                        </group>
+                                        <group col="12" groups="planillas.group_planillas_user">
+                                            <group class="o_form_label_align_top" colspan="12">
+                                                <field name="cantidad"/>
+                                                <field name="consumo" readonly="1"/>
+                                                <field name="diferencia_cantidad" readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <group>
+                                            <field name="observacion"/>
+                                        </group>
+                                        <notebook>
+                                            <page string="Detalles">
+                                                <field name="detalle_ids">
+                                                    <tree editable="bottom">
+                                                        <field name="tipo" required="1"/>
+                                                        <field name="valor" required="1"/>
+                                                    </tree>
+                                                </field>
+                                            </page>
+                                        </notebook>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group col="9" class="oe_right mt-3" groups="planillas.group_planillas_admin,planillas.group_planillas_reader">
+                        <group string="Totales Generales" class="oe_subtotal_footer o_form_label_align_top" colspan="3">
+                            <field name="total_subtotal" class="text-right"/>
+                            <field name="total_subtotal_descuento" class="text-right"/>
+                        </group>
+                        <group string="Totales Planilla" class="oe_subtotal_footer o_form_label_align_top" colspan="3">
+                            <field name="total_subtotal_planilla" class="text-right"/>
+                            <field name="total_subtotal_planilla_descuento" class="text-right"/>
+                        </group>
+                        <group string="Totales Diferencias" class="oe_subtotal_footer o_form_label_align_top" colspan="3">
+                            <field name="total_diferencia_subtotal" class="text-right"/>
+                            <field name="total_diferencia_subtotal_descuento" class="text-right"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista de las planillas -->
+    <record id="action_planillas_planillas" model="ir.actions.act_window">
+        <field name="name">Planillas</field>
+        <field name="res_model">planillas.planilla</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

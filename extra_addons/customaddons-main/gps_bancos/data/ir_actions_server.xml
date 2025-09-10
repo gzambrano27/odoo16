@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+
+
+
+        <record id="ir_actions_server_pay_request_purchase_wizard_act" model="ir.actions.server">
+             <field name="name">Pagar Multiples Ordenes</field>
+             <field name="type">ir.actions.server</field>
+             <field name="model_id" ref="model_account_payment_request"/>
+            <field name="binding_model_id" ref="model_account_payment_request"/>
+             <field name="state">code</field>
+             <field name="code">action = records.get_multi_payments()</field>
+            <field name="groups_id" eval="[(6,0,[ref('gps_bancos.group_pagar_sol_pagos'),ref('gps_bancos.group_confimar_sol_pagos'),ref('gps_bancos.group_admin_sol_pagos')])]" />
+        </record>
+
+
+
+
+
+    </data>
+
+
+</odoo>

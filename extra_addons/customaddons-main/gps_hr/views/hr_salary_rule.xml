@@ -1,0 +1,303 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+
+        <!--
+  <record model="ir.ui.view"
+                id="hr_salary_rule_tree_view">
+            <field name="name">hr.salary.rule.tree.view</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payroll_structure_list_view"/>
+            <field name="arch" type="xml">
+   <field name="rule_ids" position="attributes">
+       <attribute name="invisible">1</attribute>
+   </field>
+            </field>
+  </record>-->
+
+
+        <record model="ir.ui.view"
+                id="hr_salary_rule_form_view">
+            <field name="name">hr.salary.rule.form.view</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+            <field name="arch" type="xml">
+
+                  <xpath expr="//page[@name='general']" position="replace">
+                <page name="general" string="General">
+                        <group name="general_conditions" col="1" colspan="4">
+                            <group string="Conditions" col="1" colspan="4">
+                                <field name="condition_select"/>
+                                <field name="condition_range" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/>
+                                <field name="condition_range_min" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/>
+                                <field name="condition_range_max" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/>
+                            </group>
+                            <group colspan="4" col="1" >
+                                <field name="condition_python" attrs="{'invisible':[('condition_select','!=','python')], 'required': [('condition_select','=','python')]}"/>
+                            </group>
+                            <group colspan="4" string="Computation" col="1">
+                                <field name="amount_select"/>
+                                <field name="amount_percentage_base" attrs="{'invisible':[('amount_select','!=','percentage')], 'required': [('amount_select','=','percentage')]}"/>
+                                <field name="quantity" attrs="{'invisible':[('amount_select','=','code')], 'required':[('amount_select','!=','code')]}"/>
+                                <field name="amount_fix" attrs="{'invisible':[('amount_select','!=','fix')], 'required':[('amount_select','=','fix')]}"/>
+                                <field name="amount_percentage" attrs="{'invisible':[('amount_select','!=','percentage')], 'required':[('amount_select','=','percentage')]}"/>
+                            </group>
+                            <group colspan="4" col="1">
+                                <field name="amount_python_compute" attrs="{'invisible':[('amount_select','!=','code')], 'required':[('amount_select','=','code')]}"/>
+                            </group>
+                            <group string="Company Contribution" name="grp_company_contr">
+                                <field name="partner_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+  <page name="general" position="after">
+
+                <page name="general_finiquito" string="Finiquito"  >
+                        <group name="process_finiquito_conditions" coslpan="4" cols="2">
+
+                            <field name="domain_liquidation_select" nolabel="1" colspan="4"
+                                   widget="ace"
+                                   options="{'mode': 'python'}"
+                                   attrs="{'required':[('type','=','liquidation')]}"
+                                   placeholder="CODIGO PARA CONDICION EN CALCULO DE LIQUIDACION (SI o NO)"/>
+                            <separator colspan="4" string="Calculo"/>
+                            <newline/>
+                            <field name="process_liquidation_select" nolabel="1" colspan="4"
+                                   placeholder="CODIGO PARA CALCULO EN LIQUIDACION"
+                                   widget="ace"
+                                   options="{'mode': 'python'}"
+attrs="{'required':[('type','=','liquidation')]}"
+/>
+
+                        </group>
+                     </page>
+  </page>
+                <page name="general" position="before">
+
+                    <page name="general_process" string="Configuración">
+                        <group name="process_general_conditions" coslpan="4" cols="2">
+
+                            <group string="Formas de Cálculo"  name="grp_compute">
+                                <field name="category_code" invisible="1" colspan="2"/>
+                                <field name="type" widget="radio" colspan="2"/>
+<field name="legal_iess"   colspan="2"/>
+
+
+                                <field name="add_iess" attrs="{'invisible':[('category_code','!=','IN')]}" colspan="2"/>
+<field name="for_liquidate_provision"
+attrs="{'invisible':[('category_code','!=','IN')]}"
+/>
+
+  <field name="enable_for_documents"
+attrs="{'invisible':[('for_liquidate_provision','!=',True)]}"
+/>
+
+ <field name="provision_rule_ids" widget="many2many_tags"
+ attrs="{'invisible':[('for_liquidate_provision','!=',True)]}"
+domain="[('category_id.code','=','PRO')]"
+ />
+                            </group>
+                            <group string="Comportamiento en Rol" name="grp_payslip" >
+                                <field name="force_payslip" colspan="2"
+                                attrs="{'invisible':[('type','=','payslip')]}"
+                                />
+                                <field name="show_print" colspan="2"/>
+                                <field name="unique_month" colspan="2"/>
+                            </group>
+                        </group>
+            <group name="process_general_conditions2" coslpan="4" cols="2">
+
+                <group string="Contabilidad" name="grp_account" attrs="{'invisible':[('enable_for_documents','=',False),('type','=','payslip')]}">
+                                <field name="payment" colspan="2"/>
+                                <field name="account" colspan="2"/>
+
+
+                            </group>
+
+
+                            <group string="Reglas de Registro" attrs="{'invisible':[('type','=','payslip')]}"
+                                    name="grp_rule_record" >
+                                <field name="locked_import" colspan="2"/>
+                                <field name="locked_edit" colspan="2"/>
+                                <field name="locked_compute" colspan="2"/>
+                            </group>
+
+
+                        </group>
+                        <newline attrs="{'invisible':[('type','=','payslip'),('enable_for_documents','!=',True)]}"/>
+                        <group col="1" attrs="{'invisible':[('type','=','payslip'),('enable_for_documents','!=',True)]}">
+                            <field name="help_programming_code"  nolabel="1" colspan="4"
+                                   widget="ace"
+                                   options="{'mode': 'python'}"/>
+                             <newline/>
+                            <separator colspan="4" string="Condiciones"/>
+                            <newline/>
+                            <field name="domain_select" nolabel="1" colspan="4"
+                                   widget="ace"
+                                   options="{'mode': 'python'}"
+                                   attrs="{'required':['|',('type','!=','payslip'),('enable_for_documents','=',True)]}"
+                                   placeholder="CODIGO PARA CONDICION EN CALCULO DE PROCESO (SI o NO)"/>
+                            <separator colspan="4" string="Calculo"/>
+                            <newline/>
+                            <field name="process_select" nolabel="1" colspan="4"
+                                   placeholder="CODIGO PARA CALCULO EN PROCESO"
+                                   widget="ace"
+                                   options="{'mode': 'python'}"
+attrs="{'required':['|',('type','!=','payslip'),('enable_for_documents','=',True)]}"
+/>
+
+
+
+
+                        </group>
+
+
+                    </page>
+                </page>
+
+<field name="condition_python" position="attributes">
+    <attribute name="widget">ace</attribute>
+    <attribute name="options">{'mode': 'python'}</attribute>
+                         <attribute name="nolabel">1</attribute>
+                     <attribute name="colspan">4</attribute>
+</field>
+
+                <field name="amount_python_compute" position="attributes">
+    <attribute name="widget">ace</attribute>
+                     <attribute name="nolabel">1</attribute>
+                     <attribute name="colspan">4</attribute>
+    <attribute name="options">{'mode': 'python'}</attribute>
+</field>
+
+                <field name="condition_select" position="attributes">
+    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="amount_select" position="attributes">
+    <attribute name="invisible">1</attribute>
+                </field>
+
+                <group name="general_conditions" position="after">
+                    <field name="help_programming_code"  nolabel="1" colspan="4"
+                                   widget="ace" attrs="{'invisible':[('condition_select','!=','python'),('amount_select','!=','python')]}"
+                                   options="{'mode': 'python'}"/>
+
+                </group>
+
+                <group name="general_conditions" position="attributes">
+                    <attribute name="cols">1</attribute>
+                </group>
+
+                <field name="struct_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+
+
+
+
+
+
+
+
+            </field>
+        </record>
+
+
+ <record model="ir.ui.view"
+                id="hr_salary_rule_account_form_account_view">
+            <field name="name">hr.salary.rule.account.form.view</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll_account.hr_salary_rule_view_form"/>
+            <field name="arch" type="xml">
+
+                   <page name="accounting" position="attributes">
+                       <attribute name="invisible">1</attribute>
+                   </page>
+                 <page name="accounting" position="after">
+
+                     <page string="Contabilidad" name="pg_account">
+
+								<field name="rule_account_ids" nolabel="1" colspan="4"
+
+                                >
+									<tree string="Cuentas">
+										<field name="type" />
+										<field name="account_type" />
+										<field name="company_id"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+										<field name="account_id"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]" />
+
+                                        <field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]"
+                                        attrs="{'readonly':[('required_journal','!=',True)],'invisible':[('required_journal','!=',True)],'required':[('required_journal','=',True)]}"
+                                        />
+
+
+
+                                        <field name="required_journal" optional="hide" />
+										</tree>
+
+
+                                    <form string="Cuentas" >
+                                         <group>
+                                        <group>
+                                            <field name="type" colspan="2"/>
+										<field name="account_type" colspan="2"/>
+										<field name="company_id" colspan="2"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}" />
+
+                                        </group>
+                                        <group>
+                                            <field name="account_id" colspan="2"
+											options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]" />
+                                              <field name="journal_id" colspan="2" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+											domain="[('company_id','=',company_id)]"
+                                        attrs="{'readonly':[('required_journal','!=',True)],'invisible':[('required_journal','!=',True)],'required':[('required_journal','=',True)]}"
+                                        />
+
+
+
+                                        <field name="required_journal" colspan="2" invisible="1" />
+                                        </group>
+                                         </group>
+
+<newline/>
+                  <field name="analytic_ids" >
+                      <tree editable="bottom">
+                           <field name="department_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+                      domain="['|',('company_id','=',parent.company_id),('company_id','=',False)]"
+                      />
+                          <field name="account_id"
+                             domain="[('company_id','=',parent.company_id)]"
+                             options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                      <field name="analytic_account_id"
+                             domain="['|',('company_id','=',parent.company_id),('company_id','=',False)]"
+                             options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
+
+                      </tree>
+                        </field>
+
+										</form>
+
+								</field>
+
+						</page>
+
+
+                 </page>
+
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

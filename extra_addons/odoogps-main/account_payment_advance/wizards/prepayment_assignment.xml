@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- account.prepayment.assignment form view -->
+    <record id="view_account_prepayment_assignment_form" model="ir.ui.view">
+        <field name="name">account.prepayment.assignment.view.form</field>
+        <field name="model">account.prepayment.assignment</field>
+        <field name="arch" type="xml">
+            <form string="Prepayment Assignment">
+                <group name="info">
+                    <group>
+                        <field name="move_id" invisible="1" required="1"/>
+                        <field name="prepayment_aml_id"
+                               options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':true, 'no_open':true}"
+                               context="{'for_prepayment_assignment': True}" required="1" />
+                        <field name="amount" required="1"/>
+                    </group>
+                    <group>
+                        <field name="date" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="button_confirm"
+                            type="object" string="Confirm"
+                            class="btn-primary" />
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_prepayment_assignment" model="ir.actions.act_window">
+        <field name="name">Assign prepayment to invoice</field>
+        <field name="res_model">account.prepayment.assignment</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_account_prepayment_assignment_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

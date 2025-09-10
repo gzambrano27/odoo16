@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+		<record
+			id="hr_employee_payslip_reports_wizard_form"
+			model="ir.ui.view">
+			<field name="name">hr.employee.payslip.reports.wizard.form</field>
+			<field name="model">hr.employee.payslip.reports.wizard</field>
+			<field name="type">form</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Reportes de Nómina"
+					version="16.0">
+					<header>
+
+					</header>
+					<group colspan="2" cols="1">
+
+						<field name="type" readonly="1" />
+					<field name="company_id"
+                               options="{'no_open': True, 'no_create': True}" required="0"/>
+
+						<field name="type_struct_id" attrs="{'invisible':[('type','!=','payslip')]}"
+                               options="{'no_open': True, 'no_create': True}" required="0"/>
+
+                              	<field name="month_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+           <field name="year" attrs="{'required':[('month_id','=',False)],'invisible':[('month_id','=',False)]}"/>
+
+						<field name="payslip_type" widget="radio" attrs="{'required':[('type','=','payslip')],'invisible':[('type','!=','payslip')]}"
+							   />
+
+             <field name="date_start"  readonly="1" force_save="1"/>
+               <field name="date_end" readonly="1" force_save="1"/>
+
+						 <field name="employee_ids" attrs="{'invisible':[('type','=','payslip')]}" options="{'no_open': True, 'no_create': True}" widget="many2many_tags"/>
+						 <field name="rule_ids"
+								attrs="{'invisible':[('type','=','payslip')]}"
+								domain="[('type','!=','payslip')]"
+								options="{'no_open': True, 'no_create': True}" widget="many2many_tags"/>
+
+						</group>
+					<newline />
+					<footer>
+						<button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+						/>
+						<button special="cancel" name="cancel" string="Salir"
+							colspan="2" type="object" icon='fa-times' />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		
+		<record
+			id="hr_employee_payslip_reports_wizard_action"
+			model="ir.actions.act_window">
+			<field name="name">Reportes de Nómina</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.payslip.reports.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_payslip_reports_wizard_form" />
+			<field name="context">{'default_type':'payslip','default_state':'annulled','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+			
+		</record>
+
+
+		<record
+			id="hr_employee_payslip_reports_movements_wizard_action"
+			model="ir.actions.act_window">
+			<field name="name">Reportes por Rubros</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.employee.payslip.reports.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="hr_employee_payslip_reports_wizard_form" />
+			<field name="context">{'default_type':'movements','default_state':'annulled','update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
+
+		
+		
+	</data>
+</odoo>

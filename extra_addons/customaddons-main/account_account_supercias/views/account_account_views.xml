@@ -1,0 +1,37 @@
+<!-- views/account_account_views.xml -->
+<odoo>
+	<record id="view_account_form_inherit" model="ir.ui.view">
+		<field name="name">account.account.form.supercias</field>
+		<field name="model">account.account</field>
+		<field name="inherit_id" ref="account.view_account_form"/>
+		<field name="arch" type="xml">
+			<!-- Insertar los nuevos campos justo después de account_type -->
+			<xpath expr="//field[@name='account_type']" position="after">
+				<field name="codigo_cuenta_contable_nuevo_plan"/>
+				<field name="nombre_cuenta_nuevo_plan"/>
+				<field name="codigo_supercia_id" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+				<field name="grupo_supercia" readonly='1'/>
+				<field name="cuenta_supercia"/>
+				<field name="codigo_ir_mapeo"/>
+				<field name="cuenta_servicio_rentas_internas"/>
+			</xpath>
+		</field>
+	</record>
+
+	<record id="view_account_tree_inherit" model="ir.ui.view">
+		<field name="name">account.account.tree.supercias</field>
+		<field name="model">account.account</field>
+		<field name="inherit_id" ref="account.view_account_list"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='account_type']" position="after">
+				<field name="codigo_cuenta_contable_nuevo_plan" optional="show"/>
+				<field name="nombre_cuenta_nuevo_plan" optional="show"/>
+				<field name="codigo_supercia_id" optional="show"/>
+				<field name="grupo_supercia" optional="hide"/>
+				<field name="cuenta_supercia" optional="show"/>
+				<field name="codigo_ir_mapeo" optional="show"/>
+				<field name="cuenta_servicio_rentas_internas" optional="show"/>
+			</xpath>
+		</field>
+	</record>
+</odoo>

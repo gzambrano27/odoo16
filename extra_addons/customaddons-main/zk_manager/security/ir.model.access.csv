@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+zk_machine_wizard,zk_machine_wizard,model_zk_machine_wizard,base.group_user,1,1,1,1
+zk_machine_employee,zk_machine_employee,model_zk_machine_employee,base.group_user,1,1,1,1

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data noupdate="1">
+        <!-- Secuencia para el tipo de orden de producción A -->
+        <record id="seq_reg_caja_chica" model="ir.sequence">
+            <field name="name">Registro Caja Chica</field>
+            <field name="code">CAJA_CHICA</field>
+            <field name="prefix">CAJA_CHICA</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+	<record id="caja_chica_user_rule" model="ir.rule">
+        <field name="name">Registro de Caja Chica: Solo propios</field>
+        <field name="model_id" ref="model_hr_registro_caja_chica"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/> <!-- Grupo de usuarios regulares -->
+        <field name="domain_force">[('user_id', '=', user.id)]</field> <!-- Solo ver registros donde el campo user_id coincide con el usuario conectado -->
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Regla para permitir acceso total al administrador -->
+    <record id="caja_chica_contador_rule" model="ir.rule">
+        <field name="name">Regla de Caja Chica: Acceso total para contadores de Caja Chica</field>
+        <field name="model_id" ref="model_hr_registro_caja_chica"/>
+        <field name="groups" eval="[(4, ref('account_payment_purchase.group_caja_chica_contador'))]"/> <!-- Grupo de administradores de reembolsos -->
+        <field name="domain_force">[(1, '=', 1)]</field> <!-- Sin restricción, acceso total -->
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Regla para permitir acceso total al administrador -->
+    <record id="caja_chica_admin_rule" model="ir.rule">
+        <field name="name">Regla de Caja Chica: Acceso total para administradores de Caja Chica</field>
+        <field name="model_id" ref="model_hr_registro_caja_chica"/>
+        <field name="groups" eval="[(4, ref('account_payment_purchase.group_caja_chica_manager'))]"/> <!-- Grupo de administradores de reembolsos -->
+        <field name="domain_force">[(1, '=', 1)]</field> <!-- Sin restricción, acceso total -->
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Tree view for Registro de Caja Chica -->
+    <record model="ir.ui.view" id="view_reg_caja_chica_tree">
+        <field name="name">hr.registro.caja.chica.tree</field>
+        <field name="model">hr.registro.caja.chica</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Caja Chica Entries">
+                <field name="name" />
+                <field name="employee_id"/>
+                <field name="partner_id"/>
+                <field name="fecharegistro"/>
+                <field name="company_id" />
+                <field name="total"/>
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search view for Registro de Caja Chica -->
+    <record id="view_reg_caja_chica_filter" model="ir.ui.view">
+        <field name="name">hr.registro.caja.chica.select</field>
+        <field name="model">hr.registro.caja.chica</field>
+        <field name="arch" type="xml">
+            <search string="Search Caja Chica">
+                <field name="employee_id" filter_domain="[('employee_id', 'child_of', self)]"/>
+                <field name="name"/>
+                <filter name="unpaid" string="No pagados" domain="[('state','in',('draft','approve'))]"/>
+                <filter name="paid" string="Pagados" domain="[('state','=','paid')]"/>
+                <filter string="Archivados" name="empleados_archivados" domain="[('employee_id.active','=',False)]"/>
+                <filter string="Mis registros" name="mis_registros" domain="[('user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name = 'Empleado' string="Empleado" domain="[]" context="{'group_by':'employee_id'}"/>
+                    <filter name = 'Estado' string="Estado" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Pago de Reembolsos -->
+<!--     <act_window id="act_payment_reembolso_wizard" -->
+<!--         name="Pago de Reembolso" -->
+<!--         src_model="hr.registro.reembolsos" -->
+<!--         res_model="payment.reembolso.wizard" -->
+<!--         view_mode="form" -->
+<!--         target="new" -->
+<!--         multi="False" /> -->
+
+    <!-- Form view for Registro de Reembolsos -->
+    <record model="ir.ui.view" id="view_registro_caja_chica_form">
+        <field name="name">hr.registro.caja.chica.form</field>
+        <field name="model">hr.registro.caja.chica</field>
+        <field name="arch" type="xml">
+            <form string="Registro de Caja Chica">
+                <header>
+                    <button name="button_revision" states="draft" string="En Revision" type="object" class="oe_highlight"/>
+                    <button name="button_to_approve" states="revision" groups="account_payment_purchase.group_caja_chica_contador, account_payment_purchase.group_caja_chica_manager , base.group_no_one" string="Pendiente Aprobar" type="object" class="oe_highlight" />
+                    <button name="button_approve" states="to_approve" groups="account_payment_purchase.group_caja_chica_manager , base.group_no_one" string="Aprobar" type="object" class="oe_highlight" confirm="¿Estás seguro de confirmar este registro?"/>
+                    <!-- <button name="obtiene_combustibles" states="draft" string="Obtiene Rubros" class="oe_highlight" type="object" /> -->
+                    <!-- <button name="procesa_combustibles" attrs="{'invisible':[('tiene_combustible','!=',True)]}" states="approve" string="Procesa Combustible" class="oe_highlight" type="object" /> -->
+                    <button name="button_canceled" states="revision,to_approve,approve" string="Cancel" class="oe_highlight" type="object" />
+                    <!-- <button name="button_canceled" string="Cancelar" type="object" states="paid" groups="base.group_no_one"/> -->
+                    <button name="button_set_draft" string="Set to Draft" states="cancel" type="object" />
+                    <button name="action_print_pdf" string="Imprimir Caja Chica" type="object" class="btn-primary"/>
+                    <button name="crear_liquidacion_compra" groups="account_payment_purchase.group_caja_chica_contador, account_payment_purchase.group_caja_chica_manager , base.group_no_one" states="approve" string="Genera Liq Compra" type="object" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,revision,to_approve,approve" statusbar_colors='{"draft":"blue"}'/>
+                </header>
+                <field name="has_outstanding" invisible="1"/>
+                <sheet string="Registro de Reembolsos">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="button_payments_caja_chica"
+                                string="Pagos" type="object"
+                                attrs="{'invisible':[('has_pagos','=',False)]}" icon="fa-bars"/>
+                    </div>
+                    
+                    <h3>
+                        <field name="name" readonly="1" attrs="{'invisible': [('state','=','draft')]}" />
+                        <field name="tiene_combustible" invisible="1"/>
+                    </h3>
+                    
+                    <group>
+                        <group>
+                            <field name="es_empleado" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="partner_id" attrs="{'readonly': [('state','!=','draft')],'required':[('es_empleado','=',False)], 'invisible':[('es_empleado','=', True)]}"/>
+                            <field name="employee_id" attrs="{'readonly': [('state','!=','draft')],'required':[('es_empleado','=',True)], 'invisible':[('es_empleado','=', False)]}" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}' />
+                         <field name="job_id" options='{"no_open": True, "no_quick_create": True, "no_create_edit": True}' readonly="1"
+                          attrs="{ 'readonly': [('state','!=','draft')], 'invisible':[('es_empleado','!=', True)]}"
+                          />
+                            <field name="fecharegistro" invisible="1" readonly="1"/>
+                            <field name="fechaingreso" required="1" attrs="{'readonly': [('state','!=','draft')]}" />
+                            <field name="caja_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}'/>
+                            <field name="has_pagos" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle de Registros">
+                            <field name="line_ids" attrs="{'readonly': [('state','in',('approve','paid'))]}">
+                                <tree string="Registros Lines" editable="bottom">
+                                    <field name="tipo" required="True" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}'/>
+                                    <field name="name_tipo" invisible="1"/>
+                                    <field name="vehicle_id" invisible="1" attrs="{'required': [('name_tipo','=','Combustible')]}" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}'/>
+                                    <field name="cuenta_analitica_id" required="True" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}'/>
+                                    <field name="identification_id"/>
+                                    <field name="beneficiario"/>
+                                    <field name="fecha" required="True"/>
+                                    <field name="tipo_documento" required="True"/>
+                                    <field name="nro_documento" attrs="{'required': [('tipo_documento','=','Factura')]}"/>
+                                    <field name="valor" required="True"/>
+                                    <field name="valor_aprobado" required="True" groups="account_payment_purchase.group_caja_chica_contador, account_payment_purchase.group_caja_chica_manager , base.group_no_one"/>
+                                    <field name="observacion"/>
+                                    <field name="verificado" groups="account_payment_purchase.group_caja_chica_contador, account_payment_purchase.group_caja_chica_manager , base.group_no_one"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="total"/>
+                                    <field name="val_pagado" readonly="1"/>
+                                    <field name="payments_widget" colspan="2" nolabel="1" widget="payment"/>
+                                    <field name="residual" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                         <page string="Detalle de Pagos" groups="account_payment_purchase.group_caja_chica_contador,account_payment_purchase.group_caja_chica_manager">
+                            <field name="line_pagos_ids"  attrs="{'readonly': [('state','in',('approve','paid'))]}" >
+                                <tree string="Pagos Lines" editable="bottom">
+                                    <field name="payment_id"/>
+                                    <field name="fecha_pago"/>
+                                    <field name="diario_pago" />
+                                    <field name="monto_pago"/>
+
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Otra Información">
+                            <group col="4">
+                                <field name="user_id" required="1"/>
+                                <field name="company_id" widget="selection"/>
+                                <field name="journal_id" invisible='1'/>
+                                <field name="move_id" invisible='1'/>
+                                <field name="move_caja_chica_id" invisible='1'/>
+                                <field name="liquidation_move_id" readonly="1"/>
+                                <field name="currency_id" groups="base.group_multi_currency"  options='{"no_open": True, "no_quick_create": True, "no_create_edit": True}'/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Registro de Caja Chica -->
+    <record id="action_registro_caja_chica" model="ir.actions.act_window">
+        <field name="name">Registro de Caja Chica</field>
+        <field name="res_model">hr.registro.caja.chica</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_reg_caja_chica_tree"/>
+        <field name="search_view_id" ref="view_reg_caja_chica_filter"/>
+        <field name="context">{'search_default_mis_registros': 1}</field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click para crear un Registro de Caja Chica.
+            </p><p>
+                Cuando el Registro es validado, se puede realizar el respectivo pago.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_caja_chica_contabilidad"
+        name="Caja Chica"
+        parent="account.menu_finance_entries"
+        sequence="35"
+        groups="account_payment_purchase.group_caja_chica_user"
+    />
+
+    <!-- Submenú: Registro de Caja Chica -->
+    <menuitem id="menu_registro_caja_chica"
+                name="Registro Caja Chica"
+                parent="menu_caja_chica_contabilidad"
+                sequence="0"
+                action="action_registro_caja_chica"
+                groups="account_payment_purchase.group_caja_chica_user"/>
+
+</odoo>

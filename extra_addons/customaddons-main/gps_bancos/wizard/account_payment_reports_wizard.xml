@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="account_payment_reports_wizard_view_form" model="ir.ui.view">
+            <field name="name">account.payment.reports.wizard.form</field>
+            <field name="model">account.payment.reports.wizard</field>
+            <field name="type">form</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Consulta de pagos" version="16.0">
+                    <group>
+                        <group>
+                            <field name="type_report" readonly="1" force_save="1" coslpan="2"/>
+                            <field name="company_ids" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                            widget="many2many_tags" coslpan="2"
+                            />
+                              </group>
+  <group>
+      <field name="date_from" invisible="context.get('invisible_date',False)" required="context.get('required_date',True)" coslpan="2" />
+      <field name="date_to" invisible="context.get('invisible_date',False)" required="context.get('required_date',True)" coslpan="2"/>
+
+<field name="type_report_partner" widget="radio" invisible="context.get('invisible_partner',True)" />
+
+<field name="type_payment"
+
+       attrs="{'invisible':[('type_report_partner','!=','pagos')]}"
+       widget="radio" invisible="context.get('invisible_partner',True)" />
+
+      <field name="weeks" placeholder="SEMANAS..." invisible="context.get('invisible_weeks',True)" required="context.get('required_weeks',False)" coslpan="2"/>
+<field name="contratista" invisible="1" />
+  </group>
+                    </group>
+                    <newline string="Proveedores" invisible="context.get('invisible_partner',True)"/>
+                     <field name="partner_ids" invisible="context.get('invisible_partner',True)"
+              coslpan="4"
+                            domain="contratista and [('category_id.name','ilike','contratista')] or []"
+      />
+                    <newline invisible="context.get('invisible_partner',True)"/>
+                    <footer>
+                        <button name="process" type="object" string="Procesar" icon='fa-cogs'
+                        />
+                        <button special="cancel" name="cancel" string="Salir" colspan="2" type="object"
+                                icon='fa-times'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record
+                id="account_payment_reports_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Pagos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'is_report':True,'default_type_report':'pagos'}</field>
+
+        </record>
+
+         <record
+                id="account_payment_oc_reports_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de OC con Pagos Relacionados</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'is_report':True,'default_type_report':'oc_pagos'}</field>
+
+        </record>
+
+
+         <record
+                id="account_payment_solicitudes_reports_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Solicitudes de Pagos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'is_report':True,'default_type_report':'solicitudes_pagos'}</field>
+
+        </record>
+
+
+
+        <record
+                id="account_payment_resumen_reports_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Resumen de OC con Pagos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'is_report':True,'default_type_report':'resumen_sol_pagos'}</field>
+
+        </record>
+
+        <!--    -->
+
+         <record
+                id="account_payment_reports_pagos_macros_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Pagos a Proveedores desde Bancos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'invisible_weeks':False,'required_weeks':False,'is_report':True,'default_type_report':'resumen_pagos_macros','invisible_date':True,'required_date':False}</field>
+
+        </record>
+
+        <record
+                id="account_payment_reports_pagos_contratos_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Cartera por Cobrar Contratos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'is_report':True,'default_type_report':'contratos','invisible_date':False,'required_date':True}</field>
+
+        </record>
+
+
+
+        <record
+                id="account_payment_reports_info_pago_provee_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Proveedores</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_contratista':False,'is_report':True,'default_type_report':'pagos_proveedores','invisible_partner':False,'contratista':0}</field>
+        </record>
+
+          <record
+                id="account_payment_reports_info_contratista_wizard_action"
+                model="ir.actions.act_window">
+            <field name="name">Reporte de Contratistas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment.reports.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id"
+                   ref="account_payment_reports_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_contratista':True,'is_report':True,'default_type_report':'pagos_proveedores','invisible_partner':False,'contratista':1}</field>
+        </record>
+
+
+
+
+
+    </data>
+
+
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_res_partner_bank_wizard_form" model="ir.ui.view">
+        <field name="name">res.partner.bank.wizard.form</field>
+        <field name="model">res.partner.bank.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Procesar Cuentas Bancarias">
+                <footer>
+                    <button name="process" type="object" string="Procesar" icon="fa-cogs"/>
+                    <button string="Cancelar" icon="fa-times" special="cancel"/>
+
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_res_partner_bank_wizard" model="ir.actions.act_window">
+        <field name="name">Reporte de Cuentas Bancarias</field>
+        <field name="res_model">res.partner.bank.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

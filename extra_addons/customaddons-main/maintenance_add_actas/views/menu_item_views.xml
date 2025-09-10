@@ -1,0 +1,9 @@
+<odoo>
+    <menuitem
+        id="menu_maintenance_actas"
+        name="Actas"
+        parent="maintenance.menu_maintenance_title"
+        groups="maintenance.group_equipment_manager,base.group_user"
+        action="action_maintenance_actas"
+        sequence="50"/>
+</odoo>

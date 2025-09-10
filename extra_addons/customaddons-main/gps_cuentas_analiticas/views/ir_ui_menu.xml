@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <menuitem name="Reporte de Cuentas analíticas"
+                id="account_analytic_account_wizard_menu"
+              action="account_analytic_account_wizard_action"  parent="account.menu_analytic_accounting"
+              sequence="9999999"
+                   groups="analytic.group_analytic_accounting"
+           />
+
+
+    <menuitem name="Reporte de Asientos de Cuentas analíticas"
+                id="account_analytic_account_wizard_move_menu"
+              action="account_analytic_account_wizard_move_action"  parent="account.menu_analytic_accounting"
+              sequence="9999998"
+                   groups="analytic.group_analytic_accounting"
+           />
+
+    <menuitem name="Contabilidad analítica"
+                id="account_analytic_account_wizard_move_analiticos_menu"
+              parent="account.menu_finance_reports"
+              sequence="9999999"
+                   groups="analytic.group_analytic_accounting"
+           />
+
+<menuitem name="Reporte de Cuentas analíticas"
+                id="account_analytic_account_wizard_menu"
+              action="account_analytic_account_wizard_action"  parent="account_analytic_account_wizard_move_analiticos_menu"
+              sequence="9999999"
+                   groups="analytic.group_analytic_accounting"
+           />
+
+
+    <menuitem name="Reporte de Asientos de Cuentas analíticas"
+                id="account_analytic_account_wizard_move_menu"
+              action="account_analytic_account_wizard_move_action"  parent="account_analytic_account_wizard_move_analiticos_menu"
+              sequence="9999998"
+                   groups="analytic.group_analytic_accounting"
+           />
+
+
+
+</odoo>

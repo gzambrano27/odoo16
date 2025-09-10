@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+
+
+
+		         <record model="ir.ui.view"
+                id="hr_payroll_structure_form_grade_view">
+            <field name="name">hr.payroll.structure.form.grade.view</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_employee_grade_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+        <field name="account" />
+    <field name="legal_iess" invisible="1" />
+</field>
+
+                <xpath expr="//page[@name='salary_rules']" position="replace">
+      <page name="salary_rules" string="Reglas Salarios">
+ <field name="rule_ids" domain="[('legal_iess','=',legal_iess)]" attrs="{'readonly': [('id', '=', False)]}" invisible="1">
+                         <tree>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="partner_id"/>
+                         </tree>
+                      </field>
+<newline/>
+    <field name="struct_rule_ids" domain="[('legal_iess','=',legal_iess)]"  />
+      </page>
+
+
+
+
+</xpath>
+
+            </field>
+           </record>
+
+
+
+		
+	</data>
+
+</odoo>

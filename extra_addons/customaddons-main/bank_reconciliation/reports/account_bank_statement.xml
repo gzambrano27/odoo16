@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_bank_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="st" t-value="o.statement_id" />
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <table style="border: 1px solid black; width: 100%;">
+                            <tbody style="white-space:nowrap">
+                                <tr>
+                                    <td style="border: 0px solid black; text-align:center;">
+                                        <h3 class="col-md-offset-2">
+                                            CONCILIACION BANCARIA <span t-field="st.date" />
+                                        </h3>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <span style="text-align: center">
+                            <h4 t-if="o.journal_id.default_account_id">
+                                <span t-field="o.journal_id.default_account_id" />
+                            </h4>
+                        </span>
+                        <br/>
+                        <span class="text-right">
+                            <b >SALDO SEGÚN ESTADO DE CUENTA: <span t-field="st.balance_end_real"/>
+                            </b>
+                        </span>
+                        <br/>
+                        <table style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <td style="border: 1px solid black; text-align: center">
+                                        <b>Movimientos no conciliados meses anteriores</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <t t-set="total_debit_meses_antes" t-value="0"/>
+                        <t t-set="total_credit_meses_antes" t-value="0"/>
+
+                        <table class="table-condensed" style="font-size: 10px; margin-bottom: 0.5em; border-collapse: collapse; empty-cells: show; width: 100%; page-break-after: auto;">
+                            <thead style="white-space:nowrap; text-align: center;">
+                                <tr>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Fecha</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Empresa</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>No.</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Diario</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Nombre</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Ref.</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Debe</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Haber</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="old_moves" t-as="l">
+                                    <td class="text-center col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="l.date"/>
+                                    </td>
+                                    <td class="text-left col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-if="l.partner_id">
+                                            <t t-esc="l.partner_id.name"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-center" style="border: 1px solid black;">
+                                        <t t-esc="l.bank_match_number"/>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <t t-if="l.journal_id">
+                                            <t t-esc="l.journal_id.name"/>
+                                        </t>
+                                    </td>
+                                    <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                        <t t-esc="l.name"/>
+                                    </td>
+                                    <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                        <t t-esc="l.ref"/>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="'{0:,.2f}'.format(l.debit)"/>
+                                        <t t-set="total_debit_meses_antes" t-value="total_debit_meses_antes + l.debit"/>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="'{0:,.2f}'.format(l.credit)"/>
+                                        <t t-set="total_credit_meses_antes" t-value="total_credit_meses_antes + l.credit"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="border: 0px solid black;"></td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Total</b>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(total_debit_meses_antes)"/>
+                                        </b>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(total_credit_meses_antes)"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+
+
+                        <table style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <td style="border: 1px solid black; text-align: center">
+                                        <b>Movimientos no conciliados del mes de <span t-esc="month"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <t t-set="total_debit_mes_actual" t-value="0"/>
+                        <t t-set="total_credit_mes_actual" t-value="0"/>
+
+                        <table class="table-condensed" style="font-size: 10px; margin-bottom: 0.5em; border-collapse: collapse; empty-cells: show; width: 100%;">
+                            <thead style="white-space:nowrap; text-align: center;">
+                                <tr>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Fecha</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Empresa</b>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <b>No.</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Diario</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Nombre</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Ref.</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Debe</b>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                        <b>Haber</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="moves" t-as="l">
+                                    <td class="text-center col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="l.date"/>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-if="l.partner_id">
+                                            <t t-esc="l.partner_id.name"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-center" style="border: 1px solid black;">
+                                        <t t-esc="l.bank_reference"/>
+                                    </td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <t t-if="l.journal_id">
+                                            <t t-esc="l.journal_id.name"/>
+                                        </t>
+                                    </td>
+                                    <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                        <t t-esc="l.name"/>
+                                    </td>
+                                    <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                        <t t-esc="l.ref"/>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="'{0:,.2f}'.format(l.debit)"/>
+                                        <t t-set="total_debit_mes_actual" t-value="total_debit_mes_actual + l.debit"/>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <t t-esc="'{0:,.2f}'.format(l.credit)"/>
+                                        <t t-set="total_credit_mes_actual" t-value="total_credit_mes_actual + l.credit"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="border: 0px solid black;"></td>
+                                    <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                        <b>Total</b>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(total_debit_mes_actual)"/>
+                                        </b>
+                                    </td>
+                                    <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                        <b>
+                                            <span t-esc="'{0:,.2f}'.format(total_credit_mes_actual)"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br/>
+
+                        <t t-set="balance_meses_antes" t-value="total_debit_meses_antes - total_credit_meses_antes"/>
+                        <t t-set="balance_mes_actual" t-value="total_debit_mes_actual - total_credit_mes_actual"/>
+                        <t t-set="subtotal" t-value="sum([st.balance_end_real, balance_meses_antes, balance_mes_actual])"/>
+
+                        <table class="table-condensed" style="width: 50%;">
+                            <thead>
+                                <th>
+                                    <h4>RESUMEN DEL EXTRACTO</h4>
+                                </th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <b>SALDO SEGÚN ESTADO DE CUENTA</b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <t t-esc="'{0:,.2f}'.format(st.balance_end_real)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>(-) NO CONCILIADOS MESES ANTERIORES</b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <t t-esc="'{0:,.2f}'.format(total_credit_meses_antes)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>(+) NO CONCILIADOS MESES ANTERIORES</b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <t t-esc="'{0:,.2f}'.format(total_debit_meses_antes)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>(-) NO CONCILIADOS MES DE <span t-esc="month.upper()"/>
+                                        </b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <t t-esc="'{0:,.2f}'.format(total_credit_mes_actual)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>(+) NO CONCILIADOS MES DE <span t-esc="month.upper()"/>
+                                        </b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <t t-esc="'{0:,.2f}'.format(total_debit_mes_actual)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right; padding-left: 1mm;">
+                                        <b>SALDO CONCILIADO</b>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 1mm; border-top: solid black 1px;">
+                                        <b>
+                                            <t t-esc="'{0:,.2f}'.format(st.balance_end)"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table-condensed" style="width: 50%;">
+                            <thead>
+                                <th style="border-top: solid black 1px;">SALDO EN LIBROS</th>
+                                <th style="text-align:right; border-top: solid black 1px;">
+                                    <t t-esc="'{0:.2f}'.format(balance)"/>
+                                </th>
+                            </thead>
+                        </table>
+
+                        <br/>
+
+                        <table class="table-condensed" style="width: 50%;">
+                            <thead>
+                                <th style="border-top: solid black 1px;">DIFERENCIA (+/-) NC/ND</th>
+                                <th style="text-align:right; border-top: solid black 1px;">
+                                    <t t-esc="'{0:.2f}'.format(st.balance_end - balance)"/>
+                                </th>
+                            </thead>
+                        </table>
+
+                        <br />
+                        <br />
+
+                        <t t-if="excl_moves">
+
+                            <table style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <td style="border: 1px solid black; text-align: center">
+                                            <b>Movimientos no conciliados por exclusion</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                            <t t-set="total_debit_excluido" t-value="0"/>
+                            <t t-set="total_credit_excluido" t-value="0"/>
+
+                            <table class="table-condensed" style="font-size: 10px; margin-bottom: 0.5em; border-collapse: collapse; empty-cells: show; width: 100%;">
+                                <thead style="white-space:nowrap; text-align: center;">
+                                    <tr>
+                                        <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                            <b>Fecha</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                            <b>Empresa</b>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <b>No.</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                            <b>Diario</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                            <b>Nombre</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                            <b>Ref.</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                            <b>Debe</b>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-1 col-md-1 col-lg-1">
+                                            <b>Haber</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="excl_moves" t-as="l">
+                                        <td class="text-center col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <t t-esc="l.date"/>
+                                        </td>
+                                        <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <t t-if="l.partner_id">
+                                                <t t-esc="l.partner_id.name"/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center" style="border: 1px solid black;">
+                                            <t t-esc="l.bank_match_number"/>
+                                        </td>
+                                        <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                            <t t-if="l.journal_id">
+                                                <t t-esc="l.journal_id.name"/>
+                                            </t>
+                                        </td>
+                                        <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                            <t t-esc="l.name"/>
+                                        </td>
+                                        <td class="col-xs-2 col-md-2 col-lg-2" style="border: 1px solid black;">
+                                            <t t-esc="l.ref"/>
+                                        </td>
+                                        <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(l.debit)"/>
+                                            <t t-set="total_debit_excluido" t-value="total_debit_excluido + l.debit"/>
+                                        </td>
+                                        <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <t t-esc="'{0:,.2f}'.format(l.credit)"/>
+                                            <t t-set="total_credit_excluido" t-value="total_credit_excluido + l.credit"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" style="border: 0px solid black;"></td>
+                                        <td style="border: 1px solid black;" class="col-xs-2 col-md-2 col-lg-2">
+                                            <b>Total</b>
+                                        </td>
+                                        <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <b>
+                                                <span t-esc="'{0:,.2f}'.format(total_debit_excluido)"/>
+                                            </b>
+                                        </td>
+                                        <td class="text-right col-xs-1 col-md-1 col-lg-1" style="border: 1px solid black;">
+                                            <b>
+                                                <span t-esc="'{0:,.2f}'.format(total_credit_excluido)"/>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <br />
+                            <br />
+                            <table class="table-condensed" style="width: 50%;">
+                                <thead>
+                                    <th>
+                                        <h4>RESUMEN MOVIMIENTOS EXCLUIDOS</h4>
+                                    </th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <b>(-) EGRESOS NO CONCILIADOS POR EXCLUSION</b>
+                                        </td>
+                                        <td style="text-align:right; padding-left: 1mm;">
+                                            <t t-esc="'{0:,.2f}'.format(total_debit_excluido)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>(+) INGRESOS NO CONCILIADOS POR EXCLUSION</b>
+                                        </td>
+                                        <td style="text-align:right; padding-left: 1mm;">
+                                            <t t-esc="'{0:,.2f}'.format(total_credit_excluido)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right; padding-left: 1mm;">
+                                            <b>SALDO EXCLUIDO</b>
+                                        </td>
+                                        <td style="text-align:right; padding-left: 1mm; border-top: solid black 1px;">
+                                            <b>
+                                                <t t-esc="'{0:,.2f}'.format(total_debit_excluido - total_credit_excluido)"/>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                        <br />
+                        <br />
+                        <br />
+
+                        <table align="center" class="table-condensed" style="margin-top: 0.5em; margin-bottom: 0.5em; table-layout:fixed; border-collapse: collapse;empty-cells: show; width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <th style="text-align:center; border: solid black 1px; width: 25%;" >
+                                        ELABORADO POR
+                                    </th>
+                                    <th style="text-align:center; border: solid black 1px; width:25%;">
+                                        REVISADO POR
+                                    </th>
+
+                                    <th style="text-align:center; border: solid black 1px; width:25%;">
+                                        APROBADO POR
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td style="border: solid black 1px; text-align: center;">
+                                        <div style="height: 2em;">
+                                            <span t-esc="o.create_uid.name.upper()" />
+                                        </div>
+                                    </td>
+                                    <td style="border: solid black 1px;"/>
+                                    <td style="border: solid black 1px;"/>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

@@ -1,0 +1,11 @@
+<odoo>
+    <!-- Menú principal para el módulo con icono -->
+    <menuitem id="historical_gps_menu" name="Historial GPS" sequence="1" web_icon="historical_master_gps,static/description/icon.png"/>
+
+    <!-- Submenú para el modelo de Inventario -->
+    <menuitem id="menu_inventory_historical_gps" name="Historial de Inventario GPS" parent="historical_gps_menu" action="action_inventory_historical_gps" sequence="1"/>
+
+    <!-- Menú de compras y ventas, ocultos del menú izquierdo -->
+    <menuitem id="menu_purchase_historical_gps" name="Historial de Compras GPS" parent="historical_gps_menu" action="action_purchase_historical_gps" sequence="2" groups="base.group_user" />
+    <menuitem id="menu_sale_historical_gps" name="Historial de Ventas GPS" parent="historical_gps_menu" action="action_sale_historical_gps" sequence="3" groups="base.group_user" />
+</odoo>

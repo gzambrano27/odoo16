@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		
+		<record id="custom_view_contract_form" model="ir.ui.view">
+			<field name="name">custom.hr.contract.form</field>
+			<field name="model">hr.contract</field>
+			<field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+			<field name="arch" type="xml">
+				
+				<xpath expr="//field[@name='hr_responsible_id']" position='after'>
+					<field name="fifty_percent_hour"/>
+          <field name="one_hundred_percent_hour"/>
+				</xpath>
+
+				
+				<xpath expr="//page[@name='information']//group[@name='salary']" position="after">
+					<group name="duration_group" string="Duration">
+						<field name="company_id" required="1" widget="selection" on_change="onchange_company(company_id)"/>
+							<label for="date_start" string="Duration"/>
+							<div>
+									<field name="date_start" class="oe_inline"/> - <field name="date_end" class="oe_inline"/>
+							</div>
+							<field name="number_of_payments" invisible="1"/>
+					</group>
+
+					<group name='quincena' string='Pago de quincena'>
+						<field name="first_fitten_payment_mode"/>
+						<field name="value"/>
+					</group>
+
+					<group name="configuration_pay" string="Pagos de Beneficios Sociales">
+						<field name="pay_reserve_funds" string="Pagar Fondos de reserva?"/>
+						<field name="pay_thirteenth_salary" string="Pagar Décimo Tercer sueldo?"/>
+						<field name="pay_fourteenth_salary" string="Pagar Décimo Cuarto sueldo?"/>
+						<field name="add_iees" string="Extender IESS esposa/o?"/>
+					</group>
+
+					<group name="lugar_inicio_contrato" string="Lugar Inicio Contrato">
+						<field name="provincia_inicio"
+						/>
+					</group>
+					
+					<group name="lugar_fin_contrato" string="Lugar Fin Contrato">
+						<field name="provincia_fin"/>
+					</group>
+					
+					<group name="add_retencion_judicial" string="Retencion Judicial">
+						<field name="add_judicial_reten"/>
+					</group>
+					
+					<group name="add_retenciones" string="Retenciones">
+						<field name="aditional_hold"/>
+					</group>
+				
+				</xpath>
+
+				<xpath expr="//page[@name='information']" position="after">
+					<page string="Income and Expenses" name="page_income_expenses">
+						<group colspan='2'>
+							<separator string="Incomes Employee" colspan="2"/>
+							<field name="contract_income_ids" nolabel="1" colspan="2">
+								<tree string="Incomes" editable="bottom">
+									<field name="name" required="1" domain="[('type','=','incomes'),('type_income','!=','extra_hours')]" widget="selection"/>
+									<field name="amount"/>
+									<field name="collection_form" required="1"/>
+									<field name="contract_id" invisible="1"/>
+								</tree>
+								<form string="Incomes">
+									<field name="name" required="1" domain="[('type','=','incomes'),('type_income','!=','extra_hours')]" widget="selection"/>
+									<field name="amount"/>
+									<field name="collection_form" required="1"/>
+									<field name="contract_id" invisible="1"/>
+								</form>
+							</field>
+
+							<separator string="Expenses Employee" colspan="2"/>
+							<field name="contract_expense_ids" nolabel="1" colspan="2">
+								<tree string="Expenses" editable="bottom">
+									<field name="name" required="1" domain="[('type','=','expenses')]" widget="selection"/>
+									<field name="amount"/>
+									<field name="collection_form" required="1"/>
+									<field name="contract_id" invisible="1"/>
+								</tree>
+								<form string="Expenses">
+									<field name="name" required="1" domain="[('type','=','expenses')]" widget="selection"/>
+									<field name="amount"/>
+									<field name="collection_form" required="1"/>
+									<field name="contract_id" invisible="1"/>
+								</form>
+							</field>
+
+						</group>
+					</page>
+
+					<page string="Historial de Gastos Deducibles">
+						<group>
+							<field name="gastos_lines" nolabel="1" colspan="4">
+								<tree string="Gastos Historical">
+									<field name="otros_ingresos"/>
+									<field name="bonificacion"/>
+									<field name="utilidades"/>
+									<field name="vivienda"/>
+									<field name="educacion"/>
+									<field name="salud"/>
+									<field name="vestimenta"/>
+									<field name="alimentacion"/>
+									<field name="state"/>
+								</tree>
+							</field>
+						</group>
+					</page>
+						                    
+
+
+				</xpath>
+
+
+
+
+
+
+
+			</field>
+		</record>
+
+      
+
+
+	</data>
+</odoo>
+

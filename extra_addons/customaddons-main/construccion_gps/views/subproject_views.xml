@@ -1,0 +1,99 @@
+<odoo>
+    <record id="view_project_subproyecto_form" model="ir.ui.view">
+        <field name="name">projects.subproyecto.form</field>
+        <field name="model">projects.subproyecto</field>
+        <field name="arch" type="xml">
+            <form string="Subproyecto">
+                <sheet>
+                    <group>
+                        <group string="Información del Subproyecto">
+                            <field name="name"/>
+                            <field name="codigo"/>
+                            <field name="proyecto_id"/>
+                        </group>
+                        <group string="Dirección">
+                            <field name="direccion"/>
+                            <field name="pais"/>
+                            <field name="ciudad"/>
+                            <field name="provincia"/>
+                            <field name="codigo_postal"/>
+                        </group>
+                        <group string="Localización Geográfica">
+                            <field name="longitud"/>
+                            <field name="latitud"/>
+                        </group>
+                        <group string="Duración">
+                            <field name="fecha_inicio"/>
+                            <field name="fecha_final"/>
+                        </group>
+                        <group string="Detalles de Contacto">
+                            <field name="contacto"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Personal">
+                            <field name="personal_ids">
+                                <kanban>
+                                    <field name="partner_id"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="o_kanban_card">
+                                                <strong><field name="partner_id"/></strong>
+                                                <div><field name="rol"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+
+                        <page string="Documentos">
+                            <field name="documentos_ids">
+                                <tree editable="bottom">
+                                    <field name="titulo"/>
+                                    <field name="documento" widget="many2many_binary" colspan="2" />
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Gastos Extras">
+                            <field name="gastos_extras_ids">
+                                <tree editable="bottom">
+                                    <field name="fecha"/>
+                                    <field name="vendedor"/>
+                                    <field name="cuenta_analitica"/>
+                                    <field name="nota"/>
+                                    <field name="cantidad"/>
+                                    <field name="costo"/>
+                                    <field name="factura_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree del modelo Proyecto -->
+        <record id="view_project_subproyecto_tree" model="ir.ui.view">
+            <field name="name">projects.subproyecto.tree</field>
+            <field name="model">projects.subproyecto</field>
+            <field name="arch" type="xml">
+                <tree string="Subproyectos">
+                    <field name="name"/>
+                    <field name="codigo"/>
+                    <field name="proyecto_id"/>
+                </tree>
+            </field>
+        </record>
+
+    <!-- Action para la vista del modelo Subproyecto -->
+    <record id="action_project_subproyecto" model="ir.actions.act_window">
+        <field name="name">Subproyectos</field>
+        <field name="res_model">projects.subproyecto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_project_subproyecto_tree"/>
+    </record>
+</odoo>

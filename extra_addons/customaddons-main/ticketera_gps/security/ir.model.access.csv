@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ticket_usuario,Usuario - Tickets GPS,model_ticket_gps,ticketera_gps.group_usuario_tickets,1,1,1,0
+access_ticket_admin,Admin - Tickets GPS,model_ticket_gps,ticketera_gps.group_admin_tickets,1,1,1,1

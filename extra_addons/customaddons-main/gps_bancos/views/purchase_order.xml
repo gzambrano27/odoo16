@@ -1,0 +1,269 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+        <record model="ir.ui.view"
+                id="purchase_order_view_payment_inherit">
+            <field name="name">purchase.order.form.payment.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="gps_purchases.purchase_order_view_inherit"/>
+            <field name="arch" type="xml">
+
+    <field name="date_advance_payment" position="after">
+
+         <field name="warning_date_advance_payment" invisible="1" />
+    <field name="warning_date_advance_payment_message"  style="color:red" attrs="{'invisible':[('warning_date_advance_payment','!=',True)]}"/>
+      <field name="warning_date_advance_payment_message"  style="color:green" attrs="{'invisible':[('warning_date_advance_payment','=',True)]}"/>
+
+
+</field>
+
+
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="bi_purchase_advance_payment.purchase_order_view_inherit">
+        <field name="name">purchase.order.view.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/header/button[@name='button_cancel']" position="after">
+                <button name="%(bi_purchase_advance_payment.action_advance_payment_wizard_form)d" type="action"
+                        string="Pago Anticipado" class="oe_highlight" groups="purchase.group_purchase_manager"
+                        attrs="{'invisible': [('state', 'not in', ['purchase','done'])]}"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Pagos" groups="account.group_account_invoice">
+                    <field name="account_payment_ids" readonly="1"/>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='date_planned']" position="replace">
+                <field name="date_planned" attrs="{'readonly': [('state', 'in', ('to approve', 'purchase','done','cancel'))]}"/>
+            </xpath>
+        </field>
+    </record>
+
+         <record model="ir.ui.view"
+                id="bi_purchase_order_view_payment_inherit">
+            <field name="name">bi.purchase.order.form.payment.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="bi_purchase_advance_payment.purchase_order_view_inherit"/>
+            <field name="arch" type="xml">
+
+    <field name="account_payment_ids" position="before">
+        <separator string="Solicitudes de Pagos"/>
+         <newline/>
+<field name="payment_request_ids" context="{'hide_parent':True,'tree_view_ref':'gps_bancos.account_payment_request_view_tree','form_view_ref':'gps_bancos.account_payment_request_view_form'}"
+groups="gps_bancos.group_generar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+readonly="1"
+/>
+        <newline/>
+
+         <group class="oe_subtotal_footer oe_right">
+
+    <field name="total_request_payments"  />
+        <field name="total_dif_request_payments"  />
+
+
+                </group>
+
+          <newline/>
+                <separator string="Pagos"/>
+               <newline/>
+    </field>
+
+            <field name="account_payment_ids" position="after">
+       <newline/>
+                <separator string="Pagos Aplicados"/>
+              <newline/>
+                <field name="purchase_payment_line_ids" readonly="1">
+                    <tree string="Pago de Orden de Compra">
+                        <field name="payment_id"/>
+                        <field name="amount" sum="total"/>
+                        <field name="reconciled" optional="hide" invisible="1"/>
+                         <field name="reconciled_date" optional="show" invisible="0"/>
+                         <field name="reconciled_user_id" optional="hide" invisible="1"/>
+                    </tree>
+                     <form string="Pago de Orden de Compra">
+                         <group>
+                             <group>
+                              <field name="payment_id"/>
+                        <field name="amount"/>
+                         </group>
+                             <group invisible="1">
+                               <field name="reconciled" invisible="1"/>
+                         <field name="reconciled_date"/>
+                         <field name="reconciled_user_id" invisible="1"/>
+                         </group>
+
+                         </group>
+
+
+                    </form>
+
+                </field>
+             <group class="oe_subtotal_footer oe_right">
+
+    <field name="total_payments_advances"  />
+        <field name="total_dif_payments_advances"   />
+
+
+                </group>
+
+
+</field>
+
+
+
+            </field>
+        </record>
+
+
+          <record model="ir.ui.view"
+                id="purchase_order_view_search_anticipo_inherit">
+            <field name="name">purchase.order.search.anticipo.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+
+               <filter name="to_approve"  position="after" >
+   <separator/>
+                    <filter name="filter_required_advance_payment" string="Requiere Anticipo"
+                            domain="[('required_advance_payment', '=',True)]"/>
+                     <separator/>
+                <filter name="filter_total_dif_payments_advances" string="Con valores pendientes por Anticipar"
+                            domain="[('total_dif_payments_advances', '&gt;',0)]"/>
+                   <filter name="filter_no_total_dif_payments_advances" string="Sin valores pendientes por Anticipar"
+                            domain="[('total_dif_payments_advances', '&lt;=',0)]"/>
+
+
+
+                   </filter>
+            </field>
+               </record>
+
+
+               <record model="ir.ui.view"
+                id="purchase_order_view_anticipo_inherit">
+            <field name="name">purchase.order.form.anticipo.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="gps_purchases.purchase_order_view_inherit"/>
+            <field name="arch" type="xml">
+
+                   <field name="date_advance_payment"  position="after" >
+                    <field name="overdue_days"   widget="badge"
+       decoration-danger="overdue_days&lt;=0" attrs="{'invisible':[('required_advance_payment','!=',True)]}"
+        decoration-success="overdue_days&gt;0" />
+                   </field>
+            </field>
+               </record>
+
+
+         <record model="ir.ui.view"
+                id="purchase_order_view_anticipo_inherit">
+            <field name="name">purchase.order.tree.anticipo.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="arch" type="xml">
+
+                   <field name="date_planned"  position="after" >
+                    <field name="total_payments_advances"  sum="total" optional="hide" />
+                         <field name="total_dif_payments_advances"  sum="total" optional="hide" />
+            </field>
+            </field>
+
+               </record>
+
+<record model="ir.ui.view"
+                id="purchase_order_view_anticipo_kpis_inherit">
+            <field name="name">purchase.order.tree.anticipo.kpis.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+
+                   <field name="invoice_status"  position="after" >
+                    <field name="total_payments_advances"  sum="total" optional="hide" />
+                         <field name="total_dif_payments_advances"  sum="total" optional="hide" />
+            </field>
+            </field>
+
+               </record>
+<!-- -->
+        <record id="view_purchase_order_tree_forapprove" model="ir.ui.view">
+    <field name="name">purchase.order.tree.forapprove</field>
+    <field name="model">purchase.order</field>
+    <field name="arch" type="xml">
+       <tree decoration-muted="state == 'cancel'" decoration-info="state == 'draft'"  class="o_purchase_order" sample="1">
+             <field name="company_id"/>
+            <field name="id" optional="hide"/>
+          <field name="partner_ref" optional="hide"/>
+                    <field name="name" string="Reference" readonly="1" decoration-bf="1" decoration-info="state in ('draft','sent')"/>
+                    <field name="date_approve" widget="date" invisible="context.get('quotation_only', False)" optional="show"/>
+                    <field name="partner_id"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" optional="show"/>
+                    <field name="company_id" groups="!base.group_multi_company" invisible="1"/>
+                    <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="date_order" invisible="not context.get('quotation_only', False)" optional="show"/>
+                    <field name="origin" optional="show"/>
+                    <field name="amount_untaxed" sum="total" string="Base Imponible" widget="monetary" optional="hide"/>
+                    <field name="amount_total" sum="total" widget="monetary" string="Total" optional="show" decoration-bf="1"/>
+
+            <field name="payment_term_id"  />
+            <field name="required_advance_payment" optional="hide" />
+           <field name="date_advance_payment"/>
+
+            <field name="date_advance_first_payment" optional="hide"/>
+<field name="overdue_days"  attrs="{'invisible':[('required_advance_payment','!=',True)]}"
+       widget="badge"
+       decoration-danger="overdue_days&lt;=0"
+        decoration-success="overdue_days&gt;0"
+       />
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
+        </tree>
+    </field>
+</record>
+
+
+ <record id="action_purchase_order_forapprove_order" model="ir.actions.act_window">
+    <field name="name">OC Pendientes de Aprobar</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">purchase.order</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('state','not in',('draft','cancel'))]</field>
+    <field name="context">{'search_default_to_approve':1,'search_default_filter_required_advance_payment':1}</field>
+    <field name="view_id" ref="view_purchase_order_tree_forapprove"/>
+     <field name="search_view_id" ref="purchase.view_purchase_order_filter" />
+</record>
+
+ <record model="ir.actions.act_window.view" id="purchase_order_forapprove_view_tree_action">
+    <field name="sequence" eval="1"/>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_purchase_order_tree_forapprove"/>
+    <field name="act_window_id" ref="action_purchase_order_forapprove_order"/>
+</record>
+
+<record model="ir.actions.act_window.view" id="purchase_forapprove_order_view_form_action">
+    <field name="sequence" eval="2"/>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="purchase.purchase_order_form"/>
+    <field name="act_window_id" ref="action_purchase_order_forapprove_order"/>
+</record>
+
+
+
+
+
+    </data>
+
+</odoo>

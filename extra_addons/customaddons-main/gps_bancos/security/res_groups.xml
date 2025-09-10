@@ -1,0 +1,92 @@
+<odoo>
+    <data noupdate="1">
+
+		<record model="res.groups" id="group_sol_creacion_cuentas">
+			<field name="name">Solicitud Creacion de Cuentas Bancarias</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			<!--solo para ordenes de compra -->
+		</record>
+
+		<record model="res.groups" id="group_creador_cuentas">
+			<field name="name">Creador de Cuentas Bancarias</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			<!--solo para ordenes de compra -->
+		</record>
+
+		<record model="res.groups" id="group_generar_sol_pagos">
+			<field name="name">Generar Sol. de Pagos(Compras)</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			<!--solo para ordenes de compra -->
+		</record>
+
+		<record model="res.groups" id="group_generar_sol_otros">
+			<field name="name">Generar Sol. de Pagos(Otros)</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			<!--solo para otros pagos -->
+		</record>
+
+        <record model="res.groups" id="group_confimar_sol_pagos">
+			<field name="name">Confirmar Pagos al Banco(Asistente de Tesoreria)</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			 <field name="implied_ids" eval="[(4, ref('group_generar_sol_pagos'))]"/>
+			<!--Asistente de Tesoreria -->
+		</record>
+
+ 		<record model="res.groups" id="group_pagar_sol_pagos">
+			<field name="name">Generar Pagos al Banco(Jefe Financiero)</field>
+			<field name="category_id" ref="group_module_bancos"/>
+			 <field name="implied_ids" eval="[(4, ref('group_confimar_sol_pagos'))]"/>
+		</record>
+
+		<record model="res.groups" id="group_usr_documentos_bancarios">
+			<field name="name">Usuarios Documentos Bancarios(Asistente de Tesoreria)</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+		</record>
+
+		<record model="res.groups" id="group_admin_documentos_bancarios">
+			<field name="name">Administrador Documentos Bancarios(Jefe Financiero)</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+			  <field name="implied_ids" eval="[(4, ref('group_usr_documentos_bancarios'))]"/>
+		</record>
+
+         <record model="res.groups" id="group_admin_sol_pagos">
+			<field name="name">Administrador Pagos al Banco(Sistemas)</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+			  <field name="implied_ids" eval="[(4, ref('group_pagar_sol_pagos'))]"/>
+		</record>
+
+
+
+		<!-- -->
+		<record model="res.groups" id="group_acuerdos_cobros">
+			<field name="name">Acuerdo de Cobros</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+		</record>
+
+		<record model="res.groups" id="group_analistas_financiero">
+			<field name="name">Analistas Financieros</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+		</record>
+
+		<!-- -->
+
+		<record model="res.groups" id="group_auditor_financiero">
+			<field name="name">Auditor</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+			<field name="implied_ids" eval="[(4, ref('group_analistas_financiero'))]"/>
+		</record>
+
+		<record model="res.groups" id="group_contador_financiero">
+			<field name="name">Contadores</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+			<field name="implied_ids" eval="[(4, ref('group_analistas_financiero'))]"/>
+		</record>
+
+		<record model="res.groups" id="group_contratista_pagos">
+			<field name="name">Visualizar Pagos Contratista</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+		</record>
+
+    </data>
+
+</odoo>

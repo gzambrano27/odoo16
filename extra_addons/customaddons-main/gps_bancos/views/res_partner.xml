@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+
+
+
+<record id="view_res_partner_form_inherit" model="ir.ui.view">
+        <field name="name">view.res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+           <field  name="show_credit_limit" position="after">
+                   <group   name="banks" position="move" />
+            </field>
+            <group   name="banks" position="attributes">
+                <attribute name="colspan">4</attribute>
+                 <attribute name="groups">gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos</attribute>
+            </group>
+             <field  name="show_credit_limit" position="before">
+                 <group>
+                       <field name="enable_payment_bank_ids" colspan="4"
+                       widget="many2many_checkboxes" domain="[('use_macro_format','=',True)]" />
+                 </group>
+
+            </field>
+
+
+            <field name="category_id" position="after">
+                <field name="group_category_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
+            </field>
+        </field>
+    </record>
+
+
+        <record id="view_partner_bank_new_form_hr_inh" model="ir.ui.view">
+        <field name="name">view.partner.bank.form.hr.inh</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+
+             <xpath expr="//page[@name='accounting']//field[@name='bank_ids']" position="attributes">
+                      <field name="attribute">[('active', 'in', (True, False))]</field>
+            </xpath>
+
+            <xpath expr="//page[@name='accounting']//field[@name='bank_ids']/tree/field[@name='allow_out_payment']" position="after">
+                      <field name="partner_email" attrs="{'invisible':[('allow_out_payment','!=',True)]}" />
+         <field name="active" widget="boolean_toggle" />
+            </xpath>
+
+            <xpath expr="//page[@name='accounting']//field[@name='bank_ids']/tree/field[@name='bank_id']"
+                   position="attributes">
+                <attribute name="options">{'no_create':True,'no_open':True,'no_edit':True}</attribute>
+                <attribute name="required">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+            <record id="view_partner_new_search_inh" model="ir.ui.view">
+        <field name="name">view.partner.search.inh</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+
+               <field name="category_id" position="after">
+                    <field name="enable_payment_bank_ids" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos" />
+               </field>
+
+        </field>
+    </record>
+
+    <record id="view_partner_new_bancos_form_inh" model="ir.ui.view">
+        <field name="name">view.partner.bancos.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+
+               <field name="category_id" position="attributes">
+<attribute name="options">{'no_create':True,'no_open':True,'no_edit':True}</attribute>
+               </field>
+
+        </field>
+    </record>
+
+
+    </data>
+
+</odoo>

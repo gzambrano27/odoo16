@@ -1,0 +1,84 @@
+<odoo>
+    <!-- Vista de formulario para el modelo de Inventario -->
+    <record id="view_inventory_historical_gps_form" model="ir.ui.view">
+        <field name="name">inventory.historical.gps.form</field>
+        <field name="model">inventory.historical.gps</field>
+        <field name="arch" type="xml">
+            <form string="Historial de Inventario GPS">
+                <sheet>
+                    <group>
+                        <!-- Campos principales del modelo de Inventario -->
+                        <field name="sistema"/>
+                        <field name="sku"/>
+                        <field name="mes1"/>
+                        <field name="referencia_interna"/>
+                        <field name="nombre"/>
+                        <field name="proveedor"/>
+                        <field name="categoria"/>
+                        <field name="subcategoria"/>
+                        <field name="marca"/>
+                        <field name="costo"/>
+                        <field name="cantidad_a_mano"/>
+                        <field name="stock_virtual"/>
+                        <field name="costo_total"/>
+                        <field name="mes2"/>
+                        <field name="anio"/>
+                    </group>
+                    <!-- Otros campos adicionales o detalles pueden agregarse aquí si es necesario -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de lista para el modelo de Inventario -->
+    <record id="view_inventory_historical_gps_tree" model="ir.ui.view">
+        <field name="name">inventory.historical.gps.tree</field>
+        <field name="model">inventory.historical.gps</field>
+        <field name="arch" type="xml">
+            <tree string="Historial de Inventario GPS">
+                <!-- Campos de la vista de lista -->
+                <field name="sistema"/>
+                <field name="sku"/>
+                <field name="nombre"/>
+                <field name="costo"/>
+                <field name="cantidad_a_mano"/>
+                <field name="stock_virtual"/>
+                <field name="costo_total"/>
+                <field name="mes1"/>
+                <field name="anio"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda para el modelo de Inventario -->
+    <record id="view_inventory_historical_gps_search" model="ir.ui.view">
+        <field name="name">inventory.historical.gps.search</field>
+        <field name="model">inventory.historical.gps</field>
+        <field name="arch" type="xml">
+            <search string="Buscar en Historial de Inventario GPS">
+                <!-- Agrupación de filtros -->
+                <group string="Agrupacion">
+                    <filter string="Sistema" name="group_by_sistema" context="{'group_by': 'sistema'}"/>
+                    <filter string="SKU" name="group_by_sku" context="{'group_by': 'sku'}"/>
+                    <filter string="Mes" name="group_by_mes1" context="{'group_by': 'mes1'}"/>
+                    <filter string="Año" name="group_by_anio" context="{'group_by': 'anio'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista de lista de inventario -->
+    <record id="action_inventory_historical_gps" model="ir.actions.act_window">
+        <field name="name">Historial de Inventario GPS</field>
+        <field name="res_model">inventory.historical.gps</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>Esta es la vista del historial de inventario GPS.</p>
+        </field>
+    </record>
+</odoo>

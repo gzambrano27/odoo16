@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+
+<odoo>
+	<data>
+
+
+<record id="view_bank_account_template_search" model="ir.ui.view">
+    <field name="name">bank.account.template.search</field>
+    <field name="model">bank.account.template</field>
+    <field name="arch" type="xml">
+        <search string="Buscar Plantillas">
+            <field name="partner_id"/>
+            <field name="acc_number"/>
+            <field name="bank_id"/>
+            <filter string="Borrador" name="draft" domain="[('state','=','draft')]"/>
+            <filter string="Enviado" name="sent" domain="[('state','=','sent')]"/>
+            <filter string="Creado" name="done" domain="[('state','=','done')]"/>
+        </search>
+    </field>
+</record>
+
+
+        <record id="view_bank_account_template_tree" model="ir.ui.view">
+    <field name="name">bank.account.template.tree</field>
+    <field name="model">bank.account.template</field>
+    <field name="arch" type="xml">
+        <tree string="Plantillas de Cuentas Bancarias">
+            <field name="partner_id"/>
+            <field name="acc_number"/>
+            <field name="acc_type"/>
+            <field name="bank_id"/>
+            <field name="state"/>
+        </tree>
+    </field>
+</record>
+
+
+        <record id="view_bank_account_template_form" model="ir.ui.view">
+    <field name="name">bank.account.template.form</field>
+    <field name="model">bank.account.template</field>
+    <field name="arch" type="xml">
+        <form string="Plantilla de Cuenta Bancaria">
+            <header>
+                <button name="action_send" type="object" string="Enviar" states="draft"/>
+                <button name="action_create_partner_bank" type="object" string="Crear Cuenta" states="sent"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,sent,done"/>
+            </header>
+            <sheet>
+                <group>
+                    <field name="partner_id"/>
+                    <field name="acc_number"/>
+                    <field name="acc_type"/>
+                    <field name="bank_id"/>
+                    <field name="active"/>
+                    <field name="identificacion_tercero"/>
+                    <field name="l10n_latam_identification_tercero_id"/>
+                    <field name="partner_bank_id" readonly="1"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+        <record id="action_bank_account_template" model="ir.actions.act_window">
+    <field name="name">Plantillas Cuentas Bancarias</field>
+    <field name="res_model">bank.account.template</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_bank_account_template_search"/>
+</record>
+
+        <!--
+<menuitem id="menu_bank_account_template_root" name="Cuentas Bancarias" sequence="100"/>
+<menuitem id="menu_bank_account_template" name="Plantillas" parent="menu_bank_account_template_root" sequence="10" action="action_bank_account_template"/>
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </data>
+
+
+</odoo>

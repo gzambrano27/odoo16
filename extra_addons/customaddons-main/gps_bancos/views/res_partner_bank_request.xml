@@ -1,0 +1,458 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+ <record id="view_form_res_partner_bank_request" model="ir.ui.view">
+  <field name="name">res.partner.bank.request.form</field>
+  <field name="model">res.partner.bank.request</field>
+  <field name="arch" type="xml">
+    <form string="Solicitud de Cuenta Bancaria">
+      <header>
+        <button name="action_send" type="object" string="Enviar" icon="fa-check"
+                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                groups="gps_bancos.group_sol_creacion_cuentas,gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_reset_draft" type="object" string="Volver a Preliminar" icon="fa-rotate-left"
+                attrs="{'invisible': ['|',('origen','=','talento_humano'),('state', 'not in', ['sent'])]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_create_account" type="object" string="Crear Cuenta" icon="fa-cogs"
+                attrs="{'invisible': [('state', '!=', 'sent')]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_cancel" type="object" string="Anular" icon="fa-times"
+                attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <field name="state" widget="statusbar" statusbar_visible="draft,sent,created,cancelled"/>
+      </header>
+
+      <sheet>
+        <group>
+          <group>
+            <field name="company_id" options="{'no_create':True,'no_open':True,'no_edit':True}"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+            invisible="1"
+            />
+
+            <field name="partner_id" options="{'no_create':True}"
+                   required="1"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="bank_id" options="{'no_create':True,'no_open':True,'no_edit':True}"
+                   required="1"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="tipo_cuenta" required="1" widget="radio"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="acc_number" widget="iban" required="1"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="tercero"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="l10n_latam_identification_tercero_id"
+                   options="{'no_create':True,'no_edit':True,'no_open':True}"
+                   can_create="false" can_write="true"
+                   modifiers="{}"
+                   attrs="{'invisible': [('tercero', '!=', True)],
+                           'required': [('tercero', '=', True)],
+                           'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="identificacion_tercero"
+                   attrs="{'invisible': [('tercero', '!=', True)],
+                           'required': [('tercero', '=', True)],
+                           'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="nombre_tercero"
+                   attrs="{'invisible': [('tercero', '!=', True)],
+                           'required': [('tercero', '=', True)],
+                           'readonly': [('state', '!=', 'draft')]}"/>
+          </group>
+
+          <group>
+            <field name="allow_out_payment" widget="boolean_toggle" options="{'autosave': False}"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="partner_email"
+                   attrs="{'invisible': [('allow_out_payment', '!=', True)],
+                           'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="active" widget="boolean_toggle" invisible="1"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="acc_holder_name" invisible="1"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+            <field name="partner_bank_id" readonly="1"
+                     attrs="{'invisible': [('partner_bank_id', '=', False)]}"/>
+
+            <field name="origen" readonly="1" force_save="1" />
+          </group>
+        </group>
+      </sheet>
+
+      <div class="oe_chatter">
+        <field name="message_follower_ids"/>
+        <field name="activity_ids"/>
+        <field name="message_ids" widget="mail_thread"/>
+      </div>
+    </form>
+  </field>
+</record>
+
+  <record id="view_tree_res_partner_bank_request" model="ir.ui.view">
+    <field name="name">res.partner.bank.request.tree</field>
+    <field name="model">res.partner.bank.request</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="partner_id"/>
+           <field name="bank_id"/>
+           <field name="tipo_cuenta" />
+        <field name="acc_holder_name" invisible="1"/>
+        <field name="acc_number"/>
+       <field name="tercero" />
+
+
+            <field name="identificacion_tercero"
+                   attrs="{'invisible': [('tercero', '!=', True)] }"/>
+
+            <field name="nombre_tercero"
+                   attrs="{'invisible': [('tercero', '!=', True)] }"/>
+
+         <field name="partner_email" string="Correo"/>
+
+          <field name="comments" invisible="not context.get('inactive',False)"/>
+        <field name="state" widget="badge" decoration-info="state=='draft'"
+        decoration-danger="state=='sent'"
+               decoration-success="state=='created'"
+               decoration-muted="state=='cancelled'"
+
+        />
+      </tree>
+    </field>
+  </record>
+
+        <record id="view_search_res_partner_bank_request" model="ir.ui.view">
+    <field name="name">res.partner.bank.request.search</field>
+    <field name="model">res.partner.bank.request</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Cuentas Bancarias">
+      <!-- Campos de búsqueda -->
+      <field name="acc_number" string="N° de Cuenta"/>
+      <field name="partner_id" string="Titular"/>
+      <field name="bank_id" string="Banco"/>
+      <field name="currency_id" string="Moneda"/>
+      <field name="acc_holder_name" string="Nombre del Titular"/>
+      <field name="tipo_cuenta" string="Tipo de Cuenta"/>
+      <field name="partner_email" string="Correo"/>
+
+    <field name="identificacion_tercero" />
+
+            <field name="nombre_tercero" />
+      <!-- Filtros rápidos -->
+      <filter string="Cuenta Tercero" name="filter_tercero" domain="[('tercero', '=', True)]"/>
+      <filter string="No es Cuenta Tercero" name="filter_notercero" domain="[('tercero', '=', False)]"/>
+<separator/>
+
+          <!-- Filtros por estado -->
+  <filter string="Preliminar" name="filter_state_draft" domain="[('state', '=', 'draft')]"/>
+  <filter string="Enviado" name="filter_state_sent" domain="[('state', '=', 'sent')]"/>
+  <filter string="Creado" name="filter_state_created" domain="[('state', '=', 'created')]"
+   invisible="context.get('inactive',True)"
+  />
+  <filter string="Actualizado" name="filter_state_updated" domain="[('state', '=', 'updated')]"
+  invisible="not context.get('inactive',True)"
+  />
+  <filter string="Anulado" name="filter_state_cancelled" domain="[('state', '=', 'cancelled')]"/>
+
+ <separator/>
+
+         <!-- Filtros por origen -->
+      <filter string="Talento Humano" domain="[('origen','=','talento_humano')]" name="filter_origen_talento"/>
+      <filter string="Financiero" domain="[('origen','=','manual')]" name="filter_origen_manual"/>
+      <filter string="Compras" domain="[('origen','=','compras')]" name="filter_origen_compras"/>
+
+
+
+      <separator/>
+
+      <!-- Agrupar por -->
+      <group expand="0" string="Agrupar por">
+         <filter string="Estado" name="group_by_state" domain="[]" context="{'group_by': 'state'}"/>
+<filter string="Origen" name="group_by_origen" domain="[]" context="{'group_by': 'origen'}"/>
+
+        <filter string="Titular" name="group_by_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+        <filter string="Banco" name="group_by_bank" domain="[]" context="{'group_by': 'bank_id'}"/>
+        <filter string="Tipo de Cuenta" name="group_by_tipo_cuenta" domain="[]" context="{'group_by': 'tipo_cuenta'}"/>
+        <filter string="Tercero" name="group_by_tercero" domain="[]" context="{'group_by': 'tercero'}"/>
+      </group>
+    </search>
+    </field>
+  </record>
+
+
+
+         <record id="view_form_res_partner_bank_request_inactive" model="ir.ui.view">
+  <field name="name">res.partner.bank.request.form.inactive</field>
+  <field name="model">res.partner.bank.request</field>
+  <field name="arch" type="xml">
+    <form string="Solicitud de Inactivacion Cuenta Bancaria">
+      <header>
+      <button name="action_send" type="object" string="Enviar" icon="fa-check"
+                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                groups="gps_bancos.group_sol_creacion_cuentas,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_reset_draft" type="object" string="Volver a Preliminar" icon="fa-rotate-left"
+                attrs="{'invisible': ['|',('origen','=','talento_humano'),('state', 'not in', ['sent'])]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_update" type="object" string="Inactivar Cuenta" icon="fa-cogs"
+                attrs="{'invisible': [('state', '!=', 'sent')]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <button name="action_cancel" type="object" string="Anular" icon="fa-times"
+                attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"
+                groups="gps_bancos.group_admin_documentos_bancarios,gps_bancos.group_creador_cuentas"/>
+
+        <field name="state" widget="statusbar" statusbar_visible="draft,sent,updated,cancelled"/>
+      </header>
+
+      <sheet>
+        <group>
+          <group>
+            <field name="company_id" options="{'no_create':True,'no_open':True,'no_edit':True}"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+            invisible="1"
+            />
+
+            <field name="partner_id" options="{'no_create':True}"
+                   required="1"
+                   context="{'type':'inactive','origen':'talento_humano'}"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+               <field name="partner_bank_id" required="1" strin="# de Cuenta"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+               domain="[('partner_id','=',partner_id)]"
+               />
+
+
+
+              <field name="bank_id" options="{'no_create':True,'no_open':True,'no_edit':True}"
+       required="1" readonly="1" force_save="1"/>
+
+<field name="tipo_cuenta" required="1" widget="radio"
+       readonly="1" force_save="1"/>
+
+<field name="acc_number" widget="iban" required="1"
+       readonly="1" force_save="1"/>
+
+<field name="tercero"
+       readonly="1" force_save="1"/>
+
+<field name="l10n_latam_identification_tercero_id"
+       options="{'no_create':True,'no_edit':True,'no_open':True}"
+       can_create="false" can_write="true"
+       modifiers="{}"
+       readonly="1" force_save="1"
+       attrs="{'invisible': [('tercero', '!=', True)],
+               'required': [('tercero', '=', True)]}"/>
+
+<field name="identificacion_tercero"
+       readonly="1" force_save="1"
+       attrs="{'invisible': [('tercero', '!=', True)],
+               'required': [('tercero', '=', True)]}"/>
+
+<field name="nombre_tercero"
+       readonly="1" force_save="1"
+       attrs="{'invisible': [('tercero', '!=', True)],
+               'required': [('tercero', '=', True)]}"/>
+
+
+
+          </group>
+
+          <group>
+<field name="allow_out_payment" widget="boolean_toggle" options="{'autosave': False}"
+       readonly="1" force_save="1"/>
+
+<field name="partner_email"
+       readonly="1" force_save="1"
+       attrs="{'invisible': [('allow_out_payment', '!=', True)]}"/>
+
+<field name="acc_holder_name" invisible="1"
+       readonly="1" force_save="1"/>
+
+            <field name="origen" readonly="1" force_save="1" />
+          </group>
+        </group>
+      </sheet>
+
+      <div class="oe_chatter">
+        <field name="message_follower_ids"/>
+        <field name="activity_ids"/>
+        <field name="message_ids" widget="mail_thread"/>
+      </div>
+    </form>
+  </field>
+</record>
+
+
+  <record id="action_res_partner_bank_request" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+      <field name="domain">[('type','=','created')]</field>
+    <field name="context">{'default_type':'created','inactive':False,'default_origen':'manual','search_default_filter_state_sent': 1}</field>
+  </record>
+
+      <record id="action_res_partner_bank_request_compra" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+          <field name="domain">[('type','=','created')]</field>
+         <field name="context">{'default_type':'created','inactive':False,'default_origen':'compras','search_default_filter_origen_compras':1}</field>
+  </record>
+
+ <record id="action_res_partner_bank_request_talento_humano" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+     <field name="domain">[('origen','=','talento_humano'),('type','=','created')]</field>
+         <field name="context">{'default_type':'created','inactive':False,'create':False,'delete':False,'edit':False,'default_origen':'talento_humano','search_default_filter_state_sent':1}</field>
+  </record>
+
+
+
+
+
+
+<record id="action_mark_as_created" model="ir.actions.server">
+  <field name="name">Crear Cuenta</field>
+  <field name="model_id" ref="model_res_partner_bank_request"/>
+  <field name="state">code</field>
+  <field name="binding_model_id" ref="model_res_partner_bank_request"/>
+  <field name="binding_type">action</field>
+   <field name="groups_id" eval="[(4, ref('gps_bancos.group_admin_documentos_bancarios'))]"/>
+  <field name="code">
+    for record in records:
+        record.action_create_account()
+  </field>
+</record>
+
+<record id="action_cancel_selected_requests" model="ir.actions.server">
+  <field name="name">Anular</field>
+  <field name="model_id" ref="model_res_partner_bank_request"/>
+  <field name="state">code</field>
+  <field name="binding_model_id" ref="model_res_partner_bank_request"/>
+  <field name="binding_type">action</field>
+   <field name="groups_id" eval="[(4, ref('gps_bancos.group_creador_cuentas')),(4, ref('gps_bancos.group_admin_documentos_bancarios'))]"/>
+
+  <field name="code">
+    for record in records:
+        record.action_cancel()
+  </field>
+</record>
+
+
+<!-- -->
+
+<record id="action_res_partner_bank_request_inactive" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Inactivación de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('type','=','inactive')]</field>
+
+    <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+    <field name="context">{'default_origen': 'manual', 'default_type': 'inactive', 'inactive': True, 'search_default_filter_state_sent': 1}</field>
+</record>
+
+           <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_tree_inactive">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_inactive"/>
+    </record>
+
+          <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_form_inactive">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="view_form_res_partner_bank_request_inactive"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_inactive"/>
+    </record>
+
+<record id="action_res_partner_bank_request_compra_inactive" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Inactivación de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+    <field name="domain">[('type','=','inactive')]</field>
+    <field name="context">{'default_origen': 'compras', 'default_type': 'inactive', 'inactive': True, 'search_default_filter_origen_compras': 1}</field>
+</record>
+
+          <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_tree_compra_inactive">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_compra_inactive"/>
+    </record>
+
+          <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_form_compra_inactive">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="view_form_res_partner_bank_request_inactive"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_compra_inactive"/>
+    </record>
+
+<record id="action_res_partner_bank_request_talento_humano_inactive" model="ir.actions.act_window">
+    <field name="name">Solicitudes de Inactivación de Cuenta Bancaria</field>
+    <field name="res_model">res.partner.bank.request</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+    <field name="domain">[('origen','=','talento_humano'), ('type','=','inactive')]</field>
+    <field name="context">{ 'default_origen': 'talento_humano', 'default_type': 'inactive', 'inactive': True, 'search_default_filter_state_sent': 1}</field>
+</record>
+
+
+ <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_tree_talento_humano_inactive">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="view_tree_res_partner_bank_request"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_talento_humano_inactive"/>
+    </record>
+
+     <record model="ir.actions.act_window.view"
+            id="action_res_partner_bank_request_form_talento_humano_inactive">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="view_form_res_partner_bank_request_inactive"/>
+        <field name="act_window_id"
+               ref="action_res_partner_bank_request_talento_humano_inactive"/>
+    </record>
+
+
+
+    </data>
+
+
+</odoo>

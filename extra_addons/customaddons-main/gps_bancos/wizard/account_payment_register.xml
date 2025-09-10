@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record id="view_account_payment_register2_form_inherit" model="ir.ui.view">
+        <field name="name">account.payment.register2.view.form.inherit</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='communication']" position="after">
+                <field name="ref2" />
+            </xpath>
+        </field>
+    </record>
+
+
+    </data>
+
+
+</odoo>

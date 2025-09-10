@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+	<data>
+
+		<record id="inventory_document_transference_view_filter"
+			model="ir.ui.view">
+			<field name="name">inventory.document.transference.filter</field>
+			<field name="model">inventory.document.transference</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Transferencias de Inventario">
+					<group expand="0" string="Agrupar por...">
+
+						<filter name="group_by_company_id"
+							string="Empresa"
+							context="{'group_by':'company_id'}" />
+
+						<filter name="group_by_date_from"
+							string="Fecha Inventario"
+							context="{'group_by':'date_from'}" />
+
+					</group>
+					<group expand="0" string="Filtrar por...">
+
+					</group>
+					<field name="id" string="# ID" />
+						<field name="stock_location_id" />
+					<field name="to_stock_location_id" />		
+				 
+					<field name="date_from" />
+					<field name="name" />
+				</search>
+			</field>
+		</record>
+
+		<record id="inventory_document_transference_view_tree"
+			model="ir.ui.view">
+			<field name="name">inventory.document.transference.tree</field>
+			<field name="model">inventory.document.transference</field>
+			<field name="type">tree</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Transferencias de Inventario"
+					decoration-info="state=='draft'"
+					decoration-danger="state=='started'"
+					decoration-success="state=='ended'"
+					decoration-muted="state=='annulled'"
+				>
+					<field name="id" string="# ID" readonly="1"
+						attrs="{'invisible':[('id','&lt;=',0)]}" />
+					<field name="company_id" />
+						<field name="stock_location_id" />
+					<field name="to_stock_location_id" />
+					<field name="document_type"/>	
+				 		<field name="name" />
+					<field name="user_ids" widget="many2many_tags" invisible="1"/>
+					<field
+                    name="analytic_distribution"
+                    widget="analytic_distribution"
+                    optional="hide"
+                    groups="analytic.group_analytic_accounting"
+                	/>
+					<field name="picking_id" optional="hide"
+								attrs="{'invisible':[('picking_id','=',False)]}"
+
+								/>
+
+							<field name="returned_picking_id" optional="hide"
+								attrs="{'invisible':[('returned_picking_id','=',False)]}"
+
+								/>
+
+							<field name="confirmed_picking_id" optional="hide"
+								attrs="{'invisible':[('confirmed_picking_id','=',False)]}"
+
+								/>
+
+
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="inventory_document_transference_view_form"
+			model="ir.ui.view">
+			<field name="name">inventory.document.transference.form</field>
+			<field name="model">inventory.document.transference</field>
+			<field eval="7" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Transferencias de Inventario" version="16.0">
+					<header>
+						<button string="En Revision" type="object" icon="fa-play"
+							name="action_revision"
+							attrs="{'invisible':[('state','!=','draft')]}"
+						/>
+						<button string="Iniciar" type="object" icon="fa-play"
+							name="action_start"
+							attrs="{'invisible':[('state','!=','revision')]}"
+						/>
+						<button string="Finalizar" type="object" icon="fa-check"
+							name="action_end"
+							attrs="{'invisible':[('state','!=','started')]}"
+						/>
+						<button string="Anular" type="object" icon="fa-times"
+							name="action_cancel"
+							attrs="{'invisible':[('state','in',('ended','annulled'))]}"
+						/>
+
+						<button name="%(inventory_document_transfer_wizard_view_file_action)d" type="action"
+                                string="Importar"
+                                icon="fa-upload" 
+                        />
+
+						<field name="state" widget="statusbar" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h2>
+								<field name="name" readonly="1" class="oe_inline" style="font-weight:bold; font-size:18px; color:#2c2c2c;"/>
+							</h2>
+						</div>
+					<group colspan="4" cols="2">
+						<group>
+							<field name="id" string="# ID" readonly="1"
+								attrs="{'invisible':[('id','&lt;=',0)]}" />
+																		<field name="company_id"
+								attrs="{'readonly':[('state','!=','draft')]}"
+												options="{'no_create':True,'no_edit':True,'no_open':True}" />
+
+							<field name="date_from"
+								attrs="{'readonly':[('state','!=','draft')]}" />
+								
+							<field name="subcontratista_solicitante"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('document_type','!=','internal')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+							<field name="intendente_solicitante"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('document_type','!=','internal')]}" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+								
+							<field name="picking_id" readonly="1"
+								attrs="{'invisible':[('picking_id','=',False)]}" 
+
+								/>
+
+							<field name="returned_picking_id" readonly="1"
+								attrs="{'invisible':[('returned_picking_id','=',False)]}"
+
+								/>
+
+							<field name="confirmed_picking_id" readonly="1"
+								attrs="{'invisible':[('confirmed_picking_id','=',False)]}"
+
+								/>
+								
+									
+						</group>
+						<group>
+						<field name="document_type"/>
+						<field name="stock_location_id"
+							options="{'no_create': True, 'no_edit': True, 'no_open': True}"
+							attrs="{'invisible': [('state', '!=', 'draft')]}"
+							domain="[('company_id', '=', company_id), ('usage', '=', 'internal')]"/>
+						<field name="to_stock_location_id" options="{'no_create':True,'no_edit':True,'no_open':True}" 
+						attrs="{'readonly':[('state','!=','draft')],'required':[('document_type','!=','dispatch')],'invisible':[('document_type','=','dispatch')]}" 
+						domain="[('company_id','=',company_id),('usage','=','internal')]"
+						/>
+							<field name="proyecto"/>
+							<field name="user_ids" invisible="1"
+								attrs="{'readonly':[('state','in',('ended','annulled'))]}"
+								widget="many2many_tags"
+								options="{'no_create':True,'no_edit':True,'no_open':True}"
+							/>
+							<field
+										name="analytic_distribution"
+										widget="analytic_distribution"
+										optional="hide"
+										groups="analytic.group_analytic_accounting"
+									/>
+						</group>
+					</group>
+					<newline />
+					<notebook>
+						<page name="pge_ad" string="Transferencias" >
+							<group>
+								<button string="Actualizar"
+									attrs="{'invisible':[('state','in',('applied','annulled'))]}"
+									type="object" invisible="1"
+									icon="fa-list-ol" name="action_update_stock" />
+							</group>
+							<newline />
+							<field name="line_ids"
+								attrs="{'readonly':[('state','in',('started','ended','annulled'))]}">
+
+								<tree string="Detalle" editable="bottom"
+									  decoration-success="quantity&lt;stock"
+									  decoration-danger="quantity>stock"
+									  decoration-warning="quantity==stock"
+									>
+									<field name="product_id"  
+										options="{'no_create':True,'no_edit':True,'no_open':True}" />
+									<field
+										name="analytic_distribution"
+										widget="analytic_distribution"
+										optional="hide"
+										groups="analytic.group_analytic_accounting"
+									/>
+									<field name="quantity" sum="total" />
+									<field name="quantity_delivery" sum="total" groups="gps_inventario.group_despachos"/>
+									<field name="pending_quantity" sum="total" />
+									 <field name="name" invisible="1" />
+									<field name="comments"  
+									/> 
+									<field name="stock" sum="total" readonly="1"  force_save="1" />
+									<field name="to_stock" sum="total" readonly="1"  force_save="1" optional="hide" />
+									
+								</tree>
+
+
+								<form string="Detalle">
+									<group>
+										<group>
+											<field name="product_id"
+												readonly="1"
+												options="{'no_create':True,'no_edit':True,'no_open':True}" />
+											<field name="quantity" />
+											 <field name="name" invisible="1" />
+									
+										</group>
+										<group> 
+											<field name="comments" />
+										</group>
+									</group>
+								</form>
+							</field>
+						</page> 
+				<page name="pge_history" string="Historial" attrs="{'invisible':[('id','&lt;=',0)]}">
+				<group>
+				<group>
+				<field name="create_uid" options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1"/>
+								<field name="create_date" readonly="1"/>
+
+				</group>
+				<group>
+				
+								<field name="write_uid" readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+								<field name="write_date" readonly="1" />
+								
+				</group>
+				
+				</group>
+				</page>
+					</notebook>
+				</sheet>
+				<div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+				</form>
+			</field>
+		</record>
+
+		<record id="inventory_document_transference_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Transferencias de Inventario</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">inventory.document.transference</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[]</field>
+			<field name="context">{}</field>
+			<field name="view_id" ref="inventory_document_transference_view_tree" />
+			<field name="search_view_id"
+				ref="inventory_document_transference_view_filter" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="inventory_document_transference_view_tree_action">
+			<field name="sequence" eval="1" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="inventory_document_transference_view_tree" />
+			<field name="act_window_id"
+				ref="inventory_document_transference_view_action" />
+		</record>
+
+		<record model="ir.actions.act_window.view"
+			id="inventory_document_transference_view_form_action">
+			<field name="sequence" eval="2" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="inventory_document_transference_view_form" />
+			<field name="act_window_id"
+				ref="inventory_document_transference_view_action" />
+		</record>
+		
+		<!--  -->
+		
+		
+		
+
+	</data>
+
+
+</odoo>

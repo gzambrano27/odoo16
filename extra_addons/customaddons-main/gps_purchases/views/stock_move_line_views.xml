@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_move_line_detailed_tree_inh" model="ir.ui.view">
+        <field name="name">stock.move.line.detailed.tree.inh</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field string="Cantidad Solicitada" name="reserved_qty" />
+                <field
+                    name="reserved_uom_qty"
+                    optional="hide"
+                    groups="analytic.group_analytic_accounting"
+                    options="{'product_field': 'product_id', 'business_domain': 'stock_move'}"
+                />
+            </field>
+        </field>
+    </record>
+    <!--
+    <field name="reserved_uom_qty" readonly="1" attrs="{'column_invisible': ['|',('parent.immediate_transfer', '=', True),('parent.picking_type_code','=','incoming')]}" optional="show"/>
+    -->
+</odoo>

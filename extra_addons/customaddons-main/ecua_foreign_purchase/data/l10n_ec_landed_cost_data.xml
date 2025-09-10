@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record forcecreate="True" id="decimal_fob_price" model="decimal.precision">
+            <field name="name">Fob Price</field>
+            <field name="digits">8</field>
+        </record>
+        <record forcecreate="True" id="decimal_total_fob_price" model="decimal.precision">
+            <field name="name">Total Fob Price</field>
+            <field name="digits">8</field>
+        </record>
+        <record forcecreate="True" id="price_unit" model="decimal.precision">
+            <field name="name">Price Unit</field>
+            <field name="digits">8</field>
+        </record>
+        <record model="decimal.precision" id="dp_factor">
+            <field name="name">Import factors</field>
+            <field name="digits">10</field>
+        </record>
+        <record model="decimal.precision" id="dp_import">
+            <field name="name">Import calculations</field>
+            <field name="digits">2</field>
+        </record>
+    </data>
+</odoo>

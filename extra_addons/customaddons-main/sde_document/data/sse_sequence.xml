@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_sse_document" model="ir.sequence">
+        <field name="name">Secuencia SSE</field>
+        <field name="code">sse.document</field>
+        <field name="prefix">SSE-</field>
+        <field name="padding">4</field>
+        <field name="implementation">no_gap</field>
+    </record>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Views for sectores Tree View -->
+
+        <record model="ir.ui.view" id="view_sectores_tree">
+            <field name="name">sectores.tree</field>
+            <field name="model">hr.sectores</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Sectores">
+                    <field name="codigo" string="Código"/>
+                    <field name="name" string="Sector"/>
+                    <field name="state" string="Estado"/>
+                </tree>
+            </field>
+        </record> 
+        
+        <record model="ir.ui.view" id="view_sectores_form">
+            <field name="name">sectores.form</field>
+            <field name="model">hr.sectores</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Sectores">
+                    <group>
+                        <group>
+                            <field name="codigo" string="Código"/>
+                            <field name="state" string="Estado"/>
+                        </group>
+                        <group>
+                            <field name="name" string="Sector"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>   
+        
+        <record id="action_sectores_form" model="ir.actions.act_window">
+            <field name="name">Sectores</field>
+            <field name="res_model">hr.sectores</field>
+            <field name="view_mode">tree,form</field>       
+        </record>
+        
+        <menuitem name="Sectores" id="menu_sectores_configuration" action="action_sectores_form"
+            parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="120"/>
+    
+    </data>
+</odoo>

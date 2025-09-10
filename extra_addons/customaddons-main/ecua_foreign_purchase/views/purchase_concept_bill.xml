@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_feoreing_concept_tree" model="ir.ui.view">
+            <field name="name">view.foreign.concept.tree</field>
+            <field name="model">purchase.concept.bill</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="product_id"/>
+                    <field name="name"/>
+                    <field name="has_tax"/>
+                    <field name="is_landed_cost"/>
+                    <field name="default_value"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="foreign_concept_action" model="ir.actions.act_window">
+            <field name="name">Settlement Expenses</field>
+            <field name="res_model">purchase.concept.bill</field>
+            <field name="view_id" ref="view_feoreing_concept_tree"/>
+        </record>
+
+    </data>
+</odoo>

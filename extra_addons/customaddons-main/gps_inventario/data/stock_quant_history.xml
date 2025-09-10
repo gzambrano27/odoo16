@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+ <data noupdate="1">
+
+	<record model="ir.cron" id="update_stock_quant_history">
+        <field name="name">Actualizar Historial de Stock</field>
+        <field name="interval_number">6</field>
+        <field name="sequence">901</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="model_stock_quant_history"/>
+        <field name="state">code</field>
+        <field name="code">model.update_stock_history()</field>
+  <field name="user_id" ref="base.user_root" />
+    </record>
+
+
+ </data>
+</odoo>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+
+<record id="view_update_reconciliation_type_wizard_form" model="ir.ui.view">
+    <field name="name">update.reconciliation.type.wizard.form</field>
+    <field name="model">update.reconciliation.type.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Actualizar Lineas de Reconciliacion">
+            <group>
+                <field name="type_id" required="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+            </group>
+            <footer>
+                <button name="action_apply_type" type="object" string="Aplicar" icon="fa-cogs"/>
+                <button string="Cancelar" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+
+    <record id="action_update_reconciliation_type_wizard" model="ir.actions.act_window">
+    <field name="name">Actualizar Lineas de Reconciliacion</field>
+    <field name="res_model">update.reconciliation.type.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+        <field name="view_id"
+				ref="view_update_reconciliation_type_wizard_form" />
+</record>
+
+
+
+    <record id="payment_update_reconciliation_type_wizard_form" model="ir.ui.view">
+    <field name="name">payment.update.reconciliation.type.wizard.form</field>
+    <field name="model">update.reconciliation.type.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Crear Pago/Cobro desde Conciliación">
+            <group>
+                 <group>
+               <field name="document_financial_id" force_save="1" readonly="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="company_id" force_save="1" readonly="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+               <field name="journal_id" force_save="1" readonly="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+                <field name="currency_id" invisible="1" />
+                 </group>
+                 <group>
+                      <field name="partner_id" required="1" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                     <field name="account_id"  required="1"  options="{'no_create':True,'no_edit':True,'no_open':True}"
+                     domain="[('company_id','=',company_id)]"  />
+ <field name="analytic_id"  invisible="1"  required="0" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                     domain="[('company_id','=',company_id)]"  />
+
+
+                      <field name="date"  required="1"/>
+                     <field name="ref" required="1" />
+                     <field name="message" />
+                     <field name="payment_total"  readonly="1" force_save="1"/>
+<field name="signed_payment_total" readonly="1" force_save="1"/>
+
+                 </group>
+            </group>
+            <footer>
+                <button name="action_payment" type="object" string="Aplicar" icon="fa-cogs"/>
+                <button string="Cancelar" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+
+     <record id="action_payment_update_reconciliation_type_wizard" model="ir.actions.act_window">
+    <field name="name">Crear Pago/Cobro desde Conciliación</field>
+    <field name="res_model">update.reconciliation.type.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+        <field name="view_id"
+				ref="payment_update_reconciliation_type_wizard_form" />
+</record>
+
+
+
+
+
+
+
+
+</odoo>
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="trade.regime.type" id="regime_type_1">
+            <field name="name">REGIMENES COMUNES</field>
+        </record>
+        <record model="trade.regime.type" id="regime_type_2">
+            <field name="name">REGIMENES ESPECIALES</field>
+        </record>
+        <record model="trade.regime.type" id="regime_type_3">
+            <field name="name">REGIMENES DE EXCEPCION</field>
+        </record>
+
+        <record model="trade.regime" id="regime_1">
+            <field name="name">IMPORTACION A CONSUMO</field>
+            <field name="regime_type_id" ref="regime_type_1"/>
+        </record>
+
+        <record model="trade.regime" id="regime_2">
+            <field name="name">EXPORTACION A CONSUMO</field>
+            <field name="regime_type_id" ref="regime_type_1"/>
+        </record>
+
+        <record model="trade.regime" id="regime_3">
+            <field name="name">TRANSITO ADUANERO</field>
+            <field name="regime_type_id" ref="regime_type_2"/>
+        </record>
+
+        <record model="trade.regime" id="regime_4">
+            <field name="name">IMPORTACION TEMPORAL CON REEXPORTACION EN EL MISMO ESTADO</field>
+            <field name="regime_type_id" ref="regime_type_2"/>
+        </record>
+
+        <record model="trade.regime" id="regime_5">
+            <field name="name">IMPORTACION TEMPORAL PARA PERFECCIONAMIENTO ACTIVO</field>
+            <field name="regime_type_id" ref="regime_type_2"/>
+        </record>
+
+        <record model="trade.regime" id="regime_6">
+            <field name="name">DEVOLUCION CONDICIONADA DE TRIBUTOS</field>
+            <field name="regime_type_id" ref="regime_type_2"/>
+        </record>
+
+    </data>
+</openerp>

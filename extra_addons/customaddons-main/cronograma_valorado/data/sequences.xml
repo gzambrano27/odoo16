@@ -1,0 +1,25 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Secuencia para Rubros -->
+        <record id="seq_planillas_rubro" model="ir.sequence">
+            <field name="name">Secuencia para Rubros</field>
+            <field name="code">cronograma.rubro</field>
+            <field name="prefix">RUB-</field>
+            <field name="padding">4</field>
+            <field name="implementation">no_gap</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- Secuencia para Planillas -->
+        <record id="seq_planillas_planilla" model="ir.sequence">
+            <field name="name">Secuencia para Planillas</field>
+            <field name="code">cronograma.planilla</field>
+            <field name="prefix">PLANILLA-</field>
+            <field name="padding">4</field>
+            <field name="implementation">no_gap</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>

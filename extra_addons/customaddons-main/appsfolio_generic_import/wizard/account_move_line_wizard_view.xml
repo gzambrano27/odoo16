@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="account_move_line_wizard_view" model="ir.ui.view">
+        <field name="name">account.move.line.wizard.view</field>
+        <field name="model">account.move.line.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Account Move Line">
+            	<group>
+	                <field name="file_import_type" wedgit="selection"/>
+	                <field name="file"/>
+                </group>
+                <footer>
+                    <button
+                        name="import_move_line_file"
+                        type="object"
+                        string="Import"
+                    />
+                    <button
+                        class="btn-default"
+                        string="Cancel"
+                        special="cancel"
+                    />
+                    <div style="margin-left: auto;margin-right: 0;">
+                        <strong>
+                        	Download Sample: 
+                        </strong>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample CSV File/journals_entry.csv" class="btn-primary" style="margin: 0 10px; font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                        	<i class="fa fa-download"/>
+                        	CSV file
+                        </a>
+                        <a role="button" href="/appsfolio_generic_import/static/Sample File/Sample XLS File/journals_entry.xls" class="btn-primary" style="font-size: 12px; line-height: 1.5; border-radius: 3px; padding: 8px 10px; color: #ffffff;">
+                            <i class="fa fa-download"/>
+                            Excel file
+                        </a>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_move_line_wizard_view" model="ir.actions.act_window">
+        <field name="name">Account Move Line Wizard</field>
+        <field name="res_model">account.move.line.wizard</field>           
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

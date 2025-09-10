@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+    <record id="view_account_payment_form_new_file" model="ir.ui.view">
+        <field name="name">account.payment.form.file</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form" />
+        <field name="arch" type="xml">
+<!--             <field name='payment_type' position="after"> -->
+<!--                 <field name="is_transfer" string="Transferencia"/> -->
+<!--             </field> -->
+          
+            <xpath expr='//group[2]' position="inside">
+<!--                <field name="tipo_cheque" attrs="{'invisible': [('payment_method_code','!=','check_printing')],'required': [('payment_method_code','=','check_printing')]}"/> -->
+               <field name="orden" string="Nro Orden Bco"/>
+            </xpath>          
+        </field>
+    </record>
+    
+    <record id="view_semana_search_pagos" model="ir.ui.view">
+	    <field name="name">account.invoice.payment.semana.search</field>
+	    <field name="model">account.payment</field>
+	    <field name="inherit_id" ref="account.view_account_payment_search"/>
+	    <field name="priority" eval="8" />
+	    <field name="arch" type="xml">
+		    <xpath expr="//search" position="inside">
+                <group expand="0" string="Group By...">
+<!-- 	                <filter name="semana" string="Semana" domain="[]" context="{'group_by':'semana'}" /> -->
+	                <filter name="date" string="Mes" domain="[]" context="{'group_by':'date:month'}" />
+	                <filter name="date" string="Anio" domain="[]" context="{'group_by':'date:year'}" />
+<!-- 	                <filter name="beneficiario" string="Beneficiario" domain="[]" context="{'group_by':'beneficiario'}" /> -->
+<!-- 	                <filter string="Tipo Cheque" name="tipo_cheque" domain="[]" context="{'group_by':'tipo_cheque'}"/> -->
+	            </group>
+           </xpath>	        
+	    </field>
+	</record>
+</odoo>

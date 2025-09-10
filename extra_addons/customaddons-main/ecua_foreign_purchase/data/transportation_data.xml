@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="trade.transportation.mean" id="mean_1">
+            <field name="name">AEREO</field>
+            <field name="code">AE</field>
+            <field name="waypoint_type">aerport</field>
+        </record>
+        <record model="trade.transportation.mean" id="mean_2">
+            <field name="name">FLUVIAL</field>
+            <field name="code">FL</field>
+            <field name="waypoint_type">dock</field>
+        </record>
+        <record model="trade.transportation.mean" id="mean_3">
+            <field name="name">MARITIMO</field>
+            <field name="code">MA</field>
+            <field name="waypoint_type">port</field>
+        </record>
+        <record model="trade.transportation.mean" id="mean_4">
+            <field name="name">TERRESTRE</field>
+            <field name="code">TE</field>
+            <field name="waypoint_type">busstation</field>
+        </record>
+
+        <!--Waypoint -->
+        <record model="trade.transportation.waypoint" id="waypoint_01">
+            <field name="name">AEROPUERTO MIAMI</field>
+            <field name="code">AEM</field>
+            <field name="type">aerport</field>
+            <field name="country_id" ref="base.us"/>
+            <field name="address">Fifth Street E-56 Sq Av Canvas, Miami, Florida</field>
+        </record>
+        <record model="trade.transportation.waypoint" id="waypoint_02">
+            <field name="name">AEROPUERTO GUAYAQUIL</field>
+            <field name="code">AEGYE</field>
+            <field name="type">aerport</field>
+            <field name="country_id" ref="base.ec"/>
+            <field name="address">Av La Marina Km 2 y 1/2, Guayaquil, Ecuador</field>
+        </record>
+        <!--Importation routes -->
+        <record model="trade.importation.route" id="route_01">
+            <field name="name">EEUU --&gt; Guayaquil</field>
+            <field name="order">1</field>
+            <field name="transportation_mean_id" ref="mean_1"/>
+            <field name="type">aerport</field>
+            <field name="country_origin_id" ref="base.us"/>
+            <field name="waypoint_origin_id" ref="waypoint_01"/>
+            <field name="country_destination_id" ref="base.ec"/>
+            <field name="waypoint_destination_id" ref="waypoint_02"/>
+        </record>
+    </data>
+</openerp>
+
+

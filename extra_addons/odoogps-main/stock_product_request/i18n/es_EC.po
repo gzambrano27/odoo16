@@ -1,0 +1,723 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* stock_product_request
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 20:07+0000\n"
+"PO-Revision-Date: 2024-01-01 15:30-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_needaction
+msgid "Action Needed"
+msgstr "Acción Necesaria"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: stock_product_request
+#: model:res.groups,name:stock_product_request.group_stock_request_manager
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__allow_negative
+#, python-format
+msgid "Allow Negative"
+msgstr "Permitir Negativos"
+
+#. module: stock_product_request
+#: model:res.groups,name:stock_product_request.group_negative_product_request
+msgid "Allow ordering negative products"
+msgstr "Permitir solicitud de productos en negativo"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#, python-format
+msgid "At least one rule must match the destination location: {}"
+msgstr "Al menos una regla debe coincidir con la ubicación de destino: {}"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__backorder_ids
+msgid "Backorder"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__backorder_count
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Backorders"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__type__bring
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request_line__type__bring
+msgid "Bring"
+msgstr "Traer"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__state__cancel
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__company_ids
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__company_ids
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__company_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__company_id
+msgid "Company"
+msgstr "Compañia"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Confirm Transfers"
+msgstr "Confirmar Transferencias"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__create_uid
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__create_date
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__product_uom_qty_current
+msgid "Current Stock"
+msgstr "Inv. Actual"
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__expected_date
+msgid "Date when you expect to receive the goods."
+msgstr "Fecha en que esperaba recibir los bienes"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__picking_count
+msgid "Delivery Orders"
+msgstr "Pedidos de entrega"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__location_dest_id
+msgid "Destination location"
+msgstr "Ubicación Destino"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__display_name
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__display_name
+msgid "Display Name"
+msgstr "Nombre a Mostrar"
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__state__done
+msgid "Done"
+msgstr "Realizado"
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__expected_date
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__expected_date
+msgid "Expected Date"
+msgstr "Fecha prevista"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "Export Template"
+msgstr "Exportar Plantilla"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__date_from
+#, python-format
+msgid "From"
+msgstr "Desde"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_search
+msgid "Group By"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__id
+msgid "ID"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__message_has_error
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "Import Template"
+msgstr "Importar Plantilla"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_search
+msgid "In Progress"
+msgstr "En progreso"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__in_picking_type_id
+msgid "In picking type"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__state__open
+msgid "In progress"
+msgstr "En progreso"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request____last_update
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__write_uid
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__write_date
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__location_id
+msgid "Location Aux"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__move_ids
+msgid "Moves"
+msgstr "Movimientos"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__name
+#, python-format
+msgid "Name"
+msgstr "Nombre"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__no_company_ids
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__no_company_ids
+msgid "No Companies"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__priority__0
+msgid "Normal"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#, python-format
+msgid "Only orders on draft state can be unlinked"
+msgstr "Solo las Ordenes en estado borrador se pueden Eliminar"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__move_count
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Operations"
+msgstr "Operaciones"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "Option"
+msgstr "Opción"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__origin
+msgid "Origin"
+msgstr "Origen"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__out_picking_type_id
+msgid "Out picking type"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__picking_ids
+msgid "Pickings"
+msgstr "Transferencias"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__product_uom_qty
+msgid "Planned Quantity"
+msgstr "Cant. Planeada"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "Please, select file to Import"
+msgstr "Por favor, seleccione un archivo a Importar"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Print Delivery"
+msgstr "Imprimir Despachos"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Print Stock Request"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__priority
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__product_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__product_id
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_form
+msgid "Product"
+msgstr "Producto"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.actions.act_window,name:stock_product_request.action_stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__line_ids
+#: model:ir.ui.menu,name:stock_product_request.menu_stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_search
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_search
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_tree
+#, python-format
+msgid "Product Request"
+msgstr "Solicitud de Producto"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_form
+msgid "Quantity"
+msgstr "Cant."
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__move_type__one
+msgid "Receive all products at once"
+msgstr "Recibir todos los productos a la vez"
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__move_type__direct
+msgid "Receive each product when available"
+msgstr "Recibir cada producto cuando este disponible"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_move__request_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_picking__request_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__request_id
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Request"
+msgstr "Solicitud"
+
+#. module: stock_product_request
+#: model:ir.actions.act_window,name:stock_product_request.action_stock_request_product_line
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_form
+msgid "Request Product"
+msgstr "Solicitud de Producto"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_tree
+msgid "Request Product Detail"
+msgstr "Detalle de Solicitud de Producto"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__line_count
+msgid "Request count"
+msgstr "# Solicitudes"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__requested_by
+#, python-format
+msgid "Requested by"
+msgstr "Solicitado por"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__product_uom_qty_residual
+msgid "Residual Stock"
+msgstr "Inv. Residual"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario Responsable"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__route_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__route_id
+#, python-format
+msgid "Route"
+msgstr "Ruta"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_picking__route_request
+msgid "Route Request"
+msgstr "Solicitud de Ruta"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__route_ids
+msgid "Routes"
+msgstr "Rutas"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__type__send
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request_line__type__send
+msgid "Send"
+msgstr ""
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Set to Draft"
+msgstr "Volver a Borrador"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__move_type
+#, python-format
+msgid "Shipping Policy"
+msgstr "Politica de envio"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__location_src_id
+msgid "Source Location"
+msgstr "Ubicación Origen"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__state
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__state
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_search
+#, python-format
+msgid "Status"
+msgstr "Estado"
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model,name:stock_product_request.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de existencias"
+
+#. module: stock_product_request
+#: model:ir.model,name:stock_product_request.model_stock_product_request
+msgid "Stock Product Request"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.actions.report,name:stock_product_request.stock_request_report
+#: model:ir.module.category,name:stock_product_request.module_category_stock_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Stock Request"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model,name:stock_product_request.model_stock_product_request_line
+msgid "Stock Request Product Line"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: code:addons/stock_product_request/models/stock.py:0
+#, python-format
+msgid "Supply move for: "
+msgstr "Movimiento de Abastecimiento para: "
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "The file to import must have an xlsx extension!"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__date_to
+#, python-format
+msgid "To"
+msgstr "Hasta"
+
+#. module: stock_product_request
+#: model:ir.model,name:stock_product_request.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_form
+msgid "Transfers"
+msgstr "Transferencias"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__location_trans_id
+msgid "Transit Location"
+msgstr "Ubicación de Transito"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__type
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__product_uom
+#, python-format
+msgid "UoM"
+msgstr "UdM"
+
+#. module: stock_product_request
+#: model:ir.model.fields.selection,name:stock_product_request.selection__stock_product_request__priority__1
+msgid "Urgent"
+msgstr ""
+
+#. module: stock_product_request
+#: model:res.groups,name:stock_product_request.group_stock_request_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#: code:addons/stock_product_request/models/stock.py:0
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__warehouse_id
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request_line__warehouse_id
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_search
+#, python-format
+msgid "Warehouse"
+msgstr "Bodega"
+
+#. module: stock_product_request
+#: model:ir.model.fields,field_description:stock_product_request.field_stock_product_request__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: stock_product_request
+#: model:ir.model.fields,help:stock_product_request.field_stock_product_request__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/wizards/stock_request.py:0
+#, python-format
+msgid "Xlsx File"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#, python-format
+msgid "You need at least one move line to process"
+msgstr "Necesita por lo menos una linea para procesar"
+
+#. module: stock_product_request
+#: model_terms:ir.ui.view,arch_db:stock_product_request.view_stock_product_request_line_tree
+msgid "total"
+msgstr ""
+
+#. module: stock_product_request
+#. odoo-python
+#: code:addons/stock_product_request/models/stock.py:0
+#, python-format
+msgid ""
+"¡You can not create picking for Warehouse {}, while you have a negative "
+"balance!"
+msgstr ""
+"¡No se puede crear una Transferencia para el Almacén {}, mientras el Inv. "
+"Residual sea Negativo!"

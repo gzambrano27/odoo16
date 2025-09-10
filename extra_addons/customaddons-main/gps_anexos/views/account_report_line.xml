@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_account_report_line_form_inherit_add_tax_report_model_name" model="ir.ui.view">
+            <field name="name">account.report.line.form.inherit.tax.report</field>
+            <field name="model">account.report.line</field>
+            <field name="inherit_id" ref="account_reports.account_report_line_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Insertar main_model_name antes de load_more_limit -->
+                <field name="parent_id" position="before">
+                    <field name="cell_report"  />
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

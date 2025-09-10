@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_purchase_payment_report_form" model="ir.ui.view">
+        <field name="name">purchase.payment.report.form</field>
+        <field name="model">purchase.payment.report</field>
+        <field name="arch" type="xml">
+            <form string="Compras - Anticipos/Pagadas/Sobrepagos">
+                <group>
+                    <field name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field name="purchase_order_type" widget="selection" options="{'no_create': True}"/>
+                    <button name="action_export_xlsx" string="Exportar a Excel" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_purchase_payment_report" model="ir.actions.act_window">
+        <field name="name">Compras - Anticipos/Pagadas/Sobrepagos</field>
+        <field name="res_model">purchase.payment.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+ <!--
+    <menuitem id="menu_purchase_payment_report_root"
+              name="Reportes de Compras"
+              parent="purchase.purchase_report_main"
+              groups="purchase.group_purchase_manager,purchase.group_purchase_user"/>
+-->
+    <menuitem id="menu_purchase_payment_report"
+              name="Compras - Anticipos/Pagadas/Sobrepagos"
+              parent="purchase.purchase_report_main"
+              sequence="99"
+              groups="purchase.group_purchase_manager,purchase.group_purchase_user"
+              action="action_purchase_payment_report"/>
+</odoo>

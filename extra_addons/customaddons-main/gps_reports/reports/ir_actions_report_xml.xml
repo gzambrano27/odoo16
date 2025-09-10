@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  	
+    	
+
+    <record id="menu_group_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reporte de Opciones por Usuario</field>
+        <field name="model">security.group.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_reports.menu_group_report_xlsx</field>
+        <field name="report_file">Reporte de Opciones por Usuario</field>
+    </record>
+
+
+
+</odoo>
+        

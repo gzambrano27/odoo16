@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+   <!-- Views for clase  de importacion Tree View -->
+
+    <record model="ir.ui.view" id="view_centro_costo_zona_tree">
+        <field name="name">centro.costo.zona.tree</field>
+        <field name="model">centro.costo.zona</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <tree string="zona">
+                <field name="codigo" string="Codigo"/>
+                <field name="name" string="Descripcion"/>
+                <field name="state" string="Estado"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_centro_costo_zona_form">
+        <field name="name">centro.costo.zona.form</field>
+        <field name="model">centro.costo.zona</field>
+        <field name="groups_id" eval="[(6, 0, [ref('group_analytic_user')])]"/>
+        <field name="arch" type="xml">
+            <form string="zona">
+	            <separator string="zona" />
+	            	<group>
+           	            <group>
+                           <field name="codigo" string="Codigo"/>
+                           <field name="state" string="Estado"  style="width: 20%%"/>
+                        </group>
+		                <group>
+	                    	<field name="name" string="Descripcion"/>
+	                    </group>
+	                </group>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_centro_costo_zona_form" model="ir.actions.act_window">
+            <field name="name">zona Centro Costo</field>
+            <field name="res_model">centro.costo.zona</field>
+            <field name="view_mode">tree,form</field>       
+   </record>
+   
+   <menuitem id="menu_action_centro_costo_zona" action="action_centro_costo_zona_form" parent="account.menu_analytic_accounting"/>
+
+</data>
+</odoo>

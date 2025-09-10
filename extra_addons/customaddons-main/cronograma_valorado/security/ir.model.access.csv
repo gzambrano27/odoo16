@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_planillas_admin,access_planillas_admin,model_cronograma_planilla,cronograma_valorado.group_planillas_admin,1,1,1,1
+access_planillas_user,access_planillas_user,model_cronograma_planilla,cronograma_valorado.group_planillas_user,1,1,1,0
+access_planillas_reader,access_planillas_reader,model_cronograma_planilla,cronograma_valorado.group_planillas_reader,1,0,0,0
+
+access_notebook_admin,access_notebook_admin,model_cronograma_notebook,cronograma_valorado.group_planillas_admin,1,1,1,1
+access_notebook_user,access_notebook_user,model_cronograma_notebook,cronograma_valorado.group_planillas_user,1,1,1,0
+access_notebook_reader,access_notebook_reader,model_cronograma_notebook,cronograma_valorado.group_planillas_reader,1,0,0,0
+
+access_detalle_admin,access_detalle_admin,model_cronograma_detalle,cronograma_valorado.group_planillas_admin,1,1,1,1
+access_detalle_user,access_detalle_user,model_cronograma_detalle,cronograma_valorado.group_planillas_user,1,1,1,0
+access_detalle_reader,access_detalle_reader,model_cronograma_detalle,cronograma_valorado.group_planillas_reader,1,0,0,0

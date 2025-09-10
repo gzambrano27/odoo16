@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+ <record id="view_document_bank_reconciliation_tree" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.tree</field>
+        <field name="model">document.bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <tree string="Documentos de Conciliación Bancaria"
+
+
+                  decoration-info="state == 'draft'"
+      decoration-danger="state == 'generated'"
+      decoration-warning="state == 'confirmed'"
+      decoration-success="state == 'done'"
+      decoration-muted="state == 'cancelled'"
+
+            >
+                <field name="company_id"/>
+                <field name="journal_id"/>
+                <field name="date"/>
+                <field name="name"/>
+
+                         <field name="date_from"  optional="hide"/>
+                        <field name="date_to" optional="hide"/>
+
+                    <field name="initial_balance"  />
+           <field name="final_balance"   />
+                 <field name="calculated_signed_amount" sum="total"/>
+                <field name="calculated_reconciled_signed_amount" sum="total"/>
+           <field name="calculated_final_balance"  />
+          <field name="difference" sum="total"/>
+
+
+<field name="difference" colspan="2" readonly="1"/>
+
+                <field name="state"
+
+
+                />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="view_document_bank_reconciliation_form" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.form</field>
+        <field name="model">document.bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <form string="Documento de Conciliación Bancaria">
+                <header>
+                     <button name="action_generate" type="object" string="Generar"
+            icon="fa-play"
+            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+
+    <!-- Botón para Confirmar -->
+    <button name="action_confirm" type="object" string="Confirmar"
+            icon="fa-check-square"
+            attrs="{'invisible': [('state', '!=', 'generated')]}"/>
+
+
+
+
+    <!-- Botón para Finalizar -->
+    <button name="action_done" type="object" string="Finalizar"
+            icon="fa-stop"
+            attrs="{'invisible': [('state', '!=', 'confirmed')]}"/>
+
+    <!-- Botón para Anular -->
+    <button name="action_cancel" type="object" string="Anular"
+            icon="fa-times"
+            attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
+
+    <!-- Botón para volver a Borrador -->
+    <button name="action_draft" type="object" string="Preliminar"
+            icon="fa-undo"
+            attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+
+                      <button name="print_report" type="object" string="Imprimir"
+            icon="fa-print"
+            attrs="{'invisible': [('state', 'in', ('draft','cancelled'))]}"/>
+
+                        <field name="state" widget="statusbar" />
+                    </header>
+
+                <sheet>
+ <group>
+                    <group>
+
+                         <field name="company_id" colspan="2" readonly="1" force_save="1" options="{'no_create': True,'no_edit': True,'no_open': True}" groups="base.group_multi_company"/>
+                        <field name="date" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+                         <field name="currency_id" colspan="2" options="{'no_create': True,'no_edit': True,'no_open': True}" readonly="1" invisible="1"/>
+                        <field name="journal_id" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"
+                               domain="[ ('type','in',('bank',))]"
+                               options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+
+
+
+
+                        <field name="date_from" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+                        <field name="date_to" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+
+ <field name="name" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+<field name="comments" colspan="2"
+               attrs="{'readonly': [('state', 'not in', ('draft', 'generated'))]}"
+               placeholder="Observaciones adicionales..."/>
+
+                    </group>
+      <group>
+
+            <field name="file" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}" filename="filename"/>
+                        <field name="filename" colspan="2" invisible="1"/>
+
+           <field name="initial_balance" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+           <field name="final_balance" colspan="2" attrs="{'readonly':[('state','not in',('draft','generated'))]}"/>
+           <field name="calculated_signed_amount" colspan="2" readonly="1"/>
+           <field name="calculated_reconciled_signed_amount" colspan="2" readonly="1"/>
+          <field name="calculated_final_balance" colspan="2" readonly="1"/>
+
+
+<field name="difference" colspan="2" readonly="1"/>
+
+      </group>
+
+ </group>
+                    <newline/>
+                    <notebook>
+                        <page string="Detalle">
+                            <group>
+
+
+                                 <button string="Abrir"
+                                        name="action_open_reconciliation_lines"
+                                        type="object" colspan="1"
+                                        icon="fa-table"
+                                     attrs="{'invisible':[('state','!=','generated')]}"
+                                        />
+                                <button string="Encontrar"
+                                        name="match_lines"
+                                        type="object" colspan="1"
+                                        icon="fa-dot-circle-o"
+                                     attrs="{'invisible':[('state','!=','generated')]}"
+                                        />
+                            </group>
+                            <newline/>
+                            <field name="line_ids" colspan="4" readonly="1" >
+
+
+
+                    </field>
+                        </page>
+                       <page string="Referencias">
+                            <group>
+                               <button string="Abrir"
+                                        name="action_open_reconciliation_lines"
+                                        type="object" colspan="1"
+                                        icon="fa-table"
+                                     attrs="{'invisible':[('state','!=','generated')]}"
+                                        />
+                                <button string="Encontrar"
+                                        name="match_lines"
+                                        type="object" colspan="1"
+                                        icon="fa-dot-circle-o"
+                                     attrs="{'invisible':[('state','!=','generated')]}"
+                                        />
+                            </group>
+                            <newline/>
+                            <field name="group_ids" colspan="4" attrs="{'readonly':[('state','!=','generated')]}">
+
+
+
+                    </field>
+                        </page>
+  <page string="Asientos">
+          <field name="move_line_ids" readonly="1" force_save="1" />
+  </page>
+
+
+
+                         <page string="Configuración">
+ <group>
+                    <group>
+                         <field name="account_id" colspan="2"
+                                force_save="1"
+                               readonly="1" options="{'no_create': True,'no_edit': True,'no_open': True}"
+
+                         />
+
+                    </group>
+                               <group>
+
+                    </group>
+ </group>
+                         </page>
+                    </notebook>
+
+
+                  <group class="o_row" name="resumen_conciliacion" style="margin-top: 15px;">
+
+    <!-- Comentario a la izquierda ocupando 8 columnas -->
+    <group class="col-10">
+<field name="summary_line_ids" nolabel="1" readonly="1" colspan="2">
+    <tree string="Resumen">
+        <field name="type_id" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+            <field name="total_amount" sum="total" />
+    </tree>
+     <form string="Resumen">
+         <group>
+               <group>
+              <field name="type_id" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+
+         </group>
+               <group>
+              <field name="total_amount" />
+         </group>
+
+         </group>
+
+    </form>
+
+</field>
+    </group>
+
+    <!-- Totales a la derecha ocupando 4 columnas -->
+    <group class="col-2">
+  <separator string="Registrados en Sistema no en  Bancos"/>
+        <field name="depositos_no_banco" colspan="2"/>
+
+        <field name="cheques_no_cobrados" colspan="2"/>
+        <field name="nd_no_reg_bancos" colspan="2"/>
+
+
+        <separator string="No registrados"/>
+        <field name="nd_no_reg_libros" colspan="2"/>
+        <field name="depositos_nc_no_libros" colspan="2"/>
+ <separator string="Totales"/>
+        <field name="saldo_inicial_meses_anteriores" colspan="2"/>
+            <field name="saldo_conciliacion" readonly="1" colspan="2"/>
+        <field name="saldo_fecha_limite" colspan="2"/>
+<field name="calculated_difference" colspan="2"
+style="color:red"
+/>
+    </group>
+
+</group>
+
+
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Search -->
+    <record id="view_document_bank_reconciliation_search" model="ir.ui.view">
+        <field name="name">document.bank.reconciliation.search</field>
+        <field name="model">document.bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Documento de Conciliación">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="journal_id"/>
+                <field name="state"/>
+                <field name="date"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_document_bank_reconciliation" model="ir.actions.act_window">
+        <field name="name">Documentos de Conciliación</field>
+        <field name="res_model">document.bank.reconciliation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primer documento de conciliación bancaria.
+            </p>
+        </field>
+    </record>
+
+
+
+
+
+    </data>
+
+
+</odoo>

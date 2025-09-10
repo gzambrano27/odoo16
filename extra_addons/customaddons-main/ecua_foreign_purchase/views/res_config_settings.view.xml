@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_config_settings_view_form_importation_inh" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.importation</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='main_currency_setting_container']" position="after">
+                    <h2>Importations</h2>
+                    <div class="row mt16 o_settings_container" name="importation_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box" id="main_account_importation">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Account importation</span>
+                                <div class="text-muted">
+                                    Account for the importation
+                                </div>
+                                <div class="text-muted">
+                                    <field name="account_importation_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="res_company_imports_account_form" model="ir.ui.view">
+            <field name="name">res.company.imports.form.inh</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='website']" position="after">
+                    <field name="account_importation_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

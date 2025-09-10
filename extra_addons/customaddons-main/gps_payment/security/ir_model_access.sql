@@ -1,0 +1,2 @@
+update ir_model_access set perm_read=true,perm_Write=false,perm_create=false,perm_unlink=false where name!='account_payment_term_line_access' and model_id = (select x.id from ir_model x where x.model='account.payment.term.line');
+update ir_model_access set perm_read=true,perm_Write=false,perm_create=false,perm_unlink=false where name!='account_payment_term_access' and model_id = (select x.id from ir_model x where x.model='account.payment.term');

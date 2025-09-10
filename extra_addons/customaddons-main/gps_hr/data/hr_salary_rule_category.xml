@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<odoo>
+<data noupdate="1">
+
+
+
+
+		<record model='hr.salary.rule.category' id='type_income'>
+			<field name='code'>IN</field>
+			<field name='name'>INGRESO</field>
+			<field name='active' eval='1' />
+		</record>
+		<record model='hr.salary.rule.category' id='type_expense'>
+			<field name='code'>OUT</field>
+			<field name='name'>EGRESO</field>
+			<field name='active' eval='1' />
+		</record>
+		<record model='hr.salary.rule.category' id='type_provision'>
+			<field name='code'>PRO</field>
+			<field name='name'>PROVISION</field>
+			<field name='active' eval='1' />
+		</record>
+
+
+	<record model='hr.salary.rule.category' id='type_informativo'>
+			<field name='code'>INFO</field>
+			<field name='name'>INFORMATIVO</field>
+			<field name='active' eval='1' />
+		</record>
+
+
+	</data>
+</odoo>

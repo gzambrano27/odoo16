@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_macro_purchase_request_user,macro.purchase.request,model_macro_purchase_request,group_macro_purchase_request_user,1,1,1,1
+access_macro_purchase_request_manager,macro.purchase.request,model_macro_purchase_request,group_macro_purchase_request_manager,1,1,1,1
+access_macro_purchase_request_jefe,macro.purchase.request,model_macro_purchase_request,group_macro_purchase_request_jefe,1,1,1,1
+access_macro_purchase_request_line_jefe,macro.purchase.request.line,model_macro_purchase_request_line,group_macro_purchase_request_jefe,1,1,1,1
+
+access_macro_purchase_request_line_user,macro.purchase.request.line,model_macro_purchase_request_line,group_macro_purchase_request_user,1,1,1,1
+access_macro_purchase_request_line_manager,macro.purchase.request.line,model_macro_purchase_request_line,group_macro_purchase_request_manager,1,1,1,1
+
+
+access_macro_purchase_request_viewer,macro.purchase.request,model_macro_purchase_request,group_macro_purchase_request_viewer,1,0,0,0
+access_macro_purchase_request_line_viewer,macro.purchase.request.line,model_macro_purchase_request_line,group_macro_purchase_request_viewer,1,0,0,0
+
+
+
