@@ -61,7 +61,9 @@
                                     <p class="m-0 p-0"><strong>PROYECTO:</strong> <span t-field="doc.proyecto"/></p>
                                     <p class="m-0 p-0"><strong>CLIENTE:</strong> <span t-field="doc.partner_id"/></p>
                                     <p class="m-0 p-0"><strong>REVISIÓN No.:</strong> A</p>
-                                    <p class="m-0 p-0"><strong>FECHA:</strong> <span t-field="doc.date_order" t-options='{"widget":"date"}'/></p>
+									<!-- Definimos la variable hoy -->
+									<t t-set="today" t-value="datetime.date.today()"/>
+                                    <p class="m-0 p-0"><strong>FECHA:</strong> <span t-esc="today.strftime('%d/%m/%Y')"/></p>
                                 </div>
                             </div>
 
