@@ -434,6 +434,8 @@ class IrModel(models.Model):
     @api.model
     def _instanciate(self, model_data):
         """ Return a class for the custom model given by parameters ``model_data``. """
+        models.check_pg_name(model_data["model"].replace(".", "_"))
+
         class CustomModel(models.Model):
             _name = pycompat.to_text(model_data['model'])
             _description = model_data['name']
@@ -2227,7 +2229,7 @@ class IrModelData(models.Model):
                     else:
                         # the field is shared across registries; don't modify it
                         Field = type(field)
-                        field_ = Field(_base_fields=[field, Field(prefetch=False)])
+                        field_ = Field(_base_fields=(field, Field(prefetch=False)))
                         self.env[ir_field.model]._add_field(ir_field.name, field_)
                         field_.setup(model)
                         has_shared_field = True
