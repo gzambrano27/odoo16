@@ -69,6 +69,23 @@ describe('Copy', () => {
                     window.chai.expect(clipboardData.getData('text/odoo-editor')).to.be.equal('<table><tbody><tr><td><ul><li>a</li><li>b</li><li>c</li></ul></td><td><br></td></tr></tbody></table>');
                 },
             });
+            await testEditor(BasicEditor, {
+                contentBefore: `<p>[abcd</p><table><tbody><tr><td><br></td><td><br></td></tr></tbody></table>]`,
+                stepFunction: async (editor) => {
+                  const clipboardData = new DataTransfer();
+                  await triggerEvent(editor.editable, "copy", { clipboardData });
+                  window.chai
+                    .expect(clipboardData.getData("text/html"))
+                    .to.be.equal(
+                      `<p>abcd</p><table class="o_selected_table"><tbody><tr><td class="o_selected_td"><br></td><td class="o_selected_td"><br></td></tr></tbody></table>`
+                    );
+                  window.chai
+                    .expect(clipboardData.getData("text/odoo-editor"))
+                    .to.be.equal(
+                      `<p>abcd</p><table class="o_selected_table"><tbody><tr><td class="o_selected_td"><br></td><td class="o_selected_td"><br></td></tr></tbody></table>`
+                    );
+                },
+            });
         });
         it('should wrap the selected text with clones of ancestors up to a block element to keep styles', async () => {
             await testEditor(BasicEditor, {
@@ -232,12 +249,12 @@ describe('Cut', () => {
 describe('Paste', () => {
     describe('Html Paste cleaning', () => {
         describe('whitelist', async () => {
-            it('should keep whitelisted Tags tag', async () => {
-                for (const node of CLIPBOARD_WHITELISTS.nodes) {
-                    if (!['TABLE', 'THEAD', 'TH', 'TBODY', 'TR', 'TD', 'IMG', 'BR', 'LI', '.fa'].includes(node)) {
-                        const isInline = ['I', 'B', 'U', 'S', 'EM', 'STRONG', 'IMG', 'BR', 'A', 'FONT'].includes(node);
-                        const html = isInline ? `a<${node.toLowerCase()}>b</${node.toLowerCase()}>c` : `a</p><${node.toLowerCase()}>b</${node.toLowerCase()}><p>c`;
+            for (const node of CLIPBOARD_WHITELISTS.nodes) {
+                if (!['TABLE', 'THEAD', 'TH', 'TBODY', 'TR', 'TD', 'IMG', 'BR', 'LI', '.fa'].includes(node)) {
+                    const isInline = ['I', 'B', 'U', 'S', 'EM', 'STRONG', 'IMG', 'BR', 'A', 'FONT'].includes(node);
+                    const html = isInline ? `a<${node.toLowerCase()}>b</${node.toLowerCase()}>c` : `a</p><${node.toLowerCase()}>b</${node.toLowerCase()}><p>c`;
 
+                    it('should keep whitelisted Tags tag', async () => {
                         await testEditor(BasicEditor, {
                             contentBefore: '<p>123[]4</p>',
                             stepFunction: async editor => {
@@ -245,10 +262,10 @@ describe('Paste', () => {
                             },
                             contentAfter: '<p>123' + html.replace(/<\/?font>/g, '') + '[]4</p>',
                         });
-                    }
+                    });
                 }
+            }
 
-            });
             it('should keep whitelisted Tags tag (2)', async () => {
                 await testEditor(BasicEditor, {
                     contentBefore: '<p>123[]</p>',
@@ -1861,6 +1878,18 @@ describe('Paste', () => {
                     },
                     contentAfter: '<div>2a<span class="a">b1<b>23</b></span><p>zzz</p><span class="a">45<b>6</b>7[]</span>e<br>f</div>',
                 });
+            });
+        });
+    });
+    describe('Complex html div', () => {
+        const complexHtmlData = `<div><div><span style="color: #fb4934;">abc</span><span style="color: #ebdbb2;">def</span></div><div dir="rtl"><span style="color: #fb4934;">ghi</span><span style="color: #fe8019;">jkl</span></div><div><span style="color: #fb4934;">jkl</span><span style="color: #ebdbb2;">mno</span></div></div>`;
+        it('should convert div to p', async () =>{
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>[]<br></p>',
+                stepFunction: async editor => {
+                    await pasteHtml(editor, complexHtmlData);
+                },
+                contentAfter: '<p>abcdef</p><p dir="rtl">ghijkl</p><p>jklmno[]</p>',
             });
         });
     });

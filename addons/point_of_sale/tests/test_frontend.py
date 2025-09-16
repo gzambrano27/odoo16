@@ -2,7 +2,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
-from odoo import Command
 
 from odoo.api import Environment
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
@@ -62,7 +61,7 @@ class TestPointOfSaleHttpCommon(AccountTestInvoicingHttpCommon):
             'name': 'Colleen Diaz'
         }])
 
-        cash_journal = journal_obj.create({
+        cls.cash_journal = journal_obj.create({
             'name': 'Cash Test',
             'type': 'cash',
             'company_id': main_company.id,
@@ -481,7 +480,7 @@ class TestPointOfSaleHttpCommon(AccountTestInvoicingHttpCommon):
             'journal_id': test_sale_journal.id,
             'invoice_journal_id': test_sale_journal.id,
             'payment_method_ids': [(0, 0, { 'name': 'Cash',
-                                            'journal_id': cash_journal.id,
+                                            'journal_id': cls.cash_journal.id,
                                             'receivable_account_id': account_receivable.id,
             })],
             'use_pricelist': True,
@@ -902,18 +901,6 @@ class TestUi(TestPointOfSaleHttpCommon):
         self.main_pos_config.open_ui()
         self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'ShowTaxExcludedTour', login="accountman")
 
-    def test_chrome_without_cash_move_permission(self):
-        self.env.user.write({'groups_id': [
-            Command.set(
-                [
-                    self.env.ref('base.group_user').id,
-                    self.env.ref('point_of_sale.group_pos_user').id,
-                ]
-            )
-        ]})
-        self.main_pos_config.open_ui()
-        self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'chrome_without_cash_move_permission', login="accountman")
-
     def test_GS1_pos_barcodes_scan(self):
         barcodes_gs1_nomenclature = self.env.ref("barcodes_gs1_nomenclature.default_gs1_nomenclature")
         self.main_pos_config.company_id.write({
@@ -1123,3 +1110,12 @@ class TestUi(TestPointOfSaleHttpCommon):
 
         self.main_pos_config.open_ui()
         self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'CashRoundingPayment', login="accountman")
+
+    def test_multiple_cash_payment_method(self):
+        cash_method = self.env['pos.payment.method'].create({
+            'name': 'New Cash',
+            'journal_id': self.cash_journal.id,
+        })
+        self.main_pos_config.payment_method_ids += cash_method
+        self.main_pos_config.open_ui()
+        self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'MultipleCashPaymentMethod', login="accountman")

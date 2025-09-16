@@ -13,7 +13,7 @@ import re
 
 from odoo import api, fields, models, tools, _
 from odoo.tools import float_is_zero, float_round, float_repr, float_compare
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError, UserError, AccessError
 from odoo.osv.expression import AND
 import base64
 
@@ -146,7 +146,7 @@ class PosOrder(models.Model):
                 # do not hide transactional errors, the order(s) won't be saved!
                 raise
             except Exception as e:
-                _logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
+                _logger.error('Could not fully process the POS Order: %s', tools.ustr(e), exc_info=True)
             pos_order._create_order_picking()
             pos_order._compute_total_cost_in_real_time()
 
@@ -180,14 +180,14 @@ class PosOrder(models.Model):
         order.amount_paid = sum(order.payment_ids.mapped('amount'))
 
         if not draft and not float_is_zero(pos_order['amount_return'], prec_acc):
-            cash_payment_method = pos_session.payment_method_ids.filtered('is_cash_count')[:1]
+            cash_payment_method = order.payment_ids.payment_method_id.filtered("is_cash_count")[:1] or pos_session.payment_method_ids.filtered('is_cash_count')[:1]
             if not cash_payment_method:
                 raise UserError(_("No cash statement found for this session. Unable to record returned cash."))
             return_payment_vals = {
                 'name': _('return'),
                 'pos_order_id': order.id,
                 'amount': -pos_order['amount_return'],
-                'payment_date': fields.Datetime.now(),
+                'payment_date': order.date_order,
                 'payment_method_id': cash_payment_method.id,
                 'is_change': True,
             }
@@ -1143,7 +1143,14 @@ class PosOrder(models.Model):
             `export_as_JSON` of models.Order. This is useful for back-and-forth communication
             between the pos frontend and backend.
         """
-        return self.mapped(self._export_for_ui) if self else []
+        results = []
+        for order in self:
+            try:
+                results.append(self._export_for_ui(order))
+            except AccessError:
+                # Skip the order in case of AccessError
+                continue
+        return results
 
 
 class PosOrderLine(models.Model):

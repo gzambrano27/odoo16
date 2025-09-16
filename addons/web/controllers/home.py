@@ -126,6 +126,7 @@ class Home(http.Controller):
             values['disable_database_manager'] = True
 
         response = request.render('web.login', values)
+        response.headers['Cache-Control'] = 'no-cache'
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
         return response
@@ -163,3 +164,14 @@ class Home(http.Controller):
         headers = [('Content-Type', 'application/json'),
                    ('Cache-Control', 'no-store')]
         return request.make_response(data, headers, status=status)
+
+    def _get_allowed_robots_routes(self):
+        """Override this method to return a list of allowed routes.
+        By default this controller does not serve robots.txt so all routes
+        are implicitly open but we want any module to be able to append
+        to this list, in case the website module is installed.
+
+        :return: A list of URL paths that should be allowed by robots.txt
+              Examples: ['/social_instagram/', '/sitemap.xml', '/web/']
+        """
+        return []
