@@ -881,3 +881,190 @@ class report_compras_acct_report_xlsx_act(models.AbstractModel):
             wb = self.close_wb(wb)
         filecontent = dtFile.get_binary(new_filename)
         return filecontent, EXT
+
+class report_facturas_pagadas_report_xlsx(models.AbstractModel):
+    _name = "report.gps_ats.report_facturas_pagadas_xlsx"
+    _inherit = "report.report_xlsx.abstract"
+    _description = "Reportes de Facturas Pagadas"
+
+    def create_xlsx_report(self, docids, data):
+        EXT = "xlsx"
+        new_filename = dtFile.create(EXT)
+
+        def get_ws_objects(template_file_name):
+            dir_path = dtFile.get_path_file(__file__)
+            filename = dtFile.join(dir_path, template_file_name)
+            dtFile.copyfile(filename, new_filename)
+            wb, ws, target = self.open_xlsx(new_filename, load_sheet=True)
+            return wb, ws, target
+
+        wb = False
+        try:
+            brw_wizard = self.env["l10n.ec.ats"].sudo().browse(docids[-1])
+            start_date, end_date = brw_wizard.date_start, brw_wizard.date_end  ##lectura de parametros
+
+            wb, ws, target = get_ws_objects("reporte_facturas_pagadas.xlsx")
+            self._cr.execute(""";with variables as (
+                    select %s::date as fecha_inicial,
+                    %s::date as fecha_final ,
+                    %s::int as company_id     
+
+                ),
+                retenciones_detalle as (
+                                select account_move.id,
+                                    sum(aml.l10n_ec_withhold_tax_amount) as total,
+                                    atxg.l10n_ec_type
+                                from res_company 
+                                inner join variables on 1=1
+                                inner join res_partner rp  on rp.id=res_company.partner_id
+                                inner join account_move on account_move.company_id = res_company.id and account_move.move_type in ('in_invoice') and account_move.state in ('posted','paid')  and 
+                                account_move.invoice_date>=variables.fecha_inicial and account_move.invoice_date<=variables.fecha_final  and account_move.company_id=variables.company_id 
+                                inner join account_journal aj on  aj.id=account_move.journal_id and coalesce(aj.l10n_latam_use_documents,false)=true  
+                                inner join account_move_line aml on aml.l10n_ec_withhold_invoice_id=account_move.id 
+                                inner join account_move_line_account_tax_rel atxrl on atxrl.account_move_line_id=aml.id 
+                                inner join account_tax atx on atx.id=  atxrl.account_tax_id 
+                                inner join account_tax_group atxg on atxg.id=atx.tax_group_id
+                                inner join account_move awt on awt.id=aml.move_id and awt.state in ('posted','paid')  
+                                where aml.l10n_ec_withhold_tax_amount>0.00
+                                group by     account_move.id        ,atxg.l10n_ec_type,round(abs(atx.amount),2)
+                ),
+fecha_pagos  as (
+	SELECT 
+    fact.id AS doc_id,
+    MAX(am.date) AS fecha_asiento_pago 
+FROM account_partial_reconcile APR  
+INNER JOIN account_move_line AMLD ON AMLD.id = APR.debit_move_id 
+INNER JOIN account_move AM ON AM.id = AMLD.move_id  
+INNER JOIN account_move_line factl ON factl.id = APR.credit_move_id 
+INNER JOIN account_move fact ON fact.id = factl.move_id 
+WHERE AM.id NOT IN (SELECT id FROM retenciones_detalle)   -- excluye retenciones
+GROUP BY fact.id
+
+
+),
+				
+                ordenes_compra as (
+                
+                    SELECT
+                        am.id AS factura_id,
+                        am.name AS factura_name,
+                    
+                        STRING_AGG(DISTINCT po.id::text, ', ') AS ordenes_ids,
+                        STRING_AGG(DISTINCT po.name, ', ') AS ordenes_names,
+                    
+                        -- si al menos una orden es TRUE → TRUE
+                        BOOL_OR(po.importacion) AS importacion_flag
+                    
+                    FROM account_move am
+                    INNER JOIN account_move_line aml
+                           ON aml.move_id = am.id
+                          AND am.move_type = 'in_invoice'   -- solo facturas proveedor
+                    INNER JOIN purchase_order_line pol
+                           ON aml.purchase_line_id = pol.id
+                    INNER JOIN purchase_order po
+                           ON pol.order_id = po.id
+                    GROUP BY am.id, am.name
+                )
+ 
+
+
+                select account_move.id,
+                doc_document_type.name as  tipo_documento,
+                account_move.nAME as numero_documento,
+                account_move.invoice_date as fecha,
+                case when(account_move.state='draft') then 'preliminar' 
+                when(account_move.state='posted') then 'publicado'
+                when(account_move.state='cancel') then 'anulado' end as estado,
+                res_partner.name as proveedor,
+                l10n_latam_identification_type.name::json->'en_US'::varchar as tipo_identificacion,
+                res_partner.vat as id_proveedor,
+                account_move.authorization_type as tipo_autorizacion,
+                coalesce(account_move.l10n_ec_authorization_number,'') as autorizacion,
+                (case when(account_move.move_type='in_refund') then -1 else 1 end )*(coalesce(account_move.amount_base0,0.00)+ coalesce(account_move.amount_baseno0,0.00)) as subtotal,
+                (case when(account_move.move_type='in_refund') then -1 else 1 end )*coalesce(account_move.amount_base0,0.00) as   base0,
+                 (case when(account_move.move_type='in_refund') then -1 else 1 end )*coalesce(account_move.amount_baseno0,0.00) as   baseno0,
+                 (case when(account_move.move_type='in_refund') then -1 else 1 end )*coalesce(account_move.amount_taxno0,0.00) as  iva,    
+                  (case when(account_move.move_type='in_refund') then -1 else 1 end )*coalesce(account_move.amount_total,0.00) as  total,   
+                coalesce(rdfte.total,0.00) as  rte_fte,
+                coalesce(rdiva.total,0.00) as  rte_iva,
+                coalesce(account_move.l10n_ec_code_taxsupport,'') as l10n_ec_code_taxsupport,
+                oc.ordenes_ids,
+                oc.ordenes_names,
+              case when  coalesce(account_move.es_importacion,
+			  		oc.importacion_flag) then 'SI' else 'NO' end as importacion_flag,
+                (CASE 
+    WHEN rcc.id IS NOT NULL AND rcc.code = 'EC' 
+        THEN 'NO' 
+    ELSE 'SI' 
+END) AS exterior,
+                 round(account_move.amount_residual,2) as pendiente,
+                round(coalesce(account_move.amount_total,0.00)-coalesce(account_move.amount_residual,0.00),2) as pagado,
+				fpg.fecha_asiento_pago 
+                                from res_company 
+                                inner join variables on 1=1
+                                inner join res_partner rp  on rp.id=res_company.partner_id
+                                inner join account_move on account_move.company_id = res_company.id and account_move.move_type in ('in_invoice','in_refund') and account_move.state in ('posted','paid')  and 
+                                account_move.invoice_date>=variables.fecha_inicial and account_move.invoice_date<=variables.fecha_final  and account_move.company_id=variables.company_id 
+                                inner join account_journal aj on  aj.id=account_move.journal_id --and coalesce(aj.l10n_latam_use_documents,false)=true 
+
+                                inner join res_partner on account_move.partner_id = res_partner.id
+                                inner join l10n_latam_identification_type on res_partner.l10n_latam_identification_type_id = l10n_latam_identification_type.id
+                                left join l10n_ec_sri_payment doc_payment_type on doc_payment_type.id = account_move.l10n_ec_sri_payment_id 
+                                inner join l10n_latam_document_type doc_document_type on doc_document_type.id = account_move.l10n_latam_document_type_id --and doc_document_type.code!='00' 
+                                left join retenciones_detalle rdfte on rdfte.id=account_move.id and rdfte.l10n_ec_type='withhold_income_purchase'
+                                left join retenciones_detalle rdiva on rdiva.id=account_move.id and rdiva.l10n_ec_type!='withhold_income_purchase' 
+                                left join ordenes_compra oc on oc.factura_id=account_move.id 
+                                left join res_country rcc on rcc.id=res_partner.country_id
+								left join fecha_pagos fpg on fpg.doc_id=account_move.id
+                                
+                    """, (start_date, end_date, brw_wizard.company_id.id))
+            result = self._cr.dictfetchall()
+            if result:
+                i, INDEX_ROW = 0, 5
+                last_row = INDEX_ROW
+                for each_result in result:
+                    row = str(INDEX_ROW + i)
+                    ws['A' + row] = each_result["id"]
+                    ws['B' + row] = each_result["tipo_documento"]
+                    ws['C' + row] = each_result["numero_documento"]
+                    ws['D' + row] = each_result["fecha"]
+                    ws['E' + row] = each_result["estado"]
+                    ws['F' + row] = each_result["proveedor"]
+                    ws['G' + row] = each_result["tipo_identificacion"]
+                    ws['H' + row] = each_result["id_proveedor"]
+                    ws['I' + row] = each_result["tipo_autorizacion"]
+                    ws['J' + row] = each_result["autorizacion"]
+                    ws['K' + row] = each_result["subtotal"]
+                    ws['L' + row] = each_result["base0"]
+                    ws['M' + row] = each_result["baseno0"]
+                    ws['N' + row] = each_result["iva"]
+                    ws['O' + row] = each_result["total"]
+                    ws['P' + row] = each_result["rte_fte"]
+                    ws['Q' + row] = each_result["rte_iva"]
+                    ws['R' + row] = each_result["l10n_ec_code_taxsupport"]
+
+                    ws['S' + row] = each_result["ordenes_names"]
+                    ws['T' + row] = each_result["exterior"]
+                    ws['U' + row] = each_result["importacion_flag"]
+                    ws['V' + row] = each_result["pagado"]
+                    ws['W' + row] = each_result["pendiente"]
+
+                    ws['X' + row] = each_result["fecha_asiento_pago"]
+
+                    i += 1
+                    last_row = INDEX_ROW + i
+                if last_row >= INDEX_ROW:
+                    thin = Side(border_style="thin", color="000000")
+                    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+                    self.set_border(ws, 'A' + str(INDEX_ROW) + ':Y' + str(last_row - 1), border)
+            ws['B3'] = len(result)
+            ws['A1'] = brw_wizard.company_id.name
+            ws['B2'] = start_date
+            ws['D2'] = end_date
+            wb = self.save_wb(wb, target)
+        except Exception as e:
+            _logger.warning("error create_xlsx_report %s" % (str(e),))
+        finally:
+            wb = self.close_wb(wb)
+        filecontent = dtFile.get_binary(new_filename)
+        return filecontent, EXT

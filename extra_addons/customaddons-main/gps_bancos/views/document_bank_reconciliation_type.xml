@@ -12,6 +12,7 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="descriptions"/>
+                <field name="can_edit" />
             </tree>
         </field>
     </record>
@@ -23,9 +24,14 @@
         <field name="arch" type="xml">
             <form string="Tipo de Documento de Reconciliación">
                 <group>
-                    <field name="code"/>
-                    <field name="name"/>
-                    <field name="descriptions"/>
+                     <group>
+                    <field name="code" colspan="2"/>
+                    <field name="name" colspan="2"/>
+                          </group>
+                               <group>
+                    <field name="descriptions" colspan="2"/>
+                    <field name="can_edit" colspan="2"/>
+                               </group>
                 </group>
             </form>
         </field>
@@ -40,6 +46,7 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="descriptions"/>
+                <field name="can_edit" />
             </search>
         </field>
     </record>

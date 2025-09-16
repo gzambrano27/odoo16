@@ -62,6 +62,10 @@ class UpdateReconciliationTypeWizard(models.TransientModel):
         if not self._context.get('active_ids',[]):
             raise ValidationError("Debe seleccionar al menos una línea.")
         recon_line_ids=self.env['document.bank.reconciliation.line'].browse(self._context.get('active_ids',[]))
+        state=recon_line_ids.mapped('document_id.state')
+        for each_state in state:
+            if each_state in ('done','cancelled'):
+                raise ValidationError(_("No puedes reclasificar las lineas de una conciliacion si el documento esta realizado o anulado"))
         recon_line_ids.write({'type_id': self.type_id.id})
         return {'type': 'ir.actions.act_window_close'}
 

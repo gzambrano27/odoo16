@@ -98,6 +98,12 @@
             <field name="description">Allows you to manage your reembolsos.</field>
             <field name="sequence">1</field>
         </record>
+        <!-- Grupos AUDITOR -->
+        <record id="group_reembolso_auditor" model="res.groups">
+            <field name="name">Auditor (Reembolsos)</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="account_payment_purchase.module_category_reembolsos_management"/>
+        </record>
 
         <!-- Definir el grupo de usuario para Reembolsos -->
         <record id="group_reembolso_user" model="res.groups">
@@ -133,6 +139,12 @@
             <field name="name">Caja Chica</field>
             <field name="description">Permite administrar tu Caja Chica.</field>
             <field name="sequence">1</field>
+        </record>
+
+        <record id="group_caja_chica_auditor" model="res.groups">
+            <field name="name">Auditor (Caja Chica)</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="account_payment_purchase.module_category_caja_chica_management"/>
         </record>
 
         <!-- Definir el grupo de usuario para Caja Chica -->
@@ -180,6 +192,52 @@
             <field name="name">Presidencia de Compras</field>
             <field name="category_id" ref="account_payment_purchase.module_category_requisiciones_admin_presi"/>
         </record>
-    </data>
 
+        <!-- Reglas: Solo lectura para Auditor de REEMBOLSOS -->
+        <!-- REEMPLAZA: module.model_* por los External ID de tus modelos -->
+        <record id="rule_reembolso_auditor_header_ro" model="ir.rule">
+            <field name="name">Reembolsos - Solo lectura (Auditor)</field>
+            <field name="model_id" ref="account_payment_purchase.model_hr_registro_reembolsos"/>
+            <field name="groups" eval="[(4, ref('account_payment_purchase.group_reembolso_auditor'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_reembolso_auditor_line_ro" model="ir.rule">
+            <field name="name">Reembolso Líneas - Solo lectura (Auditor)</field>
+            <field name="model_id" ref="account_payment_purchase.model_hr_registro_reembolsos_line"/>
+            <field name="groups" eval="[(4, ref('account_payment_purchase.group_reembolso_auditor'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Reglas: Solo lectura para Auditor de CAJA CHICA -->
+        <record id="rule_caja_auditor_header_ro" model="ir.rule">
+            <field name="name">Caja Chica - Solo lectura (Auditor)</field>
+            <field name="model_id" ref="account_payment_purchase.model_hr_registro_caja_chica"/>
+            <field name="groups" eval="[(4, ref('account_payment_purchase.group_caja_chica_auditor'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_caja_auditor_line_ro" model="ir.rule">
+            <field name="name">Caja Chica Líneas - Solo lectura (Auditor)</field>
+            <field name="model_id" ref="account_payment_purchase.model_hr_registro_caja_chica_line"/>
+            <field name="groups" eval="[(4, ref('account_payment_purchase.group_caja_chica_auditor'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
 </odoo>

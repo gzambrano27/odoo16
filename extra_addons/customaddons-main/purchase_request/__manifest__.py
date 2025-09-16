@@ -19,7 +19,10 @@
         "data/purchase_request_data.xml",
         
         "reports/report_purchase_request.xml",
-
+        # Wizards
+        "wizard/purchase_request_line_make_purchase_order_view.xml",
+        "wizard/import_purchase_request_wizard_view.xml",
+        "wizard/purchase_request_wizard.xml",
         # Vistas principales (después de que los grupos están definidos)
         "views/res_config_view.xml",
         "views/purchase_request_view.xml",       
@@ -30,10 +33,6 @@
         "views/stock_move_views.xml",
         "views/stock_move_line_views.xml",
         "views/stock_picking_views.xml",
-        # Wizards
-        "wizard/purchase_request_line_make_purchase_order_view.xml",
-        "wizard/import_purchase_request_wizard_view.xml",
-        "wizard/purchase_request_wizard.xml",
 
     ],
     "demo": ["demo/purchase_request_demo.xml"],

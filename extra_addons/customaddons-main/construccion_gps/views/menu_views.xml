@@ -7,8 +7,8 @@
     <menuitem id="menu_apu_action" parent="menu_apu" name="APU" action="apu_apu_form_action" sequence="1"/>
     <menuitem id="menu_sale_bim_form_action_ventas" action="sale_order_bim_action_orders_draft" parent="menu_apu" sequence="5" name="Borrador Presupuestos" groups="construccion_gps.group_apus_usuario"/>
     <menuitem id="menu_sale_order_bim_orders_reviewed" action="sale_order_bim_action_orders_reviewed" parent="menu_apu"  sequence="6" name="Presupuestos Revisados"/>
-    <menuitem id="menu_sale_bim_form_action_draft" action="sale_order_bim_action_orders" parent="menu_apu" sequence="7" name="Presupuestos" groups="construccion_gps.group_apus_jefe,construccion_gps.group_apus_administrador,construccion_gps.group_apus_gerente"/>
-
+    <menuitem id="menu_sale_bim_form_action_draft" action="sale_order_bim_action_orders" parent="menu_apu" sequence="7" name="Presupuestos Confirmados" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_administrador,construccion_gps.group_apus_gerente"/>
+    
     <!-- Menú (ajusta el padre si prefieres otro) -->
     <menuitem id="menu_sale_order_line_apu" name="Pedidos APU (Líneas)" parent="menu_budget_apu_root" action="action_sale_order_line_apu" sequence="3"/>
     <!-- <menuitem id="menu_apu_line_hierarchy" name="Lineas APU Jerarquicas" parent="menu_apu" action="action_apu_line_hierarchy" sequence="4"/> -->
@@ -32,6 +32,7 @@
 
     <!-- Menú: dentro de Configuración -->
     <menuitem id="menu_apu_apu_tags" name="Etiquetas de APU" parent="menu_apu_settings" action="action_apu_apu_tags" sequence="35"/>
+    <menuitem id="menu_action_tipo_presupuesto" action="action_tipo_presupuesto_form" parent="menu_apu_settings" sequence="36" />
     <!-- (Opcional) Otros menús, por ejemplo de Proyecto, si se requieren -->
     <!--
     <menuitem id="menu_project" parent="menu_budget_apu_root" name="Gestión de Proyectos" sequence="3"/>

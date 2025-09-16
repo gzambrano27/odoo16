@@ -2,8 +2,16 @@
 <odoo>
 
     	<record model="res.groups" id="group_can_login">
-			<field name="name">Puede Ingresar</field>
+			<field name="name">Puede Ingresar al Sistema</field>
 		</record>
+
+
+	<record model="res.groups" id="group_can_create_partner">
+			<field name="name">Puede Actualizar Contactos</field>
+		</record>
+
+
+
 
 
 </odoo>

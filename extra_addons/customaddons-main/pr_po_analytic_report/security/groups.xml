@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- Categoría para agrupar los permisos en el formulario de Usuarios -->
+  <record id="module_category_pr_po_analytic" model="ir.module.category">
+    <field name="name">PR ↔ PO Analítico</field>
+    <field name="description">Permisos para el reporte PR ↔ PO Analítico</field>
+    <field name="sequence">30</field>
+  </record>
+
+  <!-- Grupo: Visor del Reporte -->
+  <record id="group_pr_po_analytic_viewer" model="res.groups">
+    <field name="name">PR ↔ PO Analítico: Ver Reporte</field>
+    <field name="category_id" ref="pr_po_analytic_report.module_category_pr_po_analytic"/>
+  </record>
+
+  <!-- Grupo: PMO (hereda permiso de ver) -->
+  <record id="group_pmo" model="res.groups">
+    <field name="name">PMO</field>
+    <field name="category_id" ref="pr_po_analytic_report.module_category_pr_po_analytic"/>
+    <field name="implied_ids" eval="[(4, ref('pr_po_analytic_report.group_pr_po_analytic_viewer'))]"/>
+  </record>
+</odoo>

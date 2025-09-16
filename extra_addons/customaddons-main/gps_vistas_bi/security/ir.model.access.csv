@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_accounts_receivable_user,access.accounts.receivable.view,model_accounts_receivable_view,account.group_account_user,1,0,0,0
+access_accounts_payable_user,access.accounts.payable.view,model_accounts_payable_view,account.group_account_user,1,0,0,0
+access_res_company_view_user,access.res.company.view,model_res_company_view,account.group_account_user,1,0,0,0
+access_accounts_analytic_user,access.accounts.analytic.view,model_accounts_analytic_view,account.group_account_user,1,0,0,0

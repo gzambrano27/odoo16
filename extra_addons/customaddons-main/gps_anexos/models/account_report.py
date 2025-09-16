@@ -72,30 +72,38 @@ class GenericTaxReportCustomHandler(models.AbstractModel):
         date_to = options.get('date', {}).get('date_to')
         anio, mes, _ = date_to.split('-')
         raw_lines = report._get_lines(options)
+        self._cr.execute("select value,name from calendar_month " )
+        dct_mes=dict(self._cr.fetchall())
         result=[{
             "ky_id": "name",
             "dscr": "company_name",
             "value": brw_company.name,
-            "cell_row": "P10"
+            "cell_row": "A1"
             },
             {
-                "ky_id": "vat",
-                "dscr": "company_vat",
-                "value": brw_company.vat,
-                "cell_row": None
-            },
-            {
-                "ky_id": "year",
-                "dscr": "year",
-                "value":anio,
-                "cell_row": None
-            },
-            {
-                "ky_id": "mes",
-                "dscr": "mes",
-                "value":mes,
-                "cell_row":None
+                "ky_id": "name",
+                "dscr": "period_name",
+                "value": ("%s DEL %s" % (dct_mes[int(mes)],anio)).upper(),
+                "cell_row": "A3"
             }
+            # {
+            #     "ky_id": "vat",
+            #     "dscr": "company_vat",
+            #     "value": brw_company.vat,
+            #     "cell_row": None
+            # },
+            # {
+            #     "ky_id": "year",
+            #     "dscr": "year",
+            #     "value":anio,
+            #     "cell_row": None
+            # },
+            # {
+            #     "ky_id": "mes",
+            #     "dscr": "mes",
+            #     "value":mes,
+            #     "cell_row":None
+            # }
         ]
         for line in raw_lines:
             report_line_id = int(self._get_column_value(line, index=0, field_ky="report_line_id") or 0)

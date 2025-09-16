@@ -81,6 +81,7 @@ class HrRegistroCajaChica(models.Model):
     line_pagos_ids = fields.One2many('hr.registro.caja.chica.anticipos.line', 'caja_chica_id',
                                      'Caja Chica Anticipos Lines')
     total_pagos_ant = fields.Float('Total', compute="_calc_total")
+    fecha_revisado = fields.Date('Fecha Revisado', tracking = True)
 
     @api.depends('line_pagos_ids.monto_pago')
     def _calc_total(self):
@@ -422,8 +423,11 @@ class HrRegistroCajaChica(models.Model):
         return True
 
     def button_revision(self):
+        if not self.env.user.has_group('account_payment_purchase.group_reembolso_contador'):
+            raise UserError(_('Solo usuarios autorizados pueden enviar a revision los documentos de reembolso!!.'))
         for x in self:
-            x.write({'state': 'revision'})
+            x.write({'state': 'revision','fecha_revisado':fields.Date.today()})
+            #self._compute_total()
         return True
     
     def button_to_approve(self):
@@ -507,7 +511,13 @@ class HrRegistroCajaChicaLine(models.Model):
     'Cuenta Analitica', 
     domain="[('company_id', '=', parent.company_id)]"
     )
-
+    
+    @api.onchange('valor_aprobado')
+    def onchange_valor_aprobado(self):
+        for x in self:
+            if x.valor_aprobado:
+                x.verificado = True
+                
     @api.constrains('tipo_documento', 'observacion')
     def _check_observacion_for_vale(self):
         for record in self:

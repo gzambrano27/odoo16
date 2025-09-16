@@ -75,3 +75,5 @@ from .res_partner_bank_request import *
 from .hr_employee import *
 
 from .account_payment_request_lines import *
+
+from .res_users import *

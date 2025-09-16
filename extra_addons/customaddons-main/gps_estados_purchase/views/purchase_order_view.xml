@@ -7,12 +7,16 @@
             <header>
                 <button name="button_confirm" type="object" string="CONFIRMAR ORDEN"
                         states="control_presupuesto" class="btn-success"/>
+                
+                <button name="action_finance_review" type="object" string="Aprobación Financiera" states="financiero" class="oe_highlight"
+                    groups="account_payment_purchase.group_account_financiero_app"/>
+
                 <xpath expr="/form/header/button[@name='button_cancel']" position="replace">
                     <button name="button_cancel"
                         string="Cancelar"
                         type="object"
                         class="oe_highlight"
-                        attrs="{'invisible': [('state', 'not in', ['draft', 'to approve', 'sent', 'purchase', 'control_presupuesto'])]}"/>
+                        attrs="{'invisible': [('state', 'not in', ['draft', 'to approve', 'sent', 'purchase', 'control_presupuesto','financiero'])]}"/>
                 </xpath>
                 
             </header>

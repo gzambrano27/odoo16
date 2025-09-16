@@ -4,15 +4,32 @@
         <record id="reconciliation_type_sin_tipo" model="document.bank.reconciliation.type">
         <field name="code">sin_tipo</field>
         <field name="name">Sin clasificar</field>
-        <field name="descriptions"> SIN CLASIFICAR
-        </field>
+        <field name="descriptions">SIN CLASIFICAR</field>
     </record>
 
 
+ <record id="reconciliation_type_cheque" model="document.bank.reconciliation.type">
+        <field name="code">cheque</field>
+        <field name="name">Cheque Girado</field>
+        <field name="descriptions">CHEQUE GIRADO</field>
+    </record>
 
+ <record id="reconciliation_comisiones" model="document.bank.reconciliation.type">
+        <field name="code">comision</field>
+        <field name="name">Comisiones</field>
+        <field name="descriptions">COMISIONES</field>
+    </record>
 
-
-
+ <record id="reconciliation_recibidas" model="document.bank.reconciliation.type">
+        <field name="code">recibidas</field>
+        <field name="name">Transferencias Recibidas</field>
+        <field name="descriptions">TRANSFERENCIAS RECIBIDAS,COBROS INMEDIATOS, SERV.F.COBROS INMEDIATOS CF, N/D CARGO SERV.F.COBR.INTERB.,TRANSFERENCIA RECIBIDA DE CTA. AHORROS, TRANSFERENCIAS INTERBANCARIAS RECIBIDAS,N/C DIR-AJUSTE ORDEN DE PAGO, N/C DIR-AJUSTE SERV.F.ORDEN DE PAGO, N/C TRANSFERENCIAS INTERBANCARIAS RECIBIDAS, N/C PAGO A PROVEEDORES A CTA. CORRIENTE, N/C PAGO DIRECTO RECEPTOR CTA CTE</field>
+    </record>
+         <record id="reconciliation_realizadas" model="document.bank.reconciliation.type">
+        <field name="code">realizadas</field>
+        <field name="name">Transferencias Realizadas</field>
+        <field name="descriptions">TRANSFERENCIAS REALIZADAS,ORDEN DE PAGO, PAGO A PROVEEDORES, PAGO A PROVEEDORES - DIFERIDO, PAGO A PROVEEDORES DESDE CTA. CORRIENTE, PAGO DIRECTO RECEPTOR CTA CTE, N/C PAGO A PROVEEDORES A CTA. CORRIENTE,TRANSFERENCIA ENVIADA A OTROS BANCOS DESDE CTA. CORRIENTE,DEPOSITO COMPLETO,PAGO A TERCEROS - DIFERIDO</field>
+    </record>
 
 
     </data>

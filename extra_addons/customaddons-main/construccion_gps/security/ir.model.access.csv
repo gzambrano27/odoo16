@@ -79,3 +79,4 @@ access_product_template_actividad_admin,access.actividad.admin,model_product_tem
 access_apu_tags_gerente,apu.apu.tags.gerente,model_apu_apu_tags,group_apus_gerente,1,1,1,1
 access_apu_tags_jefe,apu.apu.tags.jefe,model_apu_apu_tags,group_apus_jefe,1,1,1,1
 access_apu_tags_usuario,apu.apu.tags.usuario,model_apu_apu_tags,group_apus_usuario,1,1,1,1
+access_tipo_presupuesto_usuario,access.tipo.presupuesto.user,model_tipo_presupuesto,group_apus_usuario,1,1,1,1

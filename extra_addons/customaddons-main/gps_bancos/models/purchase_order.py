@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api, _
@@ -222,7 +222,7 @@ class PurchaseOrder(models.Model):
             order.update_new_date()
         values = super(PurchaseOrder, self).button_approve()
         for order in self:
-            if order.state in ('purchase', 'done', 'to_approve'):  ##
+            if order.state in ('purchase', 'done', 'to_approve'):
                 if order.required_advance_payment:
                     if order.date_advance_payment:
                         date_approve = self.get_date_with_tz(order.date_approve).date()
@@ -242,6 +242,13 @@ class PurchaseOrder(models.Model):
 
     def validate_cancel_payments(self):
         for brw_each in self:
+            lines = self.env["account.payment.request"].sudo().search([('order_id', '=', brw_each.id),('checked','=',True),('state','=','confirmed')])
+            if lines:
+                raise ValidationError(
+                    _("Las solicitudes %s asociadas a la orden %s ya han sido verificadas para pagos. "
+                      "Por favor, contacte con el departamento financiero.")
+                    % (", ".join(map(str, lines.mapped('id'))), brw_each.name)
+                )
             if brw_each.total_payments_advances != 0.00:
                 raise ValidationError(
                     _("No puedes anular la %s si tiene aplicado al menos un anticipo") % (brw_each.name,))
@@ -316,6 +323,8 @@ class PurchaseOrder(models.Model):
     def button_confirm(self):
         TODAY = fields.Date.context_today(self)
         for order in self:
+            if order.partner_id:
+                order.partner_id.validate_partner_for_transaction(company_id=order.company_id.id)
             if order.state == 'control_presupuesto':
                 order.update_new_date()
             order.validate_request_default_payments()

@@ -28,6 +28,7 @@
          'views/plantilla_tareas_views.xml',
          'views/categorias_apu_view.xml',
          'views/apu_apu_tags.xml',
+         'views/tipo_presupuesto.xml',
         # 'views/budget_line_views.xml',
         #'views/apu_line_views.xml',
         'views/project_views.xml',

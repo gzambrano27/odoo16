@@ -178,6 +178,8 @@ class MacroPurchaseRequest(models.Model):
         default={},
         help="Distribucion analitica que se aplicara a todas las lineas",
     )
+    superintendente = fields.Many2one('res.users', 'Superintendente')
+    supervisor = fields.Many2one('res.users', 'Supervisor')
 
     @api.depends("state", "line_ids.product_qty", "line_ids.cancelled")
     def _compute_to_approve_allowed(self):

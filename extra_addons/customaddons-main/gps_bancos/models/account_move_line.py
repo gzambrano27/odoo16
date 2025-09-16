@@ -62,7 +62,6 @@ class AccountMoveLine(models.Model):
     def _create_reconciliation_partials(self):
         return super(AccountMoveLine,self)._create_reconciliation_partials()
 
-
     @api.model
     def _prepare_reconciliation_partials(self, vals_list):
         ''' Prepare the partials on the current journal items to perform the reconciliation.
@@ -149,6 +148,11 @@ class AccountMoveLine(models.Model):
 
         return partials_vals_list, exchange_data
 
+    def remove_move_reconcile(self):
+        """ Undo a reconciliation """
+        values=super().remove_move_reconcile()
+        return values
+
 def new_reconcile(self):
     ''' Reconcile the current move lines all together.
     :return: A dictionary representing a summary of what has been done during the reconciliation:
@@ -160,7 +164,7 @@ def new_reconcile(self):
             * tax_cash_basis_moves: An account.move recordset representing the tax cash basis journal entries.
     '''
     results = {'exchange_partials': self.env['account.partial.reconcile']}
-    print(self._context)
+    #print(self._context)
     if not self:
         return results
 
@@ -208,7 +212,7 @@ def new_reconcile(self):
     sorted_lines_ctx = sorted_lines.with_context(no_exchange_difference=self._context.get('no_exchange_difference') or partial_no_exch_diff)
     sorted_lines_ctx = sorted_lines_ctx.with_context(
         max_amount=self._context.get('max_amount') or None)
-    print(sorted_lines_ctx._context)
+    #print(sorted_lines_ctx._context)
     partials = sorted_lines_ctx._create_reconciliation_partials()
     results['partials'] = partials
     involved_partials += partials

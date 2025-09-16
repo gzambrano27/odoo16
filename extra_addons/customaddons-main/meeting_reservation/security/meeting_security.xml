@@ -1,0 +1,16 @@
+<odoo>
+  <record id="module_category_meeting_reservation" model="ir.module.category">
+    <field name="name">Reuniones</field>
+    <field name="sequence">76</field>
+  </record>
+
+  <record id="group_meeting_user" model="res.groups">
+    <field name="name">Reuniones – Usuario</field>
+    <field name="category_id" ref="meeting_reservation.module_category_meeting_reservation"/>
+  </record>
+
+  <record id="group_meeting_admin" model="res.groups">
+    <field name="name">Reuniones – Administrador</field>
+    <field name="category_id" ref="meeting_reservation.module_category_meeting_reservation"/>
+  </record>
+</odoo>

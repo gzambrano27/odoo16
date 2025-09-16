@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_stock_product_request_user,stock_request_user,model_stock_product_request,stock_product_request.group_stock_request_user,1,1,1,0
-access_stock_product_request_manager,stock_request_manager,model_stock_product_request,stock_product_request.group_stock_request_manager,1,1,1,1
-access_stock_product_request_line,stock_product_request_line,model_stock_product_request_line,base.group_user,1,1,1,1

@@ -300,3 +300,55 @@ ORDER BY t.DOC_ID::INT;
         result= self._cr.dictfetchall()
         return result
 
+    def validate_partner_for_transaction(self,company_id=False):
+        self.ensure_one()
+
+        if not self.country_id:
+            raise ValidationError(
+                _("El contacto '%s' no tiene definido un *país*. "
+                  "Debe establecerlo antes de realizar una transacción.")
+                % self.name
+            )
+
+        if not self.l10n_latam_identification_type_id:
+            raise ValidationError(
+                _("El contacto '%s' no tiene definido un *tipo de identificación*. "
+                  "Debe configurarlo antes de realizar una transacción.")
+                % self.name
+            )
+
+        if not self.vat:
+            raise ValidationError(
+                _("El contacto '%s' no tiene definido un *número de identificación (RUC/Cédula)*. "
+                  "Debe registrarlo antes de realizar una transacción.")
+                % self.name
+            )
+        # if company_id:##
+        #     if company_id:
+        #         companies = self.env['res.company'].sudo().browse(company_id)
+        #     else:
+        #         # Si el usuario tiene varias compañías activas en el contexto:
+        #         allowed = self.env.context.get('allowed_company_ids')
+        #         if allowed:
+        #             companies = self.env['res.company'].sudo().browse(allowed)
+        #         else:
+        #             companies = self.env.company.sudo()
+        #
+        #     # 2) Validar por compañía usando with_company (evita comparaciones manuales)
+        #     for company in companies:
+        #         partner_in_company = self.with_company(company)
+        #
+        #         receivable = partner_in_company.property_account_receivable_id
+        #         payable = partner_in_company.property_account_payable_id
+        #
+        #         if not receivable or not payable:
+        #             raise ValidationError(_(
+        #                 "El contacto '%(partner)s' no tiene definidas cuentas contables "
+        #                 "(por cobrar y/o por pagar) para la compañía '%(company)s'. "
+        #                 "Debe configurarlas antes de realizar una transacción."
+        #             ) % {
+        #                                       'partner': self.display_name,
+        #                                       'company': company.display_name,
+        #                                   })
+
+

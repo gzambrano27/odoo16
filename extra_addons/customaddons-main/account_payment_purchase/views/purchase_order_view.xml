@@ -165,6 +165,7 @@
                 <field name="is_developer" invisible="1"/>
                 <field name="payment_term_id"
                     attrs="{'required':[(1,'=',1)],'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', 'in', ('to approve','control_presupuesto','cancel','done','purchase'))]}" options="{'no_create': True}"/>
+
                 <field name="lead_time" attrs="{'readonly': [('state', 'in', ['purchase', 'done', 'cancel'])],
                             'required': True}"/>
             </field>

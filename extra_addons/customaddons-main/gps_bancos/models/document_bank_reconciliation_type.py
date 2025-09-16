@@ -10,6 +10,7 @@ class DocumentBankReconciliationType(models.Model):
     code=fields.Char("Codigo",required=True)
     name = fields.Char("Nombre", required=True)
     descriptions = fields.Char("Descripciones", required=True)
+    can_edit = fields.Boolean('Puede Editar', default=False)
 
     _sql_constraints = [
         ('code_unique', 'unique(code)', 'El código debe ser único.'),

@@ -110,7 +110,7 @@ decoration-it="not full_reconciled"
 
             <group expand="0" string="Agrupar por">
                 <filter name="group_by_date" string="Fecha" context="{'group_by': 'date'}"/>
-                <filter name="group_by_account" string="Cuenta" context="{'group_by': 'account_id'}"/>
+<!--                <filter name="group_by_account" string="Cuenta" context="{'group_by': 'account_id'}"/>-->
                 <filter name="group_by_type_id" string="Tipo" context="{'group_by': 'type_id'}"/>
                 <filter name="group_by_company" string="Compañía" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
             </group>

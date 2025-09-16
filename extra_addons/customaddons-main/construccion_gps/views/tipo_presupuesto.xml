@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+   <!-- Views for clase  de importacion Tree View -->
+
+    <record model="ir.ui.view" id="view_tipo_presupuesto_tree">
+        <field name="name">tipo.presupuesto.tree</field>
+        <field name="model">tipo.presupuesto</field>
+        <field name="arch" type="xml">
+            <tree string="tipopresupuesto">
+                <field name="codigo" string="Codigo"/>
+                <field name="name" string="Descripcion"/>
+                <field name="state" string="Estado"/>
+            </tree>
+        </field>
+    </record> 
+    
+      <record model="ir.ui.view" id="view_tipo_prespuesto_form">
+        <field name="name">tipo.presupuesto.form</field>
+        <field name="model">tipo.presupuesto</field>
+        <field name="arch" type="xml">
+            <form string="tipopresupuesto">
+	            <separator string="tipopresupuesto" />
+	            	<group>
+           	            <group>
+                           <field name="codigo" string="Codigo"/>
+                           <field name="state" string="Estado"  style="width: 20%%"/>
+                        </group>
+		                <group>
+	                    	<field name="name" string="Descripcion"/>
+	                    </group>
+	                </group>
+            </form>
+        </field>
+    </record>   
+    
+    <record id="action_tipo_presupuesto_form" model="ir.actions.act_window">
+            <field name="name">Tipo Presupuesto</field>
+            <field name="res_model">tipo.presupuesto</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'import_enabled': True}</field>
+   </record>
+   
+
+</data>
+</odoo>

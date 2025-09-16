@@ -200,19 +200,21 @@
 
     <!-- Comentario a la izquierda ocupando 8 columnas -->
     <group class="col-10">
-<field name="summary_line_ids" nolabel="1" readonly="1" colspan="2">
-    <tree string="Resumen">
-        <field name="type_id" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
-            <field name="total_amount" sum="total" />
+<field name="summary_line_ids" nolabel="1"  colspan="2" attrs="{'readonly':[('state','in',('done','cancelled'))]}">
+    <tree string="Resumen" editable="bottom" create="False" delete="False" edit="True">
+        <field name="type_id" readonly="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+            <field name="total_amount" sum="total" attrs="{'readonly':[('can_edit','!=',True)]}"/>
+        <field name="can_edit" optional="hide" readonly="1" force_save="1"/>
     </tree>
      <form string="Resumen">
          <group>
                <group>
-              <field name="type_id" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
+              <field name="type_id" readonly="1" options="{'no_create': True,'no_edit': True,'no_open': True}"/>
 
          </group>
                <group>
-              <field name="total_amount" />
+              <field name="total_amount" readonly="1"/>
+                        <field name="can_edit"   readonly="1" force_save="1"/>
          </group>
 
          </group>

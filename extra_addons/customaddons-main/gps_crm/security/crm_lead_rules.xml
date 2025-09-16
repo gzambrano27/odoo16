@@ -1,0 +1,26 @@
+<odoo>
+    <!-- Usuarios normales y KAM: solo ven sus propias oportunidades -->
+    <record id="crm_lead_rule_user_kam_own" model="ir.rule">
+        <field name="name">CRM - Propias oportunidades</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_user_custom')),
+                                    (4, ref('gps_crm.group_crm_kam_custom'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Gerencia: ve todas las oportunidades -->
+    <record id="crm_lead_rule_manager_all" model="ir.rule">
+        <field name="name">CRM - Todas las oportunidades (Gerencia)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_manager_custom'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Administrador: acceso completo -->
+    <record id="crm_lead_rule_admin_all" model="ir.rule">
+        <field name="name">CRM - Todas las oportunidades (Admin)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_admin_custom'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo >
+  <record id="tpl_default_scoring" model="crm.lead.scoring.template">
+    <field name="name">Plantilla estándar (100 pts)</field>
+  </record>
+
+  <record id="tpl_line_1" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">10</field>
+    <field name="stage">PERFIL DE LA EMPRESA</field>
+    <field name="description">La empresa tiene +6 años de existencia</field>
+    <field name="weight">5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_2" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">20</field>
+    <field name="stage">PERFIL DE LA EMPRESA</field>
+    <field name="description">Es una empresa líder o reconocida en su sector</field>
+    <field name="weight">5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_3" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">30</field>
+    <field name="stage">PERFIL DE LA EMPRESA</field>
+    <field name="description">Tiene capacidad de crecimiento sostenido</field>
+    <field name="weight">10</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_4" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">40</field>
+    <field name="stage">CAPACIDAD FINANCIERA</field>
+    <field name="description">Interés en inversión de soluciones energéticas</field>
+    <field name="weight">5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_5" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">50</field>
+    <field name="stage">CAPACIDAD FINANCIERA</field>
+    <field name="description">Tiene presupuesto capex asignado</field>
+    <field name="weight">5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_6" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">60</field>
+    <field name="stage">CAPACIDAD FINANCIERA</field>
+    <field name="description">Financiamiento propio</field>
+    <field name="weight">2.5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_7" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">70</field>
+    <field name="stage">CAPACIDAD FINANCIERA</field>
+    <field name="description">Financiamiento externo</field>
+    <field name="weight">2.5</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_8" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">80</field>
+    <field name="stage">TOMADORES DE DECISIÓN</field>
+    <field name="description">Es tomador de decisión en el punto de contacto</field>
+    <field name="weight">10</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_9" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">90</field>
+    <field name="stage">INTERÉS Y URGENCIA</field>
+    <field name="description">Cuenta con infraestructura en curso</field>
+    <field name="weight">3</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_10" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">100</field>
+    <field name="stage">INTERÉS Y URGENCIA</field>
+    <field name="description">Tiene definida la fecha para el proyecto</field>
+    <field name="weight">10</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_11" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">110</field>
+    <field name="stage">INTERÉS Y URGENCIA</field>
+    <field name="description">Esta considerando otras cotizaciones</field>
+    <field name="weight">7</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_12" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">120</field>
+    <field name="stage">INTERÉS Y URGENCIA</field>
+    <field name="description">Ha identificado problemas del sector energético</field>
+    <field name="weight">7</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_13" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">130</field>
+    <field name="stage">INTERÉS Y URGENCIA</field>
+    <field name="description">Ha identificado su necesidad en requerimientos energético</field>
+    <field name="weight">8</field>
+    <field name="question_type">yes_no</field>
+  </record>
+
+  <record id="tpl_line_14" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">140</field>
+    <field name="stage">CONSUMO ENERGÉTICO</field>
+    <field name="description">Demanda entre 500KW a 2MMW</field>
+    <field name="weight">20</field>
+    <field name="question_type">radio</field>
+    <field name="group_key">consumo_mw</field>
+  </record>
+
+  <record id="tpl_line_15" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">150</field>
+    <field name="stage">CONSUMO ENERGÉTICO</field>
+    <field name="description">Demanda entre 2MW a 5 MW</field>
+    <field name="weight">20</field>
+    <field name="question_type">radio</field>
+    <field name="group_key">consumo_mw</field>
+  </record>
+
+  <record id="tpl_line_16" model="crm.lead.scoring.template.line">
+    <field name="template_id" ref="tpl_default_scoring"/>
+    <field name="sequence">160</field>
+    <field name="stage">CONSUMO ENERGÉTICO</field>
+    <field name="description">Demanda más de 5 MW</field>
+    <field name="weight">20</field>
+    <field name="question_type">radio</field>
+    <field name="group_key">consumo_mw</field>
+  </record>
+</odoo>

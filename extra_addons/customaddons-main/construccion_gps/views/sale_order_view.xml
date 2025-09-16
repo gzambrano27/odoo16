@@ -20,6 +20,17 @@
               <field name="model">sale.order</field>
               <field name="inherit_id" ref="sale.view_order_tree"/>
               <field name="arch" type="xml">
+
+                    <xpath expr="//field[@name='user_id']" position="attributes">
+                        <attribute name="attrs">{'invisible': [('tipo_pedido', '=', 'apu')]}</attribute>
+                    </xpath>
+
+                    <!-- Insertar el campo Presupuestador en la misma posición -->
+                    <xpath expr="//field[@name='user_id']" position="after">
+                        <field name="usuario_presupuestador"
+                            attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"
+                            optional="show"/>
+                    </xpath>
                     <xpath expr="//field[@name='name']" position="after">
                         <field name="tipo_pedido" invisible='1'/>
                         <field name="referencia_analitica"/>
@@ -80,21 +91,30 @@
                 <xpath expr="//field[@name='sale_order_template_id']" position="after">
                     <field name="proyecto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
                     <field name="no_proyecto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
-                    <field name="tipo_presupuesto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
-                    <field name="pmo_asignado" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
-                    <field name="superintendente" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
-                    <field name="supervisor" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')], 'required': ['&amp;', ('state', '=', 'sale'), ('tipo_pedido', '=', 'apu')]}"/>
+                    <!-- <field name="tipo_presupuesto" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/> -->
+                    <field name="tipo_presupuesto_id" options="{'no_open':True,'no_create':True}" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
+                    <field name="pmo_asignado" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')]}"/>
+                    <field name="superintendente" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')]}"/>
+                    <field name="supervisor" options="{'no_open':True,'no_create':True}" attrs="{'invisible': ['|', ('tipo_pedido', '!=', 'apu'), ('state', '!=', 'sale')]}"/>
                     <field name="macro_unificado" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="plantilla_tarea_id" invisible='1'  options="{'no_open':True,'no_create':True}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
                     <field name="porcentaje_inicial_requisicion" attrs="{'invisible': [('tipo_pedido', '!=', 'apu')]}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
                 </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="usuario_presupuestador" options="{'no_open':True,'no_create':True}" groups="construccion_gps.group_apus_usuario,construccion_gps.group_apus_jefe,construccion_gps.group_apus_gerente,construccion_gps.group_apus_administrador"/>
+                </xpath>
+                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['|', ('state','not in',['draft','sent','sale','presupuesto_revisado','generar_requisiciones','generar_proyecto']), ('id','=',False)]}
+                    </attribute>
+                    <attribute name="context">{'from_sale_cancel': True, 'pass_validation_reverse': True}</attribute>
+                </xpath>
                 <xpath expr="//header/button[@name='action_quotation_send']" position="attributes">
                     <attribute name="attrs">{'invisible': [('tipo_pedido', '!=', 'apu')]}</attribute>
                 </xpath>
                 <!-- nuevo wgu -->
-                <xpath expr="//header/button[@name='action_confirm']" position="replace"/>
                 <xpath expr="//header/button[@name='action_confirm']" position="replace"/>
 
                 <!-- Agregar UNO solo con reglas APU / no APU -->
@@ -204,7 +224,7 @@
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('state', '=', 'draft'), ('tipo_pedido', '=', 'apu')]</field>
             <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
-            <field name="context">{'default_tipo_pedido': 'apu', 'default_user_id': uid}</field>
+            <field name="context">{'default_tipo_pedido': 'apu'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Create a new quotation, the first step of a new sale!

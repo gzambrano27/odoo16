@@ -14,7 +14,7 @@ class HrEmployee(models.Model):
     bank_request_id=fields.Many2one('res.partner.bank.request','Solicitud de Creacion de Ctas.')
 
     def action_contact_create_validate(self):
-        Partner = self.env['res.partner']
+        Partner = self.env['res.partner'].with_context(bypass_partner_restriction=True)
         Bank = self.env['res.partner.bank']
         BankRequest = self.env['res.partner.bank.request']
         Movement = self.env['hr.employee.movement']
@@ -63,24 +63,24 @@ class HrEmployee(models.Model):
                 }
 
             # Buscar o crear contacto
-            partner = employee.work_contact_id
+            partner = employee.work_contact_id.with_context(bypass_partner_restriction=True)
             if not partner:
                 partners = Partner.sudo().search([('vat', '=', employee.identification_id)])
                 if not partners:
                     try:
-                        partner = Partner.create(partner_vals)
+                        partner = Partner.with_context(bypass_partner_restriction=True).create(partner_vals)
                         self.env.user.notify_info("Contacto creado correctamente")
                     except Exception as e:
                         raise ValidationError(f"Error al crear el contacto: {str(e)}")
                 elif len(partners) == 1:
-                    partner = partners[0]
+                    partner = partners[0].with_context(bypass_partner_restriction=True)
                     partner.write(partner_vals)
                     self.env.user.notify_info("Contacto actualizado correctamente")
                 else:
                     raise ValidationError(
                         f"Existen más de un contacto con identificación {employee.identification_id}, nombre {employee.name}")
             else:
-                partner.write(partner_vals)
+                partner.with_context(bypass_partner_restriction=True).write(partner_vals)
                 self.env.user.notify_info("Contacto actualizado correctamente")
 
             # Enlace o creación de cuenta o solicitud

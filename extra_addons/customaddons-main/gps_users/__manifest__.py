@@ -15,7 +15,7 @@
         'data/ir_config_parameter.xml',
         'security/res_groups.xml',
         'views/res_groups.xml',
-
+        'views/res_partner.xml',
 
     ],
     'installable': True,

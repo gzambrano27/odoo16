@@ -1017,6 +1017,22 @@ class AccountPaymentBankMacro(models.Model):
                             set(all_payslip_types + brw_line.request_id.payment_employee_id.get_type_documents()))
                         # last_payslip_type = brw_each.payment_employee_id.filter_iess
 
+                        ####pago fin de mes no afiliado
+
+                        if not last_payslip_type and all_payslip_types[0]=='payslip':  # no afiliado
+                            another_accounts = grouped_payments[pk_payment]["map_another_accounts"]
+                            if not another_accounts:
+                                another_accounts=[(5,)]
+                            another_accounts.append((0, 0, {
+                                    "account_id": brw_line.payment_account_id.id,
+                                    "partner_id": partner_id,
+                                    "name":  brw_line.request_id.name,
+                                    "credit": 0.00,
+                                    "debit": brw_line.amount,
+                                    'analytic_id':  False
+                            }))
+                            grouped_payments[pk_payment]["map_another_accounts"] = another_accounts
+
                     if brw_line.request_id.payment_employee_id not in map_amounts:
                         map_amounts[brw_line.request_id.payment_employee_id] = 0.00
                     map_amounts[brw_line.request_id.payment_employee_id] = map_amounts[
@@ -1039,6 +1055,21 @@ class AccountPaymentBankMacro(models.Model):
                         map_accounts[brw_line.payment_account_id] = 0.00
                     map_accounts[brw_line.payment_account_id] = map_accounts[
                                                                     brw_line.payment_account_id] + brw_line.amount
+
+                    if not last_payslip_type and all_payslip_types[0] == 'liquidation':  # no afiliado
+                        another_accounts = grouped_payments[pk_payment]["map_another_accounts"]
+                        if not another_accounts:
+                            another_accounts = [(5,)]
+                        another_accounts.append((0, 0, {
+                            "account_id": brw_line.payment_account_id.id,
+                            "partner_id": partner_id,
+                            "name": brw_line.request_id.name,
+                            "credit": 0.00,
+                            "debit": brw_line.amount,
+                            'analytic_id': False
+                        }))
+                        grouped_payments[pk_payment]["map_another_accounts"] = another_accounts
+
                 if brw_line.request_id.type == 'request':
                     if brw_line.request_id.enable_other_account:
                         brw_payment_account_id=brw_line.payment_account_id
@@ -1105,7 +1136,7 @@ class AccountPaymentBankMacro(models.Model):
             all_brw_lines = []
             consolidated_map_accounts = {}
             consolidated_map_amounts = {}
-
+            consolidated_map_another_accounts=[]
             sample_data = list(grouped_payments.values())[0]  # Tomamos cualquier entrada como base
 
             consolidated_payment = {
@@ -1143,11 +1174,13 @@ class AccountPaymentBankMacro(models.Model):
                 for emp, amt in data['map_amounts'].items():
                     consolidated_map_amounts[emp] = consolidated_map_amounts.get(emp, 0) + amt
 
+                consolidated_map_another_accounts+=data.get('map_another_accounts', [])
             consolidated_payment['amount'] = total_amount
             consolidated_payment['ref'] = ref_list
             consolidated_payment['brw_lines'] = all_brw_lines
             consolidated_payment['map_accounts'] = consolidated_map_accounts
             consolidated_payment['map_amounts'] = consolidated_map_amounts
+            consolidated_payment['map_another_accounts'] = consolidated_map_another_accounts
 
             # Sobreescribe grouped_payments con un solo item
             grouped_payments = {'CONSOLIDADO': consolidated_payment}

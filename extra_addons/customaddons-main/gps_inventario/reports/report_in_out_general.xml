@@ -58,7 +58,27 @@
 									<strong><span>Bodega:</span></strong> <span t-field="o.warehouse_name"/>
 								</div>
 								<div>
-									<strong><span>Proyecto:</span></strong> <span t-field="o.analytic_distribution"/>
+									<strong><span>Proyecto:</span></strong> 
+									<!-- <span t-field="o.analytic_distribution"/> -->
+									<t t-set="ad" t-value="o.analytic_distribution or {}"/>
+									<t t-if="ad">
+										<!-- Pares (id, porcentaje) ya con id en int -->
+										<t t-set="pairs" t-value="[(int(k), v) for k, v in ad.items()]"/>
+										<t t-set="n" t-value="len(pairs)"/>
+										<t t-set="idx" t-value="0"/>
+
+										<t t-foreach="pairs" t-as="p">
+										<t t-set="acc" t-value="env['account.analytic.account'].browse(p[0])"/>
+										<t t-set="pct" t-value="p[1]"/>
+
+										<span t-esc="acc.name"/>
+										<t t-if="pct and pct != 100.0"> (<t t-esc="pct"/>%)</t>
+
+										<t t-if="idx &lt; n - 1">, </t>
+										<t t-set="idx" t-value="idx + 1"/>
+										</t>
+									</t>
+									<t t-else="">—</t>
 								</div>
 								<div>
 									<strong><span>Solicitante:</span></strong> <span t-field="o.subcontratista_solicitante.name"/>
@@ -166,17 +186,18 @@
 								<div class="col-4 text-center">
 									<span>.....................................</span><br/>
 									<strong><span>Entrega conforme</span></strong><br/>
-									<strong><span t-field="o.create_uid.name"/></strong><br/>
+									<strong><span>Residente/Supervisor</span></strong><br/>
+									<!-- <strong><span t-field="o.create_uid.name"/></strong><br/> -->
 								</div>
 								<div class="col-4 text-center">
 									<span>.....................................</span><br/>
-									<strong><span>Intendente/Supervisor</span></strong><br/>
-									<strong><span t-field="o.intendente_solicitante.name"/></strong><br/>
+									<strong><span>Entrega Bodega</span></strong><br/>
+									<!-- <strong><span t-field="o.intendente_solicitante.name"/></strong><br/> -->
 								</div>
 								<div class="col-4 text-center">
 									<span>.....................................</span><br/>
-									<strong><span>Recibí conforme</span></strong><br/>
-									<strong><span t-field="o.intendente_solicitante.name"/></strong><br/>
+									<strong><span>Contratista</span></strong><br/>
+									<!-- <strong><span t-field="o.intendente_solicitante.name"/></strong><br/> -->
 								</div>
 							</t>
 						</div>

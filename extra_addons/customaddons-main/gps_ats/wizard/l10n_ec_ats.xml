@@ -110,6 +110,12 @@ context="{'default_report':'gps_ats.report_compras_acct_report_xlsx_act'}"
 invisible="not context.get('compras_acct',False)"
 							/>
 
+                        <button name="process_report" type="object" string="Procesar"
+							icon='fa-cogs'
+context="{'default_report':'gps_ats.report_facturas_pagadas_report_xlsx_act'}"
+invisible="not context.get('facturas_pagadas',False)"
+							/>
+
 							
 						<button special="cancel" name="cancel" string="Salir"
 							colspan="2" type="object" icon='fa-times' />
@@ -117,7 +123,22 @@ invisible="not context.get('compras_acct',False)"
 				</form>
 			</field>
 		</record>
-		
+
+        <record
+			id="l10n_ec_ats_reporte_facturas_pagadas_view_action"
+			model="ir.actions.act_window">
+			<field name="name">Reporte de Facturas Pagadas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">l10n.ec.ats</field>
+			<field name="view_mode">form</field>
+			<field name="view_id"
+				ref="l10n_ec_ats_reports_view_form" />
+			<field name="context">{'is_report':True,'facturas_pagadas':True,'hide_detailed':True,'update_table':False,'pass_validate':True,'only_update':False}
+			</field>
+			<field name="target">new</field>
+
+		</record>
+
 		<record
 			id="l10n_ec_ats_reporte_purchases_view_action"
 			model="ir.actions.act_window">

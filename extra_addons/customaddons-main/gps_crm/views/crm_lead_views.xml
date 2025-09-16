@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_crm_lead_form_scoring" model="ir.ui.view">
+    <field name="name">crm.lead.form.scoring</field>
+    <field name="model">crm.lead</field>
+    <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet//div[@name='button_box']" position="inside">
+        <button type="object" name="action_load_scoring_from_template"
+              groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+                class="oe_stat_button" icon="fa-star" string="Calificación">
+          <field name="score_percent"  class="oe_inline"/>
+          
+        </button>
+      </xpath>
+
+      <xpath expr="//sheet/notebook/page[1]" position="before">
+        <field name="revisado" invisible="1"/>
+        <page string="Calificación de Oportunidad" attrs="{'readonly': [('revisado','=',True)]}">
+          <group>
+            <group>
+              <field name="scoring_template_id" attrs="{'readonly': [('revisado','=',True)]}" options="{'no_create_edit': True, 'no_open': True}"/>
+            </group>
+            <group>
+              <field name="score_total" readonly="1" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+              <field name="score_max" readonly="1" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+              <field name="score_percent" readonly="1" groups="gps_crm.group_crm_kam_custom ,gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+            </group>
+          </group>
+
+          <button name="action_load_scoring_from_template" type="object"
+                  string="Cargar/Recargar preguntas" class="btn-secondary" attrs="{'invisible': [('revisado','=',True)]}"/>
+          <field name="scoring_line_ids" attrs="{'readonly': [('revisado','=',True)]}" nolabel="1" context="{'default_lead_id': active_id}">
+            <tree editable="bottom" no_open="True">
+              <field name="stage"/>
+              <field name="description"/>
+              <field name="question_type" readonly="1"/>
+              <field name="weight" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+
+              <!-- Para Sí/No -->
+              <field name="answer_yes"
+                    attrs="{'invisible': [('question_type', '!=', 'yes_no')]}"/>
+
+              <field name="radio_choice_id" 
+                domain="[('line_id','=',id)]"
+                options="{'no_create':True,'no_edit':True,'no_open':True}"
+                attrs="{'invisible': [('question_type', '!=', 'radio')]}"/>
+
+              <field name="points" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+          </tree>
+          </field>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_scoring_template_tree" model="ir.ui.view">
+    <field name="name">crm.lead.scoring.template.tree</field>
+    <field name="model">crm.lead.scoring.template</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="company_id"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_scoring_template_form" model="ir.ui.view">
+    <field name="name">crm.lead.scoring.template.form</field>
+    <field name="model">crm.lead.scoring.template</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="company_id"/>
+          </group>
+          <field name="line_ids">
+            <tree editable="bottom">
+              <field name="sequence" widget="handle"/>
+              <field name="stage"/>
+              <field name="description"/>
+              <field name="question_type"/>
+              <field name="group_key" attrs="{'invisible': [('question_type','!=','radio')]}"/>
+              <field name="weight"/>
+            </tree>
+          </field>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_scoring_template_search" model="ir.ui.view">
+    <field name="name">crm.lead.scoring.template.search</field>
+    <field name="model">crm.lead.scoring.template</field>
+    <field name="arch" type="xml">
+      <search string="Plantillas">
+        <field name="name"/>
+        <field name="company_id"/>
+      </search>
+    </field>
+  </record>
+
+  <!-- ACCIÓN: abre TREE primero y FORM después -->
+  <record id="action_scoring_templates" model="ir.actions.act_window">
+    <field name="name">Plantillas de calificación</field>
+    <field name="res_model">crm.lead.scoring.template</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_scoring_template_search"/>
+  </record>
+  <record id="action_scoring_templates_view_tree" model="ir.actions.act_window.view">
+    <field name="act_window_id" ref="action_scoring_templates"/>
+    <field name="sequence" eval="1"/>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_scoring_template_tree"/>
+  </record>
+
+  <record id="action_scoring_templates_view_form" model="ir.actions.act_window.view">
+    <field name="act_window_id" ref="action_scoring_templates"/>
+    <field name="sequence" eval="2"/>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_scoring_template_form"/>
+  </record>
+
+  <menuitem id="menu_crm_scoring_root" name="Calificacion"
+            groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+            parent="crm.crm_menu_config" sequence="101"/>
+
+  <menuitem id="menu_action_scoring_templates"
+                  parent="menu_crm_scoring_root"
+                  name="Plantillas de calificacion"
+                  sequence="102"
+                  groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+                  action="action_scoring_templates"/>
+                  
+  <record id="action_tipoproyecto_crm_form" model="ir.actions.act_window">
+        <field name="name">Tipo Proyecto</field>
+        <field name="res_model">centro.costo.tipo.proyecto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'import_enabled': True}</field>
+   </record>
+   
+   <!-- Menu: ahora en CRM Configuración -->
+   <menuitem id="menu_action_tipoproyecto_crm"
+             action="action_tipoproyecto_crm_form"
+             parent="crm.crm_menu_config"
+             sequence="51"/>
+</odoo>

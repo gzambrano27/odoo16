@@ -87,10 +87,12 @@ class ZkMachineWizard(models.Model):
             device_id_num = int(brw_each.device_id_num)
             if brw_each.type == "create_user":
                 brw_each.biometric_id.create_user(device_id_num, brw_each.employee_id)
-                brw_each.employee_id.write({"device_id_num": device_id_num})
+                brw_employee= brw_each.employee_id.with_context(bypass_partner_restriction=True)
+                brw_employee.write({"device_id_num": device_id_num})
             if brw_each.type == "delete_user":
                 brw_each.biometric_id.delete_user(device_id_num)
-                brw_each.employee_id.write({"device_id_num": None})
+                brw_employee = brw_each.employee_id.with_context(bypass_partner_restriction=True)
+                brw_employee.write({"device_id_num": None})
             if brw_each.type == "update_user":
                 if brw_each.type_update == "only_name":
                     brw_each.biometric_id.update_user(device_id_num, brw_each.employee_id)

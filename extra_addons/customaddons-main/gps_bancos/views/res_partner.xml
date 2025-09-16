@@ -84,6 +84,20 @@
     </record>
 
 
+          <record id="view_partner_new_bancos_form_inh" model="ir.ui.view">
+        <field name="name">view.partner.bancos.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+
+               <field name="category_id" position="attributes">
+<attribute name="options">{'no_create':True,'no_open':True,'no_edit':True}</attribute>
+               </field>
+
+        </field>
+    </record>
+
+
     </data>
 
 </odoo>

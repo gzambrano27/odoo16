@@ -4,6 +4,7 @@ from odoo import models, fields
 STATE_SELECTION = [
     ('draft', 'SdP'),
     ('control_presupuesto', 'Control Presupuesto'),
+    ('financiero', 'Financiero'),
     ('sent', 'SDP Enviada'),
     ('to approve', 'Para aprobar'),
     ('purchase', 'Orden de compra'),

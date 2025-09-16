@@ -25,7 +25,10 @@
             <field name="value">True</field>
         </record>
 
-
+        <record id="param_restringir_remocion_conciliacion" model="ir.config_parameter">
+        <field name="key">restringir.remocion.conciliacion</field>
+        <field name="value">False</field>
+    </record>
 
 
 

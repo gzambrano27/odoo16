@@ -46,6 +46,7 @@ class MrpProduction(models.Model):
             "mrp_production_id": self.id,
             "company_id": self.company_id.id,
             "picking_type_id": picking_type.id,
+            "analytic_distribution":{str(self.analytic_account_id.id): 100}  if self.analytic_account_id else False,
         }
 
         # Crear líneas de la solicitud

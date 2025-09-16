@@ -141,8 +141,9 @@ class ZkMachine(models.Model):
 
     def action_test_connection(self):
         self.ensure_one()
-        zk = ZkManager(self.name, port=self.port_no)
+        zk = ZkManager(self.name, port=self.port_no,verbose=False)
         v = zk.get_device_info()
+        print(v)
         if v.get('status', NO_JOBS) != COMMIT:
             raise ValidationError(v.get('message', "No se pudo recuperar la información"))
         return self.__show_message("Información recuperada exitosamente: %s" % (v.get('info','')), type="success")

@@ -94,7 +94,7 @@ class MacroPurchaseRequestLine(models.Model):
         default=fields.Date.context_today,
     )
     is_editable = fields.Boolean(compute="_compute_is_editable", readonly=True)
-    is_editable_assigned_to = fields.Boolean(compute="_compute_is_editable_assigned_to", readonly=True)
+    is_editable_assigned_to = fields.Boolean(readonly=True)
     specifications = fields.Text()
     request_state = fields.Selection(
         string="Request state",

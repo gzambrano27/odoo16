@@ -280,7 +280,6 @@ class DocumentBankReconciliation(models.Model):
             if not record.file:
                 raise ValidationError("Debe adjuntar un archivo para procesar.")
             if 'bolivariano' in journal_name:
-
                 try:
                     content = base64.b64decode(record.file)
                     excel_file = io.BytesIO(content)
@@ -478,7 +477,19 @@ class DocumentBankReconciliation(models.Model):
         return True
 
     def action_done(self):
+        DEC = 2
         for rec in self:
+            total_summary = 0.00
+            for summary in rec.summary_line_ids:
+                total_summary += summary.total_amount
+            total_summary = round(total_summary, DEC)
+            total_lines = 0.00
+            for line in rec.line_ids:
+                total_lines += line.signed_amount
+            total_lines = round(total_lines, DEC)
+            if total_summary != total_lines:
+                raise ValidationError(
+                    _("La suma del detalle %s debe ser igual a la suma del resumen %s") % (total_lines, total_summary))
             rec.write({'state': 'done'})
         return True
 
@@ -712,7 +723,10 @@ FROM SALDO_INICIAL si, SALDO_FINAL sf;  ''',(rec.company_id.id,rec.journal_id.id
         for rec in self:
             rec.summary_line_ids.unlink()  # Borra resumen previo
 
-            data = {}
+            com_type_id=self.env.ref('gps_bancos.reconciliation_comisiones').id
+            key_com = (com_type_id, rec.company_id.id, rec.company_id.currency_id.id)
+
+            data = {key_com:0.00}
             for line in rec.line_ids:
                 type_id = line.type_id.id if line.type_id else uncategorized_type.id
                 sign = 1 if line.transaction_type == 'debit' else -1
@@ -721,10 +735,23 @@ FROM SALDO_INICIAL si, SALDO_FINAL sf;  ''',(rec.company_id.id,rec.journal_id.id
                 data[key] += sign * line.amount
 
             for (type_id, company_id, currency_id), total in data.items():
+                brw_type=self.env['document.bank.reconciliation.type'].sudo().browse(type_id)
                 self.env['document.bank.reconciliation.summary'].create({
                     'document_id': rec.id,
                     'type_id': type_id,
                     'company_id': company_id,
                     'currency_id': currency_id,
                     'total_amount': total,
+                    'can_edit':brw_type.can_edit
                 })
+
+
+    def get_amounts_grouped_by_type(self):
+        self.ensure_one()
+        rec=self
+        lines = rec.summary_line_ids
+        result = {}
+        for line in lines:
+            code = line.type_id.code or 'sin_tipo'
+            result[code] = result.get(code, 0.0) + line.total_amount
+        return result

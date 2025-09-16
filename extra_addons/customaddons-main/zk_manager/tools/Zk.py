@@ -20,10 +20,10 @@ RETRY_SOUND = 4
 
 class ZkManager(object):
 
-    def __init__(self, ip, port=4370, timeout=5, verbose=False):
+    def __init__(self, ip, port=4370, timeout=5, verbose=False ):
         self.conn = None
         self.verbose = verbose
-        self.zk = ZK(ip, port=port, timeout=timeout, verbose=self.verbose)
+        self.zk = ZK(ip, port=port, timeout=timeout, verbose=self.verbose )
 
     def _log(self, msg):
         if self.verbose:
@@ -160,6 +160,8 @@ class ZkManager(object):
                     user_id = str(uid)
                 exists_test, exists_user, exists_finger = self.exists(uid)
                 if not exists_test:
+                    print(password)
+                    print(uid)
                     self.zk.set_user(uid=uid, name=name, privilege=privilege, password=password, group_id=group_id,
                                      user_id=user_id, card=card)
                     exists_test, exists_user, exists_finger = self.exists(uid)

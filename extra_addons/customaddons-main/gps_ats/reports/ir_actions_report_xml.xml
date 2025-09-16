@@ -36,6 +36,14 @@
         <field name="report_file">Reportes de Compras por Cuentas</field>
     </record>
 
+
+    <record id="report_facturas_pagadas_report_xlsx_act" model="ir.actions.report">
+        <field name="name">Reportes de Facturas Pagadas</field>
+        <field name="model">l10n.ec.ats</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">gps_ats.report_facturas_pagadas_xlsx</field>
+        <field name="report_file">Reportes de Facturas Pagadas</field>
+    </record>
     
 </odoo>
         

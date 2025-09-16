@@ -1,0 +1,26 @@
+<odoo>
+    <!-- Grupo base: usuarios CRM -->
+    <record id="group_crm_user_custom" model="res.groups">
+        <field name="name">Usuario Oportunidades</field>
+        <field name="category_id" ref="base.module_category_sales_crm"/>
+    </record>
+
+    <!-- KAM -->
+    <record id="group_crm_kam_custom" model="res.groups">
+        <field name="name">KAM</field>
+        <field name="implied_ids" eval="[(4, ref('gps_crm.group_crm_user_custom'))]"/>
+        <field name="category_id" ref="base.module_category_sales_crm"/>
+    </record>
+
+    <!-- Gerencia -->
+    <record id="group_crm_manager_custom" model="res.groups">
+        <field name="name">Gerencia</field>
+        <field name="category_id" ref="base.module_category_sales_crm"/>
+    </record>
+
+    <!-- Administrador -->
+    <record id="group_crm_admin_custom" model="res.groups">
+        <field name="name">Administrador CRM</field>
+        <field name="category_id" ref="base.module_category_sales_crm"/>
+    </record>
+</odoo>

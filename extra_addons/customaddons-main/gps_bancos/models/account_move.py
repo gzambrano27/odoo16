@@ -55,6 +55,10 @@ class AccountMove(models.Model):
     def action_post(self):
         values=super(AccountMove,self).action_post()
         for brw_each in self:
+
+            if brw_each.partner_id:
+                brw_each.partner_id.validate_partner_for_transaction(company_id=brw_each.company_id.id)
+
             purchase_orders = brw_each.invoice_line_ids.mapped('purchase_line_id.order_id')
             if purchase_orders:
                 purchase_orders.liberate_requests_payments()
@@ -64,6 +68,8 @@ class AccountMove(models.Model):
         return values
 
     def button_draft(self):
+        for brw_each in self:
+            brw_each.validate_request_payments()
         values=super(AccountMove,self).button_draft()
         for brw_each in self:
             brw_each.liberate_requests_payments()
@@ -71,11 +77,36 @@ class AccountMove(models.Model):
         return values
 
     def button_cancel(self):
+        for brw_each in self:
+            brw_each.validate_request_payments()
         values=super(AccountMove,self).button_cancel()
         for brw_each in self:
             brw_each.liberate_requests_payments()
             brw_each.write({"date_approved": None})
         return values
+
+    def validate_request_payments(self):
+        restrict_enabled = self.env['ir.config_parameter'].sudo().get_param(
+            'restringir.remocion.conciliacion', default='False'
+        )
+
+        if restrict_enabled in ('True', '1'):
+            for brw_each in self:
+                srch = self.env["account.payment.request"].search([('company_id', '=', brw_each.company_id.id),
+                                                               ('type', '=', 'account.move'),
+                                                               ('invoice_line_id', 'in', brw_each.line_ids.ids),
+                                                                   '|',
+                                                               ('state', '!=', 'cancelled'),
+                                                               ('paid', '!=', 0.00)])
+                if srch:
+                    if not self.env.user.has_group(
+                            'gps_bancos.group_confimar_sol_pagos') or not self.env.user.has_group(
+                            'gps_bancos.group_pagar_sol_pagos'):
+                        raise ValidationError(
+                            _("El documento con id # %s ,%s esta comprometido en las solicitudes %s")
+                            % (brw_each.id, brw_each.name, ",".join([str(each_id) for each_id  in srch.mapped('id')]))
+                        )
+        return True
 
     def liberate_requests_payments(self):
         for brw_each in self:
@@ -405,3 +436,45 @@ group by invoice_payment_term_id,invoice_id,company_id,partner_id,invoice_name  
 		GROUP BY fact.id,moveant.id,  p.move_id """,(move_id,))
         result=self._cr.dictfetchone()
         return result
+
+    def js_remove_outstanding_partial(self, partial_id):
+        self = self.with_context(pass_validation_reverse=True)
+        restrict_enabled = self.env['ir.config_parameter'].sudo().get_param(
+            'restringir.remocion.conciliacion', default='False'
+        )
+
+        if restrict_enabled in ('True', '1'):
+
+            partial = self.env['account.partial.reconcile'].browse(partial_id)
+            lines = partial.debit_move_id | partial.credit_move_id
+            payments = lines.move_id.payment_id
+
+            # Validación: si algún pago tiene bank_macro_id
+            restricted_payments = payments.filtered(lambda p: p.bank_macro_id)
+            # 🔎 Aquí se agregan los cruces por anticipos
+            # if not restricted_payments:
+            #     ##########################################3
+            #
+            #     anticipos_accounts = self.env['account.account'].search([
+            #         ('account_type', 'in', ['asset_prepayments']),  # tipo anticipo
+            #         ('prepayment_account', '=', True),  # flag anticipo
+            #         ('reconcile', '=', True)  # conciliable
+            #     ])
+            #     anticipos_lines=lines.mapped('move_id.line_ids').filtered(
+            #         lambda pr: pr.debit_move_id.account_id in anticipos_accounts
+            #                    or pr.credit_move_id.account_id in anticipos_accounts
+            #     )
+            #     if anticipos_lines:
+            #         # Restricción: sacar los pagos ligados a esos partials
+            #         anticipos_payments = anticipos_lines.mapped('move_id.payment_id')
+            #         print("====",anticipos_payments)
+            #     ##########################################
+            if restricted_payments:
+                # Validar grupo permitido
+                if not self.env.user.has_group('gps_bancos.group_confimar_sol_pagos') or not self.env.user.has_group('gps_bancos.group_pagar_sol_pagos'):
+                    raise ValidationError(
+                        "No tiene permisos para remover conciliaciones relacionadas "
+                        "con pagos de tipo pagos al banco.Ver Pago al banco # %s" % (",".join(restricted_payments.mapped('name')))
+                    )
+        res = super(AccountMove,self).js_remove_outstanding_partial(partial_id)
+        return res

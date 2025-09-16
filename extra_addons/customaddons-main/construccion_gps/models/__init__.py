@@ -7,3 +7,4 @@ from . import product_template
 from . import tareas
 from . import plantilla_tareas
 from . import apu_tags
+from . import tipo_presupuesto

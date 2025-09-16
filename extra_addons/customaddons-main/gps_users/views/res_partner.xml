@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+
+    <odoo>
+
+       <record id="view_partner_form_user_id_locked" model="ir.ui.view">
+    <field name="name">res.partner.form.user_id.locked</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//page[@name='sales_purchases']//group[@name='sale']//field[@name='user_id']" position="attributes">
+        <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
+      </xpath>
+    </field>
+          </record>
+
+  <record id="view_partner_form_user_id_locked" model="ir.ui.view">
+    <field name="name">res.partner.form.user_id.locked</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <!-- Campo "Salesperson / user_id" en la pestaña Sales & Purchase -->
+      <xpath expr="//page[@name='sales_purchases']//group[@name='sale']//field[@name='user_id']" position="attributes">
+        <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
+      </xpath>
+
+
+        <xpath expr="//div[contains(@class,'o_address_format')]//field[@name='country_id']" position="attributes">
+        <attribute name="options">
+          {'no_open': True, 'no_quick_create': True, 'no_create': True, 'no_create_edit': True}
+        </attribute>
+            <attribute name="required">1</attribute>
+      </xpath>
+
+        <xpath expr="//div[contains(@class,'o_address_format')]//field[@name='state_id']" position="attributes">
+        <attribute name="options">
+          {'no_open': True, 'no_quick_create': True, 'no_create': True, 'no_create_edit': True}
+        </attribute>
+      </xpath>
+
+      <!-- state_id en el subform (Contacts & Addresses > child_ids > form) -->
+      <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']//form//field[@name='state_id']" position="attributes">
+        <attribute name="options">
+          {'no_open': True, 'no_quick_create': True, 'no_create': True, 'no_create_edit': True}
+        </attribute>
+      </xpath>
+
+
+    </field>
+  </record>
+</odoo>
+
+
+
+     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+           <field name="name">Clientes</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'bypass_from_action':True,'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}</field>
+             <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo cliente en tu libro de direcciones
+              </p><p>
+                Odoo te ayuda a rastrear fácilmente todas las actividades relacionadas con un cliente.
+              </p>
+            </field>
+        </record>
+
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+            <field name="name">Proveedores</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'bypass_from_action':True,'search_default_supplier': 1,'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo proveedor en tu libreta de direcciones
+              </p><p>
+                Odoo te ayuda a monitorear todas las actividades relacionadas a un proveedor.
+              </p>
+            </field>
+        </record>
+
+
+
+</odoo>

@@ -232,23 +232,27 @@ ORDER BY UF.TIPO ASC, UF.MOVE_DATE, UF.MOVE_ID, UF.LINE_ID;""" )
             ws['F2'] = len(result)
 
     def create_report_resumen(self, brw_document, ws):
-
+        DEC=2
         ws['C4'] = brw_document.company_id.name
         ws['F4'] = "FECHA %s" % (brw_document.date,)
-        ws['B8'] = brw_document.journal_id.name
-        ws['B10'] = "MES DE %s DEL %s " % (self.env["calendar.month"].sudo().get_month_name(brw_document.date_to.month),int(brw_document.date_to.year))
-        ws['C14'] = "SALDO SEGÚN BANCOS AL %s" % (brw_document.date_to,)
-        ws['C31'] = "SALDO LIBROS AL %s" % (brw_document.date_to,)
+        ws['B8'] = (brw_document.journal_id.name).upper()
+        ws['B10'] = ("MES DE %s DEL %s " % (self.env["calendar.month"].sudo().get_month_name(brw_document.date_to.month),int(brw_document.date_to.year))).upper()
 
-        #ws['F4'] = brw_document.final_balance
-        ws['F14'] = brw_document.final_balance
-        ws['F18'] = brw_document.cheques_no_cobrados
-        ws['F20'] = brw_document.nd_no_reg_bancos
-        ws['F22'] = brw_document.depositos_no_banco
-        ws['F24'] = brw_document.depositos_nc_no_libros
-        ws['F26'] = brw_document.nd_no_reg_libros
-        ws['F28'] = brw_document.saldo_inicial_meses_anteriores
+        ws['D13'] = "SALDO INICIAL LIBROS AL %s" % (brw_document.date_from,)
+        ws['F13'] = brw_document.saldo_inicial_meses_anteriores
 
-        ws['F30'] = brw_document.final_balance
-        ws['F31'] = brw_document.saldo_fecha_limite
-        ws['F32'] = brw_document.calculated_difference
+        values=brw_document.get_amounts_grouped_by_type()
+        ws['F17'] =round(abs(values.get('cheque',0.00)),DEC)
+        ws['F18'] =round(abs(values.get('realizadas',0.00)),DEC)
+        ws['F19'] =round(abs(values.get('comision',0.00)),DEC)
+        ws['F21'] =round(abs(values.get('recibidas',0.00)),DEC)
+
+        ws['F24'] = brw_document.final_balance
+
+        ws['D23'] = "SALDO FINAL LIBROS %s" % (brw_document.date_to,)
+        ws['D24'] = "SALDO FINAL ESTADO DE CUENTA %s" % (brw_document.date_to,)
+
+        ws['B28'] = brw_document.comments or ''
+
+
+

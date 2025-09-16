@@ -152,42 +152,39 @@ class DocumentFinancialWizard(models.Model):
             if record.payment_other > record.original_payment_other:
                 pass#raise ValidationError("El valor de 'Otros' no puede ser mayor al valor original.")
 
-    @api.onchange('payment_capital','payment_interest','payment_overdue_interest','payment_other')
-    @api.depends('payment_capital', 'payment_interest', 'payment_overdue_interest', 'payment_other')
+    @api.onchange('payment_capital','payment_interest','payment_overdue_interest','payment_other','payment_amount_income')
+    @api.depends('payment_capital', 'payment_interest', 'payment_overdue_interest', 'payment_other','payment_amount_income')
     def _compute_total(self):
         DEC=2
         for brw_each in self:
-            payment_total=round(brw_each.payment_capital+brw_each.payment_interest+brw_each.payment_overdue_interest+brw_each.payment_other,DEC)
-            # if brw_each.internal_type=='in':
-            #     payment_total = round(brw_each.amount,DEC)
+
+            payment_total=round(brw_each.payment_capital+\
+                                brw_each.payment_interest+\
+                                brw_each.payment_overdue_interest+\
+                                brw_each.payment_other,DEC)
+            if brw_each.internal_type=='in':
+                payment_total=brw_each.payment_amount_income
             brw_each.payment_total=payment_total
 
-    @api.onchange('line_ids','line_ids.total_pending')
-    @api.depends('line_ids','line_ids.total_pending')
-    def __compute_income_total(self):
-        DEC = 2
-        for brw_each in self:
-            payment_amount_income = round(sum(brw_each.line_ids.mapped('total_pending')) , DEC)
-            # if brw_each.internal_type=='in':
-            brw_each.payment_amount_income = payment_amount_income
-
-    @api.onchange('payment_cobro_amount', 'payment_cobro_interes')
-    @api.depends('payment_cobro_amount', 'payment_cobro_interes')
+    @api.onchange('payment_cobro_amount', 'payment_cobro_interes','internal_type')
+    @api.depends('payment_cobro_amount', 'payment_cobro_interes','internal_type')
     def _compute_income_total(self):
         DEC = 2
         for brw_each in self:
-            payment_amount_income = round(brw_each.payment_cobro_amount+brw_each.payment_cobro_interes, DEC)
-            # if brw_each.internal_type=='in':
+            payment_amount_income = 0.00
+            if brw_each.internal_type=='in':
+                payment_amount_income = round(brw_each.payment_cobro_amount + brw_each.payment_cobro_interes, DEC)
             brw_each.payment_amount_income = payment_amount_income
 
     @api.constrains('payment_cobro_amount', 'payment_cobro_interes','original_cobro_amount', 'original_cobro_interes' )
     @api.onchange('payment_cobro_amount', 'payment_cobro_interes','original_cobro_amount', 'original_cobro_interes' )
     def _check_payment_not_exceed_cobro_original(self):
         for record in self:
-            if record.payment_cobro_amount > record.original_cobro_amount:
-                 raise ValidationError("El monto ingresado no puede ser mayor al monto original.")
-            if record.payment_cobro_amount > record.original_cobro_amount:
-                 raise ValidationError("El interés ingresado no puede ser mayor al interés original.")
+            pass
+            # if record.payment_cobro_amount > record.original_cobro_amount:
+            #      raise ValidationError("El monto ingresado no puede ser mayor al monto original.")
+            # if record.payment_cobro_amount > record.original_cobro_amount:
+            #      raise ValidationError("El interés ingresado no puede ser mayor al interés original.")
 
 
     @api.onchange('document_financial_id', 'document_financial_id.total_pending_collection')
@@ -198,10 +195,7 @@ class DocumentFinancialWizard(models.Model):
             payment_amount_collect = round(brw_each.document_financial_id.total_pending_collection, DEC)
             brw_each.payment_amount_collect = payment_amount_collect
 
-    @api.onchange('payment_amount_income')
-    def _onchange_payment_total_income(self):
-        for brw_each in self:
-            brw_each.payment_total = brw_each.payment_amount_income
+
 
     @api.onchange('payment_amount_collect')
     def _onchange_payment_amount_collect(self):
@@ -513,7 +507,7 @@ class DocumentFinancialWizard(models.Model):
 
         original_cobro_amount_sinaplicar = 0.00
         original_cobro_interes_sinaplicar = 0.00
-
+        amount_retenido=0.00
         for line in self.line_ids:
             payment_capital+= round(line.payment_capital, DEC)
             payment_interest+= round(line.payment_interest, DEC)
@@ -523,10 +517,10 @@ class DocumentFinancialWizard(models.Model):
             original_payment_interest_sinaplicar += round(line.payment_interest, DEC)
             original_payment_other_sinaplicar += round(line.payment_other, DEC)
 
-            payment_cobro_amount += round(line.amount, DEC)
+            payment_cobro_amount += round(line.amount+line.amount_iva, DEC)
             payment_cobro_interes += round(line.amount_interes, DEC)
 
-            original_cobro_amount_sinaplicar += round(line.amount, DEC)
+            original_cobro_amount_sinaplicar += round(line.amount+line.amount_iva, DEC)
             original_cobro_interes_sinaplicar += round(line.amount_interes, DEC)
 
             for brw_payment in line.payment_ids:
@@ -550,27 +544,32 @@ class DocumentFinancialWizard(models.Model):
                         if brw_payment.state == 'validated':
                             payment_cobro_amount_done += round(brw_payment.payment_amount, DEC)
                             payment_cobro_interes_done += round(brw_payment.payment_interes_generado, DEC)
-
+            payment_cobro_amount_done += line.amount_retenido
+        #############################################################################################
         self.payment_interest = round(payment_interest-payment_interest_done, DEC)
         self.payment_capital = round(payment_capital-payment_capital_done, DEC)
         self.payment_other=round(payment_other-payment_other_done,DEC)
-        ##############################################################################
+        #############################################################################################
         self.original_payment_capital =self.payment_capital
         self.original_payment_interest = self.payment_interest
         self.original_payment_other = self.payment_other
-        #############################################################################
-        self.original_payment_capital_sinaplicar = original_payment_capital_sinaplicar
-        self.original_payment_interest_sinaplicar = original_payment_interest_sinaplicar
-        self.original_payment_other_sinaplicar = original_payment_other_sinaplicar
-        #############################################################################
+        #############################################################################################
+        original_payment_capital_sinaplicar=original_payment_capital_sinaplicar-payment_capital_done
+        original_payment_interest_sinaplicar = original_payment_interest_sinaplicar - payment_interest_done
+        original_payment_other_sinaplicar = original_payment_other_sinaplicar - payment_other_done
+        self.original_payment_capital_sinaplicar = round(original_payment_capital_sinaplicar,DEC)
+        self.original_payment_interest_sinaplicar =round( original_payment_interest_sinaplicar,DEC)
+        self.original_payment_other_sinaplicar = round(original_payment_other_sinaplicar,DEC)
+
+
+        #############################################################################################
         self.payment_cobro_amount=round(payment_cobro_amount-payment_cobro_amount_done,DEC)
         self.payment_cobro_interes = round(payment_cobro_interes-payment_cobro_interes_done,DEC)
-
-        self.original_cobro_amount = self.payment_cobro_amount
-        self.original_cobro_interes = self.payment_cobro_interes
-
-        self.original_cobro_amount_sinaplicar = original_cobro_amount_sinaplicar
-        self.original_cobro_interes_sinaplicar = original_cobro_interes_sinaplicar
+        #############################################################################################
+        self.original_cobro_amount = round(payment_cobro_amount-payment_cobro_amount_done,DEC)
+        self.original_cobro_interes = round(payment_cobro_interes-payment_cobro_interes_done,DEC)
+        self.original_cobro_amount_sinaplicar = round(original_cobro_amount_sinaplicar,DEC)
+        self.original_cobro_interes_sinaplicar = round(original_cobro_interes_sinaplicar,DEC)
 
     @api.onchange('amount','years')
     def compute_capital(self):
@@ -944,7 +943,7 @@ class DocumentFinancialWizard(models.Model):
                         "name": ref,
                         "credit":brw_line_account.credit,
                         "debit": brw_line_account.debit,
-                    "analytic_id":brw_line_account.analytic_id and brw_line_account.analytic_id.id or False
+                        "analytic_id":brw_line_account.analytic_id and brw_line_account.analytic_id.id or False
                 }))
             else:
                 amount += brw_line_account.credit
@@ -1257,10 +1256,8 @@ class DocumentFinancialWizard(models.Model):
                         'line_id': financial_line.id,
                         'invoice_id': inv.id,
                         'amount': monto_asignado,
-                        'amount_base': monto_base if monto_asignado == monto_factura else round(
-                            monto_asignado - monto_iva, DEC),
-                        'amount_iva': monto_iva if monto_asignado == monto_factura else round(
-                            monto_asignado - monto_base, DEC),
+                        'amount_base': round(monto_base, DEC),
+                        'amount_iva':round(monto_iva, DEC),
                         'amount_retenido': round(withholds, DEC),
                     }))
 

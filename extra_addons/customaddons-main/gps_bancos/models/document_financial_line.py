@@ -68,8 +68,8 @@ class DocumentFinancialLine(models.Model):
 
     version_payment_ids = fields.Many2many("document.financial.line.payment","rel_doc_payment_line_payment","line_id","payment_id","Pagos")
 
-    total_invoiced = fields.Monetary("Facturado", default=0.00, required=False, store=True, compute="_compute_total_invoice",tracking=True)
-    total_to_invoice = fields.Monetary("Por Facturar", default=0.00, required=False, store=True, compute="_compute_total_invoice",tracking=True)
+    total_invoiced = fields.Monetary("Facturado", default=0.00, required=False, store=True, compute="_compute_total",tracking=True)
+    total_to_invoice = fields.Monetary("Por Facturar", default=0.00, required=False, store=True, compute="_compute_total",tracking=True)
 
     invoice_ids = fields.One2many("document.financial.line.invoiced", "line_id", "Facturado")
 
@@ -104,31 +104,11 @@ class DocumentFinancialLine(models.Model):
     placement_ids=fields.One2many('document.financial.placement','document_line_id','Colocaciones')
     liquidation_ids=fields.Many2many('document.financial.liquidation',string='Liquidaciones',compute="_compute_liquidation_ids")
 
-    amount_iva = fields.Monetary("Valor IVA", default=0.00,store=True, required=False,compute="_compute_amount_invoices")
-    amount_retenido = fields.Monetary("Valor Retenido", default=0.00, store=True, required=False,compute="_compute_amount_invoices")
-    amount_base = fields.Monetary("Valor Base", default=0.00, store=True, required=False,compute="_compute_amount_invoices")
+    amount_iva = fields.Monetary("Valor IVA", default=0.00,store=True, required=False,compute="_compute_total")
+    amount_retenido = fields.Monetary("Valor Retenido", default=0.00, store=True, required=False,compute="_compute_total")
+    amount_base = fields.Monetary("Valor Base", default=0.00, store=True, required=False,compute="_compute_total")
     amount_total_payments = fields.Monetary("Valor Recaudado", default=0.00, store=True, required=False,
-                                  compute="_compute_amount_invoices")
-
-
-    @api.depends('invoice_ids','invoice_ids.invoice_id','invoice_ids.invoice_id.state')
-    def _compute_amount_invoices(self):
-        DEC=2
-        for brw_each in self:
-            amount_iva=0.00
-            amount_retenido=0.00
-            amount_base=0.00
-            amount_total_payments=0.00
-            for brw_line in brw_each.invoice_ids:
-                if brw_line.invoice_id and brw_line.invoice_id.state=='posted':
-                    amount_iva+=brw_line.amount_iva
-                    amount_retenido += brw_line.amount_retenido
-                    amount_base += brw_line.amount_base
-            amount_total_payments+=brw_each.payment_amount+amount_retenido+amount_iva
-            brw_each.amount_iva=round(amount_iva,DEC)
-            brw_each.amount_base = round(amount_base,DEC)
-            brw_each.amount_retenido = round(amount_retenido,DEC)
-            brw_each.amount_total_payments=round(amount_total_payments,DEC)
+                                  compute="_compute_total")
 
     @api.depends('document_id', 'document_id.partner_id')
     def _compute_partner(self):
@@ -193,7 +173,8 @@ class DocumentFinancialLine(models.Model):
                   'payment_ids.payment_id','payment_ids.payment_id.state',
                  'payment_ids.payment_id.reversed_payment_id',
                  'payment_ids.state','payment_ids.payment_group_id.state',
-                 'is_copy','copy_payment_capital','copy_payment_interest','copy_payment_overdue_interest','copy_payment_other','copy_paid'
+                 'is_copy','copy_payment_capital','copy_payment_interest','copy_payment_overdue_interest','copy_payment_other','copy_paid',
+                 'invoice_ids','invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount'
                  )
     @api.onchange('document_id.state',
                  'payment_capital', 'payment_interest', 'payment_other',
@@ -202,8 +183,9 @@ class DocumentFinancialLine(models.Model):
                   'payment_ids.payment_id','payment_ids.payment_id.state',
                   'payment_ids.payment_id.reversed_payment_id',
                   'payment_ids.state','payment_ids.payment_group_id.state',
-                 'is_copy','copy_payment_capital','copy_payment_interest','copy_payment_overdue_interest','copy_payment_other','copy_paid',
-                  'payment_ids.','payment_ids.'
+                 'is_copy','copy_payment_capital','copy_payment_interest',
+                  'copy_payment_overdue_interest','copy_payment_other','copy_paid',
+                  'invoice_ids','invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount'
                   )
     def _compute_total(self):
         for brw_each in self:
@@ -212,17 +194,21 @@ class DocumentFinancialLine(models.Model):
     def update_total(self):
         DEC = 2
         for brw_each in self:
-            total = brw_each.amount+brw_each.amount_interes#
+            brw_each.update_invoiced_total()
+            amount_iva = 0.00
+            amount_retenido = 0.00
+            amount_base = 0.00
+            amount_total_payments = 0.00
+
+            total = brw_each.amount+brw_each.amount_interes
+
             if brw_each.is_copy:
                 total = round(
                     brw_each.copy_payment_capital + brw_each.copy_payment_interest + brw_each.copy_payment_other,
                     DEC)
             else:
                 if brw_each.document_id.internal_type=='out':#
-                    total=round(
-                    brw_each.payment_capital + brw_each.payment_interest  +   brw_each.payment_other,
-                    DEC)
-
+                    total=round(   brw_each.payment_capital + brw_each.payment_interest  +   brw_each.payment_other, DEC)
             total_paid = 0.00
             payment_overdue_interest=0.00
             payment_amount=0.00
@@ -249,16 +235,34 @@ class DocumentFinancialLine(models.Model):
                                     total_paid += brw_line.payment_amount+brw_line.payment_interes_generado
                                     payment_amount+=brw_line.payment_amount
                                     payment_amount_interes += brw_line.payment_interes_generado
+
                             else:
                                 if brw_line.state == 'validated':
                                     total_paid +=brw_line.payment_amount+brw_line.payment_interes_generado
-
                                     payment_amount += brw_line.payment_amount
                                     payment_amount_interes += brw_line.payment_interes_generado
+                        ################################################################
+                        if brw_each.invoice_ids:
+                            for brw_line in brw_each.invoice_ids:
+                                if brw_line.invoice_id and brw_line.invoice_id.state == 'posted':
+                                    amount_iva += brw_line.amount_iva
+                                    amount_retenido += brw_line.amount_retenido
+                                    amount_base += brw_line.amount_base
+                            total_paid += amount_retenido
+                        payment_amount += amount_retenido
+                        amount_total_payments += payment_amount #+ amount_retenido  # +amount_iva
+                        ################################################################
 
-            total=total+payment_overdue_interest#se suma a los interese e valor por pagar
+
+            total=total+payment_overdue_interest+amount_iva#se suma a los interese e valor por pagar
             total_to_paid = total  # siempre tomara el valor a pagar como reflejo de lo que debera pagar
-            brw_each.total = total
+
+            brw_each.amount_iva = round(amount_iva, DEC)
+            brw_each.amount_base = round(amount_base, DEC)
+            brw_each.amount_retenido = round(amount_retenido, DEC)
+            brw_each.amount_total_payments = round(amount_total_payments, DEC)
+
+            brw_each.total = round(total, DEC)
             brw_each.total_to_paid = round(total_to_paid, DEC)
             brw_each.total_paid = round(total_paid, DEC)
             brw_each.total_pending = round(total_to_paid - total_paid, DEC)
@@ -268,8 +272,11 @@ class DocumentFinancialLine(models.Model):
             brw_each.payment_amount_interes =round( payment_amount_interes,DEC)
 
 
-    @api.depends('document_id.state', 'total', 'invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount' )
-    @api.onchange('document_id.state', 'total', 'invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount' )
+
+    # @api.depends('document_id.state', 'total',
+    #              'invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount' )
+    # @api.onchange('document_id.state', 'total',
+    #               'invoice_ids.state','invoice_ids.invoice_date', 'invoice_ids', 'invoice_ids.amount' )
     def _compute_total_invoice(self):
         for brw_each in self:
             brw_each.update_invoiced_total()
@@ -279,12 +286,14 @@ class DocumentFinancialLine(models.Model):
         for brw_each in self:
             total_invoiced = 0.00
             total_to_invoice = 0.00
+            amount_iva = 0.00
             if brw_each.document_id.internal_type!='out':
                 total=brw_each.total
                 if brw_each.document_id.state not in ("draft", "cancelled"):  # paid,#approved
                     for brw_line in brw_each.invoice_ids:
-                        if brw_line.invoice_id.state=='posted':
-                            total_invoiced += brw_line.amount
+                        if brw_line.invoice_id and brw_line.invoice_id.state=='posted':
+                            total_invoiced += brw_line.amount+brw_line.amount_iva
+                            amount_iva+=brw_line.amount_iva
                 total_to_invoice=total-total_invoiced
             brw_each.total_invoiced = round(total_invoiced, DEC)
             brw_each.total_to_invoice = round(total_to_invoice, DEC)

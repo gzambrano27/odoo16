@@ -44,6 +44,6 @@ class PurchaseOrder(models.Model):
             'changed_by': self.env.user.id,
             'state_from': False,
             'state_to': 'draft',  # ajusta si tu selección usa otro valor para “borrador”
-            'note': 'Orden de compra creado desde '+po.purchase_request_id.name or '',
+            'note': "Orden de compra creada desde %s" % (po.purchase_request_id.display_name if po.purchase_request_id else ""),
         })
         return po

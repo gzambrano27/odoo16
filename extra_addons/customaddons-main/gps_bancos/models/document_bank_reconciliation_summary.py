@@ -9,6 +9,7 @@ class DocumentBankReconciliationSummary(models.Model):
     type_id = fields.Many2one('document.bank.reconciliation.type', string='Tipo', required=False, index=True)
     total_amount = fields.Monetary(string='Monto Total', required=True)
     currency_id = fields.Many2one('res.currency', string="Moneda", required=True)
+    can_edit=fields.Boolean('Puede Editar',default=False)
 
     _sql_constraints = [
         ('unique_summary_line', 'unique(document_id,company_id, type_id)',

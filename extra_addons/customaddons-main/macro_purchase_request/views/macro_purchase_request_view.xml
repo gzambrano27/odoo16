@@ -99,8 +99,8 @@
                             <field name="description"/>
                             <field name="group_id"/>
                             <field name="show_estado_revision" invisible = '1'/>
-                            <field name="estado_revision" attrs="{'invisible': [('state', '!=', 'approved')]}" groups="purchase_request.group_purchase_request_supply"/>
-                            
+                            <field name="estado_revision" invisible = '1'/>
+                            <field name="sale_order_id" readonly = '1'/>
                         </group>
                         <group>
                             <field name="date_start"/>
@@ -170,6 +170,7 @@
                 <field name="message_needaction" invisible="1" />
                 <field name="priority" optional="show" widget="priority" nolabel="1"/>
                 <field name="request_type" />
+                <field name="sale_order_id" readonly = '1'/>
                 <field name="name" />
                 <field name="date_start" />
                 <field name="requested_by" widget="many2one_avatar_user" />
@@ -179,7 +180,7 @@
                     widget="selection"
                 />
                 <field name="activity_ids" widget="list_activity" optional="show" />
-                <field name="origin" />
+                <field name="origin" optional="hide"/>
                 <field name="currency_id" invisible="1" />
                 <field
                     name="state"

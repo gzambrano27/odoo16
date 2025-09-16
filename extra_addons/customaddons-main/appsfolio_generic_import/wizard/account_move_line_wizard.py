@@ -47,15 +47,18 @@ class AccountMoveLineWizard(models.TransientModel):
         else:
             return True
 
-    def check_partner(self, partner_name):
-        partner_ids = self.env['res.partner'].search([
-            ('name', '=', partner_name)
-        ])
-        if partner_ids:
-            partner_id = partner_ids[0]
-            return partner_id
-        else:
-            None
+    def check_partner(self, partner_name, company=None):
+        """Busca el partner por nombre en la compañía del asiento o compartido."""
+        if not partner_name:
+            return None
+        _, company = self._get_target_move_and_company() if not company else (None, company)
+        Partner = self.env['res.partner'].with_context(self._company_ctx(company))
+        partner = Partner.search([
+            ('name', '=', partner_name),
+            '|', ('company_id', '=', company.id),
+                ('company_id', '=', False),
+        ], limit=1)
+        return partner or None
 
     def check_desc(self, name):
         if name:
@@ -64,14 +67,40 @@ class AccountMoveLineWizard(models.TransientModel):
             return '/'
 
     def check_currency(self, currency_name):
-        currency_ids = self.env['res.currency'].search([('name', '=', currency_name)])
-
-        if not currency_ids:
+        if not currency_name:
             return None
-        # If there are multiple currency records with the same name, you may want to handle this situation.
-        # For now, I'm assuming you want to return the first currency found.
-        currency_id = currency_ids[0]
-        return currency_id
+        Currency = self.env['res.currency']  # global
+        return Currency.search([('name', '=', currency_name)], limit=1) or None
+    
+    def _get_target_move_and_company(self):
+        move = self.env['account.move'].browse(self.env.context.get('active_id'))
+        company = move.company_id or self.env.company
+        return move, company
+
+    def _company_ctx(self, company):
+        # Contexto que fuerza/limita búsquedas a la compañía del asiento
+        return dict(self.env.context, allowed_company_ids=[company.id], force_company=company.id)
+    
+    def _find_analytic_account(self, token, company=None):
+        """ID, código o nombre; restringido a la compañía destino o compartido."""
+        if not token:
+            return False
+        token = str(token).strip()
+        _, company = self._get_target_move_and_company() if not company else (None, company)
+        Analytic = self.env['account.analytic.account'].with_context(self._company_ctx(company))
+        dom_company = ['|', ('company_id', '=', False), ('company_id', '=', company.id)]
+
+        if token.isdigit():
+            rec = Analytic.search([('id', '=', int(token))] + dom_company, limit=1)
+            if rec:
+                return rec
+        rec = Analytic.search([('code', '=', token)] + dom_company, limit=1)
+        if rec:
+            return rec
+        rec = Analytic.search([('name', '=', token)] + dom_company, limit=1)
+        if rec:
+            return rec
+        return Analytic.search(['|', ('code', 'ilike', token), ('name', 'ilike', token)] + dom_company, limit=1) or False
 
     def import_move_line_file(self):
         if self.file_import_type == 'csv':
@@ -163,6 +192,7 @@ class AccountMoveLineWizard(models.TransientModel):
                     values = {
                         'name': line[0],
                         'partner': line[1],
+                        'analytic_account_id': line[2],  # <--- NUEVO
                         'account_code': line[3],
                         'date_maturity': date_string,
                         'debit': line[5],
@@ -190,220 +220,78 @@ class AccountMoveLineWizard(models.TransientModel):
 
     def create_account_move_line(self, values):
         vals = {}
+        move, company = self._get_target_move_and_company()
+
+        # CUENTA CONTABLE (obligatorio y company-dependent)
         if values.get('account_code'):
-            account_code = values.get('account_code')
-            account_id = self.check_account_code(str(account_code))
-            if account_id != None:
-                vals.update({
-                    'account_id': account_id.id
-                })
-            else:
-                raise ValidationError(_('Invalid Account Code %s') % account_code)
+            account = self.check_account_code(str(values.get('account_code')), company=company)
+            vals['account_id'] = account.id
+        else:
+            raise ValidationError(_('Missing Account Code'))
 
+        # MONEDA (global)
         if values.get('currency'):
-            currency = values.get('currency')
-            if currency != '' and currency != None:
-                currency_id = self.check_currency(currency)
-                if currency_id != None:
-                    vals.update({
-                        'currency_id': currency_id.id
-                    })
-                else:
-                    raise ValidationError(_('Currency %s is not available') % currency)
+            currency = self.check_currency(values.get('currency'))
+            if not currency:
+                raise ValidationError(_('Currency %s is not available') % values.get('currency'))
+            vals['currency_id'] = currency.id
 
-        if values.get('name'):
-            desc_name = values.get('name')
-            name = self.check_desc(desc_name)
-            vals.update({
-                'name': name
-            })
+        # DESCRIPCIÓN
+        vals['name'] = self.check_desc(values.get('name'))
 
+        # PARTNER (mismo company o compartido)
         if values.get('partner'):
-            partner_name = values.get('partner')
-            if self.check_partner(partner_name) != None:
-                partner_id = self.check_partner(partner_name)
-                vals.update({
-                    'partner_id': partner_id.id
-                })
+            partner = self.check_partner(values.get('partner'), company=company)
+            if not partner:
+                # más claro que tomar uno de otra empresa
+                raise ValidationError(_("Partner '%s' not found in company '%s' (or shared).")
+                                    % (values.get('partner'), company.display_name))
+            vals['partner_id'] = partner.id
 
+        # FECHA DE VENCIMIENTO / FECHA
         if values.get('date_maturity'):
-            date = values.get('date_maturity')
-            vals.update({
-                'date': date
-            })
+            vals['date_maturity'] = values.get('date_maturity')
+        if values.get('date_maturity'):
+            vals['date'] = values.get('date_maturity')  # opcional; la fecha real la hereda del move
 
-        if values.get('debit') != '':
-            vals.update({
-                'debit': float(values.get('debit'))
-            })
-            if float(values.get('debit')) < 0:
-                vals.update({
-                    'credit': abs(values.get('debit'))
-                })
-                vals.update({
-                    'debit': 0.0
-                })
-        else:
-            vals.update({
-                'debit': float('0.0')
-            })
+        # ANALÍTICA (misma company o compartida)
+        analytic_token = (values.get('analytic_account_id')
+                        or values.get('analytic') or values.get('analytic_code'))
+        if analytic_token not in (None, '', False):
+            analytic_rec = self._find_analytic_account(analytic_token, company=company)
+            if not analytic_rec:
+                raise ValidationError(_("Analytic account '%s' not found for company '%s'")
+                                    % (analytic_token, company.display_name))
+            vals['analytic_distribution'] = {analytic_rec.id: 100.0}
+            # Si usas también analytic_account_id:
+            # vals['analytic_account_id'] = analytic_rec.id
 
-        if values.get('name') == '':
-            vals.update({
-                'name': '/'
-            })
+        # DÉBITO / CRÉDITO
+        debit = float(values.get('debit') or 0.0)
+        credit = float(values.get('credit') or 0.0)
+        if debit < 0:
+            credit = abs(debit); debit = 0.0
+        if credit < 0:
+            debit = abs(credit); credit = 0.0
+        vals['debit'] = debit
+        vals['credit'] = credit
 
-        if values.get('credit') != '':
-            vals.update({
-                'credit': float(values.get('credit'))
-            })
-            if float(values.get('credit')) < 0:
-                vals.update({
-                    'debit': abs(values.get('credit'))
-                })
-                vals.update({
-                    'credit': 0.0
-                })
-        else:
-            vals.update({
-                'credit': float('0.0')
-            })
+        # IMPORTE EN MONEDA
+        if values.get('amount_currency') not in (None, ''):
+            vals['amount_currency'] = float(values.get('amount_currency') or 0.0)
 
-        if values.get('amount_currency') != '':
-            vals.update({
-                'amount_currency': float(values.get('amount_currency'))
-            })
-
-        main_list = values.keys()
-        for i in main_list:
-            model_id = self.env['ir.model'].search([
-                ('model', '=', 'account.move.line')
-            ])
-            if type(i) == bytes:
-                normal_details = i.decode('utf-8')
-            else:
-                normal_details = i
-            if normal_details.startswith('x_'):
-                any_special = self.check_import_data_character(normal_details)
-                if any_special:
-                    split_fields_name = normal_details.split("@")
-                    technical_fields_name = split_fields_name[0]
-                    many2x_fields = self.env['ir.model.fields'].search([
-                        ('name', '=', technical_fields_name),
-                        ('model_id', '=', model_id.id)
-                    ])
-
-                    if many2x_fields.id:
-                        if many2x_fields.ttype in ['many2one', 'many2many']:
-                            if many2x_fields.ttype == "many2one":
-                                if values.get(i):
-                                    fetch_m2o = self.env[many2x_fields.relation].search([
-                                        ('name', '=', values.get(i))
-                                    ])
-                                    if fetch_m2o.id:
-                                        vals.update({
-                                            technical_fields_name: fetch_m2o.id
-                                        })
-                                    else:
-                                        raise ValidationError(
-                                            _('"%s" this custom field value "%s" not available') % (i, values.get(i)))
-
-                            if many2x_fields.ttype == "many2many":
-                                m2m_value_lst = []
-                                if values.get(i):
-                                    if ';' in values.get(i):
-                                        m2m_names = values.get(i).split(';')
-                                        for name in m2m_names:
-                                            m2m_id = self.env[many2x_fields.relation].search([
-                                                ('name', '=', name)
-                                            ])
-                                            if not m2m_id:
-                                                raise ValidationError(
-                                                    _('"%s" this custom field value "%s" not available') % (i, name))
-                                            m2m_value_lst.append(m2m_id.id)
-
-                                    elif ',' in values.get(i):
-                                        m2m_names = values.get(i).split(',')
-                                        for name in m2m_names:
-                                            m2m_id = self.env[many2x_fields.relation].search([
-                                                ('name', '=', name)
-                                            ])
-                                            if not m2m_id:
-                                                raise ValidationError(
-                                                    _('"%s" this custom field value "%s" not available') % (i, name))
-                                            m2m_value_lst.append(m2m_id.id)
-
-                                    else:
-                                        m2m_names = values.get(i).split(',')
-                                        m2m_id = self.env[many2x_fields.relation].search([
-                                            ('name', 'in', m2m_names)
-                                        ])
-                                        if not m2m_id:
-                                            raise ValidationError(
-                                                _('"%s" this custom field value "%s" not available') % (i, m2m_names))
-                                        m2m_value_lst.append(m2m_id.id)
-                                vals.update({
-                                    technical_fields_name: m2m_value_lst
-                                })
-                        else:
-                            raise ValidationError(
-                                _('"%s" this custom field type is not many2one/many2many') % technical_fields_name)
-                    else:
-                        raise ValidationError(
-                            _('"%s" this m2x custom field is not available') % technical_fields_name)
-                else:
-                    normal_fields = self.env['ir.model.fields'].search([
-                        ('name', '=', normal_details),
-                        ('model_id', '=', model_id.id)
-                    ])
-                    if normal_fields.id:
-                        if normal_fields.ttype == 'boolean':
-                            vals.update({
-                                normal_details: values.get(i)
-                            })
-                        elif normal_fields.ttype == 'char':
-                            vals.update({
-                                normal_details: values.get(i)
-                            })
-                        elif normal_fields.ttype == 'float':
-                            if values.get(i) == '':
-                                float_value = 0.0
-                            else:
-                                float_value = float(values.get(i))
-                            vals.update({
-                                normal_details: float_value
-                            })
-                        elif normal_fields.ttype == 'integer':
-                            if values.get(i) == '':
-                                int_value = 0
-                            else:
-                                try:
-                                    int_value = int(float(values.get(i)))
-                                except:
-                                    raise ValidationError(
-                                        _("Wrong value %s for Integer" % values.get(i)))
-                            vals.update({
-                                normal_details: int_value
-                            })
-                        elif normal_fields.ttype == 'selection':
-                            vals.update({
-                                normal_details: values.get(i)
-                            })
-                        elif normal_fields.ttype == 'text':
-                            vals.update({
-                                normal_details: values.get(i)
-                            })
-                    else:
-                        raise ValidationError(
-                            _('"%s" this custom field is not available') % normal_details)
         return vals
 
-    def check_account_code(self, account_code):
+    def check_account_code(self, account_code, company=None):
+        """Cuenta contable por código, en la compañía del asiento."""
         if not account_code:
             raise ValidationError(_('Invalid Account Code: %s') % account_code)
-
-        account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
+        _, company = self._get_target_move_and_company() if not company else (None, company)
+        Account = self.env['account.account'].with_context(self._company_ctx(company))
+        account = Account.search([
+            ('code', '=', account_code),
+            ('company_id', '=', company.id),
+        ], limit=1)
         if account:
             return account
-        else:
-            raise ValidationError(_('Account with code "%s" not found.') % account_code)
+        raise ValidationError(_('Account with code "%s" not found in company "%s".') % (account_code, company.display_name))

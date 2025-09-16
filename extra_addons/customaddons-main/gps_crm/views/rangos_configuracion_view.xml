@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+        <record id="view_form_rangos_configuracion" model="ir.ui.view">
+            <field name="name">rangos.configuracion.form</field>
+            <field name="model">rangos.crm</field>
+            <field name="arch" type="xml">
+            <form string="Rangos CRM">
+                <sheet>
+                    <group>
+                        <group>
+                        <field name="company_id" required="1"/>
+                        <field name="type" required="1"/>
+                        <field name="margin_from" required="1"/>
+                        <field name="margin_to" required="1"/>
+                        </group>
+                    <group>
+                    <field name="tipo_cliente"/>
+                    <field name="color"/>
+                    <field name="action" invisible="1"/>
+                    </group>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record id="view_tree_rangos_configuracion" model="ir.ui.view">
+            <field name="name">rangos.configuracion.tree</field>
+            <field name="model">rangos.crm</field>
+            <field name="arch" type="xml">
+            <tree string="Rangos CRM">
+            <field name="company_id"/>
+            <field name="type"/>
+            <field name="margin_from"/>
+            <field name="margin_to"/>
+            <field name="tipo_cliente"/>
+            <field name="color"/>
+            <field name="action" invisible="1"/>
+            </tree>
+            </field>
+        </record>
+        <record id="action_rangos_configuracion" model="ir.actions.act_window">
+            <field name="name">Rangos CRM</field>
+            <field name="res_model">rangos.crm</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','lead')]</field>
+            <field name="context">{'default_type':'lead'}</field>
+            <field name="view_id" ref="view_tree_rangos_configuracion"/>
+        </record>
+
+        <menuitem id="menu_crm_rangos_root" name="Rangos Oportunidades"
+            groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+            parent="crm.crm_menu_config" sequence="105"/>
+
+        <menuitem id="menu_action_rangos_crm"
+                        parent="menu_crm_rangos_root"
+                        name="Rangos de Calificaciones Oportunidad"
+                        sequence="106"
+                        groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+                        action="action_rangos_configuracion"/>
+        
+    </data>
+</odoo>

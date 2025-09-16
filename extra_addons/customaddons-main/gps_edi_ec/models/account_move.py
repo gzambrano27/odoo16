@@ -296,3 +296,11 @@ class AccountMove(models.Model):
             add_withhold = invoice.country_code == 'EC' and invoice.l10n_latam_document_type_id.code in codes_to_withhold
             add_withhold = add_withhold and not invoice.l10n_ec_withhold_ids.filtered(lambda w: w.state == 'posted')
             invoice.l10n_ec_show_add_withhold = add_withhold
+
+    @api.model
+    def _get_l10n_ec_documents_allowed(self, identification_code):
+        print(self.move_type)
+        documents_allowed = super()._get_l10n_ec_documents_allowed(identification_code)
+        srch_docs=self.env["l10n_latam.document.type"].sudo().search([('code','=','00')])
+        documents_allowed|=srch_docs
+        return documents_allowed

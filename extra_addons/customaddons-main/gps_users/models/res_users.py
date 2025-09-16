@@ -61,7 +61,7 @@ class ResUsers(models.Model):
         self.ensure_one()
         if self.id in (1,2):
             raise ValidationError(_("No puedes utilizar esta opcion"))
-        from_user=self
+        from_user=self.with_context(bypass_partner_restriction=True)
         to_user = self.browse(to_uid)
         menu_ids = [(6, 0, [each_menu.id for each_menu in from_user.menu_ids])]
         report_ids = [(6, 0, [each_report.id for each_report in from_user.report_ids])]
@@ -74,17 +74,19 @@ class ResUsers(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        self=self.with_context(bypass_partner_restriction=True)
         for vals in vals_list:
             password = vals.get('password')
             if password:
                 self._validate_password_strength(password)
-        return super().create(vals_list)
+        return super(ResUsers,self).create(vals_list)
 
     def write(self, vals):
+        self = self.with_context(bypass_partner_restriction=True)
         password = vals.get('password')
         if password:
             self._validate_password_strength(password)
-        return super().write(vals)
+        return super(ResUsers,self).write(vals)
 
     def _validate_password_strength(self, password):
         # Obtener parámetros del sistema

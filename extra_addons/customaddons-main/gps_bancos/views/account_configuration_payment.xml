@@ -121,6 +121,21 @@
                                     </group>
                                 </group>
                             </page>
+                  <page string="Miscelánea">
+                      <group>
+                          <field name="user_info_report_ids" widget="many2many_tags"
+                          colspan="2"
+                          />
+
+                          <field name="due_days" colspan="2" />
+
+<!-- <field name="hour_start" colspan="2" />
+<field name="periodicity" colspan="2" />-->
+                      </group>
+                       <group>
+
+                      </group>
+                  </page>
                         </notebook>
                         <newline/>
                            <div class="oe_chatter">

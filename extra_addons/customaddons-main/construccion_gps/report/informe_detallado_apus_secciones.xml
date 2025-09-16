@@ -64,9 +64,7 @@
                                         <strong>PROYECTO: </strong><span t-field="doc.proyecto" /><br/>
                                         <strong>CLIENTE: </strong><span t-field="doc.partner_id"/><br/>
                                         <strong>REVISIÓN No.: </strong>A<br/>
-										<!-- Definimos la variable hoy -->
-										<t t-set="today" t-value="datetime.date.today()"/>
-                                        <strong>FECHA: </strong><span t-esc="today.strftime('%d/%m/%Y')"/>
+                                        <strong>FECHA: </strong><span t-field="doc.date_order" t-options='{"widget":"date"}'/>
                                     </div>
                                 </div>
                                 <!-- Cantidad vendida de este APU -->

@@ -47,10 +47,15 @@ name="Reportes de Compras por Cuentas"
 action="l10n_ec_ats_reporte_purchases_account_view_action"
 parent="gps_edi_ec.parent_sri_menu"
  groups="account.group_account_readonly,account.group_account_invoice"
-
 />
 
+<menuitem id="l10n_ec_ats_reporte_facturas_pagadas_view_menu" sequence="1003"
+name="Reportes de Facturas Pagadas"
+action="l10n_ec_ats_reporte_facturas_pagadas_view_action"
+parent="gps_edi_ec.parent_sri_menu"
+ groups="account.group_account_readonly,account.group_account_invoice"
 
+/>
 
 
 </odoo>

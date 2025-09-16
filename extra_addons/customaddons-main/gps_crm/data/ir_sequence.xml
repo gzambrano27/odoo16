@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="seq_crm_lead_project_code" model="ir.sequence">
+      <field name="name">CRM Lead Project - Código</field>
+      <field name="code">crm.lead.project.code</field>
+      <field name="prefix">PRJ/%(y)s/</field>
+      <field name="padding">4</field>
+      <field name="implementation">no_gap</field>
+    </record>
+  </data>
+</odoo>

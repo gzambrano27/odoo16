@@ -200,7 +200,8 @@ class AccountPaymentRequestPurchase(models.Model):
         for rec in self:
             total_pagado = 0.00
             for each_macro in rec.macro_line_ids:
-                if (each_macro.apply and each_macro.bank_macro_id.state!='cancelled') and not each_macro.reversed:
+                if ((each_macro.apply and each_macro.bank_macro_id.state!='cancelled')
+                        and not each_macro.reversed):
                     total_pagado+=each_macro.amount
             rec.macro_paid = round(total_pagado,DEC)
             rec.macro_pending = round(rec.amount - total_pagado,DEC)
@@ -579,6 +580,11 @@ class AccountPaymentRequestPurchase(models.Model):
                         _("La solicitud %s con %s debe estar en estado publicado") % (brw_each.id,brw_each.invoice_id.name))
             if not brw_each.checked:
                 raise ValidationError(_("No puedes pagar solicitudes no verificadas .ver solicitud # %s") % (brw_each.id,) )
+
+
+            if brw_each.partner_id:
+                brw_each.partner_id.validate_partner_for_transaction(company_id=brw_each.company_id.id)
+
             if brw_each.type_module=='payslip':
                 if brw_each.payment_employee_id:
                     if last_payslip_type is None:

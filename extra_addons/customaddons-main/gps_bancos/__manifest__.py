@@ -23,6 +23,7 @@
         'mail/mail_purchase_order.xml',
         'mail/mail_template_pago_banco.xml',
         'mail/mail_account_payment.xml',
+        'mail/mail_template_alarma_pago.xml',
 
         'security/ir_module_category.xml',
         'security/res_groups.xml',
@@ -41,6 +42,8 @@
         'reports/report_paperformat.xml',
         'reports/account_payment_bank_macro.xml',
 
+        'reports/document_financial_line_report_handler_supplier.xml',
+        'reports/document_financial_line_report_handler_customer.xml',
         'reports/document_financial_line_report_handler.xml',
 
         'reports/account_payment_bank_macro_summary.xml',

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pr_state_log_user,purchase.request.state.log.user,model_purchase_request_state_log,base.group_user,1,0,0,0
+access_pr_state_log_viewer,purchase.request.state.log.viewer,model_purchase_request_state_log,pr_state_traceability.group_pr_state_traceability_view,1,0,0,0
+access_pr_state_log_purch_user,purchase.request.state.log.purch.user,model_purchase_request_state_log,purchase.group_purchase_user,1,0,1,0
+access_pr_state_log_purch_manager,purchase.request.state.log.purch.manager,model_purchase_request_state_log,purchase.group_purchase_manager,1,1,1,0
+access_pr_state_log_req_viewer,purchase.request.state.log.req.viewer,model_purchase_request_state_log,purchase_request.group_purchase_request_viewer,1,1,1,0

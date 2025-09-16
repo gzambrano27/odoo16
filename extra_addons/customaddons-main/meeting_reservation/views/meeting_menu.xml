@@ -1,0 +1,19 @@
+<odoo>
+  <menuitem id="menu_meeting_root" name="Reuniones" sequence="10" web_icon="meeting_reservation/static/src/icon.png"/>
+
+  <menuitem id="menu_meeting_meetings" name="Reservas"
+            parent="meeting_reservation.menu_meeting_root"
+            action="meeting_reservation.action_meeting_meeting"
+            sequence="1"/>
+
+  <menuitem id="menu_meeting_config" name="Configuración"
+            parent="meeting_reservation.menu_meeting_root"
+            sequence="2"/>
+
+  <menuitem id="menu_meeting_room" name="Salas"
+            parent="meeting_reservation.menu_meeting_config"
+            action="meeting_reservation.action_meeting_room"
+            sequence="1"/>
+
+
+</odoo>

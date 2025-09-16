@@ -15,8 +15,8 @@
                  <group expand="0" string="Filtrar...">
 						<filter string="Preliminar" name="is_draft"
 							domain="[('state','=','draft')]" />
-                        <filter string="Aprobado" name="is_approved"
-							domain="[('state','=','approved')]" />
+                        <filter string="Publicado" name="is_posted"
+							domain="[('state','=','posted')]" />
                         <filter string="Anulado" name="is_cancelled"
 							domain="[('state','=','cancelled')]" />
 <separator/>
@@ -383,7 +383,7 @@ attrs="{'invisible':[('state','!=','posted')]}"
         <field name="res_model">document.financial</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('internal_type','=','out'),('type','=','emision')]</field>
-        <field name="context">{'default_internal_type':'out','default_type':'emision'}</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_posted':1,'default_internal_type':'out','default_type':'emision'}</field>
         <field name="view_id"
                ref="document_financial_view_tree"/>
         <field name="search_view_id"
@@ -420,7 +420,7 @@ attrs="{'invisible':[('state','!=','posted')]}"
         <field name="res_model">document.financial</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('internal_type','=','out'),('type','=','prestamo')]</field>
-        <field name="context">{'default_internal_type':'out','default_type':'prestamo'}</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_posted':1,'default_internal_type':'out','default_type':'prestamo'}</field>
         <field name="view_id"
                ref="document_financial_view_tree"/>
         <field name="search_view_id"
@@ -455,7 +455,7 @@ attrs="{'invisible':[('state','!=','posted')]}"
         <field name="res_model">document.financial</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('internal_type','=','out'),('type','=','pagares')]</field>
-        <field name="context">{'default_internal_type':'out','default_type':'pagares'}</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_posted':1,'default_internal_type':'out','default_type':'pagares'}</field>
         <field name="view_id"
                ref="document_financial_view_tree"/>
         <field name="search_view_id"
@@ -654,7 +654,7 @@ attrs="{'invisible':[('state','!=','posted')]}"
         <field name="res_model">document.financial</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('internal_type','=','in'),('type','=','contrato')]</field>
-        <field name="context">{'default_internal_type':'in','default_type':'contrato'}</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_posted':1,'default_internal_type':'in','default_type':'contrato'}</field>
         <field name="view_id"
                ref="document_financial_view_tree"/>
         <field name="search_view_id"

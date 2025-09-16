@@ -31,7 +31,7 @@
               action="account_payment_reports_info_contratista_wizard_action"
               parent="account.menu_finance_payables"
               sequence="1000"
-                groups="gps_bancos.group_contratista_pagos,gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_generar_sol_otros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+                groups="gps_bancos.group_contratista_todos_pagos,gps_bancos.group_contratista_pagos,gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_generar_sol_otros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
            />
 
 <menuitem id="parent_bank_menu" sequence="3"
@@ -56,6 +56,15 @@ groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financier
               action="action_account_payment_bank_macro_summary_multi" parent="document_financial_view_in_menu"
               sequence="5"
 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+/>
+
+
+              <menuitem id="menu_document_financial_line_report_cxc"
+              name="Acuerdos de Cobros &amp; Vencidos por Cobrar"
+            action="action_document_financial_line_report_cxc"
+                    parent="document_financial_view_in_menu"
+              sequence="99"
+     groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_acuerdos_cobros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
 />
 
 
@@ -85,15 +94,24 @@ groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financier
 
 
 
-
-
-
          <menuitem id="menu_document_bank_reconciliation_report"
               name="Operaciones Financieras &amp; Vencidos por Pagar"
             action="action_document_financial_line_report"
                     parent="document_financial_view_out_menu"
               sequence="99"
       groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"    />
+
+
+
+
+
+
+ <menuitem name="Ingresos &amp; Egresos" id="document_financial_view_full_report_menu"
+             parent="parent_bank_menu"
+              sequence="3"
+           action="action_document_financial_line_report_full"
+ groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_usr_documentos_bancarios,gps_bancos.group_admin_documentos_bancarios"
+ />
 
 
 
@@ -163,7 +181,7 @@ groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financier
 
 
 
- <menuitem name="Pagos al Banco" id="document_financial_view_payslip_menu"
+ <menuitem name="Pagos al Banco" id="document_financial_view_payment_bank_menu"
              parent="parent_bank_menu"
               sequence="7"
  groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
@@ -173,37 +191,55 @@ groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financier
 
 
 <menuitem name="Pagos a Proveedores" id="account_payment_bank_macro_view_menu"
-              action="account_payment_bank_macro_view_action" parent="document_financial_view_payslip_menu"
+              action="account_payment_bank_macro_view_action" parent="document_financial_view_payment_bank_menu"
               sequence="1"
 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
 />
 
         <menuitem name="Pagos Multicompañias" id="menu_account_payment_bank_macro_summary_multi"
-              action="action_account_payment_bank_macro_summary_multi" parent="document_financial_view_payslip_menu"
+              action="action_account_payment_bank_macro_summary_multi" parent="document_financial_view_payment_bank_menu"
               sequence="2"
 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
 />
 
-        <menuitem name="Envio de correo a proveedores" id="action_bank_mail_message_menu"
-              action="action_bank_mail_message_payslip" parent="document_financial_view_payslip_menu"
-              sequence="3"
-groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
-/>
-
-
-
-        <menuitem name="Pagos de Nómina" id="account_payment_bank_macro_nomina_view_menu"
+          <menuitem name="Pagos de Nómina" id="account_payment_bank_macro_nomina_view_menu"
               action="account_payment_bank_macro_nomina_view_action"
-                  parent="document_financial_view_payslip_menu"
+                  parent="document_financial_view_payment_bank_menu"
               sequence="8"
 groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
 />
 
 <menuitem name="Otros Pagos de Nómina" id="gps_hr.hr_employee_payment_view_menu"
               action="gps_hr.hr_employee_payment_view_action"
-          parent="document_financial_view_payslip_menu"
+          parent="document_financial_view_payment_bank_menu"
           groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
               sequence="9" />
+
+
+           <menuitem name="Notificaciones" id="menu_bank_mail_notificaciones_menu"
+             parent="document_financial_view_payment_bank_menu"
+              sequence="99999999"
+groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+/>
+
+
+        <menuitem name="Envio de correo a proveedores" id="menu_bank_mail_proveedores"
+              action="action_bank_mail_message_proveedores" parent="menu_bank_mail_notificaciones_menu"
+              sequence="3"
+groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+/>
+
+       <menuitem name="Envio de Notificaciones" id="menu_bank_mail_message_other"
+              action="action_bank_mail_message_other" parent="menu_bank_mail_notificaciones_menu"
+              sequence="9999999"
+groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+/>
+
+
+
+
+
+
 
 
 
@@ -326,12 +362,11 @@ parent="document_bank_informes_view_conf_menu"
 
 
             <menuitem id="menu_document_bank_reconciliation_type"
-              name="Tipos de Documento"
+              name="Tipos de Documento Bancarios"
               parent="document_financial_view_conf_menu"
               action="action_document_bank_reconciliation_type"
                            groups="gps_bancos.group_contador_financiero,gps_bancos.group_admin_sol_pagos"
-              sequence="1001
-"/>
+              sequence="1001"/>
 
 
         <menuitem name="Reportes" id="menu_account_confs_report"
@@ -374,9 +409,12 @@ parent="document_bank_informes_view_conf_menu"
 
         <menuitem name="Solicitudes de Pagos de Ordenes de Compras" id="account_payment_request_oc_view_menu"
               action="account_payment_request_view_oc_action"  parent="purchase.menu_procurement_management"
-              sequence="9999999"
+              sequence="9999998"
            groups="gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_generar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
            />
+
+
+
 
 
 
@@ -393,6 +431,18 @@ parent="document_bank_informes_view_conf_menu"
               sequence="9999998"
                    groups="gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_sol_creacion_cuentas,gps_bancos.group_admin_sol_pagos"
            />
+
+
+
+
+         <menuitem name="Resumen de Pagos de Proveedor" id="menu_account_payment_bank_macro_summary"
+              action="action_account_payment_bank_macro_summary"
+          parent="purchase.menu_procurement_management"
+              sequence="9999999"
+                groups="gps_bancos.group_contratista_todos_pagos,gps_bancos.group_analistas_financiero,gps_bancos.group_auditor_financiero,gps_bancos.group_contador_financiero,gps_bancos.group_generar_sol_otros,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+           />
+
+
 
 
         <menuitem name="Ordenes de Compras pendientes de Aprobar" id="menu_purchase_order_forapprove_order"

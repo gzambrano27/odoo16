@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<odoo noupdate="0">
+
+     <record id="mail_template_alarma_por_pagar" model="mail.template">
+            <field name="name">Notificacion Alarma Cuentas por Pagar</field>
+            <field name="email_from">{{object.company_id.email}}</field>
+            <field name="subject">{{ object.description }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="model_id" ref="model_bank_mail_message"/>
+            <field name="auto_delete" eval="False"/>
+           <field name="lang">{{object.company_id.partner_id.lang}}</field>
+            <field name="body_html"><![CDATA[
+<p>Estimado <strong><t t-out="object.partner_id.name"/></strong>,</p>
+
+<p>A continuación se detallan los pagos programados:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+
+<thead>
+        <tr>
+            <th style="text-align: center;">Compañía</th>
+            <th style="text-align: center;">ID</th>
+            <th style="text-align: center;">Proveedor</th>
+            <th style="text-align: center;">Documento</th>
+            <th style="text-align: center;">Vencimiento</th>
+            <th style="text-align: center;">Saldo</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <t t-set="valores" t-value="object.env['account.configuration.payment'].get_cxp_payments(object.partner_id.id)"/>
+        <t t-foreach="valores['result']" t-as="line">
+            <tr>
+              <td><t t-out="line['company_name']"/></td>
+               <td>
+                   <a
+    t-attf-href="{{ object.get_base_url() }}/web#id={{ (line.id if hasattr(line,'id') else line.get('id')) }}&model={{line['model_name']}}&view_type=form"
+    target="_blank">
+    <t t-esc="(line.id if hasattr(line,'id') else line.get('id'))"/>
+  </a>
+                </td>
+                <td><t t-out="line['partner_name']"/></td>
+                <td><t t-out="line['name']"/></td>
+                <td><t t-out="line['date_maturity']"/></td>
+                <td style="text-align: right;">$<t t-out="'%.2f' % line['amount_residual']"/></td>
+            </tr>
+        </t>
+    </tbody>
+
+</table>
+
+<br/>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+
+<thead>
+        <tr>
+            <th style="text-align: center;">Compañía</th>
+            <th style="text-align: center;">Tipo</th>
+            <th style="text-align: center;">Saldo</th>
+        </tr>
+    </thead>
+
+    <tbody>
+       <t t-foreach="valores['totals']" t-as="item">
+    <tr>
+        <td><t t-out="item['company_name']"/></td>
+        <td><t t-out="item['tipo']"/></td>
+        <td style="text-align: right;">$<t t-out="'%.2f' % item['amount_residual']"/></td>
+    </tr>
+</t>
+</tbody>
+</table/>
+
+<p>Este es un mensaje automático, por favor revise la información detallada arriba.</p>]]></field>
+     </record>
+
+</odoo>

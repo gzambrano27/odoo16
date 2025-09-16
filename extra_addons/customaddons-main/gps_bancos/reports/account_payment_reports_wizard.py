@@ -677,7 +677,7 @@ sum(pr.amount) as solicitudes,
 round(po.amount_untaxed-sum(pr.amount),2) as dif_solicitudes,
 a.amount as anticipado ,
 a.num_pagos as num_pagos ,
-round(po.amount_untaxed-a.amount,2) as dif_anticipos
+    round(po.amount_untaxed-a.amount,2) as dif_anticipos
 from purchase_order po 
 inner join variables v on po.company_id = any(v.company_ids)
 inner join res_company rc on rc.id=po.company_id 

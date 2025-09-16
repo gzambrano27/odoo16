@@ -100,7 +100,7 @@
     </field>
 </record>
 
-<record id="action_bank_mail_message_payslip" model="ir.actions.act_window">
+<record id="action_bank_mail_message_proveedores" model="ir.actions.act_window">
     <field name="name">Mensajes de Pagos al Banco</field>
     <field name="res_model">bank.mail.message</field>
     <field name="view_mode">tree,form</field>
@@ -110,7 +110,14 @@
 </record>
 
 
-
+<record id="action_bank_mail_message_other" model="ir.actions.act_window">
+    <field name="name">Notificaciones</field>
+    <field name="res_model">bank.mail.message</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_bank_mail_message_tree"/>
+    <field name="context">{}</field>
+    <field name="domain">[('type','!=','payment_bank')]</field>
+</record>
 
 
 

@@ -16,5 +16,11 @@
         <field name="key">password_min_symbols</field>
         <field name="value">1</field>
     </record>
+
+      <record id="param_password_enable_lock_partner" model="ir.config_parameter">
+        <field name="key">enable.lock.partner</field>
+        <field name="value">1</field>
+    </record>
+
   </data>
 </odoo>

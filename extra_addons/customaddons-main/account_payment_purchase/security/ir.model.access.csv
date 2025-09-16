@@ -32,3 +32,8 @@ access_hr_registro_caja_chica_anticipos_line_admin,access_hr_registro_caja_chica
 
 access_po_ro,purchase.order ro,model_purchase_order,account_payment_purchase.group_purchase_viewer,1,0,0,0
 access_pol_ro,purchase.order.line ro,model_purchase_order_line,account_payment_purchase.group_purchase_viewer,1,0,0,0
+
+access_reembolso_auditor_header,Reembolsos Auditor - Cabecera,account_payment_purchase.model_hr_registro_reembolsos,account_payment_purchase.group_reembolso_auditor,1,0,0,0
+access_reembolso_auditor_line,Reembolsos Auditor - Línea,account_payment_purchase.model_hr_registro_reembolsos_line,account_payment_purchase.group_reembolso_auditor,1,0,0,0
+access_caja_auditor_header,Caja Chica Auditor - Cabecera,account_payment_purchase.model_hr_registro_caja_chica,account_payment_purchase.group_caja_chica_auditor,1,0,0,0
+access_caja_auditor_line,Caja Chica Auditor - Línea,account_payment_purchase.model_hr_registro_caja_chica_line,account_payment_purchase.group_caja_chica_auditor,1,0,0,0

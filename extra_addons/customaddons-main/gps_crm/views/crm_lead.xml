@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
+	<record id="crm_lead_form_inherit_restrict_convert" model="ir.ui.view">
+		<field name="name">crm.lead.form.inherit.restrict.convert</field>
+		<field name="model">crm.lead</field>
+		<field name="inherit_id" ref="crm.crm_lead_view_form"/>
+		<field name="arch" type="xml">
+		<!-- Apunta al botón convertir -->
+		<xpath expr="//button[@name='464']" position="attributes">
+			<attribute name="groups">gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom</attribute>
+		</xpath>
+		</field>
+	</record>
 	<record model="ir.actions.act_window" id="crm.crm_lead_action_pipeline">
 		<field name="context">{
 				'default_type': 'opportunity',
@@ -61,16 +71,19 @@
 					</div>
 				</div>
 			</xpath>
-
+			
 			<field name="user_id" position="after">
 				<field name="solicitante" options="{'no_create':True,'no_edit':True,'no_open':True}" />
 				<field name="prioridad" invisible="1"/>
-				<field name="tipo_proyecto"/>
+				<field name="tipo_proyecto" invisible='1'/>
+				<field name="tipo_proyecto_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
 				<field name="lead_project_id" 
-				 attrs="{'readonly':[('lead_project_sequence','!=',None),('lead_project_sequence','!=',False),('lead_project_sequence','!=','')],'invisible': [('probability', '!=',100)]}" />
+				 attrs="{'invisible': [('probability', '!=',100)]}" />
 				<field name="lead_project_sequence" readonly="1" force_save="1" attrs="{'invisible': [('lead_project_id', '=', False)]}" />
 			</field>
-
+			<field name="user_id" position="replace">
+				<field name="user_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+			</field>
 			<xpath expr="//page[@name='extra']" position="before">
 				<page name="contactos_crm" string="Contactos">
 					<field name="contactos_ids">
@@ -152,56 +165,24 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
+			<xpath expr="//label[@for='email_from']" position="before">
+				<field name="contacto_principal" />
+				<field name="tipo_industria" string="División"/>
+			</xpath>
+			
 			<header>
 				<xpath expr="//button[@name='action_sale_quotations_new']" position="before">
-                	<button name="button_approve"  string="Aprobar" type="object" class="oe_highlight" confirm="¿Estás seguro de confirmar este registro?"/>
+                	<button name="button_approve"  string="Revisado" type="object" class="oe_highlight" 
+					attrs="{'invisible': [('type','=','opportunity')]}"
+					confirm="¿Estás seguro de confirmar este registro?"/>
 				</xpath>
 			</header>
             <!-- Insertar el campo 'Nombre Compañía' justo debajo del campo 'Cliente' -->
 			<!-- <xpath expr="//div[@class='d-flex align-items-center']" position="replace">
 			</xpath> -->
 
-			<xpath expr="//label[@for='email_from']" position="before">
-					<field name="contacto_principal" />
-			</xpath>
-
-			<xpath expr="//group[@name='opportunity_partner']" position="inside">
-                <field name="compania_cliente" string="Nombre Compañía" invisible="1"/>
-				<field name="tipo_lead" />
-				<field name="fecha_entrega" />
-				<field name="licitacion" invisible="1"/>
-				<field name="tdr" invisible="1"/>
-				<field name="financiamiento" />
-				<field name="contacto_financiamiento" attrs="{'invisible':[('financiamiento','=',False)]}"/>
-				<field name="correo_contacto_financiamiento" attrs="{'invisible':[('financiamiento','=',False)]}"/>
-				<field name="visita_tecnica" />
-            </xpath>
         </field>
     </record>
-
-	<record id="crm_lead_action_view_form" model="ir.actions.act_window.view">
-		<field name="sequence" eval="7"/>
-		<field name="view_mode">form</field>
-		<field name="view_id" ref="view_crm_lead_form_inht"/>
-		<field name="act_window_id" ref="crm.crm_lead_action_pipeline"/>
-	</record>
-
-
-
-	<!--
-	<record model="ir.actions.act_window" id="crm_lead_action_pipeline_inh">
-		<field name="name">Pipeline</field>
-		<field name="res_model">crm.lead</field>
-		<field name="view_mode">kanban,tree,graph,pivot,form,calendar,activity</field>
-		<field name="domain">[('type','=','opportunity')]</field>
-		<field name="context">{
-				'default_type': 'opportunity',
-				'search_default_assigned_to_me': 1,
-				'today': context_today()
-		}</field>
-		<field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
-	</record>
-	-->
 
 	<record id="crm_case_kanban_view_leads_inherit" model="ir.ui.view">
 		<field name="name">crm.case.kanban.views.leads.inherit</field>
@@ -229,20 +210,23 @@
 		<field name="model">crm.lead</field>
 		<field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
 		<field name="arch" type="xml">
-			<xpath expr="//tree" position="inside">
-				<field name='contacto_principal' optional="hide"/>
-				<field name='tipo_lead' optional="hide"/>
-				<field name="fecha_entrega" optional="hide"/>
-				<field name='financiamiento' optional="hide"/>
-				<field name='contacto_financiamiento' optional="hide"/>
-				<field name='correo_contacto_financiamiento' optional="hide"/>
-				<field name='visita_tecnica' optional="hide"/>
-				<field name='solicitante' optional="hide"/>
-				<field name='tipo_proyecto' optional="hide"/>
-				<field name="codigo_presupuesto" optional="hide"/>
-				<field name='novedades_varias' optional="hide"/>
-				<field name="sequence" optional="hide"/>
-			</xpath>
+			<xpath expr="//tree" position="replace">
+				<tree string="Oportunidades" default_order="id desc" decoration-danger="rango_color == 'danger'"
+      				decoration-warning="rango_color == 'warning'"
+      				decoration-success="rango_color == 'success'">
+					<field name="create_date" string="Fecha"/>
+					<field name="tipo_industria" string="División"/>
+					<field name="categoria_proyecto" string="Categoría del Proyecto"/>
+					<field name="stage_id" string="Status del Proyecto"/>
+					<field name="tipo_proyecto_id" string="Sub-Categoría del Proyecto"/>
+					<field name="partner_id" string="Cliente"/>
+					<field name="name" string="Proyecto"/>
+					<field name="user_id" string="Responsable"/>
+					<field name="expected_revenue" string="Valor Presupuesto" widget="monetary" options="{'currency_field': 'company_currency'}"/>
+					<field name="score_percent" string="Calificacion" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+					<field name="rango_color" invisible='1'/>
+				</tree>
+        </xpath>
 		</field>
 	</record>
 
@@ -266,5 +250,66 @@
 			</xpath>
 		</field>
 	</record>
+	<!-- Acción de Oportunidades (Flujo) -->
+    <record id="crm.crm_lead_action_pipeline" model="ir.actions.act_window">
+        <field name="name">Flujo</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">tree,form,kanban,calendar,pivot,graph,activity</field>
+        <field name="domain">[('type','=','opportunity')]</field>
+        <field name="context">{'default_type':'opportunity','search_default_assigned_to_me':1}</field>
+        <field name="search_view_id" ref="view_crm_case_opportunities_filter_inherit"/>
+    </record>
+
+    <!-- Acción de Leads -->
+    <!-- <record id="gps_crm_lead_action_leads" model="ir.actions.act_window">
+		<field name="name">Leads</field>
+		<field name="res_model">crm.lead</field>
+		<field name="view_mode">tree,form,kanban,calendar,pivot,graph,activity</field>
+		<field name="domain">[('type','=','lead')]</field>
+		<field name="context">{'default_type':'lead'}</field>
+		<field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+	</record> -->
+
+	<!-- Vista Tree para Leads -->
+	<record id="view_crm_case_tree_view_leads_custom" model="ir.ui.view">
+		<field name="name">crm.case.tree.view.leads.custom</field>
+		<field name="model">crm.lead</field>
+		<field name="arch" type="xml">
+			<tree string="Leads" default_order="id desc" decoration-danger="rango_color == 'danger'"
+      decoration-warning="rango_color == 'warning'"
+      decoration-success="rango_color == 'success'">
+				<field name="create_date" string="Fecha"/>
+				<field name="partner_id" string="Cliente"/>
+				<field name="name" string="Proyecto"/>
+				<field name="user_id" string="Responsable"/>
+				<field name="score_percent" string="Calificacion" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+				<field name="rango_color" invisible='1'/>
+			</tree>
+		</field>
+	</record>
+
+	<!-- Acción de Leads usando esta vista -->
+	<record id="gps_crm_lead_action_leads" model="ir.actions.act_window">
+		<field name="name">Leads</field>
+		<field name="res_model">crm.lead</field>
+		<field name="view_mode">tree,form,kanban,calendar,pivot,graph,activity</field>
+		<field name="domain">[('type','=','lead')]</field>
+		<field name="context">{'default_type':'lead'}</field>
+		<field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+	</record>
+
+	<!-- Vincular la vista tree a la acción -->
+	<record id="gps_crm_lead_action_leads_tree_view" model="ir.actions.act_window.view">
+		<field name="sequence" eval="1"/>
+		<field name="view_mode">tree</field>
+		<field name="view_id" ref="view_crm_case_tree_view_leads_custom"/>
+		<field name="act_window_id" ref="gps_crm_lead_action_leads"/>
+	</record>
+
+	<menuitem id="gps_menu_crm_leads"
+			name="Leads"
+			parent="crm.crm_menu_root"
+			action="gps_crm_lead_action_leads"
+			sequence="1"/>
 
 </odoo>

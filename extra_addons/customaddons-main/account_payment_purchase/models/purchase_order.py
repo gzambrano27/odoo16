@@ -2,6 +2,7 @@
 # © <2024> <Washington Guijarro>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from odoo.tools.translate import _ as _t
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
@@ -18,6 +19,7 @@ import xlsxwriter
 import io
 import json
 from odoo.exceptions import ValidationError
+from collections import defaultdict
 
 class ConfigSettingsUserApproval(models.Model):
     _name = 'config.settings.approval.po'
@@ -255,7 +257,7 @@ class PurchaseOrder(models.Model):
                     band_app = 1
             #se agrega valores de logica de aprobadores
             if band_app == 0 and 'amount_untaxed' in vals:
-                usuario_aprobacion, requiere_aprobacion = x._get_usuario_aprobacion(x.amount_untaxed, x.es_admin)#self.amount_total)
+                usuario_aprobacion, requiere_aprobacion = x._get_usuario_aprobacion(x.amount_untaxed, (x.es_admin or x.es_presidencia))#self.amount_total)
                 vals['usuario_aprobacion_id'] = usuario_aprobacion
                 vals['requiere_aprobacion'] = requiere_aprobacion
             res = super().write(vals)
@@ -412,13 +414,13 @@ class PurchaseOrder(models.Model):
         if self.company_id.id != 1 or self.partner_id.id not in (11, 39, 12, 13):
             self = self.filtered(lambda order: order._approval_allowed())
             
-            if self.requiere_aprobacion:
-                raise UserError(_("No puedes aprobar una orden de compra que no ha sido verificada por Financiero!!!"))
+            # if self.requiere_aprobacion:
+            #     raise UserError(_("No puedes aprobar una orden de compra que no ha sido verificada por Financiero!!!"))
             
-            settings_model = 'config.settings.approval.po.admin' if self.es_admin else 'config.settings.approval.po'
+            settings_model = 'config.settings.approval.po.admin' if self.es_admin or self.es_presidencia else 'config.settings.approval.po'
             settings = self.env[settings_model].search([('estado', '=', 'activo')])
             usuario_aprobacion = None
-            usuario_aprobacion,requiere_aprobacion = self._get_usuario_aprobacion(self.amount_untaxed, self.es_admin)
+            usuario_aprobacion,requiere_aprobacion = self._get_usuario_aprobacion(self.amount_untaxed, (self.es_admin or self.es_presidencia))
             
             # for config in settings:
             #     if config.monto_desde <= self.amount_untaxed <= config.monto_hasta and config.usuario_id.id == self.env.user.id:
@@ -439,9 +441,10 @@ class PurchaseOrder(models.Model):
                 ])
                 
                 if not user_check:
-                    raise UserError(_(
-                        "No puedes aprobar una orden de compra ya que no eres el usuario aprobador %s!!!"
-                    ) % str(self.env['res.users'].browse(usuario_aprobacion).name))
+                    if self.amount_total > 0:
+                        raise UserError(_t(
+                            "No puedes aprobar una orden de compra ya que no eres el usuario aprobador %s!!!"
+                        ) % str(self.env['res.users'].browse(usuario_aprobacion).name))
             
             fecha_aprobacion = fields.Datetime.now()
             
@@ -598,7 +601,7 @@ class PurchaseOrder(models.Model):
             # Deal with double validation process
             if order._approval_allowed():
                 #Logica para hacer la aprobacion de ordenes de compra
-                usuario_aprobacion_id, requiere_aprobacion = self._get_usuario_aprobacion(self.amount_untaxed, self.es_admin)#self.amount_total)
+                usuario_aprobacion_id, requiere_aprobacion = self._get_usuario_aprobacion(self.amount_untaxed, (self.es_admin or self.es_presidencia))#self.amount_total)
                 if requiere_aprobacion:
                     if self.requiere_aprobacion:
                         raise UserError(_("No puedes registrar una orden de compra que no ha sido verificada por Financiero!!!"))
@@ -636,8 +639,7 @@ class PurchaseOrder(models.Model):
         for user in aprobadores:
             # Filtrar órdenes asignadas a ese aprobador
             orders = self.env['purchase.order'].search([
-                ('state', '=', 'to approve'),
-                ('requiere_aprobacion','=',True)
+                ('state', '=', 'financiero')
             ])
             if not orders:
                 continue
@@ -713,7 +715,7 @@ class PurchaseOrder(models.Model):
 
             # Enviar el correo
             self.env['mail.mail'].create({
-                'subject': 'Órdenes de compra pendientes de aprobar',
+                'subject': 'Órdenes de compra pendientes de aprobar por Financiero',
                 'body_html': body_html,
                 'email_to': user.email,
                 'auto_delete': True,
@@ -896,6 +898,108 @@ class PurchaseOrder(models.Model):
                 'subject': 'Órdenes de compra pendientes de aprobar',
                 'body_html': body_html,
                 'email_to': 'jleon@gpsgroup.com.ec, amikly@gpsgroup.com.ec',#user.email,
+                'auto_delete': True,
+            }).send()
+
+    def _find_user_by_handle(self, handle):
+        """Busca un usuario por login o email que contenga el handle (case-insensitive)."""
+        # intenta login, email (res.users), y el correo del partner relacionado
+        domain = ['|', '|',
+                  ('login', 'ilike', handle),
+                  ('email', 'ilike', handle),
+                  ('partner_id.email', 'ilike', handle)]
+        user = self.env['res.users'].sudo().search(domain, limit=1)
+        return user
+
+    def send_notifications_presidencia_adm(self):
+        """
+        Envía correos:
+          - Si tipo_orden == 'presidencia' -> a 'aaviles'
+          - Si tipo_orden == 'administrativa' -> a 'jhidalgo'
+          - Si amount_untaxed > 5000 en cualquiera de los dos tipos -> también a 'szambrano'
+        Solo considera órdenes en estado 'to approve'.
+        """
+        TYPE_FIELD = 'tipo_orden'          # cámbialo si tu campo se llama distinto
+        TYPES_WATCHED = ('es_presidencia', 'es_admin')
+        THRESHOLD = 5000.0                 # sin impuestos
+        STATE_TO_WATCH = 'to approve'      # estado objetivo
+
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url') or ''
+
+        # Mapea tipo -> handle primario
+        primary_handles = {
+            'es_presidencia': 'aaviles',
+            'es_admin': 'jhidalgo',
+        }
+        threshold_handle = 'szambrano'  # adicional cuando > 5K sin impuestos
+
+        # Resuelve usuarios (si no existen, simplemente no enviará a ese destino)
+        primary_users = {}
+        # for t, handle in primary_handles.items():
+        #     primary_users[t] = self._find_user_by_handle(handle)
+
+        # threshold_user = self._find_user_by_handle(threshold_handle)
+
+        # Busca órdenes a notificar
+        domain = [
+           ('state', '=', STATE_TO_WATCH),
+            '|', ('es_admin', '=', True), ('es_presidencia', '=', True),
+        ]
+        orders = self.env['purchase.order'].sudo().search(domain)
+        if not orders:
+            return  # nada que enviar
+
+        # Agrupa por destinatario (user.id) las órdenes que le corresponden
+        # Enviamos un correo por destinatario con su tabla de órdenes
+        orders_by_user = defaultdict(list)
+
+        for po in orders:
+            po_type = getattr(po, TYPE_FIELD, False)
+            if po_type in primary_users and primary_users[po_type]:
+                orders_by_user[primary_users[po_type].id].append(po)
+
+            # Si supera el umbral, también para threshold_user (si existe)
+            if po.amount_untaxed and po.amount_untaxed > THRESHOLD and threshold_user:
+                orders_by_user[threshold_user.id].append(po)
+
+        Mail = self.env['mail.mail'].sudo()
+
+        # Construye y envía correos por usuario
+        for user_id, po_list in orders_by_user.items():
+            user = self.env['res.users'].browse(user_id)
+            if not user or not user.partner_id.email:
+                # Si no tiene email definido, omite
+                continue
+
+            table_rows = self._build_rows_html(po_list, base_url)
+            body_html = f"""
+                <p>Estimad@ {user.name},</p>
+                <p>Estas son las órdenes de compra pendientes por aprobar asociadas a su rol:</p>
+                <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Arial; font-size: 13px;">
+                    <thead>
+                        <tr style="background-color:#f2f2f2;">
+                            <th>Orden</th>
+                            <th>Proveedor</th>
+                            <th>Solicitante</th>
+                            <th>Compañía</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Planificada</th>
+                            <th>Subtotal (s/ imp.)</th>
+                            <th>Tipo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {table_rows}
+                    </tbody>
+                </table>
+                <p>Por favor revise y proceda con la aprobación en Odoo.</p>
+            """
+
+            Mail.create({
+                'subject': 'Órdenes de compra pendientes por aprobar',
+                'body_html': body_html,
+                'email_to': user.partner_id.email,  # correo del destinatario
                 'auto_delete': True,
             }).send()
 

@@ -9,7 +9,9 @@ class BankMailMessage(models.Model):
     _description="Mensajes de Banco"
     
     internal_type=fields.Selection([('batch','Lote'),('process','Manual')],string="Tipo Envio",default="batch")
-    type=fields.Selection([('payment_bank','Pago al Banco'),],string="Tipo",default="payment_bank")
+    type=fields.Selection([('payment_bank','Pago al Banco'),
+                           ('account.configuration.payment','Configuracion de Pago'),
+                           ],string="Tipo",default="payment_bank")
     name=fields.Char(string="PK",required=True)
     internal_id=fields.Integer(required=True,string="ID Interno")
     model_name=fields.Char(string="Modelo",required=True)
@@ -28,6 +30,12 @@ class BankMailMessage(models.Model):
     message_id=fields.Many2one("mail.mail",string="Mensaje de Correo")
     template_id=fields.Many2one("mail.template",string="Plantilla")
     report_name_ref=fields.Char(string="# Ref Reporte")
+
+    attachment_ids = fields.Many2many(
+        'ir.attachment',
+        string="Archivos Adjuntos"
+    )
+    scheduled_hour=fields.Integer("Hora Envio",default=0)
 
     def get_mail_to_send(self):
         self.ensure_one()
@@ -71,6 +79,7 @@ class BankMailMessage(models.Model):
                 email_values={}
                 res_ids=[model_obj.id]
                 data={}
+
                 report_template = self.env.ref(brw_each.report_name_ref)
 
                 context = {
@@ -87,7 +96,12 @@ class BankMailMessage(models.Model):
                 #rint(pdf)
                 email_values["attachments"]=[("%s.%s" % (brw_each.description,pdf_name), pdf_base64)]
                 #recipients=model_obj.bank_account_id.partner_email and model_obj.bank_account_id.partner_email.replace(';',',')
-                email_values['email_to']= model_obj.email.replace(";",',')
+            if brw_each.attachment_ids:
+                attachments=[]
+                for attachment in brw_each.attachment_ids:
+                    attachments.append((attachment.name, attachment.datas))
+                email_values["attachments"] =attachments
+            #email_values['email_to']= brw_each.email.replace(";",',')
             template=template.with_context(ctx)
             message_id=template.send_mail(brw_each.id,force_send=True,email_values=email_values)
             brw_each.write({"message_id":message_id})
@@ -124,6 +138,10 @@ class BankMailMessage(models.Model):
                     self._cr.commit()
             except Exception as e:
                 result=(str(e))
+
+    def get_ref_id(self,ref_name):
+        v=self.env.ref(ref_name)
+        return v and v.id or 0
 
     _order = "id desc"
 

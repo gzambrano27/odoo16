@@ -57,7 +57,6 @@
                               <field name="payment_other" optional="hide" sum="total"   />
 
                     <field name="amount" sum="total" />
-                     <field name="payment_overdue_interest" sum="total" optional="hide"/>
                     <field name="payment_id" optional="hide"  attrs="{'invisible':[('migrated','=',True)]}" />
                     <field name="migrated" optional="hide"/>
                     <field name="state" optional="hide" widget="badge" />

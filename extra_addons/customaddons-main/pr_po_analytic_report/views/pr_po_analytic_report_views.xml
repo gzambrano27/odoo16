@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- Acción/Wizard -->
+  <record id="action_pr_po_analytic_report_wizard" model="ir.actions.act_window">
+    <field name="name">PR ↔ PO (Distribución Analítica)</field>
+    <field name="res_model">pr.po.analytic.report.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <!-- Menú -->
+  <menuitem id="menu_pr_po_analytic_report_root"
+            name="PR ↔ PO Analítico"
+            parent="purchase.menu_purchase_root"
+            action="action_pr_po_analytic_report_wizard"
+            groups="pr_po_analytic_report.group_pr_po_analytic_viewer,pr_po_analytic_report.group_pmo"
+            sequence="95"/>
+
+  <!-- Vista del Wizard -->
+  <record id="view_pr_po_analytic_report_wizard_form" model="ir.ui.view">
+    <field name="name">pr.po.analytic.report.wizard.form</field>
+    <field name="model">pr.po.analytic.report.wizard</field>
+    <field name="arch" type="xml">
+      <form string="PR ↔ PO (Distribución Analítica)" create="false" edit="false">
+        <group>
+          <field name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+          <field name="date_from"/>
+          <field name="date_to"/>
+          <field name="only_with_po"/>
+        </group>
+
+        <group string="Resultados (previsualización)">
+          <field name="line_ids" nolabel="1" context="{'no_open': True}">
+            <tree string="PR ↔ PO (Distribución Analítica)">
+              <!-- Bloque PR/PO/Producto -->
+              <field name="company_id"/>
+              <field name="request_id"/>
+              <field name="request_state"/>
+              <field name="product_code"/>
+              <field name="product_name"/>
+              <field name="req_qty"/>
+              <field name="po_id"/>
+              <field name="po_state"/>
+              <field name="proveedor_id"/>
+              <field name="po_qty"/>
+              <field name="po_price_unit"/>
+              <field name="po_price_subtotal"/>
+
+              <!-- Bloque Analítica -->
+              <field name="analytic_account_id"/>
+              <field name="analytic_percent"/>
+              <field name="analytic_client_id"/>
+
+              <!-- Trazabilidad PR -->
+              <field name="pr_last_changed_on" optional="show"/>
+              <field name="pr_last_changed_by_id" optional="show"/>
+              <field name="pr_last_state_from" optional="show"/>
+              <field name="pr_last_state_to" optional="show"/>
+              <field name="pr_last_note" optional="show"/>
+              <field name="pr_log_count" optional="show"/>
+
+              <!-- Trazabilidad OC -->
+              <field name="po_last_changed_on" optional="show"/>
+              <field name="po_last_changed_by_id" optional="show"/>
+              <field name="po_last_state_from" optional="show"/>
+              <field name="po_last_state_to" optional="show"/>
+              <field name="po_last_note" optional="show"/>
+              <field name="po_log_count" optional="show"/>
+            </tree>
+          </field>
+        </group>
+
+        <footer>
+          <button name="action_run" type="object" class="btn-primary" string="Ver reporte"/>
+          <button string="Cancelar" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- Tree principal para navegar -->
+  <record id="view_pr_po_analytic_report_line_tree" model="ir.ui.view">
+    <field name="name">pr.po.analytic.report.line.tree</field>
+    <field name="model">pr.po.analytic.report.line</field>
+    <field name="arch" type="xml">
+      <tree string="PR ↔ PO (Distribución Analítica)">
+        <field name="company_id" optional="show"/>
+        <field name="request_id"/>
+        <field name="request_state" optional="show"/>
+        <field name="product_code" optional="show"/>
+        <field name="product_name" optional="show"/>
+        <field name="req_qty" optional="show"/>
+        <field name="po_id"/>
+        <field name="po_state" optional="show"/>
+        <field name="proveedor_id" optional="show"/>
+        <field name="po_qty" optional="show"/>
+        <field name="po_price_unit" optional="show"/>
+        <field name="po_price_subtotal" optional="show"/>
+
+        <field name="analytic_account_id" optional="show"/>
+        <field name="analytic_percent" optional="show"/>
+        <field name="analytic_client_id" optional="show"/>
+
+        <field name="pr_last_changed_on" optional="show"/>
+        <field name="pr_last_changed_by_id" optional="show"/>
+        <field name="pr_last_state_from" optional="show"/>
+        <field name="pr_last_state_to" optional="show"/>
+        <field name="pr_last_note" optional="show"/>
+        <field name="pr_log_count" optional="show"/>
+
+        <field name="po_last_changed_on" optional="show"/>
+        <field name="po_last_changed_by_id" optional="show"/>
+        <field name="po_last_state_from" optional="show"/>
+        <field name="po_last_state_to" optional="show"/>
+        <field name="po_last_note" optional="show"/>
+        <field name="po_log_count" optional="show"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Search -->
+  <record id="view_pr_po_analytic_report_line_search" model="ir.ui.view">
+    <field name="name">pr.po.analytic.report.line.search</field>
+    <field name="model">pr.po.analytic.report.line</field>
+    <field name="arch" type="xml">
+      <search string="Buscar">
+        <field name="request_id"/>
+        <field name="po_id"/>
+        <field name="company_id"/>
+        <field name="proveedor_id"/>
+        <field name="analytic_account_id"/>
+        <filter string="Agrupar por Requisición" name="group_request" context="{'group_by':'request_id'}"/>
+        <filter string="Agrupar por Orden" name="group_po" context="{'group_by':'po_id'}"/>
+        <filter string="Agrupar por Cuenta Analítica" name="group_aa" context="{'group_by':'analytic_account_id'}"/>
+      </search>
+    </field>
+  </record>
+
+</odoo>

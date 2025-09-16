@@ -14,33 +14,31 @@ import math
 
 _logger = logging.getLogger(__name__)
 
-
 def _format_value_for_tracking(value):
-	"""Formatea valores para mostrarlos en el chatter de manera segura."""
-	# Vacíos, pero preserva 0
-	if not value and value != 0:
-		return "—"
+    """Formatea valores para mostrarlos en el chatter de manera segura."""
+    # Vacíos, pero preserva 0
+    if not value and value != 0:
+        return "—"
 
-	# ¿Es un recordset de Odoo? (evitando tocar display_name)
-	# Nota: 'mapped' y '_name' existen en recordsets; no disparan ensure_one.
-	if hasattr(value, '_name') and hasattr(value, 'mapped'):
-		# Recordset vacío
-		if not value:
-			return "—"
-		# Para 1 o N registros usamos name_get() (no requiere ensure_one)
-		try:
-			names = [name for _id, name in value.name_get()]
-			return ", ".join(names)
-		except Exception:
-			# Fallback por si el modelo no implementa name_get de forma estándar
-			try:
-				return ", ".join(value.mapped('name')) or ", ".join(map(str, value.ids))
-			except Exception:
-				return str(value)
+    # ¿Es un recordset de Odoo? (evitando tocar display_name)
+    # Nota: 'mapped' y '_name' existen en recordsets; no disparan ensure_one.
+    if hasattr(value, '_name') and hasattr(value, 'mapped'):
+        # Recordset vacío
+        if not value:
+            return "—"
+        # Para 1 o N registros usamos name_get() (no requiere ensure_one)
+        try:
+            names = [name for _id, name in value.name_get()]
+            return ", ".join(names)
+        except Exception:
+            # Fallback por si el modelo no implementa name_get de forma estándar
+            try:
+                return ", ".join(value.mapped('name')) or ", ".join(map(str, value.ids))
+            except Exception:
+                return str(value)
 
-	# Tipos primitivos / otros
-	return str(value)
-
+    # Tipos primitivos / otros
+    return str(value)
 
 try:
 	from openpyxl import load_workbook
@@ -92,7 +90,7 @@ class ProductoTemplate(models.Model):
 	_inherit = 'product.template'
 
 	subcategoria_id = fields.Many2one('apu.subcategoria', string="Subcategoría",
-	                                  help="Selecciona la subcategoría asociada a este APU")
+									  help="Selecciona la subcategoría asociada a este APU")
 	notas_descripcion = fields.Text(string="Nota", tracking=True)
 
 	apu_custom_ids = fields.One2many(
@@ -112,9 +110,9 @@ class ProductTemplateAPU(models.Model):
 	_description = 'APU personalizado para Product Template'
 
 	product_tmpl_id = fields.Many2one('product.template', string='Plantilla de Producto', ondelete='cascade',
-	                                  required=True, index=True, )
+									  required=True, index=True, )
 	apu_line_id = fields.Many2one('apu.apu.line', string='Línea APU', ondelete='cascade',
-	                              help='Enlace con apu.apu.line', domain=[('bom_id', '!=', False)], )
+								  help='Enlace con apu.apu.line', domain=[('bom_id', '!=', False)], )
 	fecha_modificacion = fields.Datetime(string='Fecha de Modificación', default=fields.Datetime.now, )
 	cantidad = fields.Float(string='Cantidad', digits=(16, 4), default=0.0, )
 	precio_unitario = fields.Float(string='Precio Unitario', digits=(16, 4), default=0.0, )
@@ -128,9 +126,9 @@ class ProductTemplateActividad(models.Model):
 	_description = 'Actividad personalizada para Product Template'
 
 	product_tmpl_id = fields.Many2one('product.template', string='Plantilla de Producto', ondelete='cascade',
-	                                  required=True, index=True, )
+									  required=True, index=True, )
 	apu_line_tareas_id = fields.Many2one('apu.apu.line.tareas', string='Línea de Tareas APU', ondelete='cascade',
-	                                     help='Enlace con apu.apu.line.tareas', )
+										 help='Enlace con apu.apu.line.tareas', )
 	fecha_modificacion = fields.Datetime(string='Fecha de Modificación', default=fields.Datetime.now, )
 	cantidad = fields.Float(string='Cantidad', digits=(16, 4), default=0.0, )
 	precio_unitario = fields.Float(string='Costo/U', digits=(16, 4), default=0.0, )
@@ -196,8 +194,8 @@ class ApuApu(models.Model):
 		domain="[('code', '=', 'mrp_operation'), ('company_id', '=', company_id)]",
 		check_company=True,
 		help=u"When a procurement has a ‘produce’ route with a operation type set, it will try to create "
-		     "a Manufacturing Order for that product using a BoM of the same operation type. That allows "
-		     "to define stock rules which trigger different manufacturing orders with different BoMs.")
+			 "a Manufacturing Order for that product using a BoM of the same operation type. That allows "
+			 "to define stock rules which trigger different manufacturing orders with different BoMs.")
 	company_id = fields.Many2one(
 		'res.company', 'Company', index=True,
 		default=lambda self: self.env.company)
@@ -210,10 +208,10 @@ class ApuApu(models.Model):
 		('warning', 'Allowed with warning'),
 		('strict', 'Blocked')],
 		help="Defines if you can consume more or less components than the quantity defined on the BoM:\n"
-		     "  * Allowed: allowed for all manufacturing users.\n"
-		     "  * Allowed with warning: allowed for all manufacturing users with summary of consumption differences when closing the manufacturing order.\n"
-		     "  Note that in the case of component Manual Consumption, where consumption is registered manually exclusively, consumption warnings will still be issued when appropriate also.\n"
-		     "  * Blocked: only a manager can close a manufacturing order when the BoM consumption is not respected.",
+			 "  * Allowed: allowed for all manufacturing users.\n"
+			 "  * Allowed with warning: allowed for all manufacturing users with summary of consumption differences when closing the manufacturing order.\n"
+			 "  Note that in the case of component Manual Consumption, where consumption is registered manually exclusively, consumption warnings will still be issued when appropriate also.\n"
+			 "  * Blocked: only a manager can close a manufacturing order when the BoM consumption is not respected.",
 		default='warning',
 		string='Flexible Consumption',
 		required=True
@@ -222,8 +220,8 @@ class ApuApu(models.Model):
 		'product.template.attribute.value',
 		compute='_compute_possible_product_template_attribute_value_ids')
 	allow_operation_dependencies = fields.Boolean('Operation Dependencies',
-	                                              help="Create operation level dependencies that will influence both planning and the status of work orders upon MO confirmation. If this feature is ticked, and nothing is specified, Odoo will assume that all operations can be started simultaneously."
-	                                              )
+												  help="Create operation level dependencies that will influence both planning and the status of work orders upon MO confirmation. If this feature is ticked, and nothing is specified, Odoo will assume that all operations can be started simultaneously."
+												  )
 
 	total_manoobra = fields.Float(
 		string="Total Mano de Obra",
@@ -369,13 +367,13 @@ class ApuApu(models.Model):
 						"La combinación de Código: %s, Producto: %s, Compañía: %s, Cliente: %s, "
 						"Subcategoría: %s y Etiquetas (%s) ya existe."
 					) % (
-						                      record.code,
-						                      record.product_tmpl_id.name,
-						                      record.company_id.name,
-						                      record.cliente_id.name,
-						                      record.subcategoria_id.name,
-						                      ", ".join(record.tag_ids.mapped('name'))
-					                      ))
+											  record.code,
+											  record.product_tmpl_id.name,
+											  record.company_id.name,
+											  record.cliente_id.name,
+											  record.subcategoria_id.name,
+											  ", ".join(record.tag_ids.mapped('name'))
+										  ))
 
 	@api.constrains('code', 'tag_ids')
 	def _check_unique_code_tags(self):
@@ -457,7 +455,7 @@ class ApuApu(models.Model):
 		for line in self:
 			margin_type = 'margen-apu-cab'  # Tipo de margen a evaluar
 			color = self.env['bim.rangos.margen'].evaluate_margin_in_range(line.total_apu_margen_porc * 100,
-			                                                               margin_type)
+																		   margin_type)
 
 			# Mapear valores de color a opciones válidas
 			mapping = {
@@ -468,7 +466,7 @@ class ApuApu(models.Model):
 			line.semaforo_margen = mapping.get(color, 'rojo')  # Valor predeterminado es 'rojo'
 
 	@api.depends('total_precio', 'total_costo_directo', 'total_margen_bruto', 'total_porc_margen_bruto',
-	             'indirectos_porcentaje', 'utilidad_porcentaje')
+				 'indirectos_porcentaje', 'utilidad_porcentaje')
 	def _compute_totals(self):
 		for record in self:
 			# Totales Directos
@@ -567,9 +565,9 @@ class ApuApu(models.Model):
 			record.total_costo_directo = equipos_costo + mano_obra_costo + materiales_costo + transporte_costo
 			record.total_margen_bruto = equipos_margen + mano_obra_margen + materiales_margen + transporte_margen
 			record.total_porc_margen_bruto = (
-					record.total_margen_bruto / record.total_precio) if record.total_precio else 0
+						record.total_margen_bruto / record.total_precio) if record.total_precio else 0
 			record.total_porc_margen_brutoc = ((
-					                                   record.total_margen_bruto / record.total_precio) if record.total_precio else 0) * 100
+														   record.total_margen_bruto / record.total_precio) if record.total_precio else 0) * 100
 
 	@api.depends('total_general', 'total_with_tax')
 	def _compute_total_apu(self):
@@ -598,13 +596,13 @@ class ApuApu(models.Model):
 			if record.apply_tax and record.tax_percentage > 0:
 				# Calcular los totales con impuesto
 				record.total_manoobra_with_tax = record.total_manoobra + (
-						record.total_manoobra * (record.tax_percentage / 100))
+							record.total_manoobra * (record.tax_percentage / 100))
 				record.total_material_with_tax = record.total_material + (
-						record.total_material * (record.tax_percentage / 100))
+							record.total_material * (record.tax_percentage / 100))
 				record.total_equipo_with_tax = record.total_equipo + (
-						record.total_equipo * (record.tax_percentage / 100))
+							record.total_equipo * (record.tax_percentage / 100))
 				record.total_transporte_with_tax = record.total_transporte + (
-						record.total_transporte * (record.tax_percentage / 100))
+							record.total_transporte * (record.tax_percentage / 100))
 			else:
 				# Si no se aplica impuesto, los totales con impuesto son iguales a los originales
 				record.total_manoobra_with_tax = record.total_manoobra
@@ -643,7 +641,7 @@ class ApuApu(models.Model):
 				if component in finished_products:
 					names = finished_products.mapped('display_name')
 					raise ValidationError(_("The current configuration is incorrect because it would create a cycle "
-					                        "between these products: %s.") % ', '.join(names))
+											"between these products: %s.") % ', '.join(names))
 				if component not in subcomponents_dict:
 					products_to_find |= component
 
@@ -776,7 +774,6 @@ class ApuApu(models.Model):
 
 	@api.model
 	def name_create(self, name):
-		# prevent to use string as product_tmpl_id
 		if isinstance(name, str):
 			raise UserError(_("You cannot create a new Bill of Material from here."))
 		return super(ApuApu, self).name_create(name)
@@ -799,25 +796,25 @@ class ApuApu(models.Model):
 	@api.constrains('product_tmpl_id', 'product_id', 'type')
 	def check_kit_has_not_orderpoint(self):
 		product_ids = [pid for bom in self.filtered(lambda bom: bom.type == "phantom")
-		               for pid in (bom.product_id.ids or bom.product_tmpl_id.product_variant_ids.ids)]
+					   for pid in (bom.product_id.ids or bom.product_tmpl_id.product_variant_ids.ids)]
 		if self.env['stock.warehouse.orderpoint'].search([('product_id', 'in', product_ids)], count=True):
 			raise ValidationError(
 				_("You can not create a kit-type bill of materials for products that have at least one reordering rule."))
 
-	@api.ondelete(at_uninstall=False)
-	def _unlink_except_running_mo(self):
-		if self.env['mrp.production'].search([('bom_id', 'in', self.ids), ('state', 'not in', ['done', 'cancel'])],
-		                                     limit=1):
-			raise UserError(
-				_('You can not delete a Bill of Material with running manufacturing orders.\nPlease close or cancel it first.'))
+	# @api.ondelete(at_uninstall=False)
+	# def _unlink_except_running_mo(self):
+	# 	if self.env['sale.order.line'].search([('apu_id', 'in', self.ids), ('state', 'not in', ['done', 'cancel'])],
+	# 										 limit=1):
+	# 		raise UserError(
+	# 			_('No puedes eliminar un APU mientras este asociado a un presupeusto.\nPrimero debes cancelar el presupuesto.'))
 
 	@api.model
 	def _bom_find_domain(self, products, picking_type=None, company_id=False, bom_type=False):
 		domain = ['&', '|', ('product_id', 'in', products.ids), '&', ('product_id', '=', False),
-		          ('product_tmpl_id', 'in', products.product_tmpl_id.ids), ('active', '=', True)]
+				  ('product_tmpl_id', 'in', products.product_tmpl_id.ids), ('active', '=', True)]
 		if company_id or self.env.context.get('company_id'):
 			domain = AND([domain, ['|', ('company_id', '=', False),
-			                       ('company_id', '=', company_id or self.env.context.get('company_id'))]])
+								   ('company_id', '=', company_id or self.env.context.get('company_id'))]])
 		if picking_type:
 			domain = AND([domain, ['|', ('picking_type_id', '=', picking_type.id), ('picking_type_id', '=', False)]])
 		if bom_type:
@@ -885,7 +882,7 @@ class ApuApu(models.Model):
 		def update_product_boms():
 			products = self.env['product.product'].browse(product_ids)
 			product_boms.update(self._bom_find(products, picking_type=picking_type or self.picking_type_id,
-			                                   company_id=self.company_id.id, bom_type='phantom'))
+											   company_id=self.company_id.id, bom_type='phantom'))
 			# Set missing keys to default value
 			for product in products:
 				product_boms.setdefault(product, self.env['apu.apu'])
@@ -917,9 +914,9 @@ class ApuApu(models.Model):
 			bom = product_boms.get(current_line.product_id)
 			if bom:
 				converted_line_quantity = current_line.product_uom_id._compute_quantity(line_quantity / bom.product_qty,
-				                                                                        bom.product_uom_id)
+																						bom.product_uom_id)
 				bom_lines += [(line, current_line.product_id, converted_line_quantity, current_line) for line in
-				              bom.line_ids]
+							  bom.line_ids]
 				for bom_line in bom.line_ids:
 					graph[current_line.product_id.product_tmpl_id.id].append(bom_line.product_id.product_tmpl_id.id)
 					if bom_line.product_id.product_tmpl_id.id in V and check_cycle(
@@ -931,16 +928,16 @@ class ApuApu(models.Model):
 					if not bom_line.product_id in product_boms:
 						product_ids.add(bom_line.product_id.id)
 				boms_done.append((bom,
-				                  {'qty': converted_line_quantity, 'product': current_product, 'original_qty': quantity,
-				                   'parent_line': current_line}))
+								  {'qty': converted_line_quantity, 'product': current_product, 'original_qty': quantity,
+								   'parent_line': current_line}))
 			else:
 				# We round up here because the user expects that if he has to consume a little more, the whole UOM unit
 				# should be consumed.
 				rounding = current_line.product_uom_id.rounding
 				line_quantity = float_round(line_quantity, precision_rounding=rounding, rounding_method='UP')
 				lines_done.append((current_line,
-				                   {'qty': line_quantity, 'product': current_product, 'original_qty': quantity,
-				                    'parent_line': parent_line}))
+								   {'qty': line_quantity, 'product': current_product, 'original_qty': quantity,
+									'parent_line': parent_line}))
 
 		return boms_done, lines_done
 
@@ -1194,7 +1191,7 @@ class ApuApu(models.Model):
 			subcategoria_rec = False
 			if header['subcategoria_id']:
 				subcategoria_rec = self.env['apu.subcategoria'].search([('codigo', '=', header['subcategoria_id'])],
-				                                                       limit=1)
+																	   limit=1)
 				if not subcategoria_rec:
 					raise UserError(_("No se encontró la Subcategoria '%s'.") % header['subcategoria_id'])
 
@@ -1287,30 +1284,30 @@ class ApuApu(models.Model):
 		title_format = workbook.add_format(
 			{**{'bold': True, 'font_size': 16, 'align': 'center', 'valign': 'vcenter'}, **common_font})
 		header_format = workbook.add_format({**{'bold': True, 'bg_color': '#EAECEE', 'border': 1, 'align': 'center',
-		                                        'valign': 'vcenter', 'text_wrap': True}, **common_font})
+												'valign': 'vcenter', 'text_wrap': True}, **common_font})
 		cat_header_format = workbook.add_format({**{'bold': True, 'bg_color': '#DCE6F1', 'border': 1, 'align': 'center',
-		                                            'valign': 'vcenter'}, **common_font})
+													'valign': 'vcenter'}, **common_font})
 		subcat_header_format = workbook.add_format(
 			{**{'bold': True, 'bg_color': '#EBF5FB', 'border': 1, 'align': 'center',
-			    'valign': 'vcenter'}, **common_font})
+				'valign': 'vcenter'}, **common_font})
 		center_text_format = workbook.add_format(
 			{**{'border': 1, 'align': 'center', 'valign': 'vcenter', 'text_wrap': True},
 			 **common_font})
 		monetary_format = workbook.add_format({**{'num_format': '$#,##0.00', 'border': 1, 'align': 'right',
-		                                          'valign': 'vcenter'}, **common_font})
+												  'valign': 'vcenter'}, **common_font})
 		numeric_format = workbook.add_format({**{'num_format': '#,##0.00', 'border': 1, 'align': 'right',
-		                                         'valign': 'vcenter'}, **common_font})
+												 'valign': 'vcenter'}, **common_font})
 		text_format = workbook.add_format({**{'border': 1, 'align': 'left', 'valign': 'vcenter', 'text_wrap': True},
-		                                   **common_font})
+										   **common_font})
 		date_format = workbook.add_format({**{'num_format': 'yyyy-mm-dd', 'border': 1, 'align': 'left',
-		                                      'valign': 'vcenter'}, **common_font})
+											  'valign': 'vcenter'}, **common_font})
 		apu_text_format = workbook.add_format(
 			{**{'border': 1, 'align': 'center', 'valign': 'vcenter', 'text_wrap': True},
 			 **common_font})
 		apu_numeric_format = workbook.add_format({**{'num_format': '$#,##0.00', 'border': 1, 'align': 'right',
-		                                             'valign': 'vcenter'}, **common_font})
+													 'valign': 'vcenter'}, **common_font})
 		apu_numeric_plain = workbook.add_format({**{'num_format': '#,##0.00', 'border': 1, 'align': 'right',
-		                                            'valign': 'vcenter'}, **common_font})
+													'valign': 'vcenter'}, **common_font})
 
 		# --- Ajustar ancho de columnas ---
 		worksheet.set_column('A:A', 15)
@@ -1381,7 +1378,7 @@ class ApuApu(models.Model):
 				worksheet.write(current_row, 1, current_subcat, subcat_header_format)
 				worksheet.merge_range(current_row, 2, current_row, 4, "", subcat_header_format)
 				worksheet.write_number(current_row, 5, subcat_totals.get((current_cat, current_subcat), 0.0),
-				                       monetary_format)
+									   monetary_format)
 				current_row += 1
 				prev_subcat = current_subcat
 
@@ -1394,7 +1391,7 @@ class ApuApu(models.Model):
 			worksheet.write_number(current_row, 3, line.precio_unit or 0.0, monetary_format)
 			worksheet.write_number(current_row, 4, line.product_qty or 0.0, numeric_format)
 			worksheet.write_number(current_row, 5, (line.precio_unit or 0.0) * (line.product_qty or 0.0),
-			                       monetary_format)
+								   monetary_format)
 			current_row += 1
 
 		worksheet.write(current_row + 1, 0, "Total General", header_format)
@@ -1439,6 +1436,33 @@ class ApuApu(models.Model):
 	            """
 			self.message_post(body=body, subtype_xmlid="mail.mt_note")
 
+	def unlink(self):
+		# 1) Bloquear si el APU aparece en presupuestos
+		SaleOrderLine = self.env['sale.order.line'].sudo()
+		budget_states = ('draft', 'presupuesto_revisado', 'sent')
+		lines = SaleOrderLine.search([
+			('apu_id', 'in', self.ids),
+			('order_id.state', 'in', budget_states),
+		])
+		if lines:
+			budgets = lines.mapped('order_id')
+			listado = ", ".join(sorted(set(budgets.mapped('name'))))
+			raise UserError(_(
+				"No se puede eliminar el APU porque está referenciado en presupuestos "
+				"(estados: %s). Documentos: %s"
+			) % (", ".join(budget_states), listado or "-"))
+
+		# 2) Bloquear si quien intenta borrar NO es el creador
+		if not self.env.is_superuser:
+			not_mine = self.filtered(lambda r: r.create_uid != self.env.user)
+			if not_mine:
+				nombres = ", ".join(not_mine.mapped('display_name'))
+				raise UserError(_(
+					"Solo el usuario que creó el APU puede eliminarlo. "
+					"No eres creador de: %s"
+				) % (nombres or "-"))
+
+		return super(ApuApu, self).unlink()
 
 class ApuApuLine(models.Model):
 	_name = 'apu.apu.line'
@@ -1465,7 +1489,7 @@ class ApuApuLine(models.Model):
 		return result
 
 	product_tmpl_id = fields.Many2one('product.template', 'Product Template', related='product_id.product_tmpl_id',
-	                                  store=True, index=True)
+									  store=True, index=True)
 	company_id = fields.Many2one(
 		related='bom_id.company_id', store=True, index=True, readonly=True)
 	product_qty = fields.Float(
@@ -1485,7 +1509,7 @@ class ApuApuLine(models.Model):
 		'apu.apu', 'Parent BoM',
 		index=True, ondelete='cascade', required=True)
 	parent_product_tmpl_id = fields.Many2one('product.template', 'Parent Product Template',
-	                                         related='bom_id.product_tmpl_id')
+											 related='bom_id.product_tmpl_id')
 	possible_bom_product_template_attribute_value_ids = fields.Many2many(
 		related='bom_id.possible_product_template_attribute_value_ids')
 	bom_product_template_attribute_value_ids = fields.Many2many(
@@ -1508,7 +1532,7 @@ class ApuApuLine(models.Model):
 		'Manual Consumption', default=False, compute='_compute_manual_consumption',
 		readonly=False, store=True, copy=True,
 		help="When activated, then the registration of consumption for that component is recorded manually exclusively.\n"
-		     "If not activated, and any of the components consumption is edited manually on the manufacturing order, Odoo assumes manual consumption also.")
+			 "If not activated, and any of the components consumption is edited manually on the manufacturing order, Odoo assumes manual consumption also.")
 	manual_consumption_readonly = fields.Boolean(
 		'Manual Consumption Readonly', compute='_compute_manual_consumption_readonly')
 	tipo_componente = fields.Selection([
@@ -1521,7 +1545,7 @@ class ApuApuLine(models.Model):
 	cost = fields.Float("Costo Unit", digits=(16, 4))
 
 	cost_compute = fields.Float("Costo Unit C.", compute="_compute_costo_unit", readonly=False,
-	                            digits=(16, 4))
+								digits=(16, 4))
 
 	subtotal = fields.Float("Costo Tot", compute="_calc_subtotal", digits=(16, 4))
 	# Nuevo campo precio_unit calculado como la suma de los costo_final_actividad de las actividades asociadas
@@ -2003,8 +2027,8 @@ class MrpByProduct(models.Model):
 		default=1.0, digits=(16, 4), required=True)
 	product_uom_category_id = fields.Many2one(related='product_id.uom_id.category_id')
 	product_uom_id = fields.Many2one('uom.uom', 'Unit of Measure', required=True,
-	                                 compute="_compute_product_uom_id", store=True, readonly=False, precompute=True,
-	                                 domain="[('category_id', '=', product_uom_category_id)]")
+									 compute="_compute_product_uom_id", store=True, readonly=False, precompute=True,
+									 domain="[('category_id', '=', product_uom_category_id)]")
 	bom_id = fields.Many2one('apu.apu', 'BoM', ondelete='cascade', index=True)
 	allowed_operation_ids = fields.One2many('mrp.routing.workcenter', related='bom_id.operation_ids')
 	operation_id = fields.Many2one(
@@ -2020,7 +2044,7 @@ class MrpByProduct(models.Model):
 	cost_share = fields.Float(
 		"Cost Share (%)", digits=(16, 4),  # decimal = 2 is important for rounding calculations!!
 		help="The percentage of the final production cost for this by-product line (divided between the quantity produced)."
-		     "The total of all by-products' cost share must be less than or equal to 100.")
+			 "The total of all by-products' cost share must be less than or equal to 100.")
 
 	@api.depends('product_id')
 	def _compute_product_uom_id(self):
@@ -2042,38 +2066,47 @@ class SaleOrder(models.Model):
 	_inherit = 'sale.order'
 
 	state = fields.Selection(selection_add=[('presupuesto_revisado', 'Presupuesto revisado'),
-	                                        ('generar_requisiciones', 'Requisiciones Generadas'),
-	                                        ('generar_proyecto', 'Proyecto Generado'), ])
+											('generar_requisiciones', 'Requisiciones Generadas'),
+											('generar_proyecto', 'Proyecto Generado'), ])
 	project_name = fields.Char(string="Nombre del Proyecto", compute="_compute_project_name", store=True, copy=False,
-	                           help="Nombre del proyecto asociado a este pedido.")
+							   help="Nombre del proyecto asociado a este pedido.")
 	show_generate_project = fields.Boolean(string="Mostrar botón de generación de proyecto",
-	                                       compute="_compute_show_generate_project")
+										   compute="_compute_show_generate_project")
 	proyecto = fields.Char(string="Proyecto", copy=False, )
 	no_proyecto = fields.Char(string="No. Proyecto", copy=False, readonly=True)
 	plantilla_tarea_id = fields.Many2one('plantilla.tareas', 'Plantilla de tareas', index=True)
 
 	# Relacionar las requisiciones de compra con el pedido de venta
 	material_purchase_requisition_ids = fields.One2many('material.purchase.requisition', 'sale_order_id',
-	                                                    string="Material Purchase Requisitions", copy=False)
+														string="Material Purchase Requisitions", copy=False)
 	purchase_requisition_ids = fields.One2many('purchase.request', 'sale_order_id',
-	                                           string="Material Purchase Requisitions", copy=False)
+											   string="Material Purchase Requisitions", copy=False)
 	purchase_request_ids = fields.One2many('purchase.request', 'sale_order_id', string="Purchase Requests", copy=False)
 	macro_purchase_request_ids = fields.One2many('macro.purchase.request', 'sale_order_id', string="Purchase Requests",
-	                                             copy=False)
+												 copy=False)
 	project_id = fields.Many2one('project.project', 'Project', copy=False, index=True)
 	plantilla_proyecto_xml = fields.Binary(string="Plantilla XML de Proyecto", copy=False)
 	plantilla_proyecto_xml_filename = fields.Char(string="Nombre del archivo XML", copy=False, )
 	tipo_pedido = fields.Selection([('apu', 'APU'), ('normal', 'Normal')], string="Tipo Pedido", default='normal',
-	                               copy=False, )
+								   copy=False, )
 	es_alcance = fields.Boolean('Es alcance?')
 	motivo_alcance = fields.Text('Motivo alcance')
 	macro_unificado = fields.Boolean('Macro Unificado?')
 	pmo_asignado = fields.Many2one('res.users', 'PMO Asignado')
 	tipo_presupuesto = fields.Selection([('civil', 'Civil'), ('mecanico', 'Mecanico')], string="Tipo Psp",
-	                                    default='civil', copy=False)
+										default='civil', copy=False)
+	tipo_presupuesto_id = fields.Many2one('tipo.presupuesto', 'T. Presupuesto')
 	superintendente = fields.Many2one('res.users', 'Superintendente')
 	supervisor = fields.Many2one('res.users', 'Supervisor')
+	usuario_presupuestador = fields.Many2one('res.users', 'Presupuestador',  store=True, default=lambda self: self.env.uid, readonly=True)
 
+	# @api.constrains('state', 'tipo_pedido', 'superintendente', 'supervisor')
+	# def _check_sup_when_confirm(self):
+	# 	for so in self:
+	# 		if so.tipo_pedido == 'apu' and so.state in ('sale', 'done'):
+	# 			if not so.superintendente or not so.supervisor:
+	# 				raise ValidationError(_("Debes completar Superintendente y Supervisor para confirmar."))
+	
 	@api.model
 	def fields_get(self, allfields=None, attributes=None):
 		res = super(SaleOrder, self).fields_get(allfields, attributes)
@@ -2104,7 +2137,7 @@ class SaleOrder(models.Model):
 				raise UserError(_('Solo puedes marcar como revisado un presupuesto en borrador.'))
 			order.state = 'presupuesto_revisado'
 		return True
-
+	
 	def action_send_informe_detallado(self):
 		self.ensure_one()
 
@@ -2178,8 +2211,8 @@ class SaleOrder(models.Model):
 	def _compute_show_generate_project(self):
 		""" Muestra el botón solo cuando el pedido de venta ya no es un presupuesto """
 		for order in self:
-			order.show_generate_project = order.state not in ('draft', 'sent', 'presupuesto_revisado'
-			                                                                   'generar_requisiciones')  # Oculta en borrador y presupuesto enviado
+			order.show_generate_project = order.state not in ('draft', 'sent','presupuesto_revisado'
+															  'generar_requisiciones')  # Oculta en borrador y presupuesto enviado
 
 	def action_generate_project(self):
 		self.ensure_one()
@@ -2424,7 +2457,7 @@ class SaleOrder(models.Model):
 		for order in self:
 			for line in order.order_line:
 				apu_lines = order.get_apu_lines_by_product_template(line.product_id.product_tmpl_id.id,
-				                                                    line.product_uom_qty)
+																	line.product_uom_qty)
 				for data in apu_lines:
 					tipo = data.get('tipo_componente')
 					totals[tipo] = totals.get(tipo, 0) + data.get('final_price', 0.0)
@@ -2525,7 +2558,7 @@ class SaleOrder(models.Model):
 
 				# Eliminar el movimiento del producto principal (evita que aparezca en el picking)
 				move_field = 'move_ids_without_package' if hasattr(picking,
-				                                                   'move_ids_without_package') else 'move_lines'
+																   'move_ids_without_package') else 'move_lines'
 				rule_moves = getattr(picking, move_field).filtered(lambda move: move.rule_id)
 				for move in rule_moves:
 					move._action_cancel()
@@ -2546,7 +2579,7 @@ class SaleOrder(models.Model):
 			{**{'bold': True, 'font_size': 16, 'align': 'center', 'valign': 'vcenter'}, **common_font})
 		header_format = workbook.add_format(
 			{**{'bold': True, 'bg_color': '#EAECEE', 'border': 1, 'align': 'center', 'valign': 'vcenter',
-			    'text_wrap': True}, **common_font})
+				'text_wrap': True}, **common_font})
 		cat_header_format = workbook.add_format(
 			{**{'bold': True, 'bg_color': '#DCE6F1', 'border': 1, 'align': 'center', 'valign': 'vcenter'},
 			 **common_font})
@@ -2644,8 +2677,8 @@ class SaleOrder(models.Model):
 			# Si la categoría cambia, insertar encabezado de categoría con total
 			if current_cat != prev_cat:
 				cat_code = (apu_rec.subcategoria_id.categoria_id.codigo
-				            if (apu_rec and apu_rec.subcategoria_id and apu_rec.subcategoria_id.categoria_id.codigo)
-				            else "")
+							if (apu_rec and apu_rec.subcategoria_id and apu_rec.subcategoria_id.categoria_id.codigo)
+							else "")
 				worksheet.write(current_row, 0, cat_code, cat_header_format)
 				worksheet.write(current_row, 1, current_cat, cat_header_format)
 				worksheet.merge_range(current_row, 2, current_row, 4, "", cat_header_format)
@@ -2657,13 +2690,13 @@ class SaleOrder(models.Model):
 			# Si la subcategoría cambia, insertar encabezado de subcategoría con total
 			if current_subcat != prev_subcat:
 				subcat_code = (apu_rec.subcategoria_id.codigo
-				               if (apu_rec and apu_rec.subcategoria_id and apu_rec.subcategoria_id.codigo)
-				               else "")
+							   if (apu_rec and apu_rec.subcategoria_id and apu_rec.subcategoria_id.codigo)
+							   else "")
 				worksheet.write(current_row, 0, subcat_code, subcat_header_format)
 				worksheet.write(current_row, 1, current_subcat, subcat_header_format)
 				worksheet.merge_range(current_row, 2, current_row, 4, "", subcat_header_format)
 				worksheet.write_number(current_row, 5, subcat_totals.get((current_cat, current_subcat), 0.0),
-				                       monetary_format)
+									   monetary_format)
 				current_row += 1
 				prev_subcat = current_subcat
 
@@ -2717,8 +2750,8 @@ class SaleOrder(models.Model):
 		}
 
 	porcentaje_inicial_requisicion = fields.Float(string='Porcentaje Inicial de Requisición (%)', digits=(12, 2),
-	                                              default=100.0,
-	                                              help="Porcentaje de la cantidad del pedido que se requisitará inicialmente (1-100).")
+												  default=100.0,
+												  help="Porcentaje de la cantidad del pedido que se requisitará inicialmente (1-100).")
 	tiempo_entrega = fields.Char(string="Tiempo de Entrega", copy=False, tracking=True)
 	condiciones_comerciales = fields.Text(string="Condiciones Comerciales", copy=False, tracking=True)
 	garantias = fields.Text(string="Garantías", copy=False, tracking=True)
@@ -2807,7 +2840,7 @@ class SaleOrder(models.Model):
 				'picking_type_id': pick_type.id,
 				'permite_aprobar': True,
 				'request_type': 'service',
-				'analytic_distribution': {aa_id: 100.0},
+				'analytic_distribution':{aa_id: 100.0},
 			}
 			pur_req_serv = self.env['macro.purchase.request'].create(pr_vals)
 
@@ -2863,7 +2896,7 @@ class SaleOrder(models.Model):
 				'picking_type_id': pick_type.id,
 				'permite_aprobar': True,
 				'request_type': 'product',
-				'analytic_distribution': {aa_id: 100.0},
+				'analytic_distribution':{aa_id: 100.0},
 			}
 			pur_req = self.env['macro.purchase.request'].create(pr_vals)
 
@@ -2953,7 +2986,7 @@ class SaleOrder(models.Model):
 					'picking_type_id': pick_type.id,
 					'permite_aprobar': True,
 					'request_type': 'service',
-					'analytic_distribution': {aa_id: 100.0},
+					'analytic_distribution':{aa_id: 100.0},
 				})
 				for line in serv_items:
 					line['request_id'] = pur_req_serv.id
@@ -2971,7 +3004,7 @@ class SaleOrder(models.Model):
 					'picking_type_id': pick_type.id,
 					'permite_aprobar': True,
 					'request_type': 'product',
-					'analytic_distribution': {aa_id: 100.0},
+					'analytic_distribution':{aa_id: 100.0},
 				})
 				for line in prod_items:
 					line['request_id'] = pur_req.id
@@ -2982,8 +3015,13 @@ class SaleOrder(models.Model):
 			'material_requisition': pur_req_serv,
 			'purchase_request': pur_req,
 		}
-
+	
 	def generate_purchase_requisition(self):
+		for so in self:
+            # Solo exigir cuando realmente corresponde (ajusta estados según tu flujo)
+			if so.tipo_pedido == 'apu' and so.state in ('sale', 'done'):
+				if not so.superintendente or not so.supervisor or not so.pmo_asignado:
+					raise ValidationError(_("Debes completar Superintendente y Supervisor para generar requisicion."))
 		self.ensure_one()
 		pur_req_serv = self.env['macro.purchase.request']
 		pur_req = self.env['macro.purchase.request']
@@ -3025,8 +3063,8 @@ class SaleOrder(models.Model):
 				'permite_aprobar': True,
 				'request_type': 'service',
 				'analytic_distribution': {self.analytic_account_id.id: 100.0},
-				'superintendente': self.superintendente.id,
-				'supervisor': self.supervisor.id
+				'superintendente':self.superintendente.id,
+				'supervisor':self.supervisor.id
 			}
 			pur_req_serv = self.env['macro.purchase.request'].create(pr_vals)
 
@@ -3047,7 +3085,7 @@ class SaleOrder(models.Model):
 						continue
 
 					key = (apu_line.product_id.id, apu_line.product_id.uom_id.id)
-					tipo_costo_display = dict(self.env['apu.apu.line']._fields['tipo_componente'].selection) \
+					tipo_costo_display = dict(self.env['apu.apu.line']._fields['tipo_componente'].selection)\
 						.get(apu_line.tipo_componente, '').strip()
 
 					if key not in agg_serv:
@@ -3091,8 +3129,8 @@ class SaleOrder(models.Model):
 				'permite_aprobar': True,
 				'request_type': 'product',
 				'analytic_distribution': {self.analytic_account_id.id: 100.0},
-				'superintendente': self.superintendente.id,
-				'supervisor': self.supervisor.id
+				'superintendente':self.superintendente.id,
+				'supervisor':self.supervisor.id
 			}
 			pur_req = self.env['macro.purchase.request'].create(pr_vals)
 
@@ -3113,7 +3151,7 @@ class SaleOrder(models.Model):
 						continue
 
 					key = (apu_line.product_id.id, apu_line.product_id.uom_id.id)
-					tipo_costo_display = dict(self.env['apu.apu.line']._fields['tipo_componente'].selection) \
+					tipo_costo_display = dict(self.env['apu.apu.line']._fields['tipo_componente'].selection)\
 						.get(apu_line.tipo_componente, '').strip()
 
 					if key not in agg_prod:
@@ -3195,8 +3233,8 @@ class SaleOrder(models.Model):
 					'permite_aprobar': True,
 					'request_type': 'service',
 					'analytic_distribution': {self.analytic_account_id.id: 100.0},
-					'superintendente': self.superintendente.id,
-					'supervisor': self.supervisor.id
+					'superintendente':self.superintendente.id,
+					'supervisor':self.supervisor.id
 				})
 				for vals in _group_items(serv_items):
 					vals['request_id'] = pur_req_serv.id
@@ -3215,8 +3253,8 @@ class SaleOrder(models.Model):
 					'permite_aprobar': True,
 					'request_type': 'product',
 					'analytic_distribution': {self.analytic_account_id.id: 100.0},
-					'superintendente': self.superintendente.id,
-					'supervisor': self.supervisor.id
+					'superintendente':self.superintendente.id,
+					'supervisor':self.supervisor.id
 				})
 				for vals in _group_items(prod_items):
 					vals['request_id'] = pur_req.id
@@ -3269,19 +3307,20 @@ class SaleOrder(models.Model):
 
 		# Enviar correo directo (NO partner_ids, NO followers, SIN reply_to)
 		email_from = (self.env.user.email_formatted
-		              or self.company_id.partner_id.email_formatted
-		              or False)
+					or self.company_id.partner_id.email_formatted
+					or False)
 		self.env['mail.mail'].sudo().create({
 			'subject': subject,
 			'body_html': body,
 			'email_from': email_from,
 			'email_to': ",".join(emails),
-			'reply_to': False,  # <-- sin "Responder a"
+			'reply_to': False,          # <-- sin "Responder a"
 			'auto_delete': True,
 		}).send()
 
 		# Log en chatter sin notificar a nadie
 		self.message_post(body=body, subject=subject, subtype_xmlid='mail.mt_note')
+
 
 	def action_view_material_requisitions(self):
 		action = self.env.ref('construccion_gps.action_view_material_requisitions').read()[0]
@@ -3357,7 +3396,7 @@ class SaleOrder(models.Model):
 				# Si es dict {account_id: pct, ...}
 				items = dist.items() if isinstance(dist, dict) else (
 					[(d.account_id.id, d.distribution) for d in dist]
-					if hasattr(dist, '__iter__') else []
+					if hasattr(dist, '_iter_') else []
 				)
 				for acct_id, pct in items:
 					acct = self.env['account.analytic.account'].browse(int(acct_id))
@@ -3390,7 +3429,7 @@ class SaleOrder(models.Model):
 		return {
 			'type': 'ir.actions.act_url',
 			'url': f"/web/content/{attachment.id}?download=1",
-			'target': 'self',  # Fuerza descarga directa
+			'target': 'self',  # Fuerza descarga directa
 		}
 
 	@api.model_create_multi
@@ -3398,7 +3437,36 @@ class SaleOrder(models.Model):
 		if self.env.context.get('from_reviewed_menu') or self.env.context.get('from_presupuesto_menu'):
 			raise UserError(_("No se pueden crear pedidos desde 'Presupuestos Revisados' o 'Presupuestos'."))
 		return super().create(vals_list)
+	
+	def action_cancel(self):
+		for order in self:
+			if getattr(order, 'tipo_pedido', '') == 'apu':
+				# 1. Verificar macro requisiciones
+				macros = self.env['macro.purchase.request'].search([
+					('sale_order_id', '=', order.id),
+					('state', '=', 'approved')
+				])
+				if macros:
+					for dm in macros:
+						# 2. Verificar request_acceptance
+						acceptances = self.env['request.acceptance'].search([
+							('request_id', '=', dm.id),
+							('state', '=', 'accept')
+						])
+						if acceptances:
+							for da in acceptances:
+								# 3. Verificar purchase_request
+								pr_lines = self.env['purchase.request'].search([
+									('request_acceptance_id', '=', da.id),
+									('state', 'in', ['approved', 'in_progress'])
+								],limit=1)
+								if pr_lines:
+									raise ValidationError(_(
+										"No se puede cancelar el presupuesto %s porque tiene "
+										"requisiciones de compra en estado Aprobado o En Progreso %s." % (order.name,pr_lines.name)
+									))
 
+		return super().action_cancel()
 
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
@@ -3413,9 +3481,9 @@ class SaleOrderLine(models.Model):
 		store=False
 	)
 	order_referencia_analitica = fields.Char(
-		related='order_id.referencia_analitica',
-		string="Proyecto",
-		store=True, index=True, precompute=True)
+        related='order_id.referencia_analitica',
+        string="Proyecto",
+        store=True, index=True, precompute=True)
 
 	def action_ver_apu_popup(self):
 		self.ensure_one()
@@ -3522,7 +3590,7 @@ class MaterialPurchaseRequisition(models.Model):
 
 	# Relaciona el requisición de compra con el pedido de venta
 	sale_order_id = fields.Many2one('sale.order', string='Presupuesto',
-	                                help="Asocia esta requisición de compra con un pedido de venta", )
+									help="Asocia esta requisición de compra con un pedido de venta", )
 	permite_aprobar = fields.Boolean('Permite Aprobar', default=False)
 
 	def requisition_confirm(self):
@@ -3537,7 +3605,7 @@ class MaterialPurchaseRequisitionLine(models.Model):
 	_inherit = 'material.purchase.requisition.line'
 
 	sale_order_line_id = fields.Many2one('sale.order.line', string='Línea de Pedido', index=True,
-	                                     help="Referencia a la línea del pedido de venta que originó esta línea de requisición", )
+										 help="Referencia a la línea del pedido de venta que originó esta línea de requisición", )
 
 	@api.constrains('qty', 'sale_order_line_id', 'product_id', 'analytic_account_id')
 	def _check_qty_not_exceed_apux(self):
@@ -3571,10 +3639,10 @@ class MaterialPurchaseRequisitionLine(models.Model):
 					raise UserError(_(
 						"Has solicitado %s unidades de %s, pero la cantidad máxima presupuestada X es %s."
 					) % (
-						                float_round(line.qty, 2),
-						                line.product_id.display_name,
-						                float_round(total_presupuestado, 2),
-					                ))
+										float_round(line.qty, 2),
+										line.product_id.display_name,
+										float_round(total_presupuestado, 2),
+									))
 				continue
 
 			# ------------------------------------------------------
@@ -3633,11 +3701,11 @@ class MaterialPurchaseRequisitionLine(models.Model):
 					"  • Ya solicitado: %s unidades\n"
 					"  • Te quedan disponibles: %s unidades"
 				) % (
-					                analytic.display_name,
-					                float_round(total_presupuestado, 2),
-					                float_round(antes, 2),
-					                float_round(restante, 2),
-				                ))
+									analytic.display_name,
+									float_round(total_presupuestado, 2),
+									float_round(antes, 2),
+									float_round(restante, 2),
+								))
 
 
 class PurchaseRequest(models.Model):
@@ -3645,7 +3713,7 @@ class PurchaseRequest(models.Model):
 
 	# Relaciona el requisición de compra con el pedido de venta
 	sale_order_id = fields.Many2one('sale.order', string='Presupuesto',
-	                                help="Asocia esta requisición de compra con un pedido de venta", )
+									help="Asocia esta requisición de compra con un pedido de venta", )
 	permite_aprobar = fields.Boolean('Permite Aprobar', default=False)
 
 	def button_to_approve(self):
@@ -3669,8 +3737,8 @@ class PurchaseRequest(models.Model):
 								pass
 						except ValueError:
 							continue  # ignorar claves mal formateadas
-		# if not rec.sale_order_id and not rec.permite_aprobar :
-		# raise UserError(_("No puedes enviar a aprobación una requisición que no está vinculada a un presupuesto."))
+			# if not rec.sale_order_id and not rec.permite_aprobar :
+			# raise UserError(_("No puedes enviar a aprobación una requisición que no está vinculada a un presupuesto."))
 		for request in self:
 			for line in request.line_ids:
 				if not line.sale_order_line_id or not line.product_id:
@@ -3697,7 +3765,7 @@ class PurchaseRequestLine(models.Model):
 	_inherit = 'purchase.request.line'
 
 	sale_order_line_id = fields.Many2one('sale.order.line', string='Línea de Pedido', index=True,
-	                                     help="Referencia a la línea del pedido de venta que originó esta línea de requisición", )
+										 help="Referencia a la línea del pedido de venta que originó esta línea de requisición", )
 
 	@api.constrains('product_qty', 'sale_order_line_id', 'product_id', 'analytic_distribution')
 	def _check_qty_not_exceed_apu(self):
@@ -3765,10 +3833,10 @@ class PurchaseRequestLine(models.Model):
 					raise UserError(_(
 						"Has solicitado %s unidades de %s, pero la cantidad máxima presupuestada es %s."
 					) % (
-						                float_round(line.product_qty, 2),
-						                line.product_id.display_name,
-						                float_round(total_presupuestado, 2),
-					                ))
+										float_round(line.product_qty, 2),
+										line.product_id.display_name,
+										float_round(total_presupuestado, 2),
+									))
 				continue
 
 			# ------------------------------------------------------
@@ -3812,14 +3880,14 @@ class PurchaseRequestLine(models.Model):
 					"El producto %s no está contemplado en las APU del presupuesto asociado a la cuenta '%s'."
 				) % (line.product_id.display_name, analytic.display_name))
 			antes = 0
-			if line.display_type != 'line_section':
+			if line.display_type!='line_section':
 				self.env.cr.execute("""
-                                    SELECT SUM(product_qty)
-                                    FROM purchase_request_line
-                                    WHERE product_id = %s
-                                      AND id != %s
-                                      AND analytic_distribution::jsonb ? %s
-				                    """, (line.product_id.id, line.id, str(analytic.id)))
+									SELECT SUM(product_qty)
+									FROM purchase_request_line
+									WHERE product_id = %s
+									AND id != %s
+									AND analytic_distribution::jsonb ? %s
+									""", (line.product_id.id, line.id, str(analytic.id)))
 				antes = self.env.cr.fetchone()[0] or 0.0
 			# antes = sum(
 			#     rec.product_qty for rec in self.search([
@@ -3836,8 +3904,8 @@ class PurchaseRequestLine(models.Model):
 					"  • Ya solicitado: %s unidades\n"
 					"  • Te quedan disponibles: %s unidades"
 				) % (
-					                analytic.display_name,
-					                float_round(total_presupuestado, 2),
-					                float_round(antes, 2),
-					                float_round(restante, 2),
-				                ))
+									analytic.display_name,
+									float_round(total_presupuestado, 2),
+									float_round(antes, 2),
+									float_round(restante, 2),
+								))

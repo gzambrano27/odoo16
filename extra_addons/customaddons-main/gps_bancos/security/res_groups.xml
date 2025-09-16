@@ -87,6 +87,11 @@
 			 <field name="category_id" ref="group_module_bancos"/>
 		</record>
 
+			<record model="res.groups" id="group_contratista_todos_pagos">
+			<field name="name">Visualizar Todos Pagos</field>
+			 <field name="category_id" ref="group_module_bancos"/>
+		</record>
+
     </data>
 
 </odoo>

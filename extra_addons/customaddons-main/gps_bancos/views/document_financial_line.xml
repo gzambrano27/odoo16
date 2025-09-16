@@ -65,8 +65,8 @@ create="false"
                     <field name="total_pending" sum="total" optional="hide"
                            attrs="{'invisible':[('state','not in',('posted','paid'))]}" readonly="1"/>
 
-            <field name="total" sum="total" optional="hide"/>
-                       <field name="total" sum="total" optional="hide"/>
+     <!--       <field name="total" sum="total" optional="hide"/>
+                       <field name="total" sum="total" optional="hide"/>-->
 
 
                     <field name="state" invisible="1"/>
@@ -77,7 +77,7 @@ create="false"
                             icon="fa-money"
                             name="%(document_financial_wizard_payment_view_lines_action)d"
                             type="action"
-                            attrs="{'invisible':['|',('state','!=','posted'),('total_pending','&lt;=',0)]}"
+                            attrs="{'invisible':[('state','!=','posted')]}"
                     />
                     <button help="Act. Colocaciones"
                             icon="fa-table"
@@ -447,10 +447,15 @@ create="false"
                                 <field name="total_pending" readonly="1"/>
 
                                   <field name="payment_amount" readonly="1"  />
-                     <field name="payment_amount_interes" readonly="1"  />
+                     <field name="payment_amount_interes" readonly="1" attrs="{'invisible':[('payment_amount_interes','&lt;=',0)]}" />
 
-                                <field name="total_invoiced" readonly="1"/>
-                                <field name="total_to_invoice" readonly="1"/>
+                                <field name="amount_iva" readonly="1" force_save="1" attrs="{'invisible':[('amount_iva','&lt;=',0)]}"/>
+                                <field name="amount_retenido" readonly="1" force_save="1" attrs="{'invisible':[('amount_retenido','&lt;=',0)]}"/>
+
+                                   <field name="total_invoiced" readonly="1" force_save="1" attrs="{'invisible':[('total_invoiced','&lt;=',0)]}"/>
+                               <field name="total_to_invoice" readonly="1" force_save="1" attrs="{'invisible':[('total_to_invoice','&lt;=',0)]}"/>
+
+                                   <field name="amount_total_payments" readonly="1" force_save="1" attrs="{'invisible':[('amount_total_payments','&lt;=',0)]}"/>
 
                             </group>
                         </group>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="document_financial_line_report_c" model="account.report">
+            <field name="name">Acuerdos de Cobros &amp; Vencidos por Cobrar</field>
+            <field name="filter_multi_company">selector</field>
+            <field name="filter_fiscal_position" eval="0"/>
+            <field name="filter_partner" eval="0"/>
+            <field name="filter_growth_comparison" eval="0"/>
+            <field name="filter_show_draft" eval="0"/>
+            <field name="filter_date_range" eval="0"/>
+            <field name="filter_period_comparison" eval="0"/>
+            <field name="default_opening_date_filter">today</field>
+            <field name="only_tax_exigible" eval="False"/>
+            <field name="main_model_name" />
+        <field name="mail_model_name" />
+            <field name="custom_handler_model_id" ref="model_document_financial_line_report_handler"/>
+<field name="line_template">gps_bancos.line_template_financial_report</field>
+            <field name="column_ids">
+
+                <record id="document_financial_line_quota_c" model="account.report.column">
+                <field name="name">Cuota</field>
+                <field name="expression_label">quota</field>
+                <field name="figure_type">integer</field>
+            </record>
+
+            <record id="document_financial_line_date_due_c" model="account.report.column">
+                <field name="name">Fecha de Vencimiento</field>
+                <field name="expression_label">date_due</field>
+                <field name="figure_type">date</field>
+            </record>
+            <record id="document_financial_line_period0_c" model="account.report.column">
+                <field name="name">En fecha</field>
+                <field name="expression_label">period0</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_period1_c" model="account.report.column">
+                <field name="name">1-30</field>
+                <field name="expression_label">period1</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_period2_c" model="account.report.column">
+                <field name="name">31-60</field>
+                <field name="expression_label">period2</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_period3_c" model="account.report.column">
+                <field name="name">61-90</field>
+                <field name="expression_label">period3</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_period4_c" model="account.report.column">
+                <field name="name">91-120</field>
+                <field name="expression_label">period4</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_period5_c" model="account.report.column">
+                <field name="name">Más antiguos</field>
+                <field name="expression_label">period5</field>
+                <field name="sortable" eval="True"/>
+            </record>
+            <record id="document_financial_line_total_c" model="account.report.column">
+                <field name="name">Total</field>
+                <field name="expression_label">total</field>
+                <field name="sortable" eval="True"/>
+            </record>
+        </field>
+
+        <field name="line_ids">
+
+
+
+            <record id="document_financial_line_ac_cobros" model="account.report.line">
+                <field name="name">Acuerdo de Cobros</field>
+                <field name="groupby">partner_id,document_id,id</field>
+                <field name="sequence">1</field>
+                <field name="mail_model_name">document.financial.line</field>
+                <field name="main_model_name">document.financial.line</field>
+                <field name="expression_ids">
+
+                    <record id="document_financial_line_ac_cobros_quota" model="account.report.expression">
+                        <field name="label">quota</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">quota</field>
+                    </record>
+
+                    <record id="document_financial_line_ac_cobros_date_due" model="account.report.expression">
+                        <field name="label">date_due</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">date_due</field>
+                    </record>
+
+                    <record id="document_financial_line_ac_cobros_period0" model="account.report.expression">
+                        <field name="label">period0</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period0</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_period1" model="account.report.expression">
+                        <field name="label">period1</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period1</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_period2" model="account.report.expression">
+                        <field name="label">period2</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period2</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_period3" model="account.report.expression">
+                        <field name="label">period3</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period3</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_period4" model="account.report.expression">
+                        <field name="label">period4</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period4</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_period5" model="account.report.expression">
+                        <field name="label">period5</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">period5</field>
+                    </record>
+                    <record id="document_financial_line_ac_cobros_total" model="account.report.expression">
+                        <field name="label">total</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">total</field>
+                    </record>
+                </field>
+                <!---->
+            </record>
+
+      <record id="document_financial_move_line_c" model="account.report.line">
+                <field name="name">Vencido por Cobrar</field>
+                <field name="groupby">partner_id,id</field>
+            <field name="sequence">3</field>
+                <field name="mail_model_name">account.move.line</field>
+            <field name="main_model_name">account.move.line</field>
+                <field name="expression_ids">
+
+                    <record id="document_financial_move_line_quota_c" model="account.report.expression">
+                        <field name="label">quota</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">quota</field>
+                    </record>
+
+                    <record id="document_financial_move_line_date_due_c" model="account.report.expression">
+                        <field name="label">date_due</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">date_due</field>
+                    </record>
+
+                    <record id="document_financial_move_line_period0_c" model="account.report.expression">
+                        <field name="label">period0</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period0</field>
+                    </record>
+                    <record id="document_financial_move_line_period1_c" model="account.report.expression">
+                        <field name="label">period1</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period1</field>
+                    </record>
+                    <record id="document_financial_move_line_period2_c" model="account.report.expression">
+                        <field name="label">period2</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period2</field>
+                    </record>
+                    <record id="document_financial_move_line_period3_c" model="account.report.expression">
+                        <field name="label">period3</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period3</field>
+                    </record>
+                    <record id="document_financial_move_line_period4_c" model="account.report.expression">
+                        <field name="label">period4</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period4</field>
+                    </record>
+                    <record id="document_financial_move_line_period5_c" model="account.report.expression">
+                        <field name="label">period5</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">period5</field>
+                    </record>
+                    <record id="document_financial_move_line_total_c" model="account.report.expression">
+                        <field name="label">total</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">total</field>
+                    </record>
+                </field>
+
+            </record>
+
+
+ <record id="document_financial_line_group_total_c" model="account.report.line">
+                <field name="name">Total</field>
+                <field name="mail_model_name">document.financial.line</field>
+      <field name="main_model_name">document.financial.line</field>
+       <field name="sequence">4</field>
+                <field name="expression_ids">
+
+
+                    <record id="document_financial_line_group_total_period0_c" model="account.report.expression">
+                        <field name="label">period0</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period0</field>
+                    </record>
+                    <record id="document_financial_line_group_total_period1_c" model="account.report.expression">
+                        <field name="label">period1</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period1</field>
+                    </record>
+                    <record id="document_financial_line_group_total_period2_c" model="account.report.expression">
+                        <field name="label">period2</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period2</field>
+                    </record>
+                    <record id="document_financial_line_group_total_period3_c" model="account.report.expression">
+                        <field name="label">period3</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period3</field>
+                    </record>
+                    <record id="document_financial_line_group_total_period4_c" model="account.report.expression">
+                        <field name="label">period4</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period4</field>
+                    </record>
+                    <record id="document_financial_line_group_total_period5_c" model="account.report.expression">
+                        <field name="label">period5</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">period5</field>
+                    </record>
+                    <record id="document_financial_line_group_total_total_c" model="account.report.expression">
+                        <field name="label">total</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_aged_c</field>
+                        <field name="subformula">total</field>
+                    </record>
+                </field>
+
+            </record>
+
+
+        </field>
+
+
+        </record>
+
+     <record id="action_document_financial_line_report_cxc" model="ir.actions.client">
+            <field name="name">Acuerdos de Cobros &amp; Vencidos por Cobrar</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'report_id': ref('gps_bancos.document_financial_line_report_c')}"/>
+        </record>
+
+</odoo>
