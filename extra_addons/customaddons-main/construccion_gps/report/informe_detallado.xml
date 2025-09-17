@@ -295,7 +295,7 @@
                                 <p class="m-0 p-0">ATENTAMENTE,</p>
                                 <br/>
                                 <p class="m-0 p-0">__________________________________________</p>
-                                <p class="m-0 p-0"><span style="text-transform: uppercase;" t-esc="doc.user_id.name"/></p>
+                                <p class="m-0 p-0"><span style="text-transform: uppercase;" t-esc="doc.usuario_presupuestador.name"/></p>
                                 <p class="m-0 p-0"><strong>INGENIERIA Y PRESUPUESTO</strong></p>
                                 <p class="m-0 p-0"><strong>GPS GROUP</strong></p>
                             </div>
