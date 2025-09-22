@@ -11,6 +11,7 @@ import logging
 import io, base64, xlsxwriter
 import json
 import math
+from odoo.exceptions import AccessDenied
 
 _logger = logging.getLogger(__name__)
 
@@ -104,7 +105,40 @@ class ProductoTemplate(models.Model):
 		string='Actividades Personalizadas',
 	)
 
+	@api.model_create_multi
+	def create(self, vals_list):
+		for vals in vals_list:
+			subcategoria = vals.get("subcategoria_id")
 
+            # Si tiene subcategoría APU y el usuario tiene permisos de APU -> permitir
+			if subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
+				continue
+
+            # Si no cumple, aplicar la restricción normal
+			if self.env.user.has_group("stock_security.group_product_restrict"):
+				raise AccessDenied(
+                    _("No tienes permisos para crear productos. Contacta al administrador.")
+                )
+		return models.Model.create(self, vals_list)
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            subcategoria = vals.get("subcategoria_id") or vals.get("product_tmpl_id")
+
+            # Si tiene subcategoría APU y el usuario tiene permisos de APU -> permitir
+            if subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
+                continue
+
+            if self.env.user.has_group("stock_security.group_product_restrict"):
+                raise AccessDenied(
+                    _("No tienes permisos para crear productos. Contacta al administrador.")
+                )
+        return models.Model.create(self, vals_list)
+	
 class ProductTemplateAPU(models.Model):
 	_name = 'product.template.apu'
 	_description = 'APU personalizado para Product Template'
@@ -2799,222 +2833,6 @@ class SaleOrder(models.Model):
 
 			record.analytic_account_id = cuenta.id
 			return cuenta
-
-	def generate_purchase_requisitionXYZ(self):
-		self.ensure_one()
-		pur_req_serv = self.env['macro.purchase.request']
-		pur_req = self.env['macro.purchase.request']
-		factor = (self.porcentaje_inicial_requisicion or 100.0) / 100.0
-
-		# 1) Crear o reutilizar proyecto + cuenta analítica
-		# debo enviar a crear la cuenta analitica
-		cuenta = self._create_analytic_account()
-		if not cuenta:
-			raise UserError(_("Debes definir primero un nombre de proyecto."))
-
-		analytic_account = cuenta  # project.analytic_account_id
-		if not analytic_account:
-			raise UserError(
-				_("No se encontró la cuenta analítica para el proyecto %s.") % self.project_name
-			)
-		aa_id = analytic_account.id
-
-		# Asignar al sale.order y sus líneas
-		self.write({'analytic_account_id': aa_id})  # , 'project_id': project.id})
-		for line in self.order_line:
-			line.analytic_distribution = {aa_id: 100.0}
-
-		if not self.macro_unificado:
-			# 2) Requisición de servicios
-			pick_type = self.env['stock.picking.type'].search([
-				('warehouse_id.company_id', '=', self.company_id.id),
-				('code', '=', 'incoming')
-			], limit=1)
-			pr_vals = {
-				'sale_order_id': self.id,
-				'state': 'draft',
-				'company_id': self.company_id.id,
-				'requested_by': self.env.user.id,
-				'date_start': fields.Date.context_today(self),
-				'date_planned': (datetime.today() + timedelta(days=15)).date(),
-				'picking_type_id': pick_type.id,
-				'permite_aprobar': True,
-				'request_type': 'service',
-				'analytic_distribution':{aa_id: 100.0},
-			}
-			pur_req_serv = self.env['macro.purchase.request'].create(pr_vals)
-
-			for sol in self.order_line.sorted('id', reverse=True):
-				apu = sol.apu_id or self.env['apu.apu'].search([
-					('product_tmpl_id', '=', sol.product_template_id.id)
-				], limit=1)
-				if not apu:
-					continue
-
-				for apu_line in apu.line_ids.sorted('sequence', reverse=True):
-					if apu_line.product_id.detailed_type in ('service', 'consu'):
-						raw = sol.product_uom_qty * apu_line.product_qty * factor
-						qty = raw  # self._round_custom(raw)
-						if qty <= 0:
-							continue
-						tipo_componente_display = dict(
-							self.env['apu.apu.line']._fields['tipo_componente'].selection
-						).get(apu_line.tipo_componente, '').strip()
-
-						tipo_costo_rec = self.env['tipo.costo'].search([
-							('name', 'ilike', tipo_componente_display)
-						], limit=1)
-						self.env['macro.purchase.request.line'].create({
-							'request_id': pur_req_serv.id,
-							'sale_order_line_id': sol.id,
-							'product_id': apu_line.product_id.id,
-							'name': apu_line.product_id.name,
-							'product_qty': qty,
-							'date_required': fields.Date.context_today(self),
-							'analytic_distribution': {aa_id: 100.0},
-							'product_brand_id': apu_line.product_id.product_brand_id.id,
-							'product_uom_id': apu_line.product_id.uom_id.id,
-							'product_categ_id': apu_line.product_id.categ_id.id,
-							'rubro': apu_line.codigo_componente,
-							'costo_unit_apu': apu_line.cost,
-							'tipo_costo': tipo_costo_rec.name if tipo_costo_rec else tipo_componente_display,
-							# apu_line.tipo_componente
-						})
-
-			# 3) Requisición de productos
-			pick_type = self.env['stock.picking.type'].search([
-				('warehouse_id.company_id', '=', self.company_id.id),
-				('code', '=', 'incoming')
-			], limit=1)
-			pr_vals = {
-				'sale_order_id': self.id,
-				'state': 'draft',
-				'company_id': self.company_id.id,
-				'requested_by': self.env.user.id,
-				'date_start': fields.Date.context_today(self),
-				'date_planned': (datetime.today() + timedelta(days=15)).date(),
-				'picking_type_id': pick_type.id,
-				'permite_aprobar': True,
-				'request_type': 'product',
-				'analytic_distribution':{aa_id: 100.0},
-			}
-			pur_req = self.env['macro.purchase.request'].create(pr_vals)
-
-			for sol in self.order_line.sorted('id', reverse=True):
-				apu = sol.apu_id or self.env['apu.apu'].search([
-					('product_tmpl_id', '=', sol.product_template_id.id)
-				], limit=1)
-				if not apu:
-					continue
-
-				for apu_line in apu.line_ids.sorted('sequence', reverse=True):
-					if apu_line.product_id.detailed_type in ('product'):
-						raw = sol.product_uom_qty * apu_line.product_qty * factor
-						qty = raw  # self._round_custom(raw)
-						if qty <= 0:
-							continue
-						tipo_componente_display = dict(
-							self.env['apu.apu.line']._fields['tipo_componente'].selection
-						).get(apu_line.tipo_componente, '').strip()
-
-						tipo_costo_rec = self.env['tipo.costo'].search([
-							('name', 'ilike', tipo_componente_display)
-						], limit=1)
-						self.env['macro.purchase.request.line'].create({
-							'request_id': pur_req.id,
-							'sale_order_line_id': sol.id,
-							'product_id': apu_line.product_id.id,
-							'name': apu_line.product_id.name,
-							'product_qty': qty,
-							'date_required': fields.Date.context_today(self),
-							'analytic_distribution': {aa_id: 100.0},
-							'product_brand_id': apu_line.product_id.product_brand_id.id,
-							'product_categ_id': apu_line.product_id.categ_id.id,
-							'product_uom_id': apu_line.product_id.uom_id.id,
-							'rubro': apu_line.codigo_componente,
-							'costo_unit_apu': apu_line.cost,
-							'tipo_costo': tipo_costo_rec.name if tipo_costo_rec else tipo_componente_display,
-							# apu_line.tipo_componente
-						})
-		else:  # para las que vn directo
-			# Clasificación de líneas por tipo
-			serv_items = []
-			prod_items = []
-
-			for sol in self.order_line.sorted('id', reverse=True):
-				raw_qty = sol.product_uom_qty * factor
-				if raw_qty <= 0:
-					continue
-				# tendria que ir a buscar el apu para obtener el costo unitario
-				apu = self.env['apu.apu'].search([
-					('product_tmpl_id', '=', sol.product_id.product_tmpl_id.id)
-				], limit=1)
-
-				item_data = {
-					'sale_order_line_id': sol.id,
-					'product_id': sol.product_id.id,
-					'name': sol.product_id.name,
-					'product_qty': raw_qty,
-					'date_required': fields.Date.context_today(self),
-					'analytic_distribution': {aa_id: 100.0},
-					'product_brand_id': sol.product_id.product_brand_id.id,
-					'product_uom_id': sol.product_id.uom_id.id,
-					'product_categ_id': sol.product_id.categ_id.id,
-					'rubro': '',
-					'tipo_costo': '',
-					'costo_unit_apu': apu.total_apu_costo
-				}
-				if sol.product_id.detailed_type in ('service', 'consu'):
-					serv_items.append(item_data)
-				elif sol.product_id.detailed_type == 'product':
-					prod_items.append(item_data)
-
-			pick_type = self.env['stock.picking.type'].search([
-				('warehouse_id.company_id', '=', self.company_id.id),
-				('code', '=', 'incoming')
-			], limit=1)
-
-			# Crear requisición de servicios si hay elementos
-			if serv_items:
-				pur_req_serv = self.env['macro.purchase.request'].create({
-					'sale_order_id': self.id,
-					'state': 'draft',
-					'company_id': self.company_id.id,
-					'requested_by': self.env.user.id,
-					'date_start': fields.Date.context_today(self),
-					'date_planned': (datetime.today() + timedelta(days=15)).date(),
-					'picking_type_id': pick_type.id,
-					'permite_aprobar': True,
-					'request_type': 'service',
-					'analytic_distribution':{aa_id: 100.0},
-				})
-				for line in serv_items:
-					line['request_id'] = pur_req_serv.id
-					self.env['macro.purchase.request.line'].create(line)
-
-			# Crear requisición de productos si hay elementos
-			if prod_items:
-				pur_req = self.env['macro.purchase.request'].create({
-					'sale_order_id': self.id,
-					'state': 'draft',
-					'company_id': self.company_id.id,
-					'requested_by': self.env.user.id,
-					'date_start': fields.Date.context_today(self),
-					'date_planned': (datetime.today() + timedelta(days=15)).date(),
-					'picking_type_id': pick_type.id,
-					'permite_aprobar': True,
-					'request_type': 'product',
-					'analytic_distribution':{aa_id: 100.0},
-				})
-				for line in prod_items:
-					line['request_id'] = pur_req.id
-					self.env['macro.purchase.request.line'].create(line)
-		# 4) Estado y retorno
-		self.write({'state': 'generar_requisiciones'})
-		return {
-			'material_requisition': pur_req_serv,
-			'purchase_request': pur_req,
-		}
 	
 	def generate_purchase_requisition(self):
 		for so in self:
@@ -3436,8 +3254,93 @@ class SaleOrder(models.Model):
 	def create(self, vals_list):
 		if self.env.context.get('from_reviewed_menu') or self.env.context.get('from_presupuesto_menu'):
 			raise UserError(_("No se pueden crear pedidos desde 'Presupuestos Revisados' o 'Presupuestos'."))
-		return super().create(vals_list)
+		orders = super().create(vals_list)
+		# --- Eliminar al cliente como seguidor ---
+		for order in orders:
+			if order.partner_id:
+				follower = self.env['mail.followers'].search([
+                    ('res_model', '=', 'sale.order'),
+                    ('res_id', '=', order.id),
+                    ('partner_id', '=', order.partner_id.id),
+                ])
+			follower.sudo().unlink()
+        # Buscar el grupo PMO (cambia el XML-ID por el de tu grupo real)
+		# group_pmo = self.env.ref('account_payment_purchase.group_pgpp_cambiar', raise_if_not_found=False)
+		# if group_pmo:
+		# 	partner_ids = group_pmo.users.mapped('partner_id').ids
+		# 	if partner_ids:
+		# 		for order in orders:
+		# 			order.message_subscribe(partner_ids=partner_ids)
+		return orders
 	
+	def write(self, vals):
+        # Guardamos los estados anteriores
+		old_states = {rec.id: rec.state for rec in self}
+
+		res = super(SaleOrder, self).write(vals)
+
+		if 'state' in vals:
+			for order in self:
+				prev_state = old_states.get(order.id)
+				new_state = order.state
+
+                # Solo aplica para pedidos de tipo APU
+				if getattr(order, "tipo_pedido", False) != "apu":
+					continue
+
+                # Presupuesto revisado -> Notificación a PMO
+				if new_state == 'presupuesto_revisado' and prev_state != 'presupuesto_revisado':
+					self._notify_groups(order, [
+                        'construccion_gps.group_apus_pmo'
+                    ])
+
+                # Pedido de venta confirmado -> Notificación a PMO, Supply, Fábrica
+				if new_state == 'sale' and prev_state != 'sale':
+					# Eliminar cliente de seguidores antes de notificar
+					if order.partner_id:
+						follower = self.env['mail.followers'].sudo().search([
+							('res_model', '=', 'sale.order'),
+							('res_id', '=', order.id),
+							('partner_id', '=', order.partner_id.id),
+						])
+						follower.unlink()
+					self._notify_groups(order, [
+                        'construccion_gps.group_apus_pmo',
+                        'construccion_gps.group_apus_supply',
+                        'construccion_gps.group_apus_fabrica'
+                    ])
+		return res
+
+	def _notify_groups(self, order, group_xmlids):
+		""" Notifica a los usuarios de los grupos especificados (sin cliente/socio) """
+		users_to_notify = self.env['res.users']
+		for xmlid in group_xmlids:
+			group = self.env.ref(xmlid, raise_if_not_found=False)
+			if group:
+				users_to_notify |= group.users
+
+		if not users_to_notify:
+			return
+
+		# --- Estado personalizado ---
+		estado = order.state
+		if estado == "sale":
+			estado = "presupuesto confirmado"
+
+		# --- Mensaje de notificación ---
+		message = _("Estimado Usuario, el presupuesto %s ha cambiado al estado '%s'.") % (
+			order.referencia_analitica, estado
+		)
+
+		# --- Posteo SOLO a usuarios de los grupos, no al socio ---
+		order.message_post(
+			body=message,
+			subject=f"Referencia {order.referencia_analitica}",  # Asunto personalizado
+			message_type="notification",
+			subtype_xmlid="mail.mt_comment",
+			partner_ids=users_to_notify.mapped("partner_id").ids
+		)
+
 	def action_cancel(self):
 		for order in self:
 			if getattr(order, 'tipo_pedido', '') == 'apu':

@@ -38,5 +38,46 @@
             <field name="category_id" ref="module_category_apus"/>
         </record>
 
+        <record id="group_apus_pmo" model="res.groups">
+            <field name="name">PMO</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Supply -->
+        <record id="group_apus_supply" model="res.groups">
+            <field name="name">Supply</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Fábrica -->
+        <record id="group_apus_fabrica" model="res.groups">
+            <field name="name">Fábrica</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Financiero -->
+        <record id="group_apus_financiero" model="res.groups">
+            <field name="name">Financiero</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Control Presupuesto -->
+        <record id="group_apus_control_presupuesto" model="res.groups">
+            <field name="name">Control Presupuesto</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Comercial -->
+        <record id="group_apus_comercial" model="res.groups">
+            <field name="name">Comercial</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
+        <!-- Grupo Otros -->
+        <record id="group_apus_otros" model="res.groups">
+            <field name="name">Otros</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
+
     </data>
 </odoo>
