@@ -138,7 +138,7 @@ class ProductProduct(models.Model):
                     _("No tienes permisos para crear productos. Contacta al administrador.")
                 )
         return models.Model.create(self, vals_list)
-	
+
 class ProductTemplateAPU(models.Model):
 	_name = 'product.template.apu'
 	_description = 'APU personalizado para Product Template'
@@ -193,11 +193,11 @@ class ApuApu(models.Model):
 	product_tmpl_id = fields.Many2one(
 		'product.template', 'Product',
 		check_company=True, index=True,
-		domain="[('type', 'in', ['product', 'consu']), '|', ('company_id', '=', False), ('company_id', '=', company_id)]")
+		domain="[('type', 'in', ['product', 'consu', 'service']), '|', ('company_id', '=', False), ('company_id', '=', company_id)]")
 	product_id = fields.Many2one(
 		'product.product', 'Product Variant',
 		check_company=True, index=True,
-		domain="['&', ('product_tmpl_id', '=', product_tmpl_id), ('type', 'in', ['product', 'consu']),  '|', ('company_id', '=', False), ('company_id', '=', company_id)]",
+		domain="['&', ('product_tmpl_id', '=', product_tmpl_id), ('type', 'in', ['product', 'consu', 'service']),  '|', ('company_id', '=', False), ('company_id', '=', company_id)]",
 		help="If a product variant is defined the BOM is available only for this product.")
 	subcategoria_id = fields.Many2one(
 		'apu.subcategoria',
@@ -1082,6 +1082,113 @@ class ApuApu(models.Model):
 		# Crear el attachment y retornar la acción para descargar el fichero
 		attachment = self.env['ir.attachment'].create({
 			'name': 'APU_Template.xlsx',
+			'datas': base64.b64encode(file_data),
+			'type': 'binary',
+			'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		})
+		url = "/web/content/%s?download=true" % (attachment.id)
+		return {
+			'type': 'ir.actions.act_url',
+			'url': url,
+			'target': 'new',
+		}
+
+	def export_excel_name(self):
+		"""
+		Genera un Excel con tres hojas (igual que export_excel),
+		pero usando el campo `name` en lugar de `default_code`
+		para product_tmpl_id, product_id y tarea_id.
+		"""
+		self.ensure_one()
+		import io, base64, xlsxwriter
+		output = io.BytesIO()
+		workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+
+		# Definir formatos
+		header_format = workbook.add_format({
+			'bold': True,
+			'bg_color': '#F7F7F7',
+			'border': 1,
+			'align': 'center'
+		})
+		numeric_format = workbook.add_format({
+			'num_format': '#,##0.00',
+			'border': 1,
+			'align': 'right'
+		})
+		text_format = workbook.add_format({
+			'border': 1,
+			'align': 'left'
+		})
+
+		# --- Hoja Rubro ---
+		worksheet_rubro = workbook.add_worksheet("Rubro")
+		rubro_headers = [
+			"Code", "Product Template", "Product", "Quantity", "UoM", "Company", "Cliente", "Indirectos (%)",
+			"Utilidad (%)", "Subcategoria"
+		]
+		for col, header in enumerate(rubro_headers):
+			worksheet_rubro.write(0, col, header, header_format)
+		worksheet_rubro.write(1, 0, self.code or '', text_format)
+		worksheet_rubro.write(1, 1,(f"[{self.product_tmpl_id.default_code}] " if self.product_tmpl_id.default_code else '') + (self.product_tmpl_id.name or ''), text_format)
+		worksheet_rubro.write(1, 2,(f"[{self.product_id.default_code}] " if self.product_id.default_code else '') + (self.product_id.name or ''), text_format)
+		worksheet_rubro.write_number(1, 3, float(self.product_qty), numeric_format)
+		worksheet_rubro.write(1, 4, self.product_uom_id.name or '', text_format)
+		worksheet_rubro.write(1, 5, self.company_id.name or '', text_format)
+		worksheet_rubro.write(1, 6, self.cliente_id.name or '', text_format)
+		worksheet_rubro.write_number(1, 7, float(self.indirectos_porcentaje), numeric_format)
+		worksheet_rubro.write_number(1, 8, float(self.utilidad_porcentaje), numeric_format)
+		worksheet_rubro.write(1, 9, self.subcategoria_id.name or '', text_format)
+
+		# --- Hoja Apu ---
+		worksheet_apu = workbook.add_worksheet("Apu")
+		apu_headers = [
+			"Rubro ID", "Codigo Componente", "Product",
+			"Tipo Componente", "Unidad", "Cantidad", "Costo", "Precio Unit"
+		]
+		for col, header in enumerate(apu_headers):
+			worksheet_apu.write(0, col, header, header_format)
+
+		row = 1
+		for line in self.line_ids:
+			worksheet_apu.write(row, 0, self.code or '', text_format)
+			worksheet_apu.write(row, 1, line.codigo_componente or '', text_format)
+			worksheet_apu.write(row, 2,(f"[{line.product_id.default_code}] " if line.product_id.default_code else '') + (line.product_id.name or ''), text_format)
+			worksheet_apu.write(row, 3, line.tipo_componente or '', text_format)
+			worksheet_apu.write(row, 4, line.product_uom_id.name or '', text_format)
+			worksheet_apu.write_number(row, 5, float(line.product_qty), numeric_format)
+			worksheet_apu.write_number(row, 6, float(line.subtotal), numeric_format)  # Costo total
+			worksheet_apu.write_number(row, 7, float(line.precio_unit), numeric_format)  # Precio Unitario
+			row += 1
+
+		# --- Hoja Actividades ---
+		worksheet_actividades = workbook.add_worksheet("Actividades")
+		act_headers = [
+			"APU ID", "Tarea", "Tipo Actividad",
+			"Unidad", "Cantidad", "Costo/H", "Rendimiento"
+		]
+		for col, header in enumerate(act_headers):
+			worksheet_actividades.write(0, col, header, header_format)
+
+		row = 1
+		for line in self.line_ids:
+			for act in line.line_tarea_ids:
+				worksheet_actividades.write(row, 0, line.codigo_componente or '', text_format)
+				worksheet_actividades.write(row, 1,(f"[{act.tarea_id.default_code}] " if act.tarea_id and act.tarea_id.default_code else '') + (act.tarea_id.name or ''), text_format)
+				worksheet_actividades.write(row, 2, act.tipo_actividad or '', text_format)
+				worksheet_actividades.write(row, 3, act.unidad.name if act.unidad else '', text_format)
+				worksheet_actividades.write_number(row, 4, float(act.cantidad), numeric_format)
+				worksheet_actividades.write_number(row, 5, float(act.costo), numeric_format)
+				worksheet_actividades.write_number(row, 6, float(act.rendimiento), numeric_format)
+				row += 1
+
+		workbook.close()
+		output.seek(0)
+		file_data = output.read()
+
+		# Crear el attachment y retornar la acción para descargar el fichero
+		attachment = self.env['ir.attachment'].create({
+			'name': 'APU_Template_Name.xlsx',
 			'datas': base64.b64encode(file_data),
 			'type': 'binary',
 			'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -2140,7 +2247,7 @@ class SaleOrder(models.Model):
 	# 		if so.tipo_pedido == 'apu' and so.state in ('sale', 'done'):
 	# 			if not so.superintendente or not so.supervisor:
 	# 				raise ValidationError(_("Debes completar Superintendente y Supervisor para confirmar."))
-	
+
 	@api.model
 	def fields_get(self, allfields=None, attributes=None):
 		res = super(SaleOrder, self).fields_get(allfields, attributes)
@@ -2171,7 +2278,7 @@ class SaleOrder(models.Model):
 				raise UserError(_('Solo puedes marcar como revisado un presupuesto en borrador.'))
 			order.state = 'presupuesto_revisado'
 		return True
-	
+
 	def action_send_informe_detallado(self):
 		self.ensure_one()
 
@@ -2833,7 +2940,7 @@ class SaleOrder(models.Model):
 
 			record.analytic_account_id = cuenta.id
 			return cuenta
-	
+
 	def generate_purchase_requisition(self):
 		for so in self:
             # Solo exigir cuando realmente corresponde (ajusta estados según tu flujo)
@@ -3272,7 +3379,7 @@ class SaleOrder(models.Model):
 		# 		for order in orders:
 		# 			order.message_subscribe(partner_ids=partner_ids)
 		return orders
-	
+
 	def write(self, vals):
         # Guardamos los estados anteriores
 		old_states = {rec.id: rec.state for rec in self}

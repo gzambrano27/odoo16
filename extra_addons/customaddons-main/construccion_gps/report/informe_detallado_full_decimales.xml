@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Paper Format -->
-        <record id="report_docs_format_inform_sin_precios" model="report.paperformat">
-            <field name="name">Formato Informe detallado (sin precios)</field>
+        <!-- Nuevo Paper Format -->
+        <record id="report_docs_format_inform_full" model="report.paperformat">
+            <field name="name">Formato Informe detallado FULL DECIMALES</field>
             <field name="default" eval="False"/>
             <field name="format">A4</field>
             <field name="orientation">Portrait</field>
@@ -15,23 +15,23 @@
             <field name="header_spacing">10</field>
         </record>
 
-        <!-- Report Action -->
-        <record id="report_inform_sin_precios_action" model="ir.actions.report">
-            <field name="name">Informe detallado (sin precios)</field>
+        <!-- Nuevo Reporte -->
+        <record id="report_inform_full" model="ir.actions.report">
+            <field name="name">Informe detallado FULL DECIMALES</field>
             <field name="model">sale.order</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">construccion_gps.informe_detallado_sin_precios</field>
-            <field name="report_file">construccion_gps.informe_detallado_sin_precios</field>
+            <field name="report_name">construccion_gps.informe_detallado_full</field>
+            <field name="report_file">construccion_gps.informe_detallado_full</field>
             <field name="binding_model_id" ref="sale.model_sale_order"/>
             <field name="binding_type">report</field>
-            <field name="paperformat_id" ref="report_docs_format_inform_sin_precios"/>
-            <field name="print_report_name">"Informe detallado (sin precios) - " + object.referencia_analitica + " - " +
-                object.proyecto
+            <field name="paperformat_id" ref="report_docs_format_inform_full"/>
+            <field name="print_report_name">"Informe detallado FULL DECIMALES - " + object.referencia_analitica + " - "
+                + object.proyecto
             </field>
         </record>
 
-        <!-- QWeb Template: Informe Detallado sin Precio, sin Subtotal, sin Resumen -->
-        <template id="informe_detallado_sin_precios">
+        <!-- QWeb Template FULL DECIMALES -->
+        <template id="informe_detallado_full">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
                     <t t-call="web.basic_layout">
@@ -97,33 +97,46 @@
                                 { p[1].subcategoria_id.categoria_id.id: p[1].subcategoria_id.categoria_id for p in filtered }.values(),
                                 key=lambda c: int(''.join(ch for ch in c.codigo.split('-')[-1] if ch.isdigit()) or 0)
                             )"/>
-                            <t t-set="others" t-value="[
-                                p for p in apu_lines if not (p[1] and p[1].subcategoria_id)
-                            ]"/>
+                            <t t-set="others" t-value="[p for p in apu_lines if not (p[1] and p[1].subcategoria_id)]"/>
 
-                            <!-- Tabla sin Precio/Subtotal -->
+                            <!-- Tabla de detalle -->
                             <table class="table table-sm o_main_table"
-                                   style="border:1px solid #ccc; border-collapse:collapse; margin-bottom:20px; width:100%;">
+                                   style="border:1px solid #ccc;border-collapse:collapse;margin-bottom:20px; width:100%;">
                                 <thead>
                                     <tr style="background-color:#EAECEE;">
                                         <th>ITEM</th>
                                         <th>DESCRIPCIÓN</th>
                                         <th>UNIDAD</th>
+                                        <th>PRECIO</th>
                                         <th>CANTIDAD</th>
+                                        <th>SUBTOTAL</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Categorías y Subcategorías -->
+                                    <!-- Categorías y subcategorías -->
                                     <t t-foreach="categories" t-as="cat">
+                                        <t t-set="cat_total" t-value="
+                                            sum(p[0].product_uom_qty * p[0].price_unit
+                                                for p in filtered
+                                                if doc.env['apu.apu']
+                                                    .search([('id','=', p[0].apu_id.id)], limit=1)
+                                                    .subcategoria_id.categoria_id.id == cat.id
+                                            )
+                                        "/>
                                         <tr style="background-color:#DCE6F1;">
                                             <td class="text-center">
                                                 <strong>
                                                     <span t-esc="cat.codigo"/>
                                                 </strong>
                                             </td>
-                                            <td colspan="3">
+                                            <td colspan="4">
                                                 <strong>
                                                     <span t-esc="cat.name"/>
+                                                </strong>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>
+                                                    <span t-esc="cat_total"/>
                                                 </strong>
                                             </td>
                                         </tr>
@@ -135,26 +148,39 @@
                                             key=lambda s: int(''.join(ch for ch in s.codigo.split('-')[-1] if ch.isdigit()) or 0)
                                         )"/>
                                         <t t-foreach="subcats" t-as="subcat">
+                                            <t t-set="subcat_total" t-value="
+                                                sum(p[0].product_uom_qty * p[0].price_unit
+                                                    for p in filtered
+                                                    if doc.env['apu.apu']
+                                                        .search([('id','=', p[0].apu_id.id)], limit=1)
+                                                        .subcategoria_id.id == subcat.id
+                                                )
+                                            "/>
                                             <tr style="background-color:#EBF5FB;">
                                                 <td class="text-center">
                                                     <strong>
                                                         <span t-esc="subcat.codigo"/>
                                                     </strong>
                                                 </td>
-                                                <td colspan="3">
+                                                <td colspan="4">
                                                     <strong>
                                                         <span t-esc="subcat.name"/>
                                                     </strong>
                                                 </td>
+                                                <td class="text-end">
+                                                    <strong>
+                                                        <span t-esc="subcat_total"/>
+                                                    </strong>
+                                                </td>
                                             </tr>
-                                            <!-- Enumerar y mostrar líneas -->
+
+                                            <!-- Líneas detalle -->
                                             <t t-set="lines_sub"
                                                t-value="sorted([p for p in filtered if p[1].subcategoria_id.id == subcat.id], key=lambda p: p[1].code)"/>
                                             <t t-set="lines_sub_idx"
                                                t-value="[(p, i+1) for i,p in enumerate(lines_sub)]"/>
                                             <t t-foreach="lines_sub_idx" t-as="item">
                                                 <t t-set="pair" t-value="item[0]"/>
-                                                <t t-set="seq" t-value="item[1]"/>
                                                 <tr>
                                                     <td class="text-center">
                                                         <strong>
@@ -167,9 +193,20 @@
                                                     <td class="text-center">
                                                         <t t-esc="pair[1].product_uom_id.name"/>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <t t-esc="pair[0].product_uom_qty"
-                                                           t-options='{"widget":"float","precision":2}'/>
+                                                    <!-- PRECIO sin redondeo -->
+                                                    <td class="text-end">
+                                                        <t t-esc="pair[0].price_unit"/>
+                                                    </td>
+                                                    <!-- CANTIDAD -->
+                                                    <td class="text-end">
+                                                        <span t-field="pair[0].product_uom_qty"
+                                                              t-options='{"widget":"float","precision":2}'/>
+                                                    </td>
+                                                    <!-- SUBTOTAL sin redondeo -->
+                                                    <td class="text-end">
+                                                        <t t-set="qty" t-value="pair[0].product_uom_qty"/>
+                                                        <t t-set="unit_price" t-value="pair[0].price_unit"/>
+                                                        <t t-esc="qty * unit_price"/>
                                                     </td>
                                                 </tr>
                                             </t>
@@ -178,17 +215,20 @@
 
                                     <!-- OTROS / MATERIALES -->
                                     <t t-if="others">
-                                        <!-- Categoría MATERIALES -->
                                         <tr style="background-color:#DCE6F1;">
-                                            <td colspan="4">
+                                            <td colspan="5">
                                                 <strong>MATERIALES</strong>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>
+                                                    <span t-esc="sum(p[0].product_uom_qty * p[0].price_unit for p in others)"/>
+                                                </strong>
                                             </td>
                                         </tr>
                                         <t t-set="others_idx" t-value="[(p, i+1) for i,p in enumerate(others)]"/>
                                         <t t-foreach="others_idx" t-as="item2">
                                             <t t-set="pair" t-value="item2[0]"/>
                                             <t t-set="seq2" t-value="item2[1]"/>
-                                            <t t-set="code_prefix" t-value="'MAT'"/>
                                             <tr>
                                                 <td class="text-center">
                                                     <strong>
@@ -201,9 +241,20 @@
                                                 <td class="text-center">
                                                     <t t-esc="pair[0].product_template_id.uom_id.name"/>
                                                 </td>
+                                                <!-- PRECIO sin redondeo -->
+                                                <td class="text-end">
+                                                    <t t-esc="pair[0].price_unit"/>
+                                                </td>
+                                                <!-- CANTIDAD -->
                                                 <td class="text-end">
                                                     <span t-field="pair[0].product_uom_qty"
                                                           t-options='{"widget":"float","precision":2}'/>
+                                                </td>
+                                                <!-- SUBTOTAL sin redondeo -->
+                                                <td class="text-end">
+                                                    <t t-set="qty" t-value="pair[0].product_uom_qty"/>
+                                                    <t t-set="unit_price" t-value="pair[0].price_unit"/>
+                                                    <t t-esc="qty * unit_price"/>
                                                 </td>
                                             </tr>
                                         </t>
@@ -211,9 +262,84 @@
                                 </tbody>
                             </table>
 
-                            <!-- Sin precio, subtotal ni resumen final -->
+                            <!-- Resumen Final -->
+                            <div class="clearfix" name="so_total_summary">
+                                <div class="row">
+                                    <div style="width:50%;margin-left:auto;">
+                                        <table class="table table-sm table-borderless">
+                                            <t t-set="sub_no_disc"
+                                               t-value="sum(l.price_unit * l.product_uom_qty for l in doc.order_line)"/>
+                                            <t t-set="disc_amount" t-value="max(0, sub_no_disc - doc.amount_untaxed)"/>
+                                            <t t-set="disc_pct"
+                                               t-value="sub_no_disc and (disc_amount / sub_no_disc) * 100 or 0"/>
+                                            <t t-set="iva_pct"
+                                               t-value="doc.amount_untaxed and (doc.amount_tax / doc.amount_untaxed) * 100 or 0"/>
+                                            <tbody>
+                                                <t t-if="disc_amount == 0.0">
+                                                    <tr>
+                                                        <td>SUBTOTAL</td>
+                                                        <td class="text-end">
+                                                            <span t-esc="sub_no_disc"
+                                                                  t-options="{&quot;widget&quot;:&quot;monetary&quot;,&quot;display_currency&quot;:doc.pricelist_id.currency_id}"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="round(disc_amount, 2) != 0.0">
+                                                    <tr>
+                                                        <td>SUBTOTAL SIN DESCUENTO</td>
+                                                        <td class="text-end">
+                                                            <span t-esc="sub_no_disc"
+                                                                  t-options="{&quot;widget&quot;:&quot;monetary&quot;,&quot;display_currency&quot;:doc.pricelist_id.currency_id}"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>DESCUENTO
+                                                            <span t-esc="disc_pct"
+                                                                  t-options='{"widget":"float","precision":2}'/>
+                                                            %
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <span t-esc="disc_amount"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Total(SIN IVA)</strong>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span t-esc="doc.amount_untaxed"
+                                                              t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                                <t t-if="iva_pct &gt; 0">
+                                                    <tr>
+                                                        <td>IVA<span t-esc="iva_pct"
+                                                                     t-options='{"widget":"float","precision":2}'/>%
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <span t-esc="doc.amount_tax"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="border-top:1px solid #000;">
+                                                        <td>
+                                                            <strong>TOTAL(CON IVA)</strong>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <span t-esc="doc.amount_total"
+                                                                  t-options='{"widget":"monetary","display_currency":doc.pricelist_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <!-- Tiempo de entrega y nota -->
+                            <!-- Condiciones y firma -->
                             <div style="margin-top:20px;page-break-inside:avoid;">
                                 <strong>CONDICIONES COMERCIALES:</strong>
                                 <br/>
@@ -225,7 +351,6 @@
                                 <span style="text-transform: uppercase;line-height: 1.2;" t-field="doc.note"/>
                                 <br/>
                             </div>
-                            <!-- Firma -->
                             <div style="margin-top:10px;page-break-inside:avoid;">
                                 <p class="m-0 p-0">ATENTAMENTE,</p>
                                 <br/>

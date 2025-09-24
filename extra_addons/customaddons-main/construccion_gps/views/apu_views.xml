@@ -51,6 +51,7 @@
                 <form string="Registro de APU">
                     <header>
                         <button name="export_excel" type="object" string="Exportar Plantilla" />
+                        <button name="export_excel_name" type="object" string="Exportar Plantilla Modificada" />
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
