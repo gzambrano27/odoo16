@@ -23,8 +23,7 @@
                      />
 
                      <separator/>
-
-                     <filter string="Manual" name="flter_origin_manual"
+                    <filter string="Manual" name="flter_origin_manual"
 							domain="[('origin','=','manual')]" />
                      <filter string="Automatico" name="flter_origin_automatic"
 							domain="[('origin','!=','manual')]" />
@@ -128,7 +127,7 @@
         <field name="arch" type="xml">
             <calendar string="Solicitud de Pagos"
                       date_start="date"
-                      date_stop="date_maturity"
+                      date_stop="date"
             mode="month"
                  hide_time="true" js_class="project_calendar" event_open_popup="true"
             >
@@ -153,10 +152,17 @@
 
        <tree string="Solicitud de Pagos" decoration-it="adjust">
                  <header>
-<button string="Confirmar" invisible="context.get('hide_financial',0)" type="object" name="confirm_multi_payments" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
+<button string="Confirmar" invisible="context.get('hide_financial',0)" type="object"
+        confirm="¿Estás seguro de continuar?"
+        name="confirm_multi_payments" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
 
-<button string="Anular" invisible="context.get('hide_financial',0)" type="object" name="cancel_multi_payments" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
-<button string="Pagar" type="object" name="get_multi_payments" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
+<button string="Anular" invisible="context.get('hide_financial',0)" type="object"
+        name="cancel_multi_payments"
+confirm="¿Estás seguro de continuar?"
+        groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
+<button string="Pagar" type="object" name="get_multi_payments"
+
+        groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
 
 <button string="Ver Documentos" type="object" name="get_document_payments" groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_confimar_sol_pagos,gps_bancos.group_admin_sol_pagos"/>
 
@@ -199,7 +205,7 @@
                  <field name="request_wizard_comments" optional="hide" invisible="context.get('hide_financial',0)" />
 <field name="document_ref" optional="show"/>
                     <field name="request_type_id" optional="hide"/>
-
+<field name="tipo_partner_pago" optional="hide"/>
 
 
             </tree>
@@ -297,6 +303,7 @@ groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
                        options="{'no_create':True,'no_edit':True}"
                        attrs="{'readonly':['|',('state','!=','draft'),('type','!=','request')]}"  />
       <field name="vat" />
+
                          <field name="request_wizard_id"  readonly="1"
                          attrs="{'invisible':[('request_wizard_id','=',False)]}"
                          />
@@ -318,6 +325,9 @@ groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
                          options="{'no_create':True,'no_edit':True,'no_open':True}"
                          domain="[('company_id','=',company_id)]"
                          attrs="{'invisible':['|', ('enable_other_account','!=',True), ('origin','!=','manual')],'readonly':['|',('state','!=','draft'),('origin','!=','manual')]}"  />
+ <field name="tipo_partner_pago"     readonly="1"     force_save="1"
+                        attrs="{'invisible':[('partner_id','=',False)]}"
+                      />
 
 
                     </group>
@@ -489,11 +499,11 @@ groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
 
     <record id="account_payment_request_view_action"
             model="ir.actions.act_window">
-        <field name="name">Solicitud de Pagos Proveedores</field>
+        <field name="name">Solicitud de Pagos Proveedores Locales</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment.request</field>
         <field name="view_mode">tree,form,calendar</field>
-        <field name="domain">[('type_module','=','financial')]</field>
+        <field name="domain">[('type_module','=','financial'),('tipo_partner_pago','=','local')]</field>
         <field name="context">{'search_default_flter_default_mode_payment_bank':1,'hide_financial':0,'hide_nomina':1,'default_type_module':'financial','search_default_is_checked':1,'lock_order':0,'lock_manual':0,'default_origin':'manual','search_default_is_oc':1,'search_default_is_request':1,'search_default_is_move':1,'search_default_is_confirmed':1,'hide_parent':False}</field>
         <field name="view_id"
                ref="account_payment_request_view_tree"/>
@@ -531,6 +541,51 @@ groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
                ref="account_payment_request_view_action"/>
     </record>
  
+    <!--  -->
+
+        <record id="account_payment_request_view_ext_action"
+            model="ir.actions.act_window">
+        <field name="name">Solicitud de Pagos Proveedores Exterior</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment.request</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="domain">[('type_module','=','financial'),('tipo_partner_pago','=','exterior')]</field>
+        <field name="context">{'search_default_flter_default_mode_payment_bank':1,'hide_financial':0,'hide_nomina':1,'default_type_module':'financial','search_default_is_checked':1,'lock_order':0,'lock_manual':0,'default_origin':'manual','search_default_is_oc':1,'search_default_is_request':1,'search_default_is_move':1,'search_default_is_confirmed':1,'hide_parent':False}</field>
+        <field name="view_id"
+               ref="account_payment_request_view_tree"/>
+        <field name="search_view_id"
+               ref="account_payment_request_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_request_view_tree_ext_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="account_payment_request_view_tree"/>
+        <field name="act_window_id"
+               ref="account_payment_request_view_ext_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_request_view_form_ext_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="account_payment_request_view_form"/>
+        <field name="act_window_id"
+               ref="account_payment_request_view_ext_action"/>
+    </record>
+
+<record model="ir.actions.act_window.view"
+            id="account_payment_request_view_calendar_ext_action">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">calendar</field>
+        <field name="view_id"
+               ref="account_payment_request_view_calendar"/>
+        <field name="act_window_id"
+               ref="account_payment_request_view_ext_action"/>
+    </record>
 
         <!--  -->
 

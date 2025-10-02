@@ -180,6 +180,22 @@ class MacroPurchaseRequest(models.Model):
     )
     superintendente = fields.Many2one('res.users', 'Superintendente')
     supervisor = fields.Many2one('res.users', 'Supervisor')
+    fiscalizador_id = fields.Many2one(
+        comodel_name="res.users",
+        copy=False,
+        tracking=True,
+        index=True,
+        domain=lambda self: [
+            ("groups_id", "in", self.env.ref("macro_purchase_request.group_macro_purchase_request_fiscalizador").id)
+        ],
+        #default=lambda self: self._default_fiscalizador(),
+    )
+    tipo_contrato = fields.Selection(
+        [("por ejecutar", "Por Ejecutar"), ("en ejecucion", "En Ejecucion"), ("ejecutado", "Ejecutado")],
+        string="Tipo de Contrato",
+        copy=False,
+        tracking=True,
+    )
 
     @api.depends("state", "line_ids.product_qty", "line_ids.cancelled")
     def _compute_to_approve_allowed(self):

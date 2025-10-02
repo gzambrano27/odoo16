@@ -41,6 +41,10 @@ class HrContract(models.Model):
     tiene_pension_alimenticia=fields.Boolean("Tiene Pension Alimenticia?",default=False,tracking=True)
     pension_alimenticia=fields.Monetary(string="Pension Alimenticia",tracking=True, required=False, default=0.00)
 
+    control_marcaciones = fields.Boolean("Control Marcaciones", default=True,compute="_compute_working_hours",store=True,readonly=True)
+
+    employee_group_id=fields.Many2one("hr.employee.group","Grupo")
+
     @api.onchange('tiene_pension_alimenticia')
     def onchange_tiene_pension_alimenticia(self):
         if not self.tiene_pension_alimenticia:
@@ -131,3 +135,19 @@ order by hc.id asc""",(employee_id,))
                 periods._write({'company_id': contract.company_id.id})
 
         return values
+
+    working_hours = fields.Many2one(
+        'resource.calendar',
+        string='Horario de trabajo',
+        compute='_compute_working_hours',
+        store=True,
+        readonly=True,
+        required=False,
+    )
+
+    @api.onchange('employee_id','employee_id.resource_calendar_id','employee_id.control_marcaciones')
+    @api.depends('employee_id','employee_id.resource_calendar_id','employee_id.control_marcaciones')
+    def _compute_working_hours(self):
+        for contract in self:
+            contract.working_hours = contract.employee_id.resource_calendar_id
+            contract.control_marcaciones = contract.employee_id.control_marcaciones

@@ -31,7 +31,11 @@
         <field name="implied_ids" eval="[(4, ref('purchase_request.group_purchase_request_supply'))]"/>
         <field name="category_id" ref="module_category_purchase_request" />
     </record>
-    
+    <!-- Grupo Fiscalizadores Requisicion -->
+    <record id="group_purchase_request__ficalizador" model="res.groups">
+        <field name="name">Fiscalizador</field>
+        <field name="category_id" ref="module_category_purchase_request"/>
+    </record>
     <record id="purchase_request_viewer_rule" model="ir.rule">
         <field name="name">Purchase Request Viewer</field>
         <field name="model_id" ref="model_purchase_request" />

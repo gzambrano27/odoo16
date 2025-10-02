@@ -82,8 +82,8 @@ class DocumentFinancial(models.Model):
     percentage_interest_quota = fields.Float("% de Interes Cuota", default=0.00, digits=(4, 6), tracking=True)
 
     ##############################################################################################
-    periods = fields.Integer("# Periodos", default=0,tracking=True,compute="_compute_periods")
-    years = fields.Integer("Años", default=0,tracking=True,compute="_compute_periods")
+    periods = fields.Integer("# Periodos", default=0,tracking=True,compute="_compute_periods",store=True)
+    years = fields.Integer("Años", default=0,tracking=True,compute="_compute_periods",store=True)
 
     type_document = fields.Selection([('compute', 'Calculado'),
                                       ('file', 'Archivo')], string="Tipo", default="compute",tracking=True)

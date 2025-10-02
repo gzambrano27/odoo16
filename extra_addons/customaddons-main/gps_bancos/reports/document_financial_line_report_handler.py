@@ -71,6 +71,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     #'account_name': query_res['account_name'][0] if len(query_res['account_name']) == 1 else None,
                     #'expected_date': query_res['expected_date'][0] if len(query_res['expected_date']) == 1 else None,
                     'total': None,
+                    'expected_date': None,
                     'quota':0,
                     'has_sublines': query_res['aml_count'] > 0,
                     #'report_date': query_res['report_date'][0] if len(query_res['report_date']) == 1 else None,
@@ -84,7 +85,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     #'amount_currency': None,
                     #'currency': None,
                     #'account_name': None,
-                    #'expected_date': None,
+                    'expected_date': None,
                     #'report_date': None,
                     'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
                     'has_sublines': False,
@@ -170,12 +171,12 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     JOIN period_table ON
                         (
                             period_table.date_start IS NULL
-                            OR COALESCE(account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
+                            OR COALESCE(account_move_line.date_maturity,account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
                         )
                         AND
                         (
                             period_table.date_stop IS NULL
-                            OR COALESCE(account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
+                            OR COALESCE(account_move_line.date_maturity,account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
                         )
 
                     WHERE {where_clause}
@@ -226,7 +227,6 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
             print(rslt)
             return rslt
 
-
     def _get_custom_line_values(self, options, internal_type, current_groupby, next_groupby, offset=0, limit=None,filter_ttype='out'):
         print(options)
         report = self.env['account.report'].browse(options['report_id'])
@@ -258,6 +258,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                 brw_financial_line=self.env["document.financial.line"].browse(query_res['grouping_key'])
                 rslt.update({
                     'date_due': brw_financial_line.date_process,
+                    'date_expected': None,
                     'has_sublines': query_res['counter'] > 0,
                     'quota':brw_financial_line.quota,
                     'total': sum(query_res[f'period{i}'] for i in range(len(periods))),
@@ -266,6 +267,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                 rslt.update({
                     'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
                     'has_sublines': False,
+                    'date_expected': None,
                     'date_due':None,
                     'quota':0
                 })
@@ -303,7 +305,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
             i+=1
         filter_contrato=""
         if internal_type=="contrato":
-            filter_contrato=" and round(dbkl.total_invoiced,2)<=0.00 "
+            filter_contrato=" and round(dbkl.total_invoiced,2)>0.00 "
         if len(order_by)>0:
             order_by = " order by "+order_by
         tail_query=order_by+" "+tail_query
@@ -354,14 +356,285 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                 rslt.append((grouping_key, build_result_dict(report, query_res_lines)))
             return rslt
 
+    def _get_custom_line_values_contrato(self, options, internal_type, current_groupby, next_groupby, offset=0, limit=None,
+                                filter_ttype='out'):
+        print(options)
+        report = self.env['account.report'].browse(options['report_id'])
+        allowed_company_ids = self._context.get('allowed_company_ids', [])
+
+        date_to = fields.Date.from_string(options['date']['date_to'])
+        periods = [
+            (fields.Date.to_string(date_to - relativedelta(years=10)), fields.Date.to_string(date_to)),
+            (fields.Date.to_string(date_to + relativedelta(days=1)),
+             fields.Date.to_string(date_to + relativedelta(days=30))),
+            (fields.Date.to_string(date_to + relativedelta(days=31)),
+             fields.Date.to_string(date_to + relativedelta(days=60))),
+            (fields.Date.to_string(date_to + relativedelta(days=61)),
+             fields.Date.to_string(date_to + relativedelta(days=90))),
+            (fields.Date.to_string(date_to + relativedelta(days=91)),
+             fields.Date.to_string(date_to + relativedelta(days=120))),
+            (fields.Date.to_string(date_to + relativedelta(days=121)),
+             fields.Date.to_string(date_to + relativedelta(years=50))),
+        ]
+        # if filter_ttype=='in':#contratos
+        #     periods=periods[::-1]
+        def build_result_dict(report, query_res_lines):
+            rslt = {f'period{i}': 0 for i in range(len(periods))}
+            for query_res in query_res_lines:
+                for i in range(len(periods)):
+                    rslt[f'period{i}'] += query_res[f'period{i}']
+            if current_groupby == 'id':
+                query_res = query_res_lines[
+                    0]  # We're grouping by id, so there is only 1 element in query_res_lines anyway
+                # currency = self.env['res.currency'].browse(query_res['currency_id'][0]) if len(
+                #    query_res['currency_id']) == 1 else None
+                brw_financial_line = self.env["document.financial.line"].browse(query_res['grouping_key'])
+                rslt.update({
+                    'date_due': brw_financial_line.date_process,
+                    'date_expected': brw_financial_line.date_maturity_payment,
+                    'has_sublines': query_res['counter'] > 0,
+                    'quota': brw_financial_line.quota,
+                    'total': sum(query_res[f'period{i}'] for i in range(len(periods))),
+                })
+            else:
+                rslt.update({
+                    'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
+                    'has_sublines': False,
+                    'date_due': None,
+                    'date_expected': None,
+                    'quota': 0
+                })
+            return rslt
+
+        # Construir tabla de periodos
+        period_table_format = ('(VALUES %s)' % ','.join("(%s, %s, %s)" for _ in periods))
+        params = list(chain.from_iterable((p[0] or None, p[1] or None, i) for i, p in enumerate(periods)))
+        period_table = self.env.cr.mogrify(period_table_format, params).decode(self.env.cr.connection.encoding)
+        # groupby_sql = f'dbkl.{current_groupby}' if current_groupby else None
+        # print(groupby_sql)
+        # print(next_groupby)
+        order_by = ""
+        always_present_groupby = "period_table.period_index"
+        if current_groupby:
+            select_from_groupby = f"dbkl.{current_groupby} AS grouping_key,"
+            groupby_clause = f"dbkl.{current_groupby}, {always_present_groupby}"
+
+            order_by += f" dbkl.{current_groupby}"
+
+        else:
+            select_from_groupby = ''
+            groupby_clause = always_present_groupby
+
+        # Consulta adaptada a document_financial_line
+        tail_query, tail_params = report._get_engine_query_tail(offset, limit)
+
+        where_clause = " "
+
+        forced_domain = options["forced_domain"]
+        i = 0
+        for field_name, operator, value in forced_domain:
+            where_clause += f" and dbkl.{field_name} {operator} {value} "
+            i += 1
+        filter_contrato = ""
+        if internal_type == "contrato":
+            filter_contrato = " and round(dbkl.total_to_invoice,2)>0.00 "
+        if len(order_by) > 0:
+            order_by = " order by " + order_by
+        tail_query = order_by + " " + tail_query
+        query = f"""
+                               WITH period_table(date_start, date_stop, period_index) AS ({period_table})
+
+                               SELECT
+                                   {select_from_groupby}
+                                   {', '.join(f"SUM(CASE WHEN period_table.period_index = {i} THEN dbkl.total_pending ELSE 0 END) AS period{i}" for i in range(len(periods)))},
+                                   count(1) as counter
+
+                               FROM document_financial dbk
+                               INNER JOIN document_financial_line dbkl ON dbkl.document_id = dbk.id
+                               inner JOIN period_table ON
+                                   (dbkl.date_maturity_payment >= period_table.date_start::date)
+                                   AND
+                                   ( dbkl.date_maturity_payment <= period_table.date_stop::date) 
+
+                               WHERE dbk.state = 'posted' and dbk.company_id in {tuple(allowed_company_ids + [-1])}
+                                 AND dbkl.total_pending != 0.00
+                                 AND (dbk.internal_type = '{filter_ttype}' 
+                                    {filter_contrato}
+                                 )
+                                 AND ('{internal_type}'='total' or ('{internal_type}'!='total' and dbk.type = '{internal_type}')) {where_clause}
+
+                               GROUP BY {groupby_clause}
+
+                               HAVING SUM(dbkl.total_pending)!=0 
+
+                             {tail_query}
+                           """
+
+        self.env.cr.execute(query, params)
+        query_res_lines = self.env.cr.dictfetchall()
+
+        if not current_groupby:
+            return build_result_dict(report, query_res_lines)
+        else:
+            rslt = []
+
+            all_res_per_grouping_key = {}
+            for query_res in query_res_lines:
+                grouping_key = query_res['grouping_key']
+                all_res_per_grouping_key.setdefault(grouping_key, []).append(query_res)
+
+            for grouping_key, query_res_lines in all_res_per_grouping_key.items():
+                rslt.append((grouping_key, build_result_dict(report, query_res_lines)))
+            return rslt
+
+    def _get_custom_line_values_contrato_vencido(self, options, internal_type, current_groupby, next_groupby, offset=0, limit=None,
+                                filter_ttype='out'):
+        print(options)
+        report = self.env['account.report'].browse(options['report_id'])
+        allowed_company_ids = self._context.get('allowed_company_ids', [])
+
+        date_to = fields.Date.from_string(options['date']['date_to'])
+        periods = [
+
+            # 1. Por vencer (todo lo posterior a hoy)
+            (fields.Date.to_string(date_to + relativedelta(days=1)), fields.Date.to_string(date_to + relativedelta(years=50))),
+
+            # 2. 0–30 días vencidos
+            (fields.Date.to_string(date_to - relativedelta(days=30)), fields.Date.to_string(date_to)),
+
+            # 3. 31–60 días vencidos
+            (fields.Date.to_string(date_to - relativedelta(days=60)), fields.Date.to_string(date_to - relativedelta(days=31))),
+
+            # 4. 61–90 días vencidos
+            (fields.Date.to_string(date_to - relativedelta(days=90)), fields.Date.to_string(date_to - relativedelta(days=61))),
+
+            # 5. 91–120 días vencidos
+            (fields.Date.to_string(date_to - relativedelta(days=120)), fields.Date.to_string(date_to - relativedelta(days=91))),
+
+            # 6. Más de 120 días vencidos
+            (fields.Date.to_string(date_to - relativedelta(years=10)), fields.Date.to_string(date_to - relativedelta(days=121))),
+        ]
+        def build_result_dict(report, query_res_lines):
+            rslt = {f'period{i}': 0 for i in range(len(periods))}
+            for query_res in query_res_lines:
+                for i in range(len(periods)):
+                    rslt[f'period{i}'] += query_res[f'period{i}']
+            if current_groupby == 'id':
+                query_res = query_res_lines[
+                    0]  # We're grouping by id, so there is only 1 element in query_res_lines anyway
+                # currency = self.env['res.currency'].browse(query_res['currency_id'][0]) if len(
+                #    query_res['currency_id']) == 1 else None
+                brw_financial_line = self.env["document.financial.line"].browse(query_res['grouping_key'])
+                rslt.update({
+                    'date_due': brw_financial_line.date_process,
+                    'expected_date':  brw_financial_line.date_maturity_payment ,
+                    'has_sublines': query_res['counter'] > 0,
+                    'quota': brw_financial_line.quota,
+                    'total': sum(query_res[f'period{i}'] for i in range(len(periods))),
+                })
+            else:
+                rslt.update({
+                    'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
+                    'has_sublines': False,
+                    'date_due': None,
+                    'expected_date':None,
+                    'quota': 0
+                })
+            return rslt
+
+        # Construir tabla de periodos
+        period_table_format = ('(VALUES %s)' % ','.join("(%s, %s, %s)" for _ in periods))
+        params = list(chain.from_iterable((p[0] or None, p[1] or None, i) for i, p in enumerate(periods)))
+        period_table = self.env.cr.mogrify(period_table_format, params).decode(self.env.cr.connection.encoding)
+        # groupby_sql = f'dbkl.{current_groupby}' if current_groupby else None
+        # print(groupby_sql)
+        # print(next_groupby)
+        order_by = ""
+        always_present_groupby = "period_table.period_index"
+        if current_groupby:
+            select_from_groupby = f"dbkl.{current_groupby} AS grouping_key,"
+            groupby_clause = f"dbkl.{current_groupby}, {always_present_groupby}"
+
+            order_by += f" dbkl.{current_groupby}"
+
+        else:
+            select_from_groupby = ''
+            groupby_clause = always_present_groupby
+
+        # Consulta adaptada a document_financial_line
+        tail_query, tail_params = report._get_engine_query_tail(offset, limit)
+
+        where_clause = " "
+
+        forced_domain = options["forced_domain"]
+        i = 0
+        for field_name, operator, value in forced_domain:
+            where_clause += f" and dbkl.{field_name} {operator} {value} "
+            i += 1
+        filter_contrato = ""
+        if internal_type == "contrato":
+            filter_contrato = " and round(dbkl.total_to_invoice,2)!=0.00 "
+        if len(order_by) > 0:
+            order_by = " order by " + order_by
+        tail_query = order_by + " " + tail_query
+        query = f"""
+                       WITH period_table(date_start, date_stop, period_index) AS ({period_table})
+
+                       SELECT
+                           {select_from_groupby}
+                           {', '.join(f"SUM(CASE WHEN period_table.period_index = {i} THEN dbkl.total_pending ELSE 0 END) AS period{i}" for i in range(len(periods)))},
+                           count(1) as counter
+
+                       FROM document_financial dbk
+                       INNER JOIN document_financial_line dbkl ON dbkl.document_id = dbk.id
+                       inner JOIN period_table ON
+                           (dbkl.date_maturity_payment >= period_table.date_start::date)
+                           AND
+                           ( dbkl.date_maturity_payment <= period_table.date_stop::date) 
+
+                       WHERE dbk.state = 'posted' and dbk.company_id in {tuple(allowed_company_ids + [-1])}
+                         AND dbkl.total_pending != 0.00
+                         AND (dbk.internal_type = '{filter_ttype}' 
+                            {filter_contrato}
+                         )
+                         AND ('{internal_type}'='total' or ('{internal_type}'!='total' and dbk.type = '{internal_type}')) {where_clause}
+
+                       GROUP BY {groupby_clause}
+
+                       HAVING SUM(dbkl.total_pending)!=0 
+
+                     {tail_query}
+                   """
+
+        self.env.cr.execute(query, params)
+        query_res_lines = self.env.cr.dictfetchall()
+
+        if not current_groupby:
+            return build_result_dict(report, query_res_lines)
+        else:
+            rslt = []
+
+            all_res_per_grouping_key = {}
+            for query_res in query_res_lines:
+                grouping_key = query_res['grouping_key']
+                all_res_per_grouping_key.setdefault(grouping_key, []).append(query_res)
+
+            for grouping_key, query_res_lines in all_res_per_grouping_key.items():
+                rslt.append((grouping_key, build_result_dict(report, query_res_lines)))
+            return rslt
+
+
     #############################################################################################################################################
 
     def _report_custom_engine_cobros_aged(self, expressions, options, date_scope, current_groupby, next_groupby, offset=0, limit=None):
-        return self._get_custom_line_values(options, 'contrato', current_groupby, next_groupby, offset=offset, limit=limit,filter_ttype='in')
+        return self._get_custom_line_values_contrato_vencido(options, 'contrato', current_groupby, next_groupby, offset=offset, limit=limit,filter_ttype='in')
 
     def _report_custom_engine_cxc_aged(self, expressions, options, date_scope, current_groupby, next_groupby, offset=0,
                                         limit=None):
         internal_type='asset_receivable'
+
+        multiplicator = -1 if internal_type == 'liability_payable' else 1
+
         report = self.env['account.report'].browse(options['report_id'])
         report._check_groupby_fields(
             (next_groupby.split(',') if next_groupby else []) + ([current_groupby] if current_groupby else []))
@@ -397,7 +670,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     #'amount_currency': report.format_value(query_res['amount_currency'], currency=currency),
                     #'currency': currency.display_name if currency else None,
                     #'account_name': query_res['account_name'][0] if len(query_res['account_name']) == 1 else None,
-                    #'expected_date': query_res['expected_date'][0] if len(query_res['expected_date']) == 1 else None,
+                    'expected_date': query_res['expected_date'][0] if len(query_res['expected_date']) == 1 else None,
                     'total': None,
                     'quota':0,
                     'has_sublines': query_res['aml_count'] > 0,
@@ -412,7 +685,7 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     #'amount_currency': None,
                     #'currency': None,
                     #'account_name': None,
-                    #'expected_date': None,
+                    'expected_date': None,
                     #'report_date': None,
                     'total': sum(rslt[f'period{i}'] for i in range(len(periods))),
                     'has_sublines': False,
@@ -498,12 +771,12 @@ class DocumentFinancialLineReportHandler(models.AbstractModel):
                     JOIN period_table ON
                         (
                             period_table.date_start IS NULL
-                            OR COALESCE(account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
+                            OR COALESCE(account_move_line.expected_pay_date, account_move_line.date_maturity, account_move_line.date) <= DATE(period_table.date_start)
                         )
                         AND
                         (
                             period_table.date_stop IS NULL
-                            OR COALESCE(account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
+                            OR COALESCE(account_move_line.expected_pay_date, account_move_line.date_maturity, account_move_line.date) >= DATE(period_table.date_stop)
                         )
 
                     WHERE {where_clause}

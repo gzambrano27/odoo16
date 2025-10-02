@@ -13,7 +13,8 @@ Improve purchase orders to control imports
     'depends': [
         'purchase',
         'stock_landed_costs',
-        'account_payment_purchase'
+        'account_payment_purchase',
+        'report_xlsx',
     ],
     'data': [
         'security/foreign_security.xml',
@@ -26,6 +27,7 @@ Improve purchase orders to control imports
         'data/purchase.tariff.csv',
         'security/foreign_security.xml',
         'security/ir.model.access.csv',
+        'report/reports.xml',
         'views/purchase_tariff_view.xml',
         'views/trade_importation_view.xml',
         'views/account_move.xml',
@@ -36,7 +38,6 @@ Improve purchase orders to control imports
         'views/menu_foreign.xml',
         'views/importation_advance_view.xml',
         'wizard/wizard_purchase_order_assing.xml',
-        'report/reports.xml',
         'report/report_foreign_trade.xml',
         'data/ir_sequence_data.xml',
 

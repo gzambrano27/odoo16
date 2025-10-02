@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <!-- Vista tree de invitaciones -->
-  <record id="view_meeting_invitation_tree" model="ir.ui.view">
-    <field name="name">meeting.invitation.tree</field>
+  <!-- Vista tree de Invitaciones Internas -->
+  <record id="view_meeting_invitation_tree_internal" model="ir.ui.view">
+    <field name="name">meeting.invitation.tree.internal</field>
     <field name="model">meeting.invitation</field>
     <field name="arch" type="xml">
       <tree editable="bottom">
@@ -10,32 +10,24 @@
         <field name="department"/>
         <field name="state" attrs="{'readonly':[('is_my_invitation','=',False)]}"/>
         <field name="is_my_invitation" invisible="1"/>
-        <button name="action_send_invitation" string="Enviar" type="object"
-                class="btn-secondary"/>
+        <button name="action_send_invitation" string="Enviar" type="object" class="btn-secondary"/>
       </tree>
     </field>
   </record>
 
-  <!-- Vista formulario de invitaciones -->
-  <record id="view_meeting_invitation_form" model="ir.ui.view">
-    <field name="name">meeting.invitation.form</field>
+  <!-- Vista tree de Invitaciones Externas -->
+  <record id="view_meeting_invitation_tree_external" model="ir.ui.view">
+    <field name="name">meeting.invitation.tree.external</field>
     <field name="model">meeting.invitation</field>
     <field name="arch" type="xml">
-      <form string="Invitación">
-        <group>
-          <field name="meeting_id"/>
-          <field name="employee_id"/>
-          <field name="department"/>
-          <field name="is_my_invitation" invisible="1"/>
-          <field name="state" attrs="{'readonly':[('is_my_invitation','=',False)]}"/>
-          <button name="action_send_invitation" string="Enviar" type="object"
-                class="btn-secondary"/><button name="action_send_invitation" string="Enviar" type="object"
-                class="btn-secondary"/>
-        </group>
-        <footer>
-          <button string="Cerrar" class="btn-secondary" special="cancel"/>
-        </footer>
-      </form>
+      <tree editable="bottom">
+        <field name="external_name"/>
+        <field name="external_company"/>
+        <field name="external_reason"/>
+        <field name="external_email"/>
+        <field name="state"/> <!-- editable controlado en modelo -->
+        <button name="action_send_invitation" string="Enviar" type="object" class="btn-secondary"/>
+      </tree>
     </field>
   </record>
 </odoo>

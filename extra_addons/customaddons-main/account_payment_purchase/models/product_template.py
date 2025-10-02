@@ -81,7 +81,8 @@ class Product(models.Model):
             sequence = self.env['ir.sequence'].next_by_code('product.internal.ref')
             vals['default_code'] = sequence  # Asignar el código secuencial al campo 'default_code'
             vals['referencia_company'] = sequence  # Asignar el código secuencial al campo 'default_code'
-        
+        if self.env.context.get("bypass_product_restrict"):
+            return super(Product, self.with_context(bypass_product_restrict=True)).create(vals)
         # Llamar al método 'create' original
         return super(Product, self).create(vals)
     

@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-
+from odoo import tools
 
 class AccountsReceivableView(models.Model):
     _name = 'accounts.receivable.view'
@@ -40,8 +41,10 @@ class AccountsReceivableView(models.Model):
     type=fields.Selection([('asiento','Documento'),
                            ('acuerdo_cobro','Acuerdos de Cobros')
                            ],string="Tipo")
+    date_maturity_payment = fields.Date(string="Date Maturity Payment", readonly=True)
 
     def init(self):
+        tools.drop_view_if_exists(self._cr, 'accounts_receivable_view')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW accounts_receivable_view AS (
               
@@ -56,15 +59,15 @@ class AccountsReceivableView(models.Model):
 	am.name as move_name,
 	am.ref as move_ref,
 	am.date as move_date,
-	aml.date_maturity,
+	coalesce(aml.date_maturity,am.date) as date_maturity ,
 	aml.debit,
 	aml.credit,
 	aa.code::varchar as account_code,
 	aa.name::varchar as account_name,
 	aml.amount_residual as amount_residual ,
 	coalesce(am.currency_id,rc.currency_id ) as currency_id ,
-	'asiento'::varchar as type
-
+	'asiento'::varchar as type,
+	coalesce(aml.expected_pay_date,aml.date_maturity,am.date) as date_maturity_payment
 from account_move_line aml
 	inner join account_move am on am.id=aml.move_id
 	inner join account_account aa on aa.id=aml.account_id
@@ -95,7 +98,8 @@ where am.state='posted'
 	''::varchar  as account_name,
 	dbkl.total_pending as amount_residual ,
 	rc.currency_id  as currency_id ,
-	'acuerdo_cobro'::varchar as type
+	'acuerdo_cobro'::varchar as type,
+    dbkl.date_maturity_payment as date_maturity_payment
 
 	  FROM document_financial dbk
            INNER JOIN document_financial_line dbkl ON dbkl.document_id = dbk.id

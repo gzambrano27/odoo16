@@ -11,6 +11,13 @@
                 name="ecua_foreign_purchase.report_foreign_trade_"
                 file="ecua_foreign_purchase.report_foreign_trade"
         />
-
+        <report
+            id="action_importation_report_xlsx"
+            model="trade.importation"
+            string="Exportar Excel Importación"
+            report_type="xlsx"
+            name="ecua_foreign_purchase.importation_report_xlsx"
+            file="ecua_foreign_purchase.importation_report_xlsx"
+        />
     </data>
 </odoo>

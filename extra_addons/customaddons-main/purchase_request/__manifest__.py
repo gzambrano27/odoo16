@@ -33,7 +33,7 @@
         "views/stock_move_views.xml",
         "views/stock_move_line_views.xml",
         "views/stock_picking_views.xml",
-
+        "wizard/export_request_line_wizard_view.xml",
     ],
     "demo": ["demo/purchase_request_demo.xml"],
     "license": "LGPL-3",

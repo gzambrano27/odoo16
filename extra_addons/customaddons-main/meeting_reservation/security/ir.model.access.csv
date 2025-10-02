@@ -1,7 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_meeting_meeting_admin,access.meeting.meeting.admin,meeting_reservation.model_meeting_meeting,meeting_reservation.group_meeting_admin,1,1,1,1
-access_meeting_meeting_user,access.meeting.meeting.user,meeting_reservation.model_meeting_meeting,meeting_reservation.group_meeting_user,1,1,1,0
-access_meeting_room_admin,access.meeting.room.admin,meeting_reservation.model_meeting_room,meeting_reservation.group_meeting_admin,1,1,1,1
-access_meeting_room_user,access.meeting.room.user,meeting_reservation.model_meeting_room,meeting_reservation.group_meeting_user,1,0,0,0
-access_meeting_invitation_admin,access.meeting.invitation.admin,meeting_reservation.model_meeting_invitation,meeting_reservation.group_meeting_admin,1,1,1,1
-access_meeting_invitation_user,access.meeting.invitation.user,meeting_reservation.model_meeting_invitation,meeting_reservation.group_meeting_user,1,1,1,0
+access_meeting_meeting_user,meeting.meeting access for user,model_meeting_meeting,meeting_reservation.group_meeting_user,1,1,1,0
+access_meeting_invitation_user,meeting.invitation access for user,model_meeting_invitation,meeting_reservation.group_meeting_user,1,1,1,1
+access_wizard_cancel_meeting_user,wizard.cancel.meeting access for user,model_wizard_cancel_meeting,meeting_reservation.group_meeting_user,1,1,1,0
+access_meeting_room_user,meeting.room access for user,model_meeting_room,meeting_reservation.group_meeting_user,1,1,0,0
+access_meeting_meeting_admin,meeting.meeting access for admin,model_meeting_meeting,meeting_reservation.group_meeting_admin,1,1,1,1
+access_meeting_invitation_admin,meeting.invitation access for admin,model_meeting_invitation,meeting_reservation.group_meeting_admin,1,1,1,1
+access_meeting_room_admin,meeting.room access for admin,model_meeting_room,meeting_reservation.group_meeting_admin,1,1,1,1
+access_wizard_cancel_meeting_admin,wizard.cancel.meeting access for admin,model_wizard_cancel_meeting,meeting_reservation.group_meeting_admin,1,1,1,1

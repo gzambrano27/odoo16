@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-
+from odoo import tools
 
 class AccountsPayableView(models.Model):
     _name = 'accounts.payable.view'
@@ -42,6 +43,7 @@ class AccountsPayableView(models.Model):
                              ], string="Tipo")
 
     def init(self):
+        tools.drop_view_if_exists(self._cr, 'accounts_payable_view')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW accounts_payable_view AS (
               

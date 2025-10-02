@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-
+from odoo import tools
 
 class AccountsAnalyticView(models.Model):
     _name = 'accounts.analytic.view'
@@ -25,6 +26,7 @@ class AccountsAnalyticView(models.Model):
     codigo = fields.Char(string="Codigo", readonly=True)
 
     def init(self):
+        tools.drop_view_if_exists(self._cr, 'accounts_analytic_view')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW accounts_analytic_view AS (
                 SELECT 

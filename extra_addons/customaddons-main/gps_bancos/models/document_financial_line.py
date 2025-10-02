@@ -292,7 +292,7 @@ class DocumentFinancialLine(models.Model):
                 if brw_each.document_id.state not in ("draft", "cancelled"):  # paid,#approved
                     for brw_line in brw_each.invoice_ids:
                         if brw_line.invoice_id and brw_line.invoice_id.state=='posted':
-                            total_invoiced += brw_line.amount+brw_line.amount_iva
+                            total_invoiced += brw_line.amount_base+brw_line.amount_iva
                             amount_iva+=brw_line.amount_iva
                 total_to_invoice=total-total_invoiced
             brw_each.total_invoiced = round(total_invoiced, DEC)
@@ -369,4 +369,8 @@ class DocumentFinancialLine(models.Model):
             'domain': [('document_line_id','=',self.id),('document_id','=',self.document_id.id)],
             'context': context,
         }
+
+    @api.onchange('date_process')
+    def onchange_date_process(self):
+        self.date_maturity_payment=self.date_process
 

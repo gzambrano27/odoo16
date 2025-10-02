@@ -36,6 +36,8 @@
 
         "security/ir_rule.xml",
 
+        "wizard/hr_biometric_wizard.xml",
+
         "wizard/hr_employee_movement_wizard.xml",
         "wizard/hr_payslip_employees.xml",
         "wizard/hr_employee_payslip_reports_wizard.xml",
@@ -52,6 +54,7 @@
         "reports/hr_payslip.xml",
         "reports/ir_actions_report_xml.xml",
 
+        "views/zk_machine.xml",
         "views/hr_salary_rule_account.xml",
         "views/hr_department.xml",
         "views/res_partner_bank.xml",
@@ -108,6 +111,11 @@
 
         "views/actas_acta.xml",
         "views/hr_employee_view.xml",
+
+        'views/resource_calendar.xml',
+        'views/employee_attendance_calendar_views.xml',
+
+        "views/hr_employee_group.xml",
 
         "views/ir_ui_menu.xml",
     ],

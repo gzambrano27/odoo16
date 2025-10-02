@@ -15,8 +15,13 @@
             <field name="bank_account_id"/>
             <field name="date_payment"/>
             <field name="ref"/>
-
+<field name="comments"/>
             <!-- Filtros -->
+
+            <field name="search_move_doc" string="Factura / Asiento"/>
+                <field name="search_po_doc" string="Orden de Compra"/>
+
+
             <filter string="Sin Referencia" name="filter_ref_none" domain="[('ref','=',False)]"/>
             <filter string="Con Referencia" name="filter_ref_yes" domain="[('ref','!=',False)]"/>
             <separator/>
@@ -64,7 +69,7 @@
                                       attrs="{'invisible':[('tercero','!=',True)]}"
 
                                       />
-                                      <field name="l10n_latam_identification_tercero_id"
+                                      <field name="l10n_latam_identification_tercero_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
                                              attrs="{'invisible':[('tercero','!=',True)]}"
                                              optional="hide" force_save="1"    readonly="1"/>
 
@@ -91,7 +96,7 @@
     <field name="view_id" ref="account_payment_bank_macro_summary_view_tree_editable"/>
     <field name="target">current</field>
     <field name="context">{'search_default_filter_ref_none':1}</field>
-    <field name="domain">[('bank_macro_id.state','=','done')]</field>
+    <field name="domain">[('type_module','=','financial'),('bank_macro_id.state','=','done')]</field>
     <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
             No hay pagos a proveedores para mostrar.
@@ -185,7 +190,7 @@
                                       attrs="{'invisible':[('tercero','!=',True)]}"
 
                                       />
-                                      <field name="l10n_latam_identification_tercero_id"
+                                      <field name="l10n_latam_identification_tercero_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
                                              attrs="{'invisible':[('tercero','!=',True)]}"
                                              optional="hide" force_save="1"    readonly="1"/>
 
@@ -334,7 +339,7 @@
     <field name="res_model">account.payment.bank.macro.summary</field>
     <field name="view_mode">tree,form</field>
     <field name="target">current</field>
-         <field name="domain">[('bank_macro_id.state','=','done')]</field>
+         <field name="domain">[('type_module','=','financial'),('bank_macro_id.state','=','done')]</field>
 </record>
 
          <record id="action_account_payment_bank_macro_summary_contratista" model="ir.actions.act_window">
@@ -342,7 +347,7 @@
     <field name="res_model">account.payment.bank.macro.summary</field>
     <field name="view_mode">tree,form</field>
     <field name="target">current</field>
-              <field name="domain">[('bank_macro_id.state','=','done'),('contratista','=',True)]</field>
+              <field name="domain">[('type_module','=','financial'),('bank_macro_id.state','=','done'),('contratista','=',True)]</field>
 </record>
 
 
@@ -441,7 +446,7 @@
     <field name="res_model">account.payment.bank.macro.summary</field>
     <field name="view_mode">tree,form</field>
     <field name="target">current</field>
-              <field name="domain">[('bank_macro_id.state','=','done'),('is_intercompany','=',True),('reversed','!=',True)]</field>
+              <field name="domain">[('type_module','=','financial'),('bank_macro_id.state','=','done'),('is_intercompany','=',True),('reversed','!=',True)]</field>
 </record>
 
 <record id="action_account_payment_bank_macro_summary_tree_multi" model="ir.actions.act_window.view">

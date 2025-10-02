@@ -13,6 +13,12 @@
                 decoration-info="request_state in ('draft', 'to_approve')"
                 default_order="sequence asc"
             >
+                <header>
+                    <button name="action_export_custom"
+                            type="object"
+                            string="Exportar personalizado"
+                            class="oe_highlight"/>
+                </header>
                 <field name="display_type" invisible="1"/>
                 
                 <!-- Línea como separador -->
@@ -28,12 +34,12 @@
                     decoration-danger="request_state == 'rejected'"
                     attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="requested_by" widget="many2one_avatar_user" attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="assigned_to" widget="many2one_avatar_user" attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="employees_ids" widget="many2many_tags" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="assigned_to" optional="hide" widget="many2one_avatar_user" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="employees_ids" optional="hide" widget="many2many_tags" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="date_required" attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="estimated_cost" widget="monetary" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="estimated_cost" optional="hide" widget="monetary" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="currency_id" invisible="1" />
-                <field name="purchased_qty" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="purchased_qty" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="purchase_state" widget="badge"
                     decoration-success="purchase_state == 'done'"
                     decoration-muted="purchase_state == 'draft'"
@@ -41,13 +47,13 @@
                     decoration-warning="purchase_state == 'to_approve'"
                     decoration-danger="purchase_state == 'cancelled'"
                     attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="product_id" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="product_id" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="name" string="Descripción" optional="show" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="tipo_costo" readonly="1" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="rubro" readonly="1" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="referencia_anterior_po" readonly="1" options='{"no_create": True, "no_create_edit": True}' attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="product_brand_id" readonly="1" options='{"no_create": True, "no_create_edit": True}' attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="product_categ_id" readonly="1" options='{"no_create": True, "no_create_edit": True}' attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="product_categ_id" optional="hide" readonly="1" options='{"no_create": True, "no_create_edit": True}' attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="product_qty" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="qty_done" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="qty_available" readonly="1" attrs="{'invisible': [('display_type','=','line_section')]}"/>
@@ -60,7 +66,7 @@
                     options="{'product_field': 'product_id', 'business_domain': 'purchase_order'}"
                     attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="analytic_account_names" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
-                <field name="supplier_id" attrs="{'invisible': [('display_type','=','line_section')]}"/>
+                <field name="supplier_id" optional="hide" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="company_id" groups="base.group_multi_company" widget="selection" attrs="{'invisible': [('display_type','=','line_section')]}"/>
                 <field name="cancelled" invisible="1"/>
                 <field name="qty_in_progress" invisible="1"/>

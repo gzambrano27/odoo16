@@ -9,11 +9,18 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="custom_requisition_id" readonly='1' options="{'no_create': True}"/>
-                <field name="purchase_request_id" readonly='1'  options="{'no_create': True}"/>
+                <field name="purchase_request_id" readonly='1'  options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="rendimiento" readonly='1'/>
+                <field name="equipos" readonly='1'/>
+                <field name="personal_min_equipo" readonly='1'/>
+                <field name="duracion_estimada" readonly='1'/>
+                <field name="tipo_pedido" readonly='1'/>
+                <field name="fiscalizador_id" readonly='1'/>
+                <field name="tipo_contrato" readonly='1'/>
             </xpath>
             <xpath expr="//field[@name='product_id']" position="after">
                 <field name="referencia_anterior_po" readonly="1" options='{"no_create": True, "no_create_edit": True}' />
-                <field name="product_brand_id" options='{"no_create": True, "no_create_edit": True}' />
+                <field name="product_brand_id" options='{"no_create": True, "no_create_edit": True, "no_open": True}' />
             </xpath>
             <xpath expr="//field[@name='order_line']/tree" position="inside">
                 <field name="purchase_request_lines" invisible="1" />

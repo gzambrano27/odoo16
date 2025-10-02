@@ -3,31 +3,77 @@ access_crm_lead_project_user,crm.lead.project user,model_crm_lead_project,gps_cr
 access_crm_lead_project_kam,crm.lead.project kam,model_crm_lead_project,gps_crm.group_crm_kam_custom,1,1,1,0
 access_crm_lead_project_manager,crm.lead.project manager,model_crm_lead_project,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_lead_project_admin,crm.lead.project admin,model_crm_lead_project,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_project_viewer,crm.lead.project viewer,model_crm_lead_project,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_project_engineering,crm.lead.project engineering,model_crm_lead_project,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_project_comite,crm.lead.project comite,model_crm_lead_project,gps_crm.group_crm_comite_custom,1,1,1,1
 
 access_crm_lead_contactos_user,crm.lead.contactos user,model_crm_lead_contactos,gps_crm.group_crm_user_custom,1,0,0,0
 access_crm_lead_contactos_manager,crm.lead.contactos manager,model_crm_lead_contactos,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_lead_contactos_admin,crm.lead.contactos admin,model_crm_lead_contactos,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_contactos_viewer,crm.lead.contactos viewer,model_crm_lead_contactos,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_contactos_engineering,crm.lead.contactos engineering,model_crm_lead_contactos,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_contactos_comite,crm.lead.contactos comite,model_crm_lead_contactos,gps_crm.group_crm_comite_custom,1,1,1,1
 
 access_crm_correo_user,crm.correo user,model_crm_correo,gps_crm.group_crm_user_custom,1,0,0,0
 access_crm_correo_manager,crm.correo manager,model_crm_correo,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_correo_admin,crm.correo admin,model_crm_correo,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_correo_viewer,crm.correo viewer,model_crm_correo,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_correo_engineering,crm.correo engineering,model_crm_correo,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_correo_comite,crm.correo comite,model_crm_correo,gps_crm.group_crm_comite_custom,1,1,1,1
 
 access_crm_lead_scoring_template_user,crm.lead.scoring.template user,model_crm_lead_scoring_template,gps_crm.group_crm_user_custom,1,0,0,0
 access_crm_lead_scoring_template_kam,crm.lead.scoring.template kam,model_crm_lead_scoring_template,gps_crm.group_crm_kam_custom,1,1,0,0
 access_crm_lead_scoring_template_manager,crm.lead.scoring.template manager,model_crm_lead_scoring_template,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_lead_scoring_template_admin,crm.lead.scoring.template admin,model_crm_lead_scoring_template,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_scoring_template_viewer,crm.lead.scoring.template viewer,model_crm_lead_scoring_template,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_scoring_template_engineering,crm.lead.scoring.template engineering,model_crm_lead_scoring_template,gps_crm.group_crm_engineering_custom,1,1,0,0
+access_crm_lead_scoring_template_comite,crm.lead.scoring.template comite,model_crm_lead_scoring_template,gps_crm.group_crm_comite_custom,1,1,1,1
+
 
 access_crm_lead_scoring_template_line_user,crm.lead.scoring.template.line user,model_crm_lead_scoring_template_line,gps_crm.group_crm_user_custom,1,0,0,0
 access_crm_lead_scoring_template_line_manager,crm.lead.scoring.template.line manager,model_crm_lead_scoring_template_line,gps_crm.group_crm_manager_custom,1,1,1,1
+access_crm_lead_scoring_template_line_viewer,crm.lead.scoring.template.line viewer,model_crm_lead_scoring_template_line,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_scoring_template_line_engineering,crm.lead.scoring.template.line engineering,model_crm_lead_scoring_template_line,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_scoring_template_line_comite,crm.lead.scoring.template.line comite,model_crm_lead_scoring_template_line,gps_crm.group_crm_comite_custom,1,1,1,1
+
 
 access_crm_lead_scoring_line_user,crm.lead.scoring.line user,model_crm_lead_scoring_line,gps_crm.group_crm_user_custom,1,1,1,0
 access_crm_lead_scoring_line_kam,crm.lead.scoring.line kam,model_crm_lead_scoring_line,gps_crm.group_crm_kam_custom,1,1,1,1
 access_crm_lead_scoring_line_manager,crm.lead.scoring.line manager,model_crm_lead_scoring_line,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_lead_scoring_line_admin,crm.lead.scoring.line admin,model_crm_lead_scoring_line,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_scoring_line_viewer,crm.lead.scoring.line viewer,model_crm_lead_scoring_line,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_scoring_line_engineering,crm.lead.scoring.line engineering,model_crm_lead_scoring_line,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_scoring_line_comite,crm.lead.scoring.line comite,model_crm_lead_scoring_line,gps_crm.group_crm_comite_custom,1,1,1,1
+
 
 access_crm_lead_scoring_option_kam,crm.lead.scoring.option kam,model_crm_lead_scoring_option,gps_crm.group_crm_kam_custom,1,1,1,1
 access_crm_lead_scoring_option_manager,crm.lead.scoring.option manager,model_crm_lead_scoring_option,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_lead_scoring_option_admin,crm.lead.scoring.option admin,model_crm_lead_scoring_option,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_scoring_option_viewer,crm.lead.scoring.option viewer,model_crm_lead_scoring_option,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_scoring_option_engineering,crm.lead.scoring.option engineering,model_crm_lead_scoring_option,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_scoring_option_comite,crm.lead.scoring.option comite,model_crm_lead_scoring_option,gps_crm.group_crm_comite_custom,1,1,1,1
+
 
 access_crm_rangos_manager,rangos.crm manager,model_rangos_crm,gps_crm.group_crm_manager_custom,1,1,1,1
 access_crm_rangos_admin,rangos.crm admin,model_rangos_crm,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_rangos_viewer,rangos.crm viewer,model_rangos_crm,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_rangos_engineering,rangos.crm engineering,model_rangos_crm,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_rangos_comite,rangos.crm comite,model_rangos_crm,gps_crm.group_crm_comite_custom,1,1,1,1
+
+
+access_centro_costo_tipo_proyecto_crm_user,crm.centro.costo.tipo.proyecto user,account_payment_purchase.model_centro_costo_tipo_proyecto,gps_crm.group_crm_user_custom,1,1,1,1
+access_centro_costo_tipo_proyecto_viewer,crm.centro.costo.tipo.proyecto viewer,account_payment_purchase.model_centro_costo_tipo_proyecto,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_centro_costo_tipo_proyecto_engineering,crm.centro.costo.tipo.proyecto engineering,account_payment_purchase.model_centro_costo_tipo_proyecto,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_centro_costo_tipo_proyecto_comite,crm.centro.costo.tipo.proyecto comite,account_payment_purchase.model_centro_costo_tipo_proyecto,gps_crm.group_crm_comite_custom,1,1,1,1
+
+
+access_crm_division_proyecto_manager,division.proyecto manager,model_crm_division_proyecto,gps_crm.group_crm_manager_custom,1,1,1,1
+access_crm_division_proyecto_admin,crm.division.proyecto admin,model_crm_division_proyecto,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_division_proyecto_viewer,crm.division.proyecto viewer,model_crm_division_proyecto,gps_crm.group_crm_viewer_custom,1,0,0,0
+
+access_crm_lead_bitacora_user,crm.lead.bitacora user,model_crm_lead_bitacora,gps_crm.group_crm_user_custom,1,1,1,0
+access_crm_lead_bitacora_manager,crm.lead.bitacora manager,model_crm_lead_bitacora,gps_crm.group_crm_manager_custom,1,1,1,1
+access_crm_lead_bitacora_admin,crm.lead.bitacora admin,model_crm_lead_bitacora,gps_crm.group_crm_admin_custom,1,1,1,1
+access_crm_lead_bitacora_viewer,crm.lead.bitacora viewer,model_crm_lead_bitacora,gps_crm.group_crm_viewer_custom,1,0,0,0
+access_crm_lead_bitacora_engineering,crm.lead.bitacora engineering,model_crm_lead_bitacora,gps_crm.group_crm_engineering_custom,1,1,1,1
+access_crm_lead_bitacora_comite,crm.lead.bitacora comite,model_crm_lead_bitacora,gps_crm.group_crm_comite_custom,1,1,1,1

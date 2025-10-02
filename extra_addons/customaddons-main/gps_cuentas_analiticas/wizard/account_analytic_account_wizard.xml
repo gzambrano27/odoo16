@@ -19,6 +19,13 @@
             widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
       domain="[('company_id', 'in', company_ids)]"
       />
+      <field name="journal_ids" required="0" placeholder="TODAS LOS DIARIOS"
+            widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      domain="[('company_id', 'in', company_ids)]"
+      />
+
+
+
   </group>
                     <footer>
                         <button name="process" type="object" string="Procesar" icon='fa-cogs'/>
@@ -65,6 +72,13 @@
             widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
       domain="[('company_id', 'in', company_ids)]"
       />
+
+      <field name="journal_ids" required="0" placeholder="TODAS LOS DIARIOS"
+            widget="many2many_tags" options="{'no_create':True,'no_open':True,'no_edit':True}"
+      domain="[('company_id', 'in', company_ids)]"
+      />
+
+
   </group>
                     <footer>
                         <button name="process" type="object" string="Procesar" icon='fa-cogs'/>

@@ -8,7 +8,7 @@
     'author': "GPS",
     'website': '',
     'depends': [
-         'gps_edi_ec','report_xlsx_helper','gps_hr','gps_purchases','gps_payment'
+         'gps_edi_ec','report_xlsx_helper','gps_hr','gps_purchases','gps_payment','purchase_work_acceptance'
     ],
     'data': [
 
@@ -68,6 +68,7 @@
 
         'wizard/account_payment_register.xml',
 
+        #'wizard/payment_request_recalc_wizard.xml',
 
         'wizard/res_partner_bank_email_update_wizard.xml',
 
@@ -119,6 +120,10 @@
         'views/bank_account_template.xml',
 
         'views/res_partner_bank_request.xml',
+
+        'views/account_journal.xml',
+        'views/res_country.xml',
+        #'views/stock_picking.xml',
 
         'views/ir_ui_menu.xml',
     ],

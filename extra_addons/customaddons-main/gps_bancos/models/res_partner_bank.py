@@ -8,6 +8,7 @@ class ResPartnerBank(models.Model):
 
     full_name=fields.Char("# Cuenta",compute="_get_compute_full_name",store=False,readonly=True)
     partner_email=fields.Char("Correo")
+    iban_number=fields.Char("# IBAN")
     active=fields.Boolean("Activo",default=True)
 
     def name_get(self):
@@ -21,6 +22,21 @@ class ResPartnerBank(models.Model):
             brw_each.full_name=full_name
 
     _rec_name="full_name"
+
+    @api.constrains('iban_number', 'active')
+    def _check_unique_iban(self):
+        for record in self:
+            if record.iban_number:
+                # Buscar otros registros activos con el mismo IBAN
+                other = self.search([
+                    ('iban_number', '=', record.iban_number),
+                    ('active', '=', True),
+                    ('id', '!=', record.id)
+                ])
+                if other:
+                    raise ValidationError(
+                        f"El IBAN '{record.iban_number}' ya existe en otro registro activo."
+                    )
 
     @api.onchange('tercero')
     def onchange_tercero(self):

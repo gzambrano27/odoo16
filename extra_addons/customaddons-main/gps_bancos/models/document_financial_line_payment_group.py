@@ -41,6 +41,7 @@ class DocumentFinancialLinePaymentGroup(models.Model):
     is_cancel = fields.Boolean("Anulado", default=False)
     ref=fields.Char("# Referencia",default=None,size=32,required=True)
     payment_id=fields.Many2one('account.payment','Pago')
+    move_id = fields.Many2one('account.move', 'Asiento Pago/NC')
     payment_line_ids=fields.One2many('document.financial.line.payment','payment_group_id',"Detalle")
 
     state = fields.Selection([('validated', 'Válido'),

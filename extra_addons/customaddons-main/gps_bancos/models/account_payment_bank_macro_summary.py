@@ -64,6 +64,18 @@ class AccountPaymentBankMacroSummary(models.Model):
 
     default_mode_payment = fields.Selection(related="bank_macro_id.default_mode_payment", store=False, readonly=True)
 
+    bank_intermediary_id = fields.Many2one(
+        "res.bank",
+        string="Banco Intermediario",
+        domain=lambda self: self._domain_bank_intermediary_id(),
+    )
+
+    def _domain_bank_intermediary_id(self):
+        """Excluye bancos de Ecuador (base.ec)"""
+        ec_country = self.env.ref("base.ec", raise_if_not_found=False)
+        if ec_country:
+            return [("country", "!=", ec_country.id)]
+        return [('id','=',-1)]  # Si no encuentra Ecuador, no aplica filtro
 
     @api.depends('company_id','partner_id')
     def compute_is_intercompany(self):
@@ -406,3 +418,90 @@ class AccountPaymentBankMacroSummary(models.Model):
                 'allowed_company_ids':allowed_company_ids
             }
         }
+
+    search_move_doc = fields.Char(
+        string="Factura / Asiento",
+        compute="_compute_search_move_doc",
+        store=False,
+        search="_search_search_move_doc"
+    )
+
+    # Campo de búsqueda para OC relacionadas
+    search_po_doc = fields.Char(
+        string="Orden de Compra",
+        compute="_compute_search_po_doc",
+        store=False,
+        search="_search_search_po_doc"
+    )
+
+    # ---------------------------------------------------
+    # COMPUTADOS
+    # ---------------------------------------------------
+    def _compute_search_move_doc(self):
+        for rec in self:
+            line_ids=rec.line_ids.filtered(lambda l:l.request_id.type == 'account.move' and l.request_id)
+            search_move_doc=False
+            if line_ids:
+                search_move_doc=",".join(line_ids.mapped('request_id.invoice_id.name'))
+            rec.search_move_doc = search_move_doc
+
+    def _compute_search_po_doc(self):
+        for rec in self:
+            line_ids = rec.line_ids.filtered(lambda l: l.request_id.type == 'purchase.order' and l.request_id)
+            search_po_doc = False
+            if line_ids:
+                search_po_doc = ",".join(line_ids.mapped('request_id.order_id.name'))
+            else:
+                line_ids = rec.line_ids.filtered(lambda l: l.request_id.type == 'account.move' and l.request_id)
+                if line_ids:
+                    search_po_doc=",".join(line_ids.mapped('invoice_id.invoice_line_ids.purchase_line_id.order_id.name')  )
+            rec.search_po_doc = search_po_doc
+
+    @api.model
+    def _search_search_move_doc(self, operator, value):
+        """Busca en line_ids los documentos account.move (por invoice_id.name o ref)."""
+        # Buscar moves por nombre de factura/asiento o ref
+        moves = self.env['account.move'].search([
+            '|',
+            ('name', operator, value),
+            ('ref', operator, value)
+        ])
+        if not moves:
+            return [('id', '=', 0)]
+
+        # Buscar summaries que tengan line_ids con esos moves
+        summaries = self.search([
+            ('line_ids.request_id.invoice_id', 'in', moves.ids)
+        ])
+        return [('id', 'in', summaries.ids)]
+
+    @api.model
+    def _search_search_po_doc(self, operator, value):
+        """Busca OCs directas en line_ids o ligadas a facturas account.move."""
+        domain = []
+
+        # 1) OCs directas
+        pos = self.env['purchase.order'].search([('name', operator, value)])
+        if pos:
+            summaries = self.search([
+                ('line_ids.request_id.order_id', 'in', pos.ids)
+            ])
+            if summaries:
+                domain.append(('id', 'in', summaries.ids))
+
+        # 2) OCs desde facturas (account.move -> invoice_line_ids -> purchase.order)
+        moves = self.env['account.move'].search([
+            ('invoice_line_ids.purchase_line_id.order_id.name', operator, value)
+        ])
+        if moves:
+            summaries = self.search([
+                ('line_ids.request_id.invoice_id', 'in', moves.ids)
+            ])
+            if summaries:
+                domain.append(('id', 'in', summaries.ids))
+
+        if not domain:
+            return [('id', '=', 0)]
+        if len(domain) == 1:
+            return domain
+        return ['|'] + domain

@@ -23,4 +23,14 @@
               parent="menu_bi_informes"
               action="action_accounts_analytic"/>
 
+    <menuitem id="menu_purchase_order_view_root"
+              name="Ordenes de Compra"
+              parent="menu_bi_informes"
+              action="action_purchase_order_view"/>
+
+    <menuitem id="menu_account_move_view_root"
+              name="Movimientos de Cuentas"
+              parent="menu_bi_informes"
+              action="action_account_move"/>
+
 </odoo>

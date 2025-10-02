@@ -231,7 +231,8 @@ class InventoryDocumentTransference(models.Model):
                 "location_id": brw_each.stock_location_id.id,
                 "location_dest_id": brw_each.company_id.transit_location_id.id,
                 "origin": "TRANSFERENCIA %s" % (brw_each.id),
-                'force_date': self.date_from
+                'force_date': self.date_from,
+                'analytic_distribution': self.analytic_distribution,
             }
             lines = [(5,)]
             for brw_line in brw_each.line_ids:
@@ -246,7 +247,8 @@ class InventoryDocumentTransference(models.Model):
                         "location_dest_id": brw_each.company_id.transit_location_id.id,
                         "product_id": brw_line.product_id.id,
                         "product_uom_qty": brw_line.quantity_delivery,
-                        "name": brw_line.name
+                        "name": brw_line.name,
+                        'analytic_distribution': brw_line.analytic_distribution,
                     }))
             if len(lines) == 0:
                 raise ValidationError("No hay productos con cantidad entregada para transferir.")

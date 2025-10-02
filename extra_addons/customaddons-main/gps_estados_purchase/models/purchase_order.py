@@ -362,6 +362,22 @@ class PurchaseOrder(models.Model):
 
         return super(PurchaseOrder, self).button_approve(force=force)
     
+    def button_cancel(self):
+        for order in self:
+            # Solo controlar si es orden administrativa o presidencia
+            if order.es_admin or order.es_presidencia:
+                # Obtener los aprobadores configurados
+                config_admin = self.env['config.settings.approval.po.admin'].sudo().search([('usuario_id','=',self.env.user.id)], limit=1)
+
+                # Super admin de Odoo
+                super_admin = self.env.ref("0922987805", raise_if_not_found=False)
+
+                # Validación: el usuario debe ser aprobador o admin
+                if not config_admin:#self.env.user not in admin_users and self.env.user != super_admin:
+                    raise UserError(_("No tienes permisos para cancelar órdenes administrativas o de presidencia. Solo los aprobadores designados y el administrador pueden hacerlo."))
+
+        return super(PurchaseOrder, self).button_cancel()
+    
     def button_approveOld(self, force=False):
         """
         Restringe la aprobación de OC Administrativas/Presidencia al usuario

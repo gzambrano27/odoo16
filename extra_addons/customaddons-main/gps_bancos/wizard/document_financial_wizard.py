@@ -118,7 +118,7 @@ class DocumentFinancialWizard(models.Model):
 
     attachment_ids = fields.Many2many("ir.attachment", "document_financial_wizard_attachment_rel", "wizard_id", "attachment_id",
                                    "Adjuntos")
-    ref = fields.Char("# Referencia", default=None, size=255, required=False)
+    ref = fields.Char("# Referencia", default="/", size=255, required=False)
 
     journal_id=fields.Many2one('account.journal','Diario',required=False)
 
@@ -140,6 +140,62 @@ class DocumentFinancialWizard(models.Model):
     invoiced_line_ids=fields.One2many('document.financial.line.invoiced.wizard','wizard_id','Facturado')
 
     apply_invoice_ids=fields.Many2many('account.move','financial_wizard_invoice_rel','wizard_id','invoice_id','Facturas Aplicadas',default=_default_apply_invoice_ids)
+
+    mode_payment=fields.Selection([('payment','Pago'),('credit_note','NC')],string="Tipo",default="payment")
+
+    @api.model
+    def _get_credit_note_domain(self,company_id,partner_id):
+        # Buscar todas las notas de crédito que tengan saldo > 0
+        credit_notes = self.env['account.move'].search([
+            ('move_type', '=', 'out_refund'),  # Solo notas de crédito
+            ('state', '=', 'posted'),
+            ('company_id','=',company_id),
+            ('partner_id', '=', partner_id)
+        ])
+        valid_ids = []
+        for cn in credit_notes:
+            srch = self.env['document.financial.line.payment.group'].sudo().search([
+                ('move_id', '=', cn.id),
+                ('state', '=', 'validated'),
+                ('is_cancel','!=',True)
+            ])
+            balance = cn.amount_total - sum(srch.mapped('amount'))
+            if round(balance,2) > 0.00:
+                valid_ids.append(cn.id)
+        if not valid_ids:
+            valid_ids+=[-1,-1]
+        domain = [('company_id','=',company_id),
+                  ('move_type','in',('out_refund', )),
+                  ('partner_id','=',partner_id),('id', 'in', valid_ids) ]
+        return domain
+
+    credit_note_id=fields.Many2one('account.move','NC')
+    credit_note_balance=fields.Float("Saldo NC",digits=(16,2))
+
+    @api.onchange('mode_payment', 'partner_id', 'company_id')
+    def _onchange_mode_payment(self):
+        if self.mode_payment == 'credit_note':
+            # Solo aplicar filtro si es NC
+            valid_ids = self._get_credit_note_domain(self.company_id.id, self.partner_id.id)
+            return {'domain': {'credit_note_id': valid_ids}}
+        else:
+            # Si es pago, se puede limpiar el filtro o permitir cualquier valor
+            return {'domain': {'credit_note_id': [('id','=',-1)]}}
+
+    @api.onchange('credit_note_id')
+    def onchange_credit_note_id(self):
+        DEC=2
+        credit_note_balance=0.00
+        ref=self.ref or '/'
+        if self.credit_note_id:
+            srch=self.env["document.financial.line.payment.group"].sudo().search([('move_id','=',self.credit_note_id.id),
+                                                                                  ('state','=','validated'),
+                ('is_cancel','!=',True)
+                                                                                  ])
+            credit_note_balance=round(self.credit_note_id.amount_total-sum(srch.mapped('amount')),DEC)
+            ref=self.credit_note_id.name
+        self.credit_note_balance=credit_note_balance
+        self.ref=ref
 
     @api.constrains('payment_capital', 'payment_interest', 'payment_other','original_payment_capital','original_payment_interest','original_payment_other')
     @api.onchange('payment_capital', 'payment_interest', 'payment_other','original_payment_capital','original_payment_interest','original_payment_other')
@@ -824,7 +880,10 @@ class DocumentFinancialWizard(models.Model):
             if brw_each.document_financial_id.internal_type=='out':
                 brw_each.process_payment_supplier()
             if brw_each.document_financial_id.internal_type == 'in':
-                brw_each.process_payment_customer()
+                if brw_each.mode_payment=='payment':
+                    brw_each.process_payment_customer()
+                else:#nc
+                    brw_each.process_payment_credit_note_customer()
 
     def process_payment_supplier(self):
         DEC = 2
@@ -951,7 +1010,7 @@ class DocumentFinancialWizard(models.Model):
         payment_res["payment_line_ids"] = payment_line_ids
         payment = payment_obj.create(payment_res)
         payment.action_post()
-        bank_line_payment_group_ids.payment_line_ids.write({"payment_id":payment.id})
+        bank_line_payment_group_ids.payment_line_ids.write({"payment_id":payment.id,"move_id":payment.move_id.id})
 
     ###########################################
 
@@ -1026,6 +1085,78 @@ class DocumentFinancialWizard(models.Model):
             ##########################################################################################
         return True
 
+    def process_payment_credit_note_customer(self):
+        DEC = 2
+        for brw_each in self:
+            if not brw_each.line_ids:
+                raise ValidationError(_("Debes definir al menos una linea"))
+            payment_amount = sum(line.total_pending for line in brw_each.line_ids)
+            global_payment_amount = brw_each.payment_total  # +brw_each.payment_overdue_interest
+            # if round(global_payment_amount, DEC) > round(payment_amount, DEC):
+            #     raise ValidationError(_("La cantidad a cobrar no puede ser mayor a lo pendiente") )
+            if round(global_payment_amount, DEC) <= 0.00:
+                raise ValidationError(_("La cantidad a cobrar debe ser mayor a 0.00"))
+            if round(payment_amount, DEC) < 0.00:
+                raise ValidationError(_("La cantidad seleccionada a cobrar debe ser mayor a 0.00"))
+            if payment_amount == 0:
+                raise ValidationError(
+                    "La cantidad pendiente total es cero, no es posible realizar la distribución.")
+            # if brw_each.payment_overdue_interest>0:
+            #     if len(brw_each.line_ids)>1:
+            #         raise ValidationError(_("No puedes asignar un interes por mas de una linea"))
+            remaining_amount = brw_each.payment_total
+
+            payment_cobro_amount = brw_each.payment_cobro_amount
+            payment_cobro_interes = brw_each.payment_cobro_interes
+
+            payment_line_ids = [(5,), ]
+            if brw_each.mode_payment!='payment':
+                if round(brw_each.payment_total,DEC)>round(brw_each.credit_note_balance,DEC):
+                    raise  ValidationError(_("No puedes pagar un valor mayor al del saldo aplicable de la NC"))
+            if brw_each.payment_total > 0:
+                for line in brw_each.line_ids:
+                    if remaining_amount <= 0:
+                        break  # Si ya no queda cantidad por aplicar, salimos
+
+                    # Determinamos cuánto podemos aplicar a la línea según su saldo pendiente
+                    amount_to_apply = min(line.total_pending, remaining_amount)
+
+                    # Reducimos la cantidad pendiente de la línea
+
+                    payment_line_ids += [(0, 0, {
+                        "line_id": line.id,
+                        "payment_amount": payment_cobro_amount,
+                        "payment_interes_generado": payment_cobro_interes,
+                        'move_id': brw_each.credit_note_id.id,
+                        "amount": payment_cobro_amount + payment_cobro_interes,
+
+                    })]
+                    # Restamos lo aplicado de la cantidad total a distribuir
+                    remaining_amount -= amount_to_apply
+
+            bank_line_payment_group_ids = self.env["document.financial.line.payment.group"].create({
+                #
+                "document_id": brw_each.document_financial_id.id,
+                "company_id": brw_each.document_financial_id.company_id.id,
+                "date_process": brw_each.payment_date,
+                "ref": brw_each.ref,
+                "name": brw_each.name,
+                "internal_type": brw_each.document_financial_id.internal_type,
+                "payment_line_ids": payment_line_ids,
+                "migrated": True,
+                'move_id':brw_each.credit_note_id.id,
+            })
+            # Si después de distribuir no se ha cubierto toda la cantidad, mostramos un error
+            if round(remaining_amount, DEC) < 0:
+                raise ValidationError(f"Could not apply the full amount. {remaining_amount} remains.")
+            ######################################crear pagos#########################################
+            #if brw_each.do_account:
+            #brw_each.create_acct_payment_customer(bank_line_payment_group_ids)
+            attachment_ids = [(4, attc.id) for attc in brw_each.attachment_ids]
+            brw_each.line_ids.write({"attachment_ids": attachment_ids})
+            ##########################################################################################
+        return True
+
     def create_acct_payment_customer(self,bank_line_payment_group_ids):
         payment_obj=self.env["account.payment"]
         self.ensure_one()
@@ -1079,27 +1210,27 @@ class DocumentFinancialWizard(models.Model):
         payment_res["amount"]=amount
         payment = payment_obj.create(payment_res)
         payment.action_post()
-        bank_line_payment_group_ids.payment_line_ids.write({"payment_id":payment.id})
+        bank_line_payment_group_ids.payment_line_ids.write({"payment_id":payment.id,"move_id":payment.move_id.id})
 
     def process_invoice(self):
         DEC = 2
         for brw_each in self:
             if not brw_each.invoice_ids:
                 raise ValidationError(_("Debes definir al menos una factura"))
-            for brw_line in brw_each.financial_line_ids:
-                brw_line.write({"invoice_ids": [(5,)]})
+            # for brw_line in brw_each.financial_line_ids:
+            #     brw_line.write({"invoice_ids": [(5,)]})
             invoices = brw_each.invoice_ids #+ old_invoices
             if not brw_each.financial_line_ids:
                 raise ValidationError(_("Debes seleccionar al menos una cuota"))
             if not invoices:
                 raise ValidationError(_("Debes seleccionar al menos una factura"))
-
+            brw_each.validar_totales()
             for brw_line_invoiced in brw_each.invoiced_line_ids:
                 if brw_line_invoiced.invoice_id:
                     invoice_ids = []
                     invoice_ids.append((0,0,{
                                  "line_id": brw_line_invoiced.line_id.id,
-                                 "company_id": brw_line.document_id.company_id.id,
+                                 "company_id": brw_line_invoiced.invoice_id.company_id.id,
                                  "amount_retenido":round(brw_line_invoiced.amount_retenido,DEC),
                                  "amount_base":round( brw_line_invoiced.amount_base,DEC),
                                  "amount":  round(brw_line_invoiced.amount,DEC),
@@ -1194,35 +1325,35 @@ class DocumentFinancialWizard(models.Model):
         payment_res["payment_line_ids"] = payment_line_ids
         payment = payment_obj.create(payment_res)
         payment.action_post()
-        bank_line_payment_group_ids.payment_line_ids.write({"payment_id": payment.id})
+        bank_line_payment_group_ids.payment_line_ids.write({"payment_id": payment.id,"move_id":payment.move_id.id})
 
     def _check_lines_valid_and_balanced(self):
         for wizard in self:
-            total_debit = 0.0
-            total_credit = 0.0
+            if wizard.mode_payment == 'payment':
+                total_debit = 0.0
+                total_credit = 0.0
+                if not wizard.line_account_ids:
+                    raise ValidationError("Debe agregar al menos una línea de operación financiera.")
+                for line in wizard.line_account_ids:
+                    if not line.account_id:
+                        raise ValidationError("Todas las líneas deben tener una cuenta contable.")
+                    #if not line.partner_id:
+                    #    raise ValidationError("Todas las líneas deben tener un contacto asignado.")
+                    if line.debit <= 0.0 and line.credit <= 0.0:
+                        raise ValidationError("Cada línea debe tener un valor mayor a 0.00 en 'Debe' o 'Haber'.")
+                    total_debit += line.debit
+                    total_credit += line.credit
 
-            if not wizard.line_account_ids:
-                raise ValidationError("Debe agregar al menos una línea de operación financiera.")
-
-            for line in wizard.line_account_ids:
-                if not line.account_id:
-                    raise ValidationError("Todas las líneas deben tener una cuenta contable.")
-                #if not line.partner_id:
-                #    raise ValidationError("Todas las líneas deben tener un contacto asignado.")
-                if line.debit <= 0.0 and line.credit <= 0.0:
-                    raise ValidationError("Cada línea debe tener un valor mayor a 0.00 en 'Debe' o 'Haber'.")
-                total_debit += line.debit
-                total_credit += line.credit
-
-            # Redondeo para evitar errores por decimales flotantes
-            if round(total_debit, 2) != round(total_credit, 2):
-                raise ValidationError("El asiento no está balanceado: el total del Debe y el Haber deben coincidir.")
+                # Redondeo para evitar errores por decimales flotantes
+                if round(total_debit, 2) != round(total_credit, 2):
+                    raise ValidationError("El asiento no está balanceado: el total del Debe y el Haber deben coincidir.")
 
     @api.onchange('financial_line_ids', 'invoice_ids')
     def _onchange_financial_or_invoiced(self):
-        """Generar detalle en invoiced_line_ids al cambiar las cuotas,
-        distribuyendo facturas sin superar el total_to_invoice total
-        y agregando una línea con saldo pendiente sin factura.
+        """
+        Distribuir una sola factura en varias cuotas.
+        - La Base se reparte en todas las cuotas.
+        - El IVA y el Retenido van SOLO en la primera cuota.
         """
         lines_vals = [(5,)]  # Limpia las líneas previas
         DEC = 2
@@ -1231,50 +1362,137 @@ class DocumentFinancialWizard(models.Model):
             self.invoiced_line_ids = []
             return
 
-        # Total global disponible a facturar
-        restante = round(sum(self.financial_line_ids.mapped('total_to_invoice')), DEC)
+        # Validar que solo haya una factura
+        if len(self.invoice_ids) > 1:
+            raise ValidationError(_("Solo puede seleccionar una factura."))
 
-        # Total de retenciones de todas las facturas
+        invoice = self.invoice_ids[:1]  # primera factura o vacío
+        if not invoice:
+            self.invoiced_line_ids = []
+            return
 
-        # Asignar facturas a las líneas (puede haber varias facturas y varias cuotas)
-        if self.invoice_ids:
-            for financial_line in self.financial_line_ids:
-                for inv in self.invoice_ids:
-                    if restante <= 0:
-                        break
+        # Totales de la factura
+        total_base = round(invoice.amount_untaxed, DEC)
+        total_iva = round(invoice.amount_total - invoice.amount_untaxed, DEC)
+        total_retenido = round(sum(invoice.get_withholds().mapped('amount_total_signed')), DEC)
 
-                    withholds = sum(
-                        inv.get_withholds().mapped('amount_total_signed')) if inv else 0.0
+        primera = True
+        for financial_line in self.financial_line_ids:
+            restante_linea = round(financial_line.amount, DEC)
 
+            asignado_base = 0.0
+            asignado_iva = 0.0
+            asignado_retenido = 0.0
 
-                    monto_factura = round(inv.amount_total, DEC)
-                    monto_asignado = min(monto_factura, restante)
-                    monto_base = round(inv.amount_untaxed, DEC)
-                    monto_iva = round(inv.amount_total - inv.amount_untaxed, DEC)
+            # Base (se consume en todas las cuotas)
+            if restante_linea > 0 and total_base > 0:
+                tomar = min(restante_linea, total_base)
+                asignado_base = tomar
+                restante_linea -= tomar
+                total_base -= tomar
 
-                    lines_vals.append((0, 0, {
-                        'line_id': financial_line.id,
-                        'invoice_id': inv.id,
-                        'amount': monto_asignado,
-                        'amount_base': round(monto_base, DEC),
-                        'amount_iva':round(monto_iva, DEC),
-                        'amount_retenido': round(withholds, DEC),
-                    }))
+            # IVA y Retenido SOLO en la primera cuota
+            if primera:
+                asignado_iva = total_iva
+                asignado_retenido = total_retenido
+                primera = False
 
-                    restante -= monto_asignado
+            monto_asignado = asignado_base + asignado_iva + asignado_retenido
 
-        # Si queda saldo pendiente sin factura, agregamos una línea
-        if restante > 0:
+            if monto_asignado > 0:
+                lines_vals.append((0, 0, {
+                    'line_id': financial_line.id,
+                    'invoice_id': invoice.id,
+                    'amount': round(asignado_base, DEC),
+                    'amount_base': round(asignado_base, DEC),
+                    'amount_iva': round(asignado_iva, DEC),
+                    'amount_retenido': round(asignado_retenido, DEC),
+                }))
+
+        # Si queda saldo pendiente de Base sin asignar (ej: cuotas < base factura)
+        if total_base > 0:
             lines_vals.append((0, 0, {
                 'line_id': False,
-                'invoice_id': False,
-                'amount': restante,
-                'amount_base': restante,
+                'invoice_id': invoice.id,
+                'amount': round(total_base, DEC),
+                'amount_base': round(total_base, DEC),
                 'amount_iva': 0.0,
                 'amount_retenido': 0.0,
             }))
 
         self.invoiced_line_ids = lines_vals
+
+    @api.onchange('line_ids', 'credit_note_id','payment_cobro_amount','payment_cobro_interes','payment_total')
+    def _onchange_financial_or_invoiced(self):
+        """
+        Distribuir una nota de crédito en varias cuotas.
+        - La Base se reparte en todas las cuotas.
+        - El IVA va SOLO en la primera cuota.
+        - No se toma en cuenta monto retenido.
+        """
+
+        if self.mode_payment != 'payment':  # Es una Nota de Crédito
+            DEC = 2
+
+            # Validación básica
+            if not self.line_ids or not self.credit_note_id:
+                self.invoiced_line_ids = [(5,)]  # Limpia asignaciones previas
+                return
+
+            invoice = self.credit_note_id  # Nota de crédito
+
+            cuotas = self.line_ids
+
+            lines_vals = [(5,)]
+
+            for financial_line in cuotas:
+                lines_vals.append((0, 0, {
+                    'line_id': financial_line.id,
+                    'invoice_id': invoice.id,
+                    'amount': round(self.payment_total, DEC),
+                    'amount_base': round(self.payment_cobro_amount, DEC),
+                    'amount_iva': round(self.payment_cobro_interes, DEC),
+                    'amount_retenido': 0.0,  # Siempre en 0
+                }))
+
+            self.invoiced_line_ids = lines_vals
+
+    def validar_totales(self):
+        """
+        Valida que la suma de todas las líneas (base, iva, retenido)
+        sea igual a lo que tiene la(s) factura(s).
+        """
+
+        if not self.invoice_ids:
+            return True
+
+        DEC = 2  # precisión
+
+        # Totales reales de las facturas seleccionadas
+        factura_base = round(sum(self.invoice_ids.mapped('amount_untaxed')), DEC)
+        factura_total = round(sum(self.invoice_ids.mapped('amount_total')), DEC)
+        factura_iva = round(factura_total - factura_base, DEC)
+        factura_retenido = round(
+            sum(self.invoice_ids.mapped(lambda i: sum(i.get_withholds().mapped('amount_total_signed')))), DEC)
+
+        # Totales distribuidos en las líneas del wizard
+        lineas = self.invoiced_line_ids
+        total_base = round(sum(lineas.mapped('amount_base')), DEC)
+        total_iva = round(sum(lineas.mapped('amount_iva')), DEC)
+        total_retenido = round(sum(lineas.mapped('amount_retenido')), DEC)
+
+        errores = []
+        if total_base != factura_base:
+            errores.append(f"Base distribuida {total_base} debe ser igual a {factura_base}")
+        if total_iva != factura_iva:
+            errores.append(f"IVA distribuido {total_iva} debe ser igual a {factura_iva}")
+        if total_retenido != factura_retenido:
+            errores.append(f"Retenido distribuido {total_retenido} debe ser igual a {factura_retenido}")
+
+        if errores:
+            raise ValidationError("Error en la distribución de totales:\n" + "\n".join(errores))
+
+        return True
 
 class DocumentFinancialLineWizard(models.Model):
     _name = "document.financial.line.wizard"
@@ -1283,7 +1501,7 @@ class DocumentFinancialLineWizard(models.Model):
     wizard_id=fields.Many2one('document.financial.wizard','Asistente',ondelete="cascade")
     company_id=fields.Many2one(related="wizard_id.company_id",store=False,readonly=True)
     currency_id = fields.Many2one(related="company_id.currency_id", store=False, readonly=True)
-    account_id = fields.Many2one('account.account', 'Cuenta', required=True)
+    account_id = fields.Many2one('account.account', 'Cuenta', required=False)
     partner_id = fields.Many2one('res.partner', 'Contacto', required=False)
     debit=fields.Monetary("Debe",required=True)
     credit = fields.Monetary("Haber", required=True)
@@ -1316,7 +1534,13 @@ class DocumentFinancialLineInvoicedWizard(models.Model):
     amount_iva = fields.Monetary("Valor IVA", default=0.00, required=True)
     amount_retenido = fields.Monetary("Valor Retenido", default=0.00, required=True)
 
-
+    @api.onchange('amount_base', 'amount_iva')
+    def _onchange_base_iva(self):
+        """
+        Actualiza el campo 'amount' cuando cambian amount_base o amount_iva.
+        """
+        for rec in self:
+            rec.amount = (rec.amount_base or 0.0) + (rec.amount_iva or 0.0)
 
 
 

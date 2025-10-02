@@ -35,12 +35,13 @@
                       decoration-danger="(total_pending&gt;0.00)"
                         >
                               <field name="quota"  force_save="1"  />
-                             <field name="date_process"  force_save="1" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="percentage_amortize" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="percentage_interest" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}" />
-                             <field name="payment_capital" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="payment_interest" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="payment_other" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="date_process"  force_save="1"
+                             />
+                             <field name="percentage_amortize" force_save="1" optional="hide" />
+                             <field name="percentage_interest" force_save="1" optional="hide"  />
+                             <field name="payment_capital" force_save="1" sum="total" />
+                             <field name="payment_interest" force_save="1" sum="total" />
+                             <field name="payment_other" force_save="1" sum="total" />
                             <field name="payment_overdue_interest" sum="total" readonly="1" force_save="1"/>
 
                              <field name="amount" sum="total" invisible="1"/>
@@ -50,6 +51,8 @@
                              <field name="total_pending" sum="total" readonly="1" force_save="1"/>
                             <field name="parent_line_id" optional="hide" readonly="1" force_save="1"/>
                             <field name="company_id" invisible="1"/>
+
+                            <field name="date_maturity_payment" invisible="1"/>
                         </tree>
                     </field>
                     <newline/>
@@ -125,6 +128,8 @@
 
                             <field name="parent_line_id" optional="hide" readonly="1" force_save="1"/>
  <field name="company_id" invisible="1"/>
+                             <field name="date_maturity_payment"  invisible="1"  />
+
                         </tree>
                     </field>
                     <newline/>
@@ -202,12 +207,12 @@
                       decoration-danger="(total_pending&gt;0.00)"
                         >
                               <field name="quota"  force_save="1"  />
-                             <field name="date_process"  force_save="1" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="percentage_amortize" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="percentage_interest" force_save="1" optional="hide" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}" />
-                             <field name="payment_capital" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="payment_interest" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
-                             <field name="payment_other" force_save="1" sum="total" attrs="{'readonly':[('parent_line_id','!=',False),('total_pending','&lt;=',0)]}"/>
+                             <field name="date_process"  force_save="1"  />
+                             <field name="percentage_amortize" force_save="1" optional="hide" />
+                             <field name="percentage_interest" force_save="1" optional="hide"  />
+                             <field name="payment_capital" force_save="1" sum="total" />
+                             <field name="payment_interest" force_save="1" sum="total" />
+                             <field name="payment_other" force_save="1" sum="total" />
                             <field name="payment_overdue_interest" sum="total" readonly="1" force_save="1"/>
 
                              <field name="amount" sum="total" invisible="1"/>

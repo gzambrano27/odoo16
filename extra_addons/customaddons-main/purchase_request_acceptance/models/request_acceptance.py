@@ -242,6 +242,8 @@ class RequestAcceptance(models.Model):
                 'request_acceptance_id': pr.id,
                 'permite_aprobar': True,
                 'analytic_distribution': pr.analytic_distribution,
+                'fiscalizador_id': pr.request_id.fiscalizador_id.id,
+                'tipo_contrato': pr.request_id.tipo_contrato,
             })
 
             for line in pr.pr_line_ids.filtered(lambda l: l.product_qty > 0 and l.purchase_line_id):

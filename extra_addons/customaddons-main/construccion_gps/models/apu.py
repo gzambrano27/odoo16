@@ -110,17 +110,20 @@ class ProductoTemplate(models.Model):
 		for vals in vals_list:
 			subcategoria = vals.get("subcategoria_id")
 
-            # Si tiene subcategoría APU y el usuario tiene permisos de APU -> permitir
-			if subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
-				continue
+			# Si es APU -> permitimos y marcamos en el contexto el bypass
+			if not subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
+				raise AccessDenied(
+					_("No tienes permisos para crear productos. Contacta al administrador.")
+				)
 
-            # Si no cumple, aplicar la restricción normal
+			# Restricción normal
 			if self.env.user.has_group("stock_security.group_product_restrict"):
 				raise AccessDenied(
-                    _("No tienes permisos para crear productos. Contacta al administrador.")
-                )
-		return models.Model.create(self, vals_list)
+					_("No tienes permisos para crear productos. Contacta al administrador.")
+				)
 
+		return super().create(vals_list)
+	
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
@@ -129,16 +132,19 @@ class ProductProduct(models.Model):
         for vals in vals_list:
             subcategoria = vals.get("subcategoria_id") or vals.get("product_tmpl_id")
 
-            # Si tiene subcategoría APU y el usuario tiene permisos de APU -> permitir
-            if subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
-                continue
+            # Si es APU -> permitimos y marcamos el bypass
+            if not subcategoria and self.env.user.has_group("construccion_gps.group_apus_otros"):
+                raise AccessDenied(
+					_("No tienes permisos para crear productos. Contacta al administrador.")
+				)
 
             if self.env.user.has_group("stock_security.group_product_restrict"):
                 raise AccessDenied(
                     _("No tienes permisos para crear productos. Contacta al administrador.")
                 )
-        return models.Model.create(self, vals_list)
 
+        return super().create(vals_list)
+	
 class ProductTemplateAPU(models.Model):
 	_name = 'product.template.apu'
 	_description = 'APU personalizado para Product Template'
@@ -1092,7 +1098,7 @@ class ApuApu(models.Model):
 			'url': url,
 			'target': 'new',
 		}
-
+	
 	def export_excel_name(self):
 		"""
 		Genera un Excel con tres hojas (igual que export_excel),
@@ -2247,6 +2253,13 @@ class SaleOrder(models.Model):
 	# 		if so.tipo_pedido == 'apu' and so.state in ('sale', 'done'):
 	# 			if not so.superintendente or not so.supervisor:
 	# 				raise ValidationError(_("Debes completar Superintendente y Supervisor para confirmar."))
+	
+	def copy(self, default=None):
+		default = dict(default or {})
+		# Reemplazar el usuario presupuestador por el usuario actual
+		if self.tipo_pedido == 'apu':
+			default['usuario_presupuestador'] = self.env.user.id
+		return super(SaleOrder, self).copy(default)
 
 	@api.model
 	def fields_get(self, allfields=None, attributes=None):
@@ -2278,7 +2291,7 @@ class SaleOrder(models.Model):
 				raise UserError(_('Solo puedes marcar como revisado un presupuesto en borrador.'))
 			order.state = 'presupuesto_revisado'
 		return True
-
+	
 	def action_send_informe_detallado(self):
 		self.ensure_one()
 
@@ -2940,7 +2953,7 @@ class SaleOrder(models.Model):
 
 			record.analytic_account_id = cuenta.id
 			return cuenta
-
+	
 	def generate_purchase_requisition(self):
 		for so in self:
             # Solo exigir cuando realmente corresponde (ajusta estados según tu flujo)
@@ -2979,6 +2992,7 @@ class SaleOrder(models.Model):
 			pr_vals = {
 				'sale_order_id': self.id,
 				'origin': self.referencia_analitica,
+				'description': self.proyecto,
 				'state': 'draft',
 				'company_id': self.company_id.id,
 				'requested_by': self.env.user.id,
@@ -3045,6 +3059,7 @@ class SaleOrder(models.Model):
 			pr_vals = {
 				'sale_order_id': self.id,
 				'origin': self.referencia_analitica,
+				'description': self.proyecto,
 				'state': 'draft',
 				'company_id': self.company_id.id,
 				'requested_by': self.env.user.id,
@@ -3149,6 +3164,7 @@ class SaleOrder(models.Model):
 				pur_req_serv = self.env['macro.purchase.request'].create({
 					'sale_order_id': self.id,
 					'origin': self.referencia_analitica,
+					'description': self.proyecto,
 					'state': 'draft',
 					'company_id': self.company_id.id,
 					'requested_by': self.env.user.id,
@@ -3379,7 +3395,7 @@ class SaleOrder(models.Model):
 		# 		for order in orders:
 		# 			order.message_subscribe(partner_ids=partner_ids)
 		return orders
-
+	
 	def write(self, vals):
         # Guardamos los estados anteriores
 		old_states = {rec.id: rec.state for rec in self}
@@ -3417,9 +3433,8 @@ class SaleOrder(models.Model):
                         'construccion_gps.group_apus_fabrica'
                     ])
 		return res
-
+	
 	def _notify_groups(self, order, group_xmlids):
-		""" Notifica a los usuarios de los grupos especificados (sin cliente/socio) """
 		users_to_notify = self.env['res.users']
 		for xmlid in group_xmlids:
 			group = self.env.ref(xmlid, raise_if_not_found=False)
@@ -3429,23 +3444,73 @@ class SaleOrder(models.Model):
 		if not users_to_notify:
 			return
 
+		# --- Reportes a adjuntar ---
+		report_xmlids = [
+			'construccion_gps.report_inform_mo_consolida',            # Mano de Obra
+			'construccion_gps.report_inform_mat_consolida', # Materiales Consolidado
+			'construccion_gps.report_docs_breakdown_action' #report_apu_breakdown_action'  # APU Breakdown
+		]
+
+		attachments = []
+		for report_xmlid in report_xmlids:
+			report = self.env.ref(report_xmlid, raise_if_not_found=False)
+			if not report:
+				_logger.warning("No se encontró el reporte %s", report_xmlid)
+				continue
+
+			# Determinar res_ids según el modelo del reporte
+			if report.model == "sale.order":
+				res_ids = [order.id]
+			elif report.model == "apu.apu":
+				res_ids = order.order_line.mapped("apu_id").ids
+			else:
+				_logger.warning("Modelo no manejado %s para %s", report.model, report_xmlid)
+				continue
+
+			if not res_ids:
+				_logger.info("No hay registros para %s (order %s)", report_xmlid, order.name)
+				continue
+
+			try:
+				pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(report.id, res_ids)
+			except Exception as e:
+				_logger.error("Error generando PDF para %s (order %s): %s", report_xmlid, order.name, e)
+				continue
+
+			if not pdf_content:
+				_logger.warning("Render vacío para %s (order %s)", report_xmlid, order.name)
+				continue
+
+			attachment = self.env['ir.attachment'].create({
+				'name': f"{order.name}_{report_xmlid.split('.')[-1]}.pdf",
+				'type': 'binary',
+				'datas': base64.b64encode(pdf_content),
+				'res_model': 'sale.order',
+				'res_id': order.id,
+				'mimetype': 'application/pdf',
+			})
+			attachments.append(attachment.id)
+
+		if not attachments:
+			_logger.warning("Ningún PDF generado para %s", order.name)
+			return
+
 		# --- Estado personalizado ---
-		estado = order.state
-		if estado == "sale":
-			estado = "presupuesto confirmado"
+		estado = "presupuesto confirmado" if order.state == "sale" else order.state
 
 		# --- Mensaje de notificación ---
-		message = _("Estimado Usuario, el presupuesto %s ha cambiado al estado '%s'.") % (
+		message = ("Estimado Usuario, el presupuesto %s ha cambiado al estado '%s'.") % (
 			order.referencia_analitica, estado
 		)
 
-		# --- Posteo SOLO a usuarios de los grupos, no al socio ---
+		# --- Postear el correo con TODOS los adjuntos ---
 		order.message_post(
 			body=message,
-			subject=f"Referencia {order.referencia_analitica}",  # Asunto personalizado
+			subject=f"Referencia {order.referencia_analitica}",
 			message_type="notification",
 			subtype_xmlid="mail.mt_comment",
-			partner_ids=users_to_notify.mapped("partner_id").ids
+			partner_ids=users_to_notify.mapped("partner_id").ids,
+			attachment_ids=attachments,   # <-- aquí se pasan todos
 		)
 
 	def action_cancel(self):

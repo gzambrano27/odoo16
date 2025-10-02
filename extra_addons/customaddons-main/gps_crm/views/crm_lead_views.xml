@@ -9,7 +9,7 @@
         <button type="object" name="action_load_scoring_from_template"
               groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
                 class="oe_stat_button" icon="fa-star" string="Calificación">
-          <field name="score_percent"  class="oe_inline"/>
+          <field name="score_final"  class="oe_inline"/>
           
         </button>
       </xpath>
@@ -25,13 +25,20 @@
               <field name="score_total" readonly="1" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
               <field name="score_max" readonly="1" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
               <field name="score_percent" readonly="1" groups="gps_crm.group_crm_kam_custom ,gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+              <field name="evaluacion_cualitativa"
+                    attrs="{
+                            'invisible': [('revisado', '=', False)],
+                            'required': [('revisado', '=', True)],
+                            'readonly': [('type', '=', 'opportunity')]
+                        }"/>
+              <field name="score_final" readonly="1" groups="gps_crm.group_crm_kam_custom ,gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
             </group>
           </group>
 
           <button name="action_load_scoring_from_template" type="object"
                   string="Cargar/Recargar preguntas" class="btn-secondary" attrs="{'invisible': [('revisado','=',True)]}"/>
           <field name="scoring_line_ids" attrs="{'readonly': [('revisado','=',True)]}" nolabel="1" context="{'default_lead_id': active_id}">
-            <tree editable="bottom" no_open="True">
+            <tree editable="bottom" no_open="True" delete="false" create="false">
               <field name="stage"/>
               <field name="description"/>
               <field name="question_type" readonly="1"/>
@@ -132,16 +139,5 @@
                   groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
                   action="action_scoring_templates"/>
                   
-  <record id="action_tipoproyecto_crm_form" model="ir.actions.act_window">
-        <field name="name">Tipo Proyecto</field>
-        <field name="res_model">centro.costo.tipo.proyecto</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{'import_enabled': True}</field>
-   </record>
-   
-   <!-- Menu: ahora en CRM Configuración -->
-   <menuitem id="menu_action_tipoproyecto_crm"
-             action="action_tipoproyecto_crm_form"
-             parent="crm.crm_menu_config"
-             sequence="51"/>
+  
 </odoo>

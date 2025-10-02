@@ -29,5 +29,5 @@ access_purchase_request_wizard,purchase.request.wizard,model_purchase_request_wi
 access_purchase_request_viewer,purchase.request,model_purchase_request,group_purchase_request_viewer,1,0,0,0
 access_purchase_request_line_viewer,purchase.request.line,model_purchase_request_line,group_purchase_request_viewer,1,0,0,0
 
-
+access_export_request_line_user,purchase.request.line.export.wizard,model_purchase_request_line_export_wizard,group_purchase_request_user,1,1,1,1
 

@@ -8,21 +8,32 @@
 			<field name="model">zk.machine</field>
         <field name="inherit_id" ref="hr_zk_attendance.view_zk_machine_form"/>
         <field name="arch" type="xml">
+                  <button name="clear_attendance" position="attributes">
+                      <attribute name="attrs">{'invisible':[('on_direct','!=',True)]}</attribute>
+                  </button>
+              <button name="download_attendance" position="attributes">
+                      <attribute name="attrs">{'invisible':[('on_direct','!=',True)]}</attribute>
+                  </button>
+             <field name="address_id" position="after">
+
+                 <field name="on_direct" />
+             </field>
+
 
   <button name="clear_attendance" position="after">
-        <button name="recover_users"
+        <button name="recover_users" attrs="{'invisible':[('on_direct','!=',True)]}"
                             type="object" >
                         <i class="fa fa-fw o_button_icon fa-users"/>
                         Recuperar Usuarios
                     </button>
 
 <button name="action_create_user"
-                            type="object" >
+                            type="object" attrs="{'invisible':[('on_direct','!=',True)]}">
                         <i class="fa fa-fw o_button_icon fa-user"/>
                         Crear Usuario
                     </button>
  <button name="action_test_connection"
-                            type="object" >
+                            type="object" attrs="{'invisible':[('on_direct','!=',True)]}">
                         <i class="fa fa-fw o_button_icon fa-television"/>
                         Test Connection
                     </button>

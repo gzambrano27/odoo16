@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<odoo noupdate="0">
+<odoo noupdate="1">
 
      <record id="mail_template_alarma_por_pagar" model="mail.template">
             <field name="name">Notificacion Alarma Cuentas por Pagar</field>
@@ -70,9 +70,10 @@
     </tr>
 </t>
 </tbody>
-</table/>
+</table>
 
-<p>Este es un mensaje automático, por favor revise la información detallada arriba.</p>]]></field>
+<p>Este es un mensaje automático, por favor revise la información detallada arriba.</p>
+]]></field>
      </record>
 
 </odoo>

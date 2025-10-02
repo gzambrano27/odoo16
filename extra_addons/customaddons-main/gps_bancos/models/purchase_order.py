@@ -46,6 +46,32 @@ class PurchaseOrder(models.Model):
     total_dif_request_payments = fields.Monetary(compute="_compute_total_request_payments", store=True, readonly=True,
                                                  string="Total Dif. por Solicitudes")
 
+    fecha_fin_entrega = fields.Date("Fecha fin de Entrega")
+
+    show_update_request = fields.Boolean(
+        string="Ocultar botón actualización",
+        compute="_compute_show_update_request",
+        store=False,groups=None
+    )
+
+    def _compute_show_update_request(self):
+        """
+        Este campo será True cuando se cumpla la condición de ocultar el botón:
+        - state no está en purchase o done
+        - no hay recepciones
+        - no hay wa_ids
+        - no hay facturas
+        """
+
+        for order in self:
+            order = order.sudo()
+            order.show_update_request = (
+                    order.state not in ('purchase', 'done')
+                    and order.incoming_picking_count <= 0
+                    and not order.wa_ids
+                    and order.invoice_count > 0
+            )
+
     @api.depends('payment_request_ids', 'payment_request_ids.state', 'payment_request_ids.amount',
                  'payment_request_ids.paid', 'amount_total')
     def _compute_total_request_payments(self):
@@ -217,19 +243,30 @@ class PurchaseOrder(models.Model):
                 order.validate_request_default_payments()
         return super(PurchaseOrder, self).button_control_presupuesto()
 
+    def validate_fecha_entrega(self):
+        # for brw_each in self:
+        #     if not brw_each.fecha_fin_entrega:
+        #         raise ValidationError(_("Debes definir una fecha de fin de entrega(estimada) de los productos solicitados en una OC"))
+        #     if brw_each.fecha_fin_entrega<fields.Date.context_today(brw_each):
+        #         raise ValidationError(_("La fecha de fin de entrega(estimada) debe ser mayor a la actual"))
+        return True
+
     def button_approve(self):
         for order in self:
             order.update_new_date()
+            order.validate_fecha_entrega()
         values = super(PurchaseOrder, self).button_approve()
         for order in self:
             if order.state in ('purchase', 'done', 'to_approve'):
-                if order.required_advance_payment:
-                    if order.date_advance_payment:
-                        date_approve = self.get_date_with_tz(order.date_approve).date()
-                        if order.date_advance_payment <= date_approve:
-                            raise ValidationError(
-                                _("No es posible aprobar la orden de compra %s el mismo día del pago de la compañía %s ,si requiere que el pago sea anticipado o inmediato." % (
-                                    order.company_id.name, order.name,)))
+                ##############################################################################
+                # if order.required_advance_payment:
+                #     if order.date_advance_payment:
+                #         date_approve = self.get_date_with_tz(order.date_approve).date()
+                #         if order.date_advance_payment <= date_approve:
+                #             raise ValidationError(
+                #                 _("No es posible aprobar la orden de compra %s el mismo día del pago de la compañía %s ,si requiere que el pago sea anticipado o inmediato." % (
+                #                     order.company_id.name, order.name,)))
+                ##############################################################################
                 order.create_payment_request()
                 order.validate_request_default_payments()
         return values
@@ -327,14 +364,16 @@ class PurchaseOrder(models.Model):
                 order.partner_id.validate_partner_for_transaction(company_id=order.company_id.id)
             if order.state == 'control_presupuesto':
                 order.update_new_date()
+            order.validate_fecha_entrega()
             order.validate_request_default_payments()
             if order.required_advance_payment:
                 if order.date_advance_payment:
                     if order.date_advance_payment <= TODAY:
+                        pass
                         # print("button_confirm",1)
-                        raise ValidationError(
-                            _("No es posible aprobar la orden de compra %s el mismo día del pago de la compañía %s o con una fecha inferior a la actual,si requiere que el pago sea anticipado o inmediato." % (
-                                order.company_id.name, order.name,)))
+                        # raise ValidationError(
+                        #     _("No es posible aprobar la orden de compra %s el mismo día del pago de la compañía %s o con una fecha inferior a la actual,si requiere que el pago sea anticipado o inmediato." % (
+                        #         order.company_id.name, order.name,)))
         values = super(PurchaseOrder, self).button_confirm()
         for order in self:
             if order.required_advance_payment:
@@ -500,7 +539,7 @@ class PurchaseOrder(models.Model):
                     #         _("Por favor, configura las políticas de pago para la compañía '%s' antes de continuar.") % company_name)
                     order_id = brw_each.id
                     if brw_each.state in ('done', 'purchase'):
-                        date = brw_each.date_advance_payment or fields.Date.context_today(self)  # .strftime('%Y-%m-%d')
+                        date = brw_each.date_approve#date_advance_payment or fields.Date.context_today(self)  # .strftime('%Y-%m-%d')
 
                         quota = 1
                         payment_request_ids = [(5,)]
@@ -595,3 +634,4 @@ class PurchaseOrder(models.Model):
     def get_mail_bank_alert_not(self):
         self.ensure_one()
         return self.company_id.get_mail_bank_alert_not()
+

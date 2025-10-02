@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-	<record id="crm_lead_form_inherit_restrict_convert" model="ir.ui.view">
-		<field name="name">crm.lead.form.inherit.restrict.convert</field>
-		<field name="model">crm.lead</field>
-		<field name="inherit_id" ref="crm.crm_lead_view_form"/>
-		<field name="arch" type="xml">
-		<!-- Apunta al botón convertir -->
-		<xpath expr="//button[@name='464']" position="attributes">
-			<attribute name="groups">gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom</attribute>
-		</xpath>
-		</field>
-	</record>
-	<record model="ir.actions.act_window" id="crm.crm_lead_action_pipeline">
+	<!-- <record model="ir.actions.act_window" id="crm.crm_lead_action_pipeline">
 		<field name="context">{
 				'default_type': 'opportunity',
 				'search_default_assigned_to_me': 1
 		}</field>
 		<field name="search_view_id" ref="view_crm_case_opportunities_filter_inherit"/>
-	</record>
+	</record> -->
 	<!-- ,'search_anio_modificacion': fields.Date.context_today(self).year -->
 
 	<record id="view_crm_lead_form_inht" model="ir.ui.view">
@@ -51,12 +40,10 @@
 
 			<xpath expr="//div[@class='d-flex align-items-end']" position="replace">
 				<div attrs="{'invisible': [('type', '=', 'lead')]}">
-					<!-- <label for="expected_revenue" class="oe_edit_only pb-1" /> -->
 					<div class="d-flex align-items-end">
 						<field name="company_currency" invisible="1"/>
 						<field name="expected_revenue" string='Presupuesto Aproximado' class="oe_inline o_input_13ch" widget='monetary' options="{'currency_field': 'company_currency'}"/>
 						<span class="oe_grey p-2" groups="crm.group_use_recurring_revenues"> + </span>
-						<!-- <span class="oe_grey p-2" groups="!crm.group_use_recurring_revenues"> at </span> -->
 					</div>
 				</div>
 			</xpath>
@@ -76,6 +63,7 @@
 				<field name="solicitante" options="{'no_create':True,'no_edit':True,'no_open':True}" />
 				<field name="prioridad" invisible="1"/>
 				<field name="tipo_proyecto" invisible='1'/>
+				<field name="division_id" string="División" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
 				<field name="tipo_proyecto_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
 				<field name="lead_project_id" 
 				 attrs="{'invisible': [('probability', '!=',100)]}" />
@@ -114,24 +102,9 @@
 					<field name="description" placeholder="Add a description..." options="{'collaborative': true}"/>
 				</page>
 			</xpath>
-<!--
-			<xpath expr="//div[@class='oe_chatter']" position="replace">
-				<div attrs="{'invisible': [('type', '=', 'lead')]}">
-					<div class="oe_chatter">
-                        <field name="message_follower_ids" />
-                        <field name="activity_ids"/>
-                        <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
-                    </div>
-				</div>
-			</xpath>
--->
 
 			<xpath expr="//div[@class='oe_edit_only d-md-flex align-items-center']" position="replace">
 			</xpath>
-			<!-- <field name="priority" position="attributes">
-                <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
-            </field> -->
-            <!-- Ocultar el campo Probabilidad -->
 			
             <field name="probability" position="attributes">
                 <attribute name="attrs">{'invisible': [('type', '=', 'opportunity')]}</attribute>
@@ -165,11 +138,49 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
+			<xpath expr="//button[@name='464']" position="attributes">
+				<attribute name="groups">gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom</attribute>
+			</xpath>
 			<xpath expr="//label[@for='email_from']" position="before">
 				<field name="contacto_principal" />
-				<field name="tipo_industria" string="División"/>
+				<!-- <field name="division_id" string="División" options="{'no_create':True,'no_edit':True,'no_open':True}"/> -->
 			</xpath>
-			
+			<!-- Ocultar Oportunidad seq -->
+			<field name="opportunity_sequence" position="attributes">
+				<attribute name="attrs">{'invisible': [('type','=','lead')]}</attribute>
+			</field>
+			<!-- Ocultar Puesto de trabajo -->
+			<field name="function" position="attributes">
+				<attribute name="attrs">{'invisible': [('type','=','lead')]}</attribute>
+			</field>
+			<!-- Ocultar Prioridad -->
+			<field name="priority" position="attributes">
+				<attribute name="attrs">{'invisible': [('type','=','lead')]}</attribute>
+			</field>
+			<!-- Ocultar website -->
+			<field name="website" position="replace">
+				<field name="website" attrs="{'invisible': [('type','=','lead')]}"/>
+			</field>
+			<!-- Ocultar el campo lead_properties cuando type = lead -->
+            <field name="lead_properties" position="replace">
+                <field name="lead_properties" attrs="{'invisible': [('type','=','lead')]}"/>
+            </field>
+			<!-- Ocultar el campo lead_properties cuando type = lead -->
+            <field name="tag_ids" position="replace">
+                <field name="tag_ids" attrs="{'invisible': [('type','=','lead')]}"/>
+            </field>
+			<!-- Ocultar el campo lead_properties cuando type = lead -->
+            <field name="sequence" position="replace">
+                <field name="sequence" attrs="{'invisible': [('type','=','lead')]}"/>
+            </field>
+			<!-- Ocultar el campo street cuando type = lead -->
+            <field name="street" position="replace">
+                <field name="street" attrs="{'invisible': [('type','=','lead')]}"/>
+            </field>
+			<!-- Ocultar el campo phone cuando type = lead -->
+            <xpath expr="//field[@name='phone']" position="attributes">
+				<attribute name="attrs">{'invisible': [('type','=','lead')]}</attribute>
+			</xpath>
 			<header>
 				<xpath expr="//button[@name='action_sale_quotations_new']" position="before">
                 	<button name="button_approve"  string="Revisado" type="object" class="oe_highlight" 
@@ -177,9 +188,6 @@
 					confirm="¿Estás seguro de confirmar este registro?"/>
 				</xpath>
 			</header>
-            <!-- Insertar el campo 'Nombre Compañía' justo debajo del campo 'Cliente' -->
-			<!-- <xpath expr="//div[@class='d-flex align-items-center']" position="replace">
-			</xpath> -->
 
         </field>
     </record>
@@ -214,17 +222,20 @@
 				<tree string="Oportunidades" default_order="id desc" decoration-danger="rango_color == 'danger'"
       				decoration-warning="rango_color == 'warning'"
       				decoration-success="rango_color == 'success'">
-					<field name="create_date" string="Fecha"/>
-					<field name="tipo_industria" string="División"/>
-					<field name="categoria_proyecto" string="Categoría del Proyecto"/>
-					<field name="stage_id" string="Status del Proyecto"/>
-					<field name="tipo_proyecto_id" string="Sub-Categoría del Proyecto"/>
+					<field name="create_date" string="Fecha" widget="date"/>
+					<field name="division_id" string="División" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+					<!-- <field name="categoria_proyecto" string="Categoría del Proyecto"/> -->
+					<field name="stage_id" string="Etapa del Proyecto"/>
+					<field name="tipo_proyecto_id" string="Tipo Proyecto"/>
 					<field name="partner_id" string="Cliente"/>
 					<field name="name" string="Proyecto"/>
 					<field name="user_id" string="Responsable"/>
 					<field name="expected_revenue" string="Valor Presupuesto" widget="monetary" options="{'currency_field': 'company_currency'}"/>
 					<field name="score_percent" string="Calificacion" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+					<field name="score_final" string="Calificacion Final" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
 					<field name="rango_color" invisible='1'/>
+					<field name="write_date" string="F. Ult. Act" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom, gps_crm.group_crm_viewer_custom"/>
+					<field name="write_uid" string="U. Ult. Act" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom, gps_crm.group_crm_viewer_custom"/>
 				</tree>
         </xpath>
 		</field>
@@ -244,8 +255,6 @@
 			<xpath expr="//search" position="inside">
 				<field name="codigo_presupuesto" filter_domain="[('codigo_presupuesto', 'ilike', self)]"/>
 				<field name="anio_modificacion" filter_domain="[('anio_modificacion', '=', self)]"/>
-				<!-- <field name='tipo_proyecto' filter_domain="[('tipo_proyecto', 'ilike', self)]"/> -->
-				<!-- <field name='financiamiento' filter_domain="[('financiamiento', 'is', self)]"/> -->
 
 			</xpath>
 		</field>
@@ -278,12 +287,16 @@
 			<tree string="Leads" default_order="id desc" decoration-danger="rango_color == 'danger'"
       decoration-warning="rango_color == 'warning'"
       decoration-success="rango_color == 'success'">
-				<field name="create_date" string="Fecha"/>
-				<field name="partner_id" string="Cliente"/>
+				<field name="create_date" string="Fecha" widget="date"/>
+				<!-- <field name="partner_id" string="Cliente"/> -->
+				<field name="partner_name" string="Cliente"/>
 				<field name="name" string="Proyecto"/>
 				<field name="user_id" string="Responsable"/>
 				<field name="score_percent" string="Calificacion" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
+				<field name="score_final" string="Calificacion" groups="gps_crm.group_crm_kam_custom, gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"/>
 				<field name="rango_color" invisible='1'/>
+				<field name="write_date" string="F. Ult. Act" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom, gps_crm.group_crm_viewer_custom"/>
+				<field name="write_uid" string="U. Ult. Act" groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom, gps_crm.group_crm_viewer_custom"/>
 			</tree>
 		</field>
 	</record>

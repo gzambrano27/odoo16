@@ -334,7 +334,8 @@ class report_compras_report_xlsx(models.AbstractModel):
       (case when(account_move.move_type='in_refund') then -1 else 1 end )*coalesce(account_move.amount_total,0.00) as  total,   
     coalesce(rdfte.total,0.00) as  rte_fte,
     coalesce(rdiva.total,0.00) as  rte_iva,
-    coalesce(account_move.l10n_ec_code_taxsupport,'') as l10n_ec_code_taxsupport
+    coalesce(account_move.l10n_ec_code_taxsupport,'') as l10n_ec_code_taxsupport,
+    coalesce(account_move.ref,'') as referencia 
                     from res_company 
                     inner join variables on 1=1
                     inner join res_partner rp  on rp.id=res_company.partner_id
@@ -373,12 +374,13 @@ class report_compras_report_xlsx(models.AbstractModel):
                         ws['P'+row]= each_result["rte_fte"]
                         ws['Q'+row]= each_result["rte_iva"]
                         ws['R' + row] = each_result["l10n_ec_code_taxsupport"]
+                        ws['S' + row] = each_result["referencia"]
                         i+=1
                         last_row=INDEX_ROW+i
                     if last_row>=INDEX_ROW:
                         thin = Side(border_style="thin", color="000000")
                         border = Border(left=thin, right=thin, top=thin, bottom=thin)
-                        self.set_border(ws,'A'+str(INDEX_ROW)+':R'+str(last_row-1),border)
+                        self.set_border(ws,'A'+str(INDEX_ROW)+':S'+str(last_row-1),border)
                 ws['B3']= len(result)
                 ws['A1']= brw_wizard.company_id.name
                 ws['B2']=start_date

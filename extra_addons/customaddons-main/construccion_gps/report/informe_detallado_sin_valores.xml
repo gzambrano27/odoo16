@@ -25,9 +25,7 @@
             <field name="binding_model_id" ref="sale.model_sale_order"/>
             <field name="binding_type">report</field>
             <field name="paperformat_id" ref="report_docs_format_inform_sin_precios"/>
-            <field name="print_report_name">"Informe detallado (sin precios) - " + object.referencia_analitica + " - " +
-                object.proyecto
-            </field>
+            <field name="print_report_name">"Informe detallado (sin precios) - " + object.referencia_analitica + " - " + object.proyecto</field>
         </record>
 
         <!-- QWeb Template: Informe Detallado sin Precio, sin Subtotal, sin Resumen -->
@@ -45,12 +43,8 @@
                                          style="max-height:125px; max-width:125%;"/>
                                 </div>
                                 <div style="font-size:12px;" class="col-7">
-                                    <p style="margin:0;">
-                                        <span t-field="doc.company_id.name"/>
-                                    </p>
-                                    <p style="margin:0;">RUC:
-                                        <span t-field="doc.company_id.vat"/>
-                                    </p>
+                                    <p style="margin:0;"><span t-field="doc.company_id.name"/></p>
+                                    <p style="margin:0;">RUC: <span t-field="doc.company_id.vat"/></p>
                                     <p style="margin:0;">KM 1.5 DE LA AV. SAMBORONDON</p>
                                     <p style="margin:0;">EDIFICIO OFFICE CENTER OFICINA 26 PISO 3</p>
                                     <p style="margin:0;">SAMBORONDON, ECUADOR</p>
@@ -59,45 +53,31 @@
                                 </div>
                                 <div class="col-3">
                                     <h5 style="margin:0; font-weight:bold;">Presupuesto</h5>
-                                    <p>
-                                        <span t-field="doc.referencia_analitica"/>
-                                    </p>
+                                    <p><span t-field="doc.referencia_analitica"/></p>
                                 </div>
                             </div>
                             <div class="row mb-4">
                                 <div>
-                                    <p class="m-0 p-0">
-                                        <strong>PROYECTO:</strong>
-                                        <span t-field="doc.proyecto"/>
-                                    </p>
-                                    <p class="m-0 p-0">
-                                        <strong>CLIENTE:</strong>
-                                        <span t-field="doc.partner_id"/>
-                                    </p>
-                                    <p class="m-0 p-0">
-                                        <strong>REVISIÓN No.:</strong>
-                                        A
-                                    </p>
-                                    <p class="m-0 p-0">
-                                        <strong>FECHA:</strong>
-                                        <span t-field="doc.date_order" t-options='{"widget":"date"}'/>
-                                    </p>
+                                    <p class="m-0 p-0"><strong>PROYECTO:</strong> <span t-field="doc.proyecto"/></p>
+                                    <p class="m-0 p-0"><strong>CLIENTE:</strong> <span t-field="doc.partner_id"/></p>
+                                    <p class="m-0 p-0"><strong>REVISIÓN No.:</strong> A</p>
+                                    <p class="m-0 p-0"><strong>FECHA:</strong> <span t-field="doc.date_order" t-options='{"widget":"date"}'/></p>
                                 </div>
                             </div>
 
                             <!-- Agrupación -->
-                            <t t-set="lines" t-value="doc._get_order_lines_to_report()"/>
+                            <t t-set="lines"     t-value="doc._get_order_lines_to_report()"/>
                             <t t-set="apu_lines" t-value="[
                                 (l, doc.env['apu.apu']
                                     .search([('id','=', l.apu_id.id)], limit=1))
                                 for l in lines
                             ]"/>
-                            <t t-set="filtered" t-value="[p for p in apu_lines if p[1] and p[1].subcategoria_id]"/>
+                            <t t-set="filtered"  t-value="[p for p in apu_lines if p[1] and p[1].subcategoria_id]"/>
                             <t t-set="categories" t-value="sorted(
                                 { p[1].subcategoria_id.categoria_id.id: p[1].subcategoria_id.categoria_id for p in filtered }.values(),
                                 key=lambda c: int(''.join(ch for ch in c.codigo.split('-')[-1] if ch.isdigit()) or 0)
                             )"/>
-                            <t t-set="others" t-value="[
+                            <t t-set="others"    t-value="[
                                 p for p in apu_lines if not (p[1] and p[1].subcategoria_id)
                             ]"/>
 
@@ -116,16 +96,8 @@
                                     <!-- Categorías y Subcategorías -->
                                     <t t-foreach="categories" t-as="cat">
                                         <tr style="background-color:#DCE6F1;">
-                                            <td class="text-center">
-                                                <strong>
-                                                    <span t-esc="cat.codigo"/>
-                                                </strong>
-                                            </td>
-                                            <td colspan="3">
-                                                <strong>
-                                                    <span t-esc="cat.name"/>
-                                                </strong>
-                                            </td>
+                                            <td class="text-center"><strong><span t-esc="cat.codigo"/></strong></td>
+                                            <td colspan="3"><strong><span t-esc="cat.name"/></strong></td>
                                         </tr>
                                         <t t-set="subcats" t-value="sorted(
                                             { p[1].subcategoria_id.id: p[1].subcategoria_id
@@ -136,40 +108,25 @@
                                         )"/>
                                         <t t-foreach="subcats" t-as="subcat">
                                             <tr style="background-color:#EBF5FB;">
-                                                <td class="text-center">
-                                                    <strong>
-                                                        <span t-esc="subcat.codigo"/>
-                                                    </strong>
-                                                </td>
-                                                <td colspan="3">
-                                                    <strong>
-                                                        <span t-esc="subcat.name"/>
-                                                    </strong>
-                                                </td>
+                                                <td class="text-center"><strong><span t-esc="subcat.codigo"/></strong></td>
+                                                <td colspan="3"><strong><span t-esc="subcat.name"/></strong></td>
                                             </tr>
                                             <!-- Enumerar y mostrar líneas -->
-                                            <t t-set="lines_sub"
-                                               t-value="sorted([p for p in filtered if p[1].subcategoria_id.id == subcat.id], key=lambda p: p[1].code)"/>
-                                            <t t-set="lines_sub_idx"
-                                               t-value="[(p, i+1) for i,p in enumerate(lines_sub)]"/>
+                                            <t t-set="lines_sub"     t-value="sorted([p for p in filtered if p[1].subcategoria_id.id == subcat.id], key=lambda p: p[1].code)"/>
+                                            <t t-set="lines_sub_idx" t-value="[(p, i+1) for i,p in enumerate(lines_sub)]"/>
                                             <t t-foreach="lines_sub_idx" t-as="item">
                                                 <t t-set="pair" t-value="item[0]"/>
-                                                <t t-set="seq" t-value="item[1]"/>
+                                                <t t-set="seq"  t-value="item[1]"/>
                                                 <tr>
                                                     <td class="text-center">
                                                         <strong>
                                                             <t t-esc="pair[1].code"/>
                                                         </strong>
                                                     </td>
-                                                    <td>[<t t-esc="pair[0].product_template_id.default_code"/>]
-                                                        <t t-esc="pair[0].product_template_id.name"/>
-                                                    </td>
+                                                    <td>[<t t-esc="pair[0].product_template_id.default_code"/>] <t t-esc="pair[0].product_template_id.name"/></td>
+                                                    <td class="text-center"><t t-esc="pair[1].product_uom_id.name"/></td>
                                                     <td class="text-center">
-                                                        <t t-esc="pair[1].product_uom_id.name"/>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <t t-esc="pair[0].product_uom_qty"
-                                                           t-options='{"widget":"float","precision":2}'/>
+                                                        <t t-esc="pair[0].product_uom_qty" t-options='{"widget":"float","precision":2}'/>
                                                     </td>
                                                 </tr>
                                             </t>
@@ -180,27 +137,19 @@
                                     <t t-if="others">
                                         <!-- Categoría MATERIALES -->
                                         <tr style="background-color:#DCE6F1;">
-                                            <td colspan="4">
-                                                <strong>MATERIALES</strong>
-                                            </td>
+                                            <td colspan="4"><strong>MATERIALES</strong></td>
                                         </tr>
                                         <t t-set="others_idx" t-value="[(p, i+1) for i,p in enumerate(others)]"/>
                                         <t t-foreach="others_idx" t-as="item2">
-                                            <t t-set="pair" t-value="item2[0]"/>
-                                            <t t-set="seq2" t-value="item2[1]"/>
+                                            <t t-set="pair"        t-value="item2[0]"/>
+                                            <t t-set="seq2"        t-value="item2[1]"/>
                                             <t t-set="code_prefix" t-value="'MAT'"/>
                                             <tr>
-                                                <td class="text-center">
-                                                    <strong>
-                                                        <t t-esc="str(seq2)"/>
-                                                    </strong>
-                                                </td>
-                                                <td>[<t t-esc="pair[0].product_template_id.default_code"/>]
-                                                    <t t-esc="pair[0].product_template_id.name"/>
-                                                </td>
-                                                <td class="text-center">
-                                                    <t t-esc="pair[0].product_template_id.uom_id.name"/>
-                                                </td>
+                                                <td class="text-center"><strong>
+                                                    <t t-esc="str(seq2)"/>
+                                                </strong></td>
+                                                <td>[<t t-esc="pair[0].product_template_id.default_code"/>] <t t-esc="pair[0].product_template_id.name"/></td>
+                                                <td class="text-center"><t t-esc="pair[0].product_template_id.uom_id.name"/></td>
                                                 <td class="text-end">
                                                     <span t-field="pair[0].product_uom_qty"
                                                           t-options='{"widget":"float","precision":2}'/>
@@ -215,30 +164,21 @@
 
                             <!-- Tiempo de entrega y nota -->
                             <div style="margin-top:20px;page-break-inside:avoid;">
-                                <strong>CONDICIONES COMERCIALES:</strong>
-                                <br/>
+                                <strong>CONDICIONES COMERCIALES:</strong><br />
                                 <t t-if="doc.payment_term_id">
                                     <strong>CONDICIONES DE PAGO:</strong>
-                                    <span style="text-transform: uppercase;" t-field="doc.payment_term_id.name"/>
-                                    <br/>
+                                    <span style="text-transform: uppercase;" t-field="doc.payment_term_id.name" /><br />
                                 </t>
-                                <span style="text-transform: uppercase;line-height: 1.2;" t-field="doc.note"/>
-                                <br/>
+                                <span style="text-transform: uppercase;line-height: 1.2;" t-field="doc.note" /><br />
                             </div>
                             <!-- Firma -->
                             <div style="margin-top:10px;page-break-inside:avoid;">
                                 <p class="m-0 p-0">ATENTAMENTE,</p>
                                 <br/>
                                 <p class="m-0 p-0">__________________________________________</p>
-                                <p class="m-0 p-0">
-                                    <span style="text-transform: uppercase;" t-esc="doc.usuario_presupuestador.name"/>
-                                </p>
-                                <p class="m-0 p-0">
-                                    <strong>INGENIERIA Y PRESUPUESTO</strong>
-                                </p>
-                                <p class="m-0 p-0">
-                                    <strong>GPS GROUP</strong>
-                                </p>
+                                <p class="m-0 p-0"><span style="text-transform: uppercase;" t-esc="doc.usuario_presupuestador.name"/></p>
+                                <p class="m-0 p-0"><strong>INGENIERIA Y PRESUPUESTO</strong></p>
+                                <p class="m-0 p-0"><strong>GPS GROUP</strong></p>
                             </div>
                         </div>
                     </t>

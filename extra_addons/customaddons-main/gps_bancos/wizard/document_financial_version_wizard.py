@@ -46,6 +46,7 @@ class DocumentFinancialVersionWizard(models.Model):
                 line_ids.append((0,0,{
                     "quota"  :  brw_line.quota,
                     "date_process":brw_line.date_process,
+                    'date_maturity_payment':brw_line.date_maturity_payment,
                     "percentage_amortize":brw_line.percentage_amortize,
                     "percentage_interest": brw_line.percentage_interest,
                     "payment_overdue_interest":brw_line.payment_overdue_interest,
@@ -125,7 +126,7 @@ class DocumentFinancialVersionWizard(models.Model):
                             'document_id': brw_each.document_id.id,
                             'quota': brw_new_line.quota,
                             'date_process': brw_new_line.date_process,
-                            'date_maturity_payment': brw_new_line.date_process,
+                            'date_maturity_payment': brw_new_line.date_maturity_payment,
                             'percentage_amortize': brw_new_line.percentage_amortize,
                             'percentage_interest': brw_new_line.percentage_interest,
                             'payment_capital': brw_new_line.payment_capital,
@@ -156,13 +157,13 @@ class DocumentFinancialVersionWizard(models.Model):
                     new_line_ids.append((0,0,new_line_values))
                 else:
                     if brw_new_line.parent_line_id:
-                        if brw_new_line.parent_line_id.total_pending<=0.00:#mantener igual
-                            pass#solo se actualiza lo que tenga un valor pendiente x eso se deja asi
-                        else:#CON ALGUN valor pendiente o simplemente se actualiza los valores
-                            new_line_values = {
+                        # if brw_new_line.parent_line_id.total_pending<=0.00:#mantener igual
+                        #     pass#solo se actualiza lo que tenga un valor pendiente x eso se deja asi
+                        # else:#CON ALGUN valor pendiente o simplemente se actualiza los valores
+                        new_line_values = {
                                 'quota': brw_new_line.quota,
                                 'date_process': brw_new_line.date_process,
-                                'date_maturity_payment': brw_new_line.date_process,
+                                'date_maturity_payment': brw_new_line.date_maturity_payment,
                                 'percentage_amortize': brw_new_line.percentage_amortize,
                                 'percentage_interest': brw_new_line.percentage_interest,
                                 'payment_capital': brw_new_line.payment_capital,
@@ -173,8 +174,8 @@ class DocumentFinancialVersionWizard(models.Model):
                                 'amount_interes': brw_new_line.amount_interes,
                                 'last_version': True,
                                 'is_copy': False,
-                            }
-                            new_line_ids.append((1, brw_new_line.parent_line_id.id, new_line_values))
+                        }
+                        new_line_ids.append((1, brw_new_line.parent_line_id.id, new_line_values))
                         updates_all_lines+=brw_new_line.parent_line_id
             excluded_lines = all_lines - updates_all_lines
             if excluded_lines:#se borra lo que no este en el nuevo detalle
@@ -192,7 +193,7 @@ class DocumentFinancialVersionWizard(models.Model):
 
                 for brw_new_line in brw_each.line_ids:
                     if round(brw_new_line.total_pending,DEC)<0.00:
-                        raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_new_line.quota,round(brw_new_line.total_pending,DEC)))
+                        pass#raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_new_line.quota,round(brw_new_line.total_pending,DEC)))
 
 
                 nounlink_doclines=brw_each.document_id.line_ids.filtered(lambda x:x.total_paid!=0.00)
@@ -222,19 +223,19 @@ class DocumentFinancialVersionWizard(models.Model):
 
                 for brw_doc_line in brw_each.document_id.line_ids:
                     if round(brw_doc_line.total_pending,DEC)<0.00:
-                        raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_doc_line.quota,round(brw_doc_line.total_pending,DEC)))
+                        pass#raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_doc_line.quota,round(brw_doc_line.total_pending,DEC)))
             else:
                 new_line_ids=[(5,)]
                 for brw_new_line in brw_each.line_ids:
                     if round(brw_new_line.total_pending,DEC)<0.00:
-                        raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_new_line.quota,round(brw_new_line.total_pending,DEC)))
+                        pass#raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_new_line.quota,round(brw_new_line.total_pending,DEC)))
 
                     new_line_values = {
                             'company_id': brw_each.document_id.company_id.id,
                             'document_id': brw_each.document_id.id,
                             'quota': brw_new_line.quota,
                             'date_process': brw_new_line.date_process,
-                            'date_maturity_payment': brw_new_line.date_process,
+                            'date_maturity_payment': brw_new_line.date_maturity_payment,
                             'percentage_amortize': brw_new_line.percentage_amortize,
                             'percentage_interest': brw_new_line.percentage_interest,
                             'payment_capital': brw_new_line.payment_capital,
@@ -252,7 +253,7 @@ class DocumentFinancialVersionWizard(models.Model):
                 brw_each.document_id.update_total()
                 for brw_doc_line in brw_each.document_id.line_ids:
                     if round(brw_doc_line.total_pending,DEC)<0.00:
-                        raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_doc_line.quota,round(brw_doc_line.total_pending,DEC)))
+                        pass#raise ValidationError(_("El valor de la cuota %s queda en negativo con %s") % (brw_doc_line.quota,round(brw_doc_line.total_pending,DEC)))
                 brw_each.document_id.message_post(
                     body=brw_each.comments
                 )
@@ -434,6 +435,8 @@ class DocumentFinancialVersionLineWizard(models.Model):
     currency_id = fields.Many2one(related="company_id.currency_id", store=False, readonly=True)
     quota = fields.Integer(string="Cuota", default=1, required=True)
     date_process = fields.Date("Fecha de Vencimiento", default=fields.Date.today(), required=True)
+    date_maturity_payment = fields.Date("Fecha de Prox. Cobro", default=fields.Date.today(), required=True,
+                                        tracking=True)
 
     percentage_amortize = fields.Float("% por Amortizar", default=0.00, digits=(16, 6))
     percentage_interest = fields.Float("% de Interes", default=0.00, digits=(16, 6))
@@ -471,7 +474,7 @@ class DocumentFinancialVersionLineWizard(models.Model):
                         DEC)
             else:
                 total = round(
-                    brw_each.amount+brw_each.amount_interes)
+                    brw_each.amount+brw_each.amount_interes,DEC)
             total = total + brw_each.payment_overdue_interest  # se suma a los interese e valor por pagar
             total_to_paid = total  # siempre tomara el valor a pagar como reflejo de lo que debera pagar
             brw_each.total = total
@@ -486,6 +489,10 @@ class DocumentFinancialVersionLineWizard(models.Model):
                     if brw_each.parent_line_id and brw_each.parent_line_id.total_paid>0.00:
                         raise ValidationError(_("No puedes borrar un registro con una valor pagado diferente a 0.00 %s ,id %s") % (brw_each.parent_line_id.quota,brw_each.parent_line_id.id))
         return super(DocumentFinancialVersionLineWizard, self).unlink()
+
+    @api.onchange('date_process')
+    def onchange_date_process(self):
+        self.date_maturity_payment = self.date_process
 
 
 

@@ -31,11 +31,11 @@ class EventoCalendario(models.Model):
     @api.model
     def default_get(self, fields):
         res = super(EventoCalendario, self).default_get(fields)
-        tarea = self.env.context.get('active_id')
-        if tarea:
-            tarea_obj = self.env['project.task'].browse(tarea)
-            tarea_obj.write({'reunion_id': self.id})
-            res.update({'tarea_id': tarea, 'proyecto_id': tarea_obj.project_id.id})
+        # tarea = self.env.context.get('active_id')
+        # if tarea:
+        #     tarea_obj = self.env['project.task'].browse(tarea)
+        #     tarea_obj.write({'reunion_id': self.id})
+        #     res.update({'tarea_id': tarea, 'proyecto_id': tarea_obj.project_id.id})
         return res
 
     # Contar tareas

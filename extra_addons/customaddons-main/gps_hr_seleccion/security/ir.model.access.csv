@@ -1,2 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_hr_recruitment_equipment_user,hr.recruitment.equipment.user,model_hr_recruitment_equipment,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+
+requisicion_personal_visor,Requisición Personal Visor,model_requisicion_personal,gps_hr_seleccion.group_requisicion_personal_visor,1,0,0,0
+requisicion_personal_usuario,Requisición Personal Usuario,model_requisicion_personal,gps_hr_seleccion.group_requisicion_personal_usuario,1,1,1,0
+requisicion_personal_jefe,Requisición Personal Jefe,model_requisicion_personal,gps_hr_seleccion.group_requisicion_personal_jefe,1,1,1,0
+requisicion_personal_gerente,Requisición Personal Gerente,model_requisicion_personal,gps_hr_seleccion.group_requisicion_personal_gerente,1,1,1,0
+requisicion_personal_admin,Requisición Personal Admin,model_requisicion_personal,gps_hr_seleccion.group_requisicion_personal_admin,1,1,1,1

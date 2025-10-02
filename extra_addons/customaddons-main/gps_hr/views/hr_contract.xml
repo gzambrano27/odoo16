@@ -4,6 +4,7 @@
 	<data>
 
 
+
         <record model="ir.ui.view"
                 id="hr_contract_form_view_inherit">
             <field name="name">hr.contract.form.inherit</field>
@@ -48,6 +49,18 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
+             <div id="resource_calendar_warning" position="after">
+                 <field name="control_marcaciones" />
+             </div>
+
+             <div id="resource_calendar_warning" position="replace">
+               <div id="resource_calendar_warning">
+                                    <field name="resource_calendar_id" groups="!hr_contract.group_hr_contract_manager" required="1" nolabel="1" options="{'no_edit': True,'no_open': True, 'no_create': True}"/>
+                                    <field name="resource_calendar_id" groups="hr_contract.group_hr_contract_manager" required="1" nolabel="1" options="{'no_edit': True,'no_open': True, 'no_create': True}"/>
+                                    <span attrs="{'invisible': ['|', ('calendar_mismatch', '=', False), ('state', '!=', 'open')]}" class="fa fa-exclamation-triangle text-danger o_calendar_warning ms-3" data-tooltip-template="hr_contract.CalendarMismatch" data-tooltip-info="{                                                 &quot;text&quot;:&quot;Calendar Mismatch : The employee's calendar does not match this contract's calendar. This could lead to unexpected behaviors.&quot;                                             }">
+                                    </span>
+                                </div>
+            </div>
 
             <field name="structure_type_id" position="replace">
 
@@ -178,6 +191,9 @@
       <field name="calcula_retencion" />
       <field name="retencion_fuente"  attrs="{'invisible':[('calcula_retencion','!=',True)]}"/>
       <field name="retencion_iva" attrs="{'invisible':['|',('calcula_iva','!=',True),('calcula_retencion','!=',True)]}" />
+
+      <field name="control_marcaciones" />
+<field name="employee_group_id" options="{'no_create':True,'no_open':True,'no_edit':True}"/>
 <newline/>
       <separator string="Contabilidad"/>
 <newline/>

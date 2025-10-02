@@ -212,83 +212,83 @@ class TradeImportation(models.Model):
     freight_total = fields.Float('Valor Flete Total', digits=dp.get_precision('Account'), tracking=True)
 
     factor_seguro = fields.Float('Total Freight Value', compute='_compute_calculate_insurance_factor',
-                                 digits=dp.get_precision('Import factors'))
+                                 digits=dp.get_precision('Import factors'), store=True)
     factor_freight = fields.Float('Freight Factor',
                                   compute='_compute_calculate_factor_freight',
-                                  digits=dp.get_precision('Import factors'))
+                                  digits=dp.get_precision('Import factors'), store=True)
 
     aranceles_line_ids = fields.One2many('purchase.aranceles', 'importation_id', 'Tariff Distribution')
 
     ins_factor_distri = fields.Float('Factor Insurance Distribution',
                                      compute='_compute_calculate_factor_distri',
-                                     digits=dp.get_precision('Import factors'), )
+                                     digits=dp.get_precision('Import factors'), store=True)
 
     freight_factor_distri = fields.Float('Freight Factor',
                                          compute='_compute_calculate_freight_factor_distri',
-                                         digits=dp.get_precision('Import factors'))
+                                         digits=dp.get_precision('Import factors'), store=True)
 
     def_factor_freight_distribution = fields.Float('Freight Factor',
                                                    compute='_compute_factor_freight_dist',
                                                    help='Valor Flete Definitivo/FOB Total ',
-                                                   digits=dp.get_precision('Import factors'))
+                                                   digits=dp.get_precision('Import factors'), store=True)
 
     def_factor_seguro_distribution = fields.Float('Insurance Factor',
                                                   compute='_compute_def_factor_seguro_dist',
                                                   help='Valor Seguro Definitivo/FOB Total ',
-                                                  digits=dp.get_precision('Import factors'))
+                                                  digits=dp.get_precision('Import factors'), store=True)
 
     total_arancel_amount_distribution = fields.Float('Total Tariffs', compute='_compute_aranceles_distribution',
                                                      help='Total amount tariffs',
-                                                     digits=dp.get_precision('Import calculations'))
+                                                     digits=dp.get_precision('Import calculations'), store=True)
 
     total_fob_amount_distribution = fields.Float('Total FOB', compute='_compute_aranceles_distribution',
                                                  help='Total Amount Fob Invoice',
-                                                 digits=dp.get_precision('Import calculations'))
+                                                 digits=dp.get_precision('Import calculations'), store=True)
 
     total_cost_import = fields.Float('Total Import Cost', compute='_compute_total_cost',
-                                     digits=dp.get_precision('Import calculations'))
+                                     digits=dp.get_precision('Import calculations'), store=True)
 
     # liquidacion costos
     liq_fob = fields.Float('FOB', digits=dp.get_precision('Import calculations'))
     liq_flete = fields.Float('Freight', digits=dp.get_precision('Import calculations'))
     liq_cyf = fields.Float('FOB+Freight', compute='_compute_liq_cyf',
                            help='FOB Value + Freight Value',
-                           digits=dp.get_precision('Import calculations'))
+                           digits=dp.get_precision('Import calculations'), store=True)
     liq_insurance = fields.Float('Insurance', digits=dp.get_precision('Import calculations'))
     liq_cif = fields.Float('CIF', compute='_compute_liq_cif',
-                           help='FOB Value + Freight + Insurance', digits=dp.get_precision('Import calculations'))
+                           help='FOB Value + Freight + Insurance', digits=dp.get_precision('Import calculations'), store=True)
 
     liq_date = fields.Date('Settlement Date', tracking=True)
     liquidation_line_ids = fields.One2many('purchase.liquidation', 'importation_id', 'Settlement Lines')
 
     total_liq_fodinfa = fields.Float('FODINFA', compute='_compute_total_liq_fodinfa',
                                      help='0.5% of the CIF value',
-                                     digits=dp.get_precision('Import calculations'))
+                                     digits=dp.get_precision('Import calculations'), store=True)
 
     liq_adv = fields.Float('Total advalorem', compute='_compute_liq_aranceles',
-                           digits=dp.get_precision('Import calculations'))
+                           digits=dp.get_precision('Import calculations'), store=True)
 
     liq_salva = fields.Float('Total safeguard', compute='_compute_liq_advsave',
-                             digits=dp.get_precision('Import calculations'))
+                             digits=dp.get_precision('Import calculations'), store=True)
 
     liq_total_cost_s_iva = fields.Float('Total costo sin IVA ', compute='_compute_liq_total_iva',
                                         help='Subtotals without VAT',
-                                        digits=dp.get_precision('Import calculations'))
+                                        digits=dp.get_precision('Import calculations'), store=True)
 
     liq_cost_sa = fields.Float('Total Cost without Tariffs', compute='_compute_liq_cost_sa',
-                               digits=dp.get_precision('Import calculations'))
+                               digits=dp.get_precision('Import calculations'), store=True)
 
     liq_iva_import = fields.Float('VAT Import', compute='_compute_liq_iva',
                                   help='15% of CIF + FODINFA Value + Total Tariffs',
-                                  store=1, digits=dp.get_precision('Import calculations'))
+                                  digits=dp.get_precision('Import calculations'), store=True)
 
     liq_iva = fields.Float('Total VAT ', compute='_compute_liq_iva',
                            help='15% of CIF + FODINFA Value + Total Tariffs + VAT on additional expenses',
-                           digits=dp.get_precision('Import calculations'))
+                           digits=dp.get_precision('Import calculations'), store=True)
 
     liq_total_cost = fields.Float('Total Cost', compute='_compute_liq_total_cost',
                                   help='Total Cost + VAT',
-                                  digits=dp.get_precision('Import calculations'))
+                                  digits=dp.get_precision('Import calculations'), store=True)
 
     def _get_default_stock_account(self):
         return self.company_id.account_importation_id
@@ -1010,18 +1010,18 @@ class PurchaseAranceles(models.Model):
     def_adval_percents = fields.Float('Advalorem')
 
     def_freight = fields.Float('Freight/Item', digits=dp.get_precision('Import calculations'),
-                               compute='_compute_def_freight')
+                               compute='_compute_def_freight', store=True)
     def_insurance = fields.Float('Ins/Item', digits=dp.get_precision('Import calculations'),
-                                 compute='_compute_def_insurance')
-    def_cif = fields.Float('CIF', digits=dp.get_precision('Import calculations'), compute='_compute_cif_distribution')
-    def_fodinfa = fields.Float('FODINFA', digits=dp.get_precision('Import calculations'), compute='_compute_fodinfa')
+                                 compute='_compute_def_insurance', store=True)
+    def_cif = fields.Float('CIF', digits=dp.get_precision('Import calculations'), compute='_compute_cif_distribution', store=True)
+    def_fodinfa = fields.Float('FODINFA', digits=dp.get_precision('Import calculations'), compute='_compute_fodinfa', store=True)
     def_advalorem_usd = fields.Float('ARANC.', digits=dp.get_precision('Import calculations'),
-                                     compute='_compute_save_usd_def')
+                                     compute='_compute_save_usd_def', store=True)
     def_save_usd = fields.Float('SALVAG.', digits=dp.get_precision('Import calculations'),
-                                compute='_compute_save_usd_def')
+                                compute='_compute_save_usd_def', store=True)
 
     def_saveadv_usd = fields.Float('ARANCELES', digits=dp.get_precision('Import calculations'),
-                                   compute='_compute_save_usd_def')
+                                   compute='_compute_save_usd_def', store=True)
 
     def_fob_item = fields.Float('FOB', digits=dp.get_precision('Import calculations'))
     def_fob_recibido = fields.Float('FOB Adjustment', digits=dp.get_precision('Import calculations'),
@@ -1069,9 +1069,9 @@ class PurchaseLiquidation(models.Model):
     concept_id = fields.Many2one('purchase.concept.bill', 'Description')
     amount = fields.Float('Amount', digits=dp.get_precision('Import calculations'))
     tax_percent = fields.Float('% VAT', default=_get_iva_percent, digits=dp.get_precision('Import calculations'))
-    tax = fields.Float('VAT', compute='_compute_iva', digits=dp.get_precision('Import calculations'))
+    tax = fields.Float('VAT', compute='_compute_iva', digits=dp.get_precision('Import calculations'), store=True)
     total_amount = fields.Float('Total Value', compute='_compute_total_amount',
-                                digits=dp.get_precision('Import calculations'))
+                                digits=dp.get_precision('Import calculations'), store=True)
     importation_id = fields.Many2one('trade.importation', invisible=True, ondelete='cascade')
     notes = fields.Text('Notes')
     split_method = fields.Selection([

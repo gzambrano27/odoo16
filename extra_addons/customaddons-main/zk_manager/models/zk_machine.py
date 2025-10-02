@@ -24,6 +24,18 @@ class ZkMachine(models.Model):
     lock_biometric = fields.Boolean("Bloquear ID Biométrico", compute="_compute_lock_biometric",
                                     default=_get_default_lock_biometric)
 
+    on_direct=fields.Boolean('Integracion Directa',default=True)
+    name=fields.Char(string="IP")
+    port_no = fields.Char(string="Puerto")
+    company_id = fields.Many2one("res.company",string="Compañía")
+    address_id = fields.Many2one("res.partner",string="Dirección")
+
+    @api.model
+    def cron_download(self):
+        machines = self.env['zk.machine'].search([('on_direct','=',True)])
+        for machine in machines:
+            machine.download_attendance()
+
     def _compute_lock_biometric(self):
         for brw_each in self:
             lock_biometric = self._get_default_lock_biometric()

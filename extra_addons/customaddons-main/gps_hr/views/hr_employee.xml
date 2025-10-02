@@ -191,6 +191,17 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form" />
         <field name="arch" type="xml">
+
+            <field name="resource_calendar_id" position="attributes">
+                <attribute name="options">{'no_create':True,'no_edit':True,'no_open':True}</attribute>
+            </field>
+
+<field name="resource_calendar_id" position="replace">
+    <field name="control_marcaciones" />
+     <field name="resource_calendar_id" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+</field>
+
+
             <field name="spouse_complete_name" position="attributes">
                 <attribute name="invisible">1</attribute>
             </field>

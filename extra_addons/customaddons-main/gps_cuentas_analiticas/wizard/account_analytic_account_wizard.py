@@ -51,6 +51,15 @@ class AccountAnalyticAccountWizard(models.TransientModel):
             return {'domain': {'analytic_ids': [('company_id', 'in', self.company_ids.ids)]}}
         return {'domain': {'analytic_ids': []}}
 
+    journal_ids = fields.Many2many(
+        'account.journal',
+        'account_analytic_journal_wizard_rel',
+        'wizard_id',
+        'journal_id',
+        'Diarios'
+
+    )
+
     def process(self):
         self = self.with_context({"no_raise": True})
         self = self.with_user(SUPERUSER_ID)

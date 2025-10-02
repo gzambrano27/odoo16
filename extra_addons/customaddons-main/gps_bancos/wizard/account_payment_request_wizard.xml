@@ -11,6 +11,9 @@
                 <form string="Solicitud de Pagos" version="16.0">
                     <group>
                         <group>
+
+
+                           <field name="tipo_partner_pago" readonly="1" force_save="1" />
                             <field name="default_mode_payment" readonly="1" force_save="1" />
                             <field name="code" readonly="1" force_save="1" />
                             <field name="request_id" invisible="1" options="{'no_create':True,'no_edit':True,'no_open':True}"/>

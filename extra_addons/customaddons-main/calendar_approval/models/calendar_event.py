@@ -137,9 +137,9 @@ class CalendarEvent(models.Model):
                 continue
             midnight = fields.Datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             if rec.start < midnight + timedelta(days=1):
-                raise ValidationError(_("Debes reservar con al menos 1 día de anticipación."))
+                raise ValidationError(("Debes reservar con al menos 1 día de anticipación."))
             if (rec.stop - rec.start).total_seconds() > 3600:
-                raise ValidationError(_("La duración máxima permitida es 1 hora."))
+                raise ValidationError(("La duración máxima permitida es 1 hora."))
             iso_year, iso_week, _ = rec.start.date().isocalendar()
             week_start = datetime.strptime(f"{iso_year}-W{iso_week}-1", "%G-W%V-%u")
             week_end   = week_start + timedelta(days=7)

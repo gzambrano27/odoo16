@@ -6,7 +6,7 @@
     'description': 'Gestiona presupuestos de construcción y calcula los costos utilizando los APU.',
     'author': 'GPS Group',
     'depends': [
-        'base','account','mrp','portal','sale','stock','uom','hr_timesheet','sale_project','macro_purchase_request','material_purchase_requisitions','purchase_request'
+        'base','account','mrp','portal','sale','stock','uom','hr_timesheet','sale_project','macro_purchase_request','stock_security','material_purchase_requisitions','purchase_request'
     ],
     'assets': {
             'web.assets_backend': [
@@ -18,7 +18,7 @@
         'security/ir.model.access.csv',
         'data/mail_template_data.xml',
         # 'views/budget_views.xml',
-        #'views/purchase_requisitions.xml',
+        'views/purchase_requisitions.xml',
          'views/product_template_view.xml',
          'views/apu_views.xml',
          'views/sale_order_view.xml',
@@ -38,7 +38,6 @@
         'views/menu_views.xml',
         'views/material_requisition_blocked.xml',
         'report/informe_detallado.xml',
-        'report/informe_detallado_full_decimales.xml',
         # 'report/informe_detallado_mo.xml',
         'report/informe_detallado_mo_consolidado.xml',
         # 'report/informe_detallado_ma.xml',
@@ -50,6 +49,7 @@
         'report/informe_detallado_sin_valores.xml',
         'report/informe_detallado_mo_consolidado_sin_valores.xml', 
         'report/informe_detallado_ma_consolidado_sin_valores.xml',
+        'report/informe_detallado_full_decimales.xml',
         # 'data/data.xml',
     ],
     'images': [

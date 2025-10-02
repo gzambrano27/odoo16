@@ -17,3 +17,5 @@ from . import res_partner_bank_email_update_wizard
 from .import account_payment_multicompany
 
 from .import account_payment_register
+
+#from .import payment_request_recalc_wizard

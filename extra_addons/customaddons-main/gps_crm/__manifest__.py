@@ -11,9 +11,9 @@
          'sale_crm','account_payment_purchase','crm'
     ],
     'data': [
-        "security/ir.model.access.csv",
         'security/crm_lead_groups.xml',
         'security/crm_lead_rules.xml',
+        "security/ir.model.access.csv",
         "data/ir_sequence.xml",
         "data/scoring_template_demo.xml",
         "views/crm_correos.xml",
@@ -23,6 +23,8 @@
         "views/rangos_configuracion_view.xml",
         "views/ir_ui_menu.xml",
         "views/crm_lead_views.xml",
+        "views/crm_tipo_proyecto.xml",
+        "views/crm_division_proyecto_view.xml",
     ],
     'installable': True,
 }

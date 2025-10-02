@@ -233,60 +233,6 @@ class CrmLead(models.Model):
 
         return True
 
-    def action_load_scoring_from_templateOld(self):
-        for lead in self:
-            if not lead.scoring_template_id:
-                raise ValidationError(_("Seleccione una plantilla de calificación."))
-
-            # limpiar anteriores
-            lead.scoring_line_ids.unlink()
-
-            lines_cmds = []
-
-            # 1) Preguntas Sí/No
-            yes_no_tlines = lead.scoring_template_id.line_ids.filtered(lambda t: t.question_type == "yes_no")
-            for tl in yes_no_tlines:
-                lines_cmds.append((0, 0, {
-                    "sequence": tl.sequence,
-                    "stage": tl.stage,
-                    "description": tl.description,
-                    "weight": tl.weight,
-                    "question_type": "yes_no",
-                    "group_key": tl.group_key,
-                    "template_line_id": tl.id,
-                }))
-
-            # 2) Preguntas Radio → colapsar en una sola línea con sus opciones
-            radio_tlines = lead.scoring_template_id.line_ids.filtered(lambda t: t.question_type == "radio")
-            groups = {}
-            for tl in radio_tlines:
-                key = tl.group_key or f"grp_{tl.id}"
-                groups.setdefault(key, []).append(tl)
-
-            for gkey, items in groups.items():
-                items_sorted = sorted(items, key=lambda t: (t.sequence, t.id))
-
-                parent = {
-                    "sequence": items_sorted[0].sequence,
-                    "stage": items_sorted[0].stage,
-                    "description": "Consumo energético",  # texto general para la línea
-                    "question_type": "radio",
-                    "group_key": gkey,
-                    "weight": 20.0,  # puntaje fijo por grupo
-                    "option_ids": [
-                        (0, 0, {
-                            "name": tl.description,   # aquí debería ponerse la descripción de la línea del template
-                            "weight": 20.0,
-                        }) for tl in items_sorted
-                    ],
-                }
-                lines_cmds.append((0, 0, parent))
-
-            if lines_cmds:
-                lead.write({"scoring_line_ids": lines_cmds})
-
-        return True
-
     @api.onchange("scoring_template_id")
     def _onchange_scoring_template_id(self):
         for lead in self:

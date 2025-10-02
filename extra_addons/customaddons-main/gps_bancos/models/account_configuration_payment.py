@@ -4,7 +4,7 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError
 from datetime import datetime
-
+import html
 
 class AccountConfigurationPayment(models.Model):
     _name = 'account.configuration.payment'
@@ -111,13 +111,13 @@ class AccountConfigurationPayment(models.Model):
                     continue
                 company_id=configs.mapped('company_id')
                 company_names=company_id.mapped('name')
-                emails = user.email
+                emails = [user.email]
                 # Quitar duplicados
                 unique_emails = list(set(emails))
                 if not unique_emails:
                     continue
                 # Opcional: convertir en string separado por coma
-                emails_string = ', '.join(unique_emails)
+                emails_string = ','.join(unique_emails)
                 # Crear el mensaje
                 brw_mail = OBJ_MAIL.create({
                         "internal_type": "batch",
@@ -188,6 +188,7 @@ class AccountConfigurationPayment(models.Model):
                po.date_order::date AS move_date,
                po.partner_id,
                rp.name AS partner_name,
+
                rp.vat AS partner_vat,
                po.name AS name,
                po.partner_ref AS ref,
@@ -244,6 +245,10 @@ class AccountConfigurationPayment(models.Model):
             #print(result_total)
             all_result+=result
             all_totals += result_total
+        print("--------0",{
+            "result": all_result,
+            "totals": all_totals
+        })
         return {
             "result": all_result,
             "totals": all_totals
@@ -300,3 +305,13 @@ class AccountConfigurationPayment(models.Model):
     def get_ref_id(self,ref_name):
         v=self.env.ref(ref_name)
         return v and v.id or 0
+
+
+
+    def limpiar_texto(self,valor):
+        """Limpia caracteres problemáticos para QWeb/HTML"""
+        if not valor:
+            return ""
+        if not isinstance(valor, str):
+            valor = str(valor).replace('/','').replace('>','').replace('<','').replace('&','')
+        return html.escape(valor, quote=True)

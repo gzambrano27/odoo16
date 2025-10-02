@@ -632,7 +632,7 @@ class PurchaseOrder(models.Model):
                 order.message_subscribe([order.partner_id.id])
         return True
     
-    def send_pending_approval_emails_aaviles(self):
+    def send_pending_approval_emails_aavilesOld(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         aprobadores = self.env['res.users'].search([('id', '=', 23)])
 
@@ -718,6 +718,99 @@ class PurchaseOrder(models.Model):
                 'subject': 'Órdenes de compra pendientes de aprobar por Financiero',
                 'body_html': body_html,
                 'email_to': user.email,
+                'auto_delete': True,
+            }).send()
+
+
+    def send_pending_approval_emails_aaviles(self):
+        """
+        Envía notificaciones de OCs en estado 'financiero' según la compañía:
+        - 'import green'  -> oalcivar (sin copia)
+        - 'import blue'   -> jaguilar (sin copia)
+        - 'green energy'  -> aaviles   (cc: avelazquez)
+        - otras           -> aaviles   (cc: avelazquez)
+        """
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url') or ''
+
+        # Helper interno para localizar usuarios
+        def _find_user_by_handle(handle):
+            domain = ['|', '|',
+                    ('login', 'ilike', handle),
+                    ('email', 'ilike', handle),
+                    ('partner_id.email', 'ilike', handle)]
+            return self.env['res.users'].sudo().search(domain, limit=1)
+
+        # Usuarios principales
+        user_oalcivar   = _find_user_by_handle('0909703068')
+        user_aaviles    = _find_user_by_handle('0914263199')
+        user_jaguilar   = _find_user_by_handle('0914675715')
+        user_avelazquez = _find_user_by_handle('0922638499')
+
+        # Buscar SOLO órdenes en estado financiero
+        orders = self.env['purchase.order'].sudo().search([('state', '=', 'financiero')])
+        if not orders:
+            return
+
+        from collections import defaultdict
+        orders_by_user = defaultdict(lambda: {"ids": set(), "cc": []})
+
+        for po in orders:
+            company_name = (po.company_id.name or '').strip().lower()
+
+            if 'import green' in company_name:
+                recipient = user_oalcivar
+                cc_list = []
+            elif 'importblue' in company_name or 'import blue' in company_name:
+                recipient = user_jaguilar
+                cc_list = []
+            elif 'green energy' in company_name:
+                recipient = user_aaviles
+                cc_list = [user_avelazquez.partner_id.email] if user_avelazquez and user_avelazquez.partner_id.email else []
+            else:
+                recipient = user_aaviles
+                cc_list = [user_avelazquez.partner_id.email] if user_avelazquez and user_avelazquez.partner_id.email else []
+
+            if recipient:
+                orders_by_user[recipient.id]["ids"].add(po.id)
+                # acumular los CC
+                orders_by_user[recipient.id]["cc"].extend(cc_list)
+
+        Mail = self.env['mail.mail'].sudo()
+        for user_id, data in orders_by_user.items():
+            user = self.env['res.users'].browse(user_id)
+            if not user or not user.partner_id.email:
+                continue
+
+            po_list = self.browse(list(data["ids"]))
+            table_rows = self._build_rows_html(po_list, base_url)
+
+            body_html = f"""
+                <p>Estimad@ {user.name},</p>
+                <p>Estas son las órdenes de compra <b>en estado financiero</b> asociadas a su revisión:</p>
+                <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Arial; font-size: 13px;">
+                    <thead>
+                        <tr style="background-color:#f2f2f2;">
+                            <th>Orden</th>
+                            <th>Proveedor</th>
+                            <th>Solicitante</th>
+                            <th>Compañía</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Planificada</th>
+                            <th>Subtotal (s/ imp.)</th>
+                            <th>Tipo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>{table_rows}</tbody>
+                </table>
+                <p>Gracias por su gestión.</p>
+            """
+
+            Mail.create({
+                'subject': 'Órdenes de compra en estado financiero',
+                'body_html': body_html,
+                'email_to': user.partner_id.email,
+                'email_cc': ','.join(set(data["cc"])),  # quita duplicados
                 'auto_delete': True,
             }).send()
 
@@ -910,67 +1003,90 @@ class PurchaseOrder(models.Model):
                   ('partner_id.email', 'ilike', handle)]
         user = self.env['res.users'].sudo().search(domain, limit=1)
         return user
-
+    
+    @api.model
+    def _build_rows_html(self, orders, base_url):
+        """Construye las filas HTML para la tabla de OC."""
+        rows = []
+        for order in orders:
+            url = f"{base_url}/web#id={order.id}&model=purchase.order&view_type=form"
+            fecha_cre = order.create_date.strftime('%Y-%m-%d') if order.create_date else ''
+            fecha_plan = order.date_planned.strftime('%Y-%m-%d') if order.date_planned else ''
+            tipo_txt = 'Presidencia' if order.es_presidencia else ('Administrativa' if order.es_admin else '')
+            solicitante = getattr(order, 'solicitante', False)
+            rows.append(f"""
+                <tr>
+                    <td>{order.name or ''}</td>
+                    <td>{order.partner_id.name or ''}</td>
+                    <td>{solicitante.name if solicitante else ''}</td>
+                    <td>{order.company_id.name or ''}</td>
+                    <td>{fecha_cre}</td>
+                    <td>{fecha_plan}</td>
+                    <td style="text-align:right;">{order.amount_untaxed:,.2f}</td>
+                    <td>{tipo_txt}</td>
+                    <td><a href="{url}">Abrir</a></td>
+                </tr>
+            """)
+        return "\n".join(rows)
+    
     def send_notifications_presidencia_adm(self):
         """
-        Envía correos:
-          - Si tipo_orden == 'presidencia' -> a 'aaviles'
-          - Si tipo_orden == 'administrativa' -> a 'jhidalgo'
-          - Si amount_untaxed > 5000 en cualquiera de los dos tipos -> también a 'szambrano'
-        Solo considera órdenes en estado 'to approve'.
+        Reglas:
+        - Órdenes con amount_untaxed > 5000 -> SOLO a 'szambrano'
+        - Órdenes con amount_untaxed <= 5000:
+            * si es_presidencia -> 'aaviles'
+            * si es_admin      -> 'jhidalgo'
+        - Solo considera órdenes en estado 'to approve'.
         """
-        TYPE_FIELD = 'tipo_orden'          # cámbialo si tu campo se llama distinto
-        TYPES_WATCHED = ('es_presidencia', 'es_admin')
-        THRESHOLD = 5000.0                 # sin impuestos
-        STATE_TO_WATCH = 'to approve'      # estado objetivo
-
+        THRESHOLD = 5000.0
+        STATE_TO_WATCH = 'to approve'
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url') or ''
 
-        # Mapea tipo -> handle primario
-        primary_handles = {
-            'es_presidencia': 'aaviles',
-            'es_admin': 'jhidalgo',
-        }
-        threshold_handle = 'szambrano'  # adicional cuando > 5K sin impuestos
+        # Buscar usuarios por handle (login/email/correo del partner).
+        def _find_user_by_handle(handle):
+            domain = ['|', '|',
+                    ('login', 'ilike', handle),
+                    ('email', 'ilike', handle),
+                    ('partner_id.email', 'ilike', handle)]
+            return self.env['res.users'].sudo().search(domain, limit=1)
 
-        # Resuelve usuarios (si no existen, simplemente no enviará a ese destino)
-        primary_users = {}
-        # for t, handle in primary_handles.items():
-        #     primary_users[t] = self._find_user_by_handle(handle)
+        user_presi  = _find_user_by_handle('aaviles')   or _find_user_by_handle('0914263199')
+        user_admin  = _find_user_by_handle('jhidalgo')  or _find_user_by_handle('0909078206')
+        user_thresh = _find_user_by_handle('szambrano')
 
-        # threshold_user = self._find_user_by_handle(threshold_handle)
-
-        # Busca órdenes a notificar
+        # Órdenes a considerar
         domain = [
-           ('state', '=', STATE_TO_WATCH),
+            ('state', '=', STATE_TO_WATCH),
             '|', ('es_admin', '=', True), ('es_presidencia', '=', True),
         ]
         orders = self.env['purchase.order'].sudo().search(domain)
         if not orders:
-            return  # nada que enviar
+            return
 
-        # Agrupa por destinatario (user.id) las órdenes que le corresponden
-        # Enviamos un correo por destinatario con su tabla de órdenes
-        orders_by_user = defaultdict(list)
+        from collections import defaultdict
+        orders_by_user = defaultdict(set)
 
         for po in orders:
-            po_type = getattr(po, TYPE_FIELD, False)
-            if po_type in primary_users and primary_users[po_type]:
-                orders_by_user[primary_users[po_type].id].append(po)
-
-            # Si supera el umbral, también para threshold_user (si existe)
-            if po.amount_untaxed and po.amount_untaxed > THRESHOLD and threshold_user:
-                orders_by_user[threshold_user.id].append(po)
+            amt = po.amount_untaxed or 0.0
+            if amt > THRESHOLD:
+                # Solo threshold user
+                if user_thresh:
+                    orders_by_user[user_thresh.id].add(po.id)
+            else:
+                # Aprobadores por tipo
+                if po.es_presidencia and user_presi:
+                    orders_by_user[user_presi.id].add(po.id)
+                if po.es_admin and user_admin:
+                    orders_by_user[user_admin.id].add(po.id)
 
         Mail = self.env['mail.mail'].sudo()
 
-        # Construye y envía correos por usuario
-        for user_id, po_list in orders_by_user.items():
+        for user_id, po_ids in orders_by_user.items():
             user = self.env['res.users'].browse(user_id)
             if not user or not user.partner_id.email:
-                # Si no tiene email definido, omite
                 continue
 
+            po_list = self.browse(list(po_ids))
             table_rows = self._build_rows_html(po_list, base_url)
             body_html = f"""
                 <p>Estimad@ {user.name},</p>
@@ -989,17 +1105,19 @@ class PurchaseOrder(models.Model):
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {table_rows}
-                    </tbody>
+                    <tbody>{table_rows}</tbody>
                 </table>
-                <p>Por favor revise y proceda con la aprobación en Odoo.</p>
+                <p>Muchas Gracias por su lectura.</p>
             """
-
+            cc_user = self._find_user_by_handle('0927729913')  # ejemplo
+            cc_list = []
+            if cc_user and cc_user.partner_id.email:
+                cc_list.append(cc_user.partner_id.email)
             Mail.create({
                 'subject': 'Órdenes de compra pendientes por aprobar',
                 'body_html': body_html,
-                'email_to': user.partner_id.email,  # correo del destinatario
+                'email_to': user.partner_id.email,
+                'email_cc': ','.join(cc_list), 
                 'auto_delete': True,
             }).send()
 

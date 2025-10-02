@@ -65,3 +65,10 @@ from . import maintenance_acta_view
 from . import actas_acta
 
 from . import res_partner
+
+from . import resource_calendar
+
+from . import employee_attendance_calendar
+from . import employee_attendance_raw
+
+from . import hr_employee_group

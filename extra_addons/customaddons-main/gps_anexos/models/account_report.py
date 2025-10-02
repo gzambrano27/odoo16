@@ -66,7 +66,7 @@ class GenericTaxReportCustomHandler(models.AbstractModel):
     def export_to_report_action(self, report, options):
         # 5️⃣ Agregar tus datos dinámicos (ejemplo fila 60 en Excel, fila 59 índice 0)
 
-
+        DEC=2
         allowed_company_ids = self._context.get('allowed_company_ids', [])
         brw_company=self.env["res.company"].sudo().browse(allowed_company_ids[0])
         date_to = options.get('date', {}).get('date_to')
@@ -113,6 +113,8 @@ class GenericTaxReportCustomHandler(models.AbstractModel):
                 dscr = line.get('name')
                 value = self._get_column_value(line,index= 0,field_ky="no_format")
                 if brw_report_line.cell_report:
+                    if type(value)==float:
+                        value=round(abs(value),DEC)
                     result.append({
                         "ky_id":ky_id,
                         "dscr": dscr,

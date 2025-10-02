@@ -203,7 +203,7 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
         return res
 
     @api.model
-    def _prepare_purchase_order(self, picking_type, group_id, company, origin, requested_by, assigned_to, date_planned,request_id,description):
+    def _prepare_purchase_order(self, picking_type, group_id, company, origin, requested_by, assigned_to, date_planned,request_id,description,rendimiento,equipos,personal_min_equipo,duracion_estimada,tipo_pedido,fiscalizador,tipo_contrato):
         if not self.supplier_id:
             raise UserError(_("Enter a supplier."))
         supplier = self.supplier_id
@@ -228,7 +228,14 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
             #'es_admin': True if (requested_by.login =='mmpico@gpsgroup.com.ec') else False
             'es_admin': is_admin,
             'es_presidencia':is_presidencia,
-            'notes':description
+            'notes':description,
+            'rendimiento': rendimiento,
+            'equipos': equipos,
+            'personal_min_equipo': personal_min_equipo,
+            'duracion_estimada': duracion_estimada,
+            'tipo_pedido': tipo_pedido,
+            'fiscalizador_id': fiscalizador,
+            'tipo_contrato': tipo_contrato
         }
         return data
 
@@ -379,7 +386,14 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
                     line.request_id.assigned_to,
                     line.request_id.date_planned + timedelta(days=1),
                     line.request_id.id,
-                    line.request_id.description
+                    line.request_id.description,
+                    line.request_id.rendimiento,
+                    line.request_id.equipos,
+                    line.request_id.personal_min_equipo,
+                    line.request_id.duracion_estimada,
+                    line.request_id.tipo_pedido,
+                    line.request_id.fiscalizador_id.id,
+                    line.request_id.tipo_contrato
                 )
                     #line.request_id.employees_id.ids
                 purchase = purchase_obj.create(po_data)

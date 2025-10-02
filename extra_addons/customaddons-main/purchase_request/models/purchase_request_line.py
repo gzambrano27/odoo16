@@ -4,6 +4,9 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.populate import compute
+import io
+import base64
+import xlsxwriter
 
 _STATES = [
     ("draft", "Draft"),
@@ -638,6 +641,114 @@ class PurchaseRequestLine(models.Model):
             ),
         }
     
+    def action_export_custom(self):
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        sheet = workbook.add_worksheet("Requisiciones")
+
+        headers = [
+            "Codigo",
+            "Descripción",
+            "Cantidad",
+            "UdM",
+            "Requisición de compra",
+            "Estado requisición",
+            "Fecha de solicitud",
+            "Fecha de llegada de requisicion",
+            "Orden de compra",
+            
+            "Fecha de llegada prevista",
+            "Fecha de llegada",
+            "Estado de Compra",
+            "Referencia Anterior",
+            "Marca",
+            "Cant. Realizada",
+            "Stock Disponible",
+            "Requerido por",
+        ]
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header)
+
+        state_map = {
+            'draft': 'Borrador',
+            'in_progress': 'En Progreso',
+            'approved': 'Aprobado',
+            'done': 'Realizado',
+            'cancel': 'Cancelado',
+        }
+
+        row = 1
+        for line in self:#.search([('request_id', '=', 1792),('product_id', '=', 6525)]):
+            sheet.write(row, 0, line.product_id.default_code or "")
+            sheet.write(row, 1, line.product_id.name or "")
+            sheet.write(row, 2, line.product_qty or 0)
+            sheet.write(row, 3, line.product_uom_id.name or "")
+            sheet.write(row, 4, line.request_id.name or "")
+            sheet.write(row, 5, state_map.get(line.request_id.state, line.request_id.state))
+            sheet.write(row, 6, str(line.request_id.date_start or ""))
+
+            # Buscar relación entre requisición y OC
+            self.env.cr.execute("""
+                SELECT purchase_order_line_id 
+                FROM purchase_request_purchase_order_line_rel
+                WHERE purchase_request_line_id = %s
+            """, (line.id,))
+            rels = self.env.cr.fetchall()
+
+            order_name = ""
+            purchase_state = ""
+            fecha_campo = ""
+            fecha_bodega = ""
+            fecha_dt = None
+            fecha_arrivo = ""
+            date_format = workbook.add_format({'num_format': 'yyyy-mm-dd', 'align': 'left'})
+            if rels:
+                for (pol_id,) in rels:
+                    pol = self.env['purchase.order.line'].browse(pol_id)
+                    if pol and pol.order_id:
+                        order_name = pol.order_id.name
+                        purchase_state = pol.order_id.state
+
+                        # Buscar recepciones (stock.picking)
+                        pickings = pol.order_id.picking_ids.filtered(lambda p: p.state != 'cancel')
+                        if pickings:
+                            # Ejemplo: tomar la primera recepción asociada
+                            scheduled_dates = [d for d in pickings.mapped('scheduled_date') if d]
+                            deadline_dates = [d for d in pickings.mapped('date_deadline') if d]
+                            done_dates = [d for d in pickings.mapped('date_done') if d]
+
+                            fecha_campo = line.request_id.date_planned#str(min(scheduled_dates)) if scheduled_dates else ""
+                            fecha_dt = fields.Datetime.to_datetime(fecha_campo)
+        
+                            fecha_bodega = str(min(deadline_dates)) if deadline_dates else ""
+                            fecha_arrivo = str(max(done_dates)) if done_dates else ""
+            #sheet.write(row, 7, fecha_campo)   # Fecha en campo
+            sheet.write_datetime(row, 7, fecha_dt, date_format)
+            sheet.write(row, 8, order_name)
+            
+            sheet.write(row, 9, fecha_bodega)  # Fecha llegada bodega
+            sheet.write(row, 10, fecha_arrivo) # Fecha arrivo real
+            sheet.write(row, 11, purchase_state)
+
+            sheet.write(row, 12, line.product_id.referencia_anterior or "")
+            sheet.write(row, 13, line.product_brand_id.name or "")
+            sheet.write(row, 14, line.qty_done or 0)
+            sheet.write(row, 15, line.qty_available or 0)
+            sheet.write(row, 16, line.request_id.requested_by.name or "")
+
+            row += 1
+
+        workbook.close()
+        output.seek(0)
+
+        file_content = base64.b64encode(output.read())
+        output.close()
+
+        wizard = self.env['purchase.request.line.export.wizard'].create({
+            'file_data': file_content,
+            'file_name': 'Requisiciones.xlsx'
+        })
+        return { 'type': 'ir.actions.act_window', 'res_model': 'purchase.request.line.export.wizard', 'view_mode': 'form', 'res_id': wizard.id, 'target': 'new', }
     # @api.constrains('analytic_distribution')
     # def _check_analytic_distribution(self):
     #     for record in self:

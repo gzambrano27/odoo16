@@ -14,6 +14,7 @@
 
     <field name="date_advance_payment" position="after">
 
+        <field name="fecha_fin_entrega" />
          <field name="warning_date_advance_payment" invisible="1" />
     <field name="warning_date_advance_payment_message"  style="color:red" attrs="{'invisible':[('warning_date_advance_payment','!=',True)]}"/>
       <field name="warning_date_advance_payment_message"  style="color:green" attrs="{'invisible':[('warning_date_advance_payment','=',True)]}"/>
@@ -32,19 +33,28 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+
+             <xpath expr="//field[@name='date_planned']" position="replace">
+                <field name="date_planned" attrs="{'readonly': [('state', 'in', ('to approve', 'purchase','done','cancel'))]}"/>
+           <!--   <field name="show_update_request" invisible="1"/> -->
+             </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                <page string="Pagos" groups="account.group_account_invoice">
+                    <field name="account_payment_ids" readonly="1"/>
+
+                </page>
+            </xpath>
+
             <xpath expr="/form/header/button[@name='button_cancel']" position="after">
                 <button name="%(bi_purchase_advance_payment.action_advance_payment_wizard_form)d" type="action"
                         string="Pago Anticipado" class="oe_highlight" groups="purchase.group_purchase_manager"
                         attrs="{'invisible': [('state', 'not in', ['purchase','done'])]}"/>
+
+
             </xpath>
-            <xpath expr="//notebook" position="inside">
-                <page string="Pagos" groups="account.group_account_invoice">
-                    <field name="account_payment_ids" readonly="1"/>
-                </page>
-            </xpath>
-            <xpath expr="//field[@name='date_planned']" position="replace">
-                <field name="date_planned" attrs="{'readonly': [('state', 'in', ('to approve', 'purchase','done','cancel'))]}"/>
-            </xpath>
+
+
         </field>
     </record>
 

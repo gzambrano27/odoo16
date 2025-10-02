@@ -16,6 +16,8 @@ from datetime import datetime
 import pytz
 from .import DEFAULT_MODE_PAYMENTS
 
+from ..tools import *
+
 class AccountPaymentBankMacro(models.Model):
     _name = 'account.payment.bank.macro'
     _description = "Pagos con Macros Bancarias"
@@ -111,6 +113,11 @@ class AccountPaymentBankMacro(models.Model):
 
     macro_bank_type=fields.Selection([('interbancaria','interbancaria'),
                                       ('intrabancaria','intrabancaria')],string="Transferencia",compute="_compute_macro_bank_type",default=None,store=True,required=False)
+
+    tipo_partner_pago = fields.Selection(
+        selection=[('local', 'Local'), ('exterior', 'Exterior')],
+        string="Tipo de Pago a Proveedor", default="local",required=True
+    )
 
     @api.depends('default_mode_payment','line_ids','line_ids.bank_account_id')
     @api.onchange('default_mode_payment','line_ids', 'line_ids.bank_account_id')
@@ -350,6 +357,9 @@ class AccountPaymentBankMacro(models.Model):
                         raise ValidationError(
                             _("La cuenta bancaria asociada para %s debe contener solo números y no ser todo ceros.") % (
                                 brw_summary.partner_id.name,))
+                    if brw_each.tipo_partner_pago!='local':
+                        if not brw_summary.bank_intermediary_id:
+                            raise ValidationError(_("Debes definir una cuenta de banco de intermediario para todos los pagos"))
         return True
 
     def action_generated(self):
@@ -396,7 +406,7 @@ class AccountPaymentBankMacro(models.Model):
 
         return texto_limpio.strip()
 
-    def generate_file_macro(self):
+    def generate_file_macro_copia(self):
         self.ensure_one()
         if self.state=='done':
             if self.attachment_id:
@@ -449,7 +459,7 @@ class AccountPaymentBankMacro(models.Model):
                 bic = codigos_bancos.get(x.bank_account_id.bank_id.id, False)
                 if not bic:
                     raise ValidationError(
-                        _("No hay codigo encontrado para BOLIVARIANO para %s") % (x.bank_account_id.bank_id.name,))
+                        _("No hay código encontrado para BOLIVARIANO para %s") % (x.bank_account_id.bank_id.name,))
                 tipo_cta = '04' if x.bank_account_id.tipo_cuenta == 'Ahorro' else '03'
                 # forma_pago = 'CUE' if str(x.employee_id.bank_id.bic)== '37' else 'COB'
                 # code_bank = '34' if str(x.employee_id.bank_id.bic) == '37' else str(x.employee_id.bank_id.bic)
@@ -512,7 +522,7 @@ class AccountPaymentBankMacro(models.Model):
                 bic = codigos_bancos.get(x.bank_account_id.bank_id.id, False)
                 if not bic:
                     raise ValidationError(
-                        _("No hay codigo encontrado para INTERNACIONAL para %s") % (x.bank_account_id.bank_id.name,))
+                        _("No hay código encontrado para INTERNACIONAL para %s") % (x.bank_account_id.bank_id.name,))
 
                 forma_pago = 'CUE' if bic == '37' else 'COB'
                 code_bank = bic
@@ -546,7 +556,7 @@ class AccountPaymentBankMacro(models.Model):
                 bic = codigos_bancos.get(x.bank_account_id.bank_id.id, False)
                 if not bic:
                     raise ValidationError(
-                        _("No hay codigo encontrado para PICHINCHA para %s") % (x.bank_account_id.bank_id.name,))
+                        _("No hay código encontrado para PICHINCHA para %s") % (x.bank_account_id.bank_id.name,))
 
                 forma_pago = 'CUE' if bic == '37' else 'COB'
                 code_bank = bic
@@ -582,7 +592,7 @@ class AccountPaymentBankMacro(models.Model):
                 bic = codigos_bancos.get(x.bank_account_id.bank_id.id, False)
                 if not bic:
                     raise ValidationError(
-                        _("No hay codigo encontrado para PRODUBANCO para %s") % (
+                        _("No hay código encontrado para PRODUBANCO para %s") % (
                             x.bank_account_id.bank_id.name,))
 
                 forma_pago = 'CUE' if bic == '37' else 'COB'
@@ -652,7 +662,7 @@ class AccountPaymentBankMacro(models.Model):
                     bic = codigos_bancos.get(x.bank_account_id.bank_id.id, False)
                     if not bic:
                         raise ValidationError(
-                            _("No hay codigo encontrado para PACIFICO para %s") % (
+                            _("No hay código encontrado para PACIFICO para %s") % (
                                 x.bank_account_id.bank_id.name,))
                     code_bank = bic
                     # csvfile.write('1OCPRU'+p.tipo_cta+'00000000'+str(amount_total).zfill(15)+
@@ -709,6 +719,49 @@ class AccountPaymentBankMacro(models.Model):
         )
         return self.download_file_macro()
 
+    def generate_file_macro(self):
+        self.ensure_one()
+        if self.state == 'done':
+            if self.attachment_id:
+                return self.download_file_macro()
+        csvfile = io.StringIO()
+        writer = csv.writer(csvfile, delimiter='\t', quoting=csv.QUOTE_NONE, escapechar='')
+        journal_name = self.journal_id.name.lower()
+        brw_company=self.company_id
+        objBk = macros_bancarias.macros_bancarias()
+        if 'bolivariano' in journal_name:
+            objBk = bolivariano.bolivariano()
+        if 'internacional' in journal_name:
+            objBk = internacional.internacional()
+        if 'pichincha' in journal_name:
+            objBk = pichincha.pichincha()
+        if 'produbanco' in journal_name:
+            objBk = produbanco.produbanco()
+        if 'pacifico' in journal_name:
+            objBk = pacifico.pacifico()
+        file_name = objBk.get_file_name_macro_local(self)
+        objBk.generate_file_macro_local(self, writer, journal_name, brw_company)
+        file_content = csvfile.getvalue()
+        if not file_name:
+            raise ValidationError(_("No hay nombre definido para el archivo"))
+        if not file_content.strip():
+            raise ValidationError(_("El archivo generado está vacío. Por favor, revise los datos de entrada."))
+        file_content_base64 = base64.b64encode(file_content.encode())
+        self.csv_export_file = file_content_base64
+        self.csv_export_filename = file_name  #
+        attachment_obj = self.env['ir.attachment']
+        attachment_id = attachment_obj.create({'name': f"{file_name}",
+                                               'type': "binary",
+                                               'datas': file_content_base64,
+                                               'mimetype': 'text/csv',
+                                               'store_fname': file_name})
+        # (opcional) guardar referencia en un campo many2one si existe
+        self.attachment_id = attachment_id.id
+        self.message_post(
+            body='El siguiente adjunto fue generado desde el sistema %s.' % (file_name,)
+        )
+        return self.download_file_macro()
+
     def download_file_macro(self):
         self.ensure_one()
         base_url = self.env['ir.config_parameter'].get_param('param.download.bancos.url')
@@ -727,7 +780,6 @@ class AccountPaymentBankMacro(models.Model):
             "url": str(base_url) + str(download_url),
             "target": "new",
         }
-
 
     def validate_grouped_accounts(self):
         """
@@ -1304,19 +1356,18 @@ class AccountPaymentBankMacro(models.Model):
                         # Conciliación
                         invoice_lines = self.env["account.move.line"]
                         for x in payment.move_id.line_ids.filtered(
-                                lambda l: l.debit > 0 and l.amount_residual != 0.00):
+                                lambda l: l.debit!=0.00 and l.amount_residual != 0.00):
                             invoice_lines += x
                             for mov in employee_payment.movement_ids:
                                 invoice_lines += mov.move_id.line_ids.filtered(
                                     lambda
-                                        y: y.credit > 0 and y.partner_id == x.partner_id and y.account_id == x.account_id and y.amount_residual != 0.00
+                                        y: y.credit!=0.00 and y.account_id == x.account_id and y.amount_residual != 0.00
                                 )
                             for slip in employee_payment.payslip_ids:
                                 invoice_lines += slip.move_id.line_ids.filtered(
                                     lambda
-                                        y: y.credit > 0 and y.partner_id == x.partner_id and y.account_id == x.account_id and y.amount_residual != 0.00
+                                        y: y.credit!=0.00 and y.account_id == x.account_id and y.amount_residual != 0.00
                                 )
-
                         if len(invoice_lines) > 1:
                             invoice_lines.reconcile()
 
@@ -1663,7 +1714,7 @@ class AccountPaymentBankMacro(models.Model):
         payment_accounts = []
         for line in self.line_ids:
             if line.request_id:
-                if line.request_id.liquidation_employee_id:
+                if line.request_id.liquidation_employee_id: 
                     payment_accounts.append(line.request_id.liquidation_employee_id.id)
         payment_accounts=payment_accounts+[-1,-1]
         action = self.env["ir.actions.actions"]._for_xml_id(
@@ -1676,3 +1727,46 @@ class AccountPaymentBankMacro(models.Model):
         print("pago intercompany")
 
         return True
+
+    def generate_file_macro_ext(self):
+        self.ensure_one()
+        if self.state == 'done':
+            if self.attachment_id:
+                return self.download_file_macro()
+        csvfile = io.StringIO()
+        writer = csv.writer(csvfile, delimiter='\t', quoting=csv.QUOTE_NONE, escapechar='')
+        journal_name = self.journal_id.name.lower()
+        brw_company=self.company_id
+        objBk = macros_bancarias.macros_bancarias()
+        #if 'bolivariano' in journal_name:
+        #    objBk = bolivariano.bolivariano()
+        if 'internacional' in journal_name:
+            objBk = internacional.internacional()
+        # if 'pichincha' in journal_name:
+        #     objBk = pichincha.pichincha()
+        # if 'produbanco' in journal_name:
+        #     objBk = produbanco.produbanco()
+        # if 'pacifico' in journal_name:
+        #     objBk = pacifico.pacifico()
+        file_name = objBk.get_file_name_macro_ext(self)
+        objBk.generate_file_macro_ext(self, writer, journal_name, brw_company)
+        file_content = csvfile.getvalue()
+        if not file_name:
+            raise ValidationError(_("No hay nombre definido para el archivo"))
+        if not file_content.strip():
+            raise ValidationError(_("El archivo generado está vacío. Por favor, revise los datos de entrada."))
+        file_content_base64 = base64.b64encode(file_content.encode())
+        self.csv_export_file = file_content_base64
+        self.csv_export_filename = file_name  #
+        attachment_obj = self.env['ir.attachment']
+        attachment_id = attachment_obj.create({'name': f"{file_name}",
+                                               'type': "binary",
+                                               'datas': file_content_base64,
+                                               'mimetype': 'text/csv',
+                                               'store_fname': file_name})
+        # (opcional) guardar referencia en un campo many2one si existe
+        self.attachment_id = attachment_id.id
+        self.message_post(
+            body='El siguiente adjunto fue generado desde el sistema %s.' % (file_name,)
+        )
+        return self.download_file_macro()

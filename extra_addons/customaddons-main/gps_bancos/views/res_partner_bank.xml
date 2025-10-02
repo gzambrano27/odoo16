@@ -10,6 +10,7 @@
   <field name="arch" type="xml">
     <search string="Buscar Cuentas Bancarias">
       <field name="acc_number" string="# de Cuenta"/>
+        <field name="iban_number" />
       <field name="partner_id" string="Titular"/>
       <field name="bank_id" string="Banco"/>
       <field name="currency_id" string="Moneda"/>
@@ -37,6 +38,7 @@
     <field name="arch" type="xml">
           <field name="allow_out_payment"  position="after">
                <field name="partner_email" />
+              <field name="iban_number" />
           </field>
 
     </field>

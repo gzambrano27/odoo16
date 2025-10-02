@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-
+from odoo import tools
 
 class ResCompanyView(models.Model):
     _name = 'res.company.view'
@@ -12,11 +13,12 @@ class ResCompanyView(models.Model):
     partner_name = fields.Char(string="Company Name", readonly=True)
 
     def init(self):
+        tools.drop_view_if_exists(self._cr, 'res_company_view')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW res_company_view AS (
               
               select rc.id,
-	rc.id as partner_id,
+	rp.id as partner_id,
 	rc.name as company_name
 
 from res_company rc

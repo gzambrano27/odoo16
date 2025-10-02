@@ -54,10 +54,12 @@ class report_acct_analytic_acct_xlsx(models.AbstractModel):
         analitic_accounts=', '.join(brw_wizard.mapped('analytic_ids').mapped('name'))
         company_ids = brw_wizard.company_ids.ids
         analytic_ids = brw_wizard.analytic_ids.ids
+        journal_ids = brw_wizard.journal_ids.ids
         self._cr.execute(f""";WITH VARIABLES AS (
 	SELECT
 		array{company_ids}::INT[] AS COMPANY_IDS,
-		array{analytic_ids}::INT[] AS ANALYTIC_IDS
+		array{analytic_ids}::INT[] AS ANALYTIC_IDS,
+		array{journal_ids}::INT[] AS JOURNAL_IDS
 ),
 cuentas_analiticas AS (
     SELECT aaa.id
@@ -67,6 +69,14 @@ cuentas_analiticas AS (
            cardinality(variables.analytic_ids) = 0 OR
 		   	(cardinality(variables.analytic_ids) >0 and aaa.id = ANY(variables.analytic_ids))
 		   )
+),diarios_filtrados AS (
+    SELECT aj.id
+    FROM variables 
+    INNER JOIN account_journal aj ON aj.company_id = ANY(variables.company_ids)
+    WHERE (
+           cardinality(variables.journal_ids) = 0 OR
+           (cardinality(variables.journal_ids) > 0 AND aj.id = ANY(variables.journal_ids))
+    )
 ),
 resumen_asientos as (
 	select  rc.name as company_name,
@@ -114,10 +124,11 @@ resumen_asientos as (
 	account_analytic_account aaa
 	inner join cuentas_analiticas  can on can.id=aaa.id 
 	inner join account_analytic_line aal on aal.account_id=aaa.id
-	left join account_move_line aml on aml.id=aal.move_line_id 
+	inner join account_move_line aml on aml.id=aal.move_line_id 
 	left join product_product pp on pp.id=aml.product_id 
 	left join product_template pt on pt.id=pp.product_tmpl_id  
-	left join account_move am on am.id=aml.move_id
+	inner join account_move am on am.id=aml.move_id 
+	inner join diarios_filtrados  dft on dft.id=am.journal_id 
 	left join account_journal aj on aj.id=am.journal_id 
 	left join account_analytic_plan aap on aap.id=aaa.plan_id 
 	left join centro_costo_tipo_proyecto cctp on cctp.id=aaa.tipo_proy_id
@@ -308,6 +319,7 @@ class account_anlyt_acct_move_xlsx(models.AbstractModel):
         analitic_accounts = ', '.join(brw_wizard.mapped('analytic_ids').mapped('name'))
         company_ids = brw_wizard.company_ids.ids
         analytic_ids = brw_wizard.analytic_ids.ids
+        journal_ids = brw_wizard.journal_ids.ids
         date_from=brw_wizard.date_from
         date_to = brw_wizard.date_to
         self._cr.execute(f""";WITH VARIABLES AS (
@@ -315,7 +327,8 @@ class account_anlyt_acct_move_xlsx(models.AbstractModel):
 		array{company_ids}::INT[] AS COMPANY_IDS,
 		array{analytic_ids}::INT[] AS ANALYTIC_IDS,
 		'{date_from}'::date as date_from,
-		'{date_to}'::date as date_to
+		'{date_to}'::date as date_to,
+		array{journal_ids}::INT[] AS JOURNAL_IDS
 ),
 cuentas_analiticas AS (
     SELECT aaa.id
@@ -325,6 +338,14 @@ cuentas_analiticas AS (
            cardinality(variables.analytic_ids) = 0 OR
 		   	(cardinality(variables.analytic_ids) >0 and aaa.id = ANY(variables.analytic_ids))
 		   )
+),diarios_filtrados AS (
+    SELECT aj.id
+    FROM variables 
+    INNER JOIN account_journal aj ON aj.company_id = ANY(variables.company_ids)
+    WHERE (
+           cardinality(variables.journal_ids) = 0 OR
+           (cardinality(variables.journal_ids) > 0 AND aj.id = ANY(variables.journal_ids))
+    )
 ),
 resumen_asientos as (
 	select  rc.name as company_name,
@@ -333,6 +354,7 @@ resumen_asientos as (
 			aaa.name as cuenta_analitica_name,
 			coalesce(rp.vat,'') as cliente_identificacion,
 			rp.name as cliente_nombre,
+			rp.vat as cliente_identificacion,
 			coalesce(aap.name,'') as plan,
 			cctp.name as proyecto_name,
 			coalesce(aaa.nro_contrato,'') as nro_contrato,
@@ -377,10 +399,11 @@ resumen_asientos as (
 	from VARIABLES 
 	INNER JOIN res_company rc ON rc.id = ANY(variables.company_ids)
 	inner join account_move am   on rc.id=am.company_id and am.date>=variables.date_from  and am.date<=variables.date_to 
+	inner join diarios_filtrados  dft on dft.id=am.journal_id  
 	inner join account_journal aj on aj.id=am.journal_id 
 	inner join account_move_line aml  on am.id=aml.move_id 	
 	inner join account_account aa on aa.id=aml.account_id 
-	left join res_partner rp on rp.id=am.partner_id 
+	left join res_partner rp on rp.id=coalesce(aml.partner_id ,am.partner_id)
 	left join l10n_latam_document_type lldt on lldt.id=am.l10n_latam_document_type_id  
 	left join product_product pp on pp.id=aml.product_id 
 	left join product_template pt on pt.id=pp.product_tmpl_id  
@@ -404,37 +427,40 @@ from resumen_asientos ra """)
                 ws['A' + row] = each_result["company_name"]
                 ws['B' + row] = each_result["asiento_id"]
 
-                ws['C' + row] = each_result["tipo_asiento"]
-                ws['D' + row] = each_result["fecha_asiento"]
-                ws['E' + row] = each_result["numero_asiento"]
-                ws['F' + row] = each_result["diario_asiento"]
-                ws['G' + row] = each_result["ref_asiento"]
-                ws['H' + row] = each_result["estado_asiento"]
+                ws['C' + row] = each_result["cliente_identificacion"]
+                ws['D' + row] = each_result["cliente_nombre"]
 
-                ws['I' + row] = each_result["linea_asiento_id"]
-                ws['J' + row] = each_result["product_default_code"]
-                ws['K' + row] = each_result["product_name"]
-                ws['L' + row] = each_result["account_code"]
-                ws['M' + row] = self.clean_text(each_result["account_name"])
-                ws['N' + row] = self.clean_text(each_result["cuenta_analitica_code"])
-                ws['O' + row] = self.clean_text(each_result["cuenta_analitica_name"])
-                ws['P' + row] = self.clean_text(each_result["plan"])
-                ws['Q' + row] = each_result["linea_debito"]
-                ws['R' + row] = each_result["linea_credito"]
-                ws['S' + row] = each_result["balance"]
+                ws['E' + row] = each_result["tipo_asiento"]
+                ws['F' + row] = each_result["fecha_asiento"]
+                ws['G' + row] = each_result["numero_asiento"]
+                ws['H' + row] = each_result["diario_asiento"]
+                ws['I' + row] = each_result["ref_asiento"]
+                ws['J' + row] = each_result["estado_asiento"]
 
-                ws['T' + row] = each_result["importe"]
-                ws['U' + row] = each_result["porcentaje"]
+                ws['K' + row] = each_result["linea_asiento_id"]
+                ws['L' + row] = each_result["product_default_code"]
+                ws['M' + row] = each_result["product_name"]
+                ws['N' + row] = each_result["account_code"]
+                ws['O' + row] = self.clean_text(each_result["account_name"])
+                ws['P' + row] = self.clean_text(each_result["cuenta_analitica_code"])
+                ws['Q' + row] = self.clean_text(each_result["cuenta_analitica_name"])
+                ws['R' + row] = self.clean_text(each_result["plan"])
+                ws['S' + row] = each_result["linea_debito"]
+                ws['T' + row] = each_result["linea_credito"]
+                ws['U' + row] = each_result["balance"]
+
+                ws['V' + row] = each_result["importe"]
+                ws['W' + row] = each_result["porcentaje"]
 
 
-                ws['V' + row] = each_result["estado_cta"]
+                ws['X' + row] = each_result["estado_cta"]
 
                 i += 1
             last_row = INDEX_ROW + i
             if last_row >= INDEX_ROW:
                 thin = Side(border_style="thin", color="000000")
                 border = Border(left=thin, right=thin, top=thin, bottom=thin)
-                self.set_border(ws, 'A' + str(INDEX_ROW) + ':V' + str(last_row - 1), border)
+                self.set_border(ws, 'A' + str(INDEX_ROW) + ':X' + str(last_row - 1), border)
             ws['A1'] = companys
             ws['B3'] = analytic_ids and analitic_accounts or 'TODAS'
             ws['B2'] = date_from

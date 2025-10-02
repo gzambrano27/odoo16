@@ -29,6 +29,12 @@
                 <field name="expression_label">date_due</field>
                 <field name="figure_type">date</field>
             </record>
+                <record id="document_financial_line_expected_date_c" model="account.report.column">
+                <field name="name">Fecha prevista</field>
+                <field name="expression_label">expected_date</field>
+                <field name="figure_type">date</field>
+            </record>
+
             <record id="document_financial_line_period0_c" model="account.report.column">
                 <field name="name">En fecha</field>
                 <field name="expression_label">period0</field>
@@ -91,6 +97,14 @@
                         <field name="formula">_report_custom_engine_cobros_aged</field>
                         <field name="subformula">date_due</field>
                     </record>
+
+                    <record id="document_financial_line_ac_cobros_expected_date" model="account.report.expression">
+                        <field name="label">expected_date</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cobros_aged</field>
+                        <field name="subformula">expected_date</field>
+                    </record>
+
 
                     <record id="document_financial_line_ac_cobros_period0" model="account.report.expression">
                         <field name="label">period0</field>
@@ -159,6 +173,14 @@
                         <field name="formula">_report_custom_engine_cxc_aged</field>
                         <field name="subformula">date_due</field>
                     </record>
+                    <record id="document_financial_move_line_expected_date_c" model="account.report.expression">
+                        <field name="label">expected_date</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cxc_aged</field>
+                        <field name="subformula">expected_date</field>
+                    </record>
+
+
 
                     <record id="document_financial_move_line_period0_c" model="account.report.expression">
                         <field name="label">period0</field>

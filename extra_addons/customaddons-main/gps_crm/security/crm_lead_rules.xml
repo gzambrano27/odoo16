@@ -1,18 +1,46 @@
 <odoo>
-    <!-- Usuarios normales y KAM: solo ven sus propias oportunidades -->
+    <!-- Visor CRM: solo lectura de todas las oportunidades -->
+    <record id="crm_lead_rule_viewer_all" model="ir.rule">
+        <field name="name">CRM - Ver todas las oportunidades (Visor)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_viewer_custom'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Usuario Oportunidades y KAM: solo sus propias oportunidades -->
     <record id="crm_lead_rule_user_kam_own" model="ir.rule">
-        <field name="name">CRM - Propias oportunidades</field>
+        <field name="name">CRM - Propias oportunidades (User/KAM)</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="groups" eval="[(4, ref('gps_crm.group_crm_user_custom')),
                                     (4, ref('gps_crm.group_crm_kam_custom'))]"/>
         <field name="domain_force">[('user_id', '=', user.id)]</field>
     </record>
 
-    <!-- Gerencia: ve todas las oportunidades -->
+    <!-- Ingenieria: todas las oportunidades -->
+    <record id="crm_lead_rule_engineering_all" model="ir.rule">
+        <field name="name">CRM - Todas las oportunidades (Ingeniería)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_engineering_custom'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Gerencia: todas las oportunidades -->
     <record id="crm_lead_rule_manager_all" model="ir.rule">
         <field name="name">CRM - Todas las oportunidades (Gerencia)</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="groups" eval="[(4, ref('gps_crm.group_crm_manager_custom'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Comité Comercial: todas las oportunidades -->
+    <record id="crm_lead_rule_comite_all" model="ir.rule">
+        <field name="name">CRM - Todas las oportunidades (Comité)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="groups" eval="[(4, ref('gps_crm.group_crm_comite_custom'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 

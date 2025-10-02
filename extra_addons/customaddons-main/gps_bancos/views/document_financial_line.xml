@@ -375,6 +375,9 @@ create="false"
                     <field name="id" readonly="1" optional="hide"/>
                     <field name="quota"/>
                     <field name="date_process"/>
+
+                    <field name="date_maturity_payment" optional="hide"/>
+
                     <field name="amount" sum="total"/>
 
 <field name="amount_iva" sum="total" optional="show"/>
@@ -437,6 +440,10 @@ create="false"
                                 <field name="id" readonly="1"/>
                                 <field name="quota" readonly="1"/>
                                 <field name="date_process" readonly="1"/>
+
+                                <field name="date_maturity_payment"  />
+
+
                             </group>
                             <group>
 

@@ -1,208 +1,218 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <!-- CALENDARIO (sin domain; el filtrado hazlo con búsqueda o contexto en la acción si quieres por defecto) -->
-  <record id="view_meeting_calendar" model="ir.ui.view">
-    <field name="name">meeting.meeting.calendar</field>
-    <field name="model">meeting.meeting</field>
-    <field name="arch" type="xml">
-      <calendar string="Reservas"
-              date_start="start_readonly"
-              date_stop="stop_readonly"
-              mode="month"
-              color="color"
-              quick_add="False"
-              >
-            <field name="name"/>
-            <field name="start_datetime"/>
-            <field name="end_datetime"/>
-            <field name="room_id"/>
-            <field name="organizer_id"/>
-            <field name="state" widget="badge"
-                       decoration-info="state=='pending'"
-                       decoration-muted="state=='draft'"
-                       decoration-danger="state=='rechazado'"
-                       decoration-success="state=='aprobado'"
-                       />
-      </calendar>
-    </field>
-  </record>
-
-  <!-- LISTA -->
-  <record id="view_meeting_tree" model="ir.ui.view">
-    <field name="name">meeting.meeting.tree</field>
-    <field name="model">meeting.meeting</field>
-    <field name="arch" type="xml">
-      <tree decoration-muted="state == 'draft'"
-            decoration-info="state == 'pending'"
-            decoration-success="state == 'approved'"
-            decoration-danger="state == 'rejected'">
-        <field name="name"/>
-        <field name="organizer_id"/>
-        <field name="start_datetime"/>
-        <field name="end_datetime"/>
-        <field name="room_id"/>
-        <field name="state"/>
-      </tree>
-    </field>
-  </record>
-
-  <!-- FORMULARIO -->
-  <record id="view_meeting_form" model="ir.ui.view">
-    <field name="name">meeting.meeting.form</field>
-    <field name="model">meeting.meeting</field>
-    <field name="arch" type="xml">
-      <form string="Reserva de Reunión">
-        <header>
-          <button string="Enviar"   type="object" name="action_to_pending" states="draft" class="btn-primary"/>
-          <button string="Aprobar" type="object" name="action_approve"
-                  class="btn-primary"
-                  attrs="{'invisible':['|',('state','!=','pending'),('is_room_responsible','=',False)]}"/>
-
-          <button string="Rechazar" type="object" name="action_reject"
-                  class="btn-primary"
-                  attrs="{'invisible':['|',('state','!=','pending'),('is_room_responsible','=',False)]}"/>
-          <button string="Revertir a Borrador" type="object" name="action_reset_draft" states="pending"/>
-          <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved,rejected"/>
-        </header>
-
-        <sheet>
-          <!-- >>> Campo oculto requerido por attrs para ocultar el bloque de usuario si es admin <<< -->
-          <field name="is_user" invisible="1"/>
-          <field name="is_room_responsible" invisible="1"/>
-          <notebook>
-
-            <page string="Detalles de la reunión">
-              <group col="12" attrs="{'readonly': [('state', 'in', ['pending','approved','rejected'])]}">
-
-                <!-- Asunto (más grande) -->
-                <group  colspan="12">
-                  <field name="name" class="o_form_label_bigger"/>
-                </group>
-                  <!-- Columna izquierda: tiempos -->
-                  <group colspan="6">
-                    <field name="start_datetime"/>
-                    <field name="duration_hours_user"
-                    attrs="{'readonly': [('state', 'in', ['pending','approved','rejected'])]}"/>
-                    <!-- Duración admin -->
-                    <field name="duration_hours_admin" attrs="{'readonly': [('state', 'in', ['pending','approved','rejected'])]}"/>
-                    <field name="end_datetime" readonly="1"/>
-                  </group>
-
-                  <!-- Columna derecha: termina, organizador, sala, URL -->
-                  <group colspan="6">
-                    <field name="organizer_id"/>
-                    <field name="room_id"
-                           options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
-                    <field name="video_url"/>
-                  </group>
-
-                <!-- Descripción grande -->
-                <group colspan="12">
-                  <field name="description"/>
-                </group>
-
-              </group>
-            </page>
+    <record id="view_meeting_calendar" model="ir.ui.view">
+        <field name="name">meeting.meeting.calendar</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <calendar string="Reservas" date_start="start_readonly" date_stop="stop_readonly" mode="day" color="color"
+                      quick_add="False" >
+                <field name="name"/>
+                <field name="organizer_department_id" string="Departamento"/>
+                <field name="room_id"/>
+                <field name="organizer_id"/>
+                <field name="state" widget="badge" decoration-info="state=='reserved'" decoration-muted="state=='draft'"
+                       decoration-danger="state=='cancelled'"
+                />
+            </calendar>
+        </field>
+    </record>
 
 
+    <record id="view_meeting_tree" model="ir.ui.view">
+        <field name="name">meeting.meeting.tree</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Reunión"/>
+                <field name="organizer_id"/>
+                <field name="organizer_department_id" string="Departamento"/>
+                <field name="room_id"/>
+                <field name="start_datetime" string="Hora y Fecha de Inicio"/>
+                <field name="end_datetime" string="Hora y Fecha Final"/>
+                <field name="state"  widget="badge" decoration-info="state=='reserved'" decoration-muted="state=='draft'"
+                       decoration-danger="state=='cancelled'"/>
+            </tree>
+        </field>
+    </record>
 
-            <page string="Invitaciones">
-              <field name="invitation_ids">
-                <tree editable="bottom">
-                  <field name="employee_id"/>
-                  <field name="department"/>
-                  <field name="state" attrs="{'readonly':[('is_my_invitation','=',False)]}"/>
-                  <field name="is_my_invitation" invisible="1"/>
-                </tree>
-              </field>
-              <button name="action_send_all_invitations"
-                      string="Enviar a todos" type="object"
-                      class="btn-secondary"/>
-            </page>
+    <record id="view_meeting_form" model="ir.ui.view">
+        <field name="name">meeting.meeting.form</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <form string="Reserva de Reunión">
+                <header>
+                    <button string="Reservar" type="object" name="action_reserve" states="draft" class="btn-primary"/>
 
-            <!-- Opciones (recurrencia) solo admin -->
-            <page string="Opciones" groups="meeting_reservation.group_meeting_admin">
-              <group>
-                <field name="recurrency"/>
-              </group>
-              <div attrs="{'invisible': [('recurrency','=',False)]}">
-                <group>
-                  <label for="interval"/>
-                  <div class="o_col">
-                    <div class="o_row">
-                      <field name="interval" class="oe_inline"
-                             attrs="{'required': [('recurrency', '=', True)]}"/>
-                      <field name="rrule_type"
-                             attrs="{'required': [('recurrency', '=', True)]}"/>
-                    </div>
-                    <widget name="week_days" attrs="{'invisible': [('rrule_type', '!=', 'weekly')]}"/>
-                  </div>
+                    <button string="Volver a borrador" type="object" name="action_back_to_draft" states="reserved" class="btn-secondary"
+                            attrs="{'invisible': [('user_can_manage', '=', False)]}"/>
 
-                  <!-- Renombrado 'Hasta' y sin opción 'Siempre' -->
-                  <label string="Hasta" for="end_type"/>
-                  <div class="o_row">
-                    <field name="end_type" attrs="{'required': [('recurrency', '=', True)]}"/>
-                    <field name="count"
-                           attrs="{'invisible': [('end_type', '!=', 'count')],
-                                   'required':  [('end_type','=','count'), ('recurrency','=',True)]}"/>
-                    <field name="until"
-                           attrs="{'invisible': [('end_type', '!=', 'end_date')],
-                                   'required':  [('end_type','=','end_date'), ('recurrency','=',True)]}"/>
-                  </div>
-                </group>
+                    <button string="Cancelar reunión" type="object" name="action_cancel" states="reserved" class="btn-danger"
+                            attrs="{'invisible': [('user_can_manage', '=', False)]}"/>
 
-                <group attrs="{'invisible': [('rrule_type', '!=', 'monthly')]}">
-                  <label string="Día del mes" for="month_by"/>
-                  <div class="o_row">
-                    <field name="month_by"/>
-                    <field name="day"
-                           attrs="{'required': [('month_by','=','date'), ('rrule_type','=','monthly')],
-                                   'invisible': [('month_by','!=','date')]}"/>
-                    <field name="byday" string="El"
-                           attrs="{'required': [('recurrency','=',True), ('month_by','=','day'), ('rrule_type','=','monthly')],
-                                   'invisible': [('month_by','!=','day')]}"/>
-                    <field name="weekday" nolabel="1"
-                           attrs="{'required': [('recurrency','=',True), ('month_by','=','day'), ('rrule_type','=','monthly')],
-                                   'invisible': [('month_by','!=','day')]}"/>
-                  </div>
-                </group>
-              </div>
-            </page>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,reserved,cancelled"/>
+                </header>
+                <sheet>
+                    <field name="user_can_manage" invisible="1"/>
+                    <field name="is_user" invisible="1"/>
+                    <field name="is_room_responsible" invisible="1"/>
+                    <notebook>
+                        <page string="Detalles de la reunión">
+                            <group>
+                                <group>
+                                    <field name="name" class="o_form_label_bigger"/>
+                                    <field name="start_datetime"/>
+                                    <field name="duration_hours_user" string="Duración"/>
+                                    <field name="duration_hours_admin" string="Duración"/>
+                                    <field name="end_datetime" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="organizer_id"/>
+                                    <field name="room_id"
+                                           options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                    <field name="video_url"/>
+                                </group>
+                                <field name="description"/>
+                            </group>
+                        </page>
 
-          </notebook>
-        </sheet>
+                        <page string="Invitaciones">
+                            <separator string="Personal Interno"/>
+                            <field name="internal_invitation_ids" nolabel="1"
+                                   context="{'default_personal': 'internal'}">
+                                <tree editable="bottom">
+                                    <field name="employee_id"/>
+                                    <field name="department" readonly="1"/>
+                                    <field name="state" attrs="{'readonly':[('is_my_invitation','=',False)]}"/>
+                                    <field name="is_my_invitation" invisible="1"/>
+                                    <button name="action_send_invitation" string="Enviar" type="object"
+                                            class="btn-secondary"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <field name="allow_external_invites"/>
+                            </group>
+                            <separator string="Personal Externo"
+                                       attrs="{'invisible':[('allow_external_invites','=',False)]}"/>
+                            <field string="Personal Externo" name="external_invitation_ids"
+                                   attrs="{'invisible':[('allow_external_invites','=',False)]}" nolabel="1"
+                                   context="{'default_personal': 'external'}">
+                                <tree editable="bottom">
+                                    <field name="external_name"/>
+                                    <field name="external_company"/>
+                                    <field name="external_reason"/>
+                                    <field name="external_email"/>
+                                    <field name="state"/>
+                                    <button name="action_send_invitation" string="Enviar" type="object"
+                                            class="btn-secondary"/>
+                                </tree>
+                            </field>
 
-        <div class="oe_chatter">
-          <field name="message_follower_ids"/>
-          <field name="activity_ids"/>
-          <field name="message_ids"/>
-        </div>
-      </form>
-    </field>
-  </record>
+                            <div class="mt-2">
+                                <button name="action_send_all_invitations" string="Enviar a todos" type="object"
+                                        class="btn-primary"/>
+                            </div>
+                        </page>
 
-  <!-- BÚSQUEDA (si quieres abrir por defecto con aprobadas, puedes usar esta vista + contexto en acción) -->
-  <record id="view_meeting_search" model="ir.ui.view">
-    <field name="name">meeting.meeting.search</field>
-    <field name="model">meeting.meeting</field>
-    <field name="arch" type="xml">
-      <search>
-        <filter string="Aprobadas" name="approved" domain="[('state','=','approved')]"/>
-        <field name="name"/>
-        <field name="room_id"/>
-        <field name="organizer_id"/>
-        <field name="state"/>
-      </search>
-    </field>
-  </record>
+                        <page string="Opciones" groups="meeting_reservation.group_meeting_admin">
+                            <!-- Activar/desactivar recurrencia -->
+                            <group>
+                                <field name="recurrency"/>
+                            </group>
 
-  <!-- ACCIÓN principal (sin domain en calendar; puedes activar el filtro por defecto con search_default_approved) -->
-  <record id="action_meeting_meeting" model="ir.actions.act_window">
-    <field name="name">Reservas</field>
-    <field name="res_model">meeting.meeting</field>
-    <field name="view_mode">calendar,tree,form</field>
-    <!-- Si quieres abrir el calendario solo con Aprobadas, descomenta la línea de abajo -->
-    <!-- <field name="context">{'calendar_default_view': 'month', 'search_default_approved': 1}</field> -->
-    <field name="context">{'calendar_default_view': 'month'}</field>
-  </record>
+                            <!-- Configuración visible solo si recurrency = True -->
+                            <div attrs="{'invisible': [('recurrency','=',False)]}">
+                                <group>
+                                    <label for="interval"/>
+                                    <div class="o_col">
+                                        <div class="o_row">
+                                            <!-- Cada cuántas unidades se repite -->
+                                            <field name="interval"
+                                                   class="oe_inline"
+                                                   attrs="{'required': [('recurrency', '=', True)]}"/>
+                                            <!-- Unidad: diaria, semanal, mensual, anual -->
+                                            <field name="rrule_type"
+                                                   attrs="{'required': [('recurrency', '=', True)]}"/>
+                                        </div>
+
+                                        <!-- Días de la semana (usa los booleanos mon..sun del modelo) -->
+                                        <widget name="week_days"
+                                                attrs="{'invisible': [('rrule_type', '!=', 'weekly')]}"/>
+                                    </div>
+
+                                    <!-- Límite de la serie -->
+                                    <label string="Hasta" for="end_type"/>
+                                    <div class="o_row">
+                                        <field name="end_type"
+                                               attrs="{'required': [('recurrency', '=', True)]}"/>
+                                        <field name="count"
+                                               attrs="{
+                 'invisible': [('end_type', '!=', 'count')],
+                 'required':  [('end_type','=','count'), ('recurrency','=',True)]
+               }"/>
+                                        <field name="until"
+                                               attrs="{
+                 'invisible': [('end_type', '!=', 'end_date')],
+                 'required':  [('end_type','=','end_date'), ('recurrency','=',True)]
+               }"/>
+                                    </div>
+                                </group>
+
+                                <!-- Configuración mensual -->
+                                <group attrs="{'invisible': [('rrule_type', '!=', 'monthly')]}">
+                                    <label string="Día del mes" for="month_by"/>
+                                    <div class="o_row">
+                                        <field name="month_by"/>
+                                        <!-- Por fecha de mes (1..31) -->
+                                        <field name="day"
+                                               attrs="{
+                 'required': [('month_by','=','date'), ('rrule_type','=','monthly')],
+                 'invisible': [('month_by','!=','date')]
+               }"/>
+                                        <!-- Por ordinal + día de la semana (ej.: 1º lunes) -->
+                                        <field name="byday" string="El"
+                                               attrs="{
+                 'required': [('recurrency','=',True), ('month_by','=','day'), ('rrule_type','=','monthly')],
+                 'invisible': [('month_by','!=','day')]
+               }"/>
+                                        <field name="weekday" nolabel="1"
+                                               attrs="{
+                 'required': [('recurrency','=',True), ('month_by','=','day'), ('rrule_type','=','monthly')],
+                 'invisible': [('month_by','!=','day')]
+               }"/>
+                                    </div>
+                                </group>
+                            </div>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_meeting_search" model="ir.ui.view">
+        <field name="name">meeting.meeting.search</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="Reservadas" name="reserved" domain="[('state','=','reserved')]"/>
+                <filter string="Canceladas" name="cancelled" domain="[('state','=','cancelled')]"/>
+                <field name="name"/>
+                <field name="room_id"/>
+                <field name="organizer_id"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_meeting_meeting" model="ir.actions.act_window">
+        <field name="name">Reservas</field>
+        <field name="res_model">meeting.meeting</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="context">{'calendar_default_view': 'day'}</field>
+    </record>
 </odoo>

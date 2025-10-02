@@ -47,8 +47,12 @@ class AccountPaymentRequestPurchase(models.Model):
                              ], string="Tipo Manual", default=None, tracking=True)
 
     type_document=fields.Selection([('quota','Cuota'),
-                                     ('document','Documento')
+                                     ('document','Documento'),
+                                     ('work_acceptance', 'Aceptación de Trabajo')
                            ],string="Tipo de Documento",default="document",tracking=True)
+
+    picking_id = fields.Many2one("stock.picking", string="Recepción Relacionada")
+    work_acceptance_id = fields.Many2one("work.acceptance", string="Aceptación Relacionada")
 
     type_module=fields.Selection([('financial','Financiero'),
                            ('payslip','Nómina')],string="Tipo de Módulo",default="financial")
@@ -188,6 +192,32 @@ class AccountPaymentRequestPurchase(models.Model):
         readonly=True,
         tracking=True
     )
+
+    tipo_partner_pago = fields.Selection(
+        selection=[('local', 'Local'), ('exterior', 'Exterior')],
+        string="Tipo de Pago a Proveedor",
+        compute="_compute_tipo_partner_pago",
+        store=True
+    )
+
+    @api.depends('partner_id','partner_id.country_id')
+    @api.onchange('partner_id','partner_id.country_id')
+    def _compute_tipo_partner_pago(self):
+        for record in self:
+            tipo_partner_pago = 'local'
+            if record.type_module!='payslip':
+                tipo_partner_pago = 'exterior'
+                if record.partner_id.country_id.code == 'EC':
+                    tipo_partner_pago = 'local'
+                else:
+                    employee_srch=self.env["hr.employee"].sudo().search([('partner_id','=',record.partner_id.id)])
+                    if employee_srch:
+                        tipo_partner_pago = 'local'
+                    if not employee_srch:
+                        if record.invoice_id.l10n_latam_document_type_id:
+                            if record.invoice_id.l10n_latam_document_type_id.code=='03':
+                                tipo_partner_pago ="local"
+            record.tipo_partner_pago = tipo_partner_pago
 
     @api.onchange('default_mode_nomina_payment')
     def _onchange_default_mode_nomina_payment(self):
@@ -549,6 +579,7 @@ class AccountPaymentRequestPurchase(models.Model):
         last_payslip_type=None
         all_payslip_types=[]
         last_default_mode_payment=None
+        last_tipo_partner_pago=None
         for brw_each in self:
             if brw_each.state not in ('confirmed',):
                 raise ValidationError(_("No puedes seleccionar solicitudes no confirmadas.Revisar %s") % (brw_each.name,))
@@ -562,6 +593,10 @@ class AccountPaymentRequestPurchase(models.Model):
             if last_default_mode_payment:
                 if last_default_mode_payment != brw_each.default_mode_payment:
                     raise ValidationError(_("Solo puedes procesar solicitudes de una misma forma de pago"))
+            if brw_each.type_module != 'payslip':
+                if last_tipo_partner_pago:
+                    if last_tipo_partner_pago != brw_each.tipo_partner_pago:
+                        raise ValidationError(_("Solo puedes procesar una único tipo de pago 'local' o 'exterior' "))
             if last_company:
                 if last_company!=brw_each.company_id:
                     raise ValidationError(_("Solo puedes procesar solicitudes de una sola empresa"))
@@ -580,11 +615,8 @@ class AccountPaymentRequestPurchase(models.Model):
                         _("La solicitud %s con %s debe estar en estado publicado") % (brw_each.id,brw_each.invoice_id.name))
             if not brw_each.checked:
                 raise ValidationError(_("No puedes pagar solicitudes no verificadas .ver solicitud # %s") % (brw_each.id,) )
-
-
             if brw_each.partner_id:
                 brw_each.partner_id.validate_partner_for_transaction(company_id=brw_each.company_id.id)
-
             if brw_each.type_module=='payslip':
                 if brw_each.payment_employee_id:
                     if last_payslip_type is None:
@@ -598,6 +630,7 @@ class AccountPaymentRequestPurchase(models.Model):
                         set(all_payslip_types + ["liquidation"]))
             last_company = brw_each.company_id
             last_default_mode_payment= brw_each.default_mode_payment
+            last_tipo_partner_pago=brw_each.tipo_partner_pago
             lst_ids.append(brw_each.id)
         if len(all_payslip_types)>1:
             dct_payslip={
@@ -615,7 +648,8 @@ class AccountPaymentRequestPurchase(models.Model):
         context = {"active_id":lst_ids[0],
                    "active_ids":lst_ids,
                    "active_model":self._name,
-                   'hide_bank_account':last_default_mode_payment!='bank'
+                   'hide_bank_account':last_default_mode_payment!='bank',
+                   'default_tipo_partner_pago':last_tipo_partner_pago
                     }
         v= {
                 'name': "GENERACION DE PAGOS MULTIPLES",
@@ -633,10 +667,14 @@ class AccountPaymentRequestPurchase(models.Model):
         lst_ids = []
         last_company = self.env["res.company"]
         last_type=None
+        last_tipo_partner_pago=None
         for brw_each in self:
             if last_company:
                 if last_company != brw_each.company_id:
                     raise ValidationError(_("Solo puedes procesar solicitudes de una sola empresa"))
+            if last_tipo_partner_pago:
+                if last_tipo_partner_pago != brw_each.tipo_partner_pago:
+                    raise ValidationError(_("Solo puedes procesar una único tipo de pago 'local' o 'exterior' "))
             if last_type:
                 if last_type != brw_each.type:
                     raise ValidationError(_("Solo puedes procesar tipos de una sola empresa"))
@@ -661,7 +699,7 @@ class AccountPaymentRequestPurchase(models.Model):
                 lst_ids.append(brw_each.invoice_id.id)
             last_company = brw_each.company_id
             last_type = brw_each.type
-
+            last_tipo_partner_pago= brw_each.tipo_partner_pago
         context = {"active_id": lst_ids[0],
                    "active_ids": lst_ids,
                    "active_model": self._name
@@ -752,8 +790,8 @@ class AccountPaymentRequestPurchase(models.Model):
                                              compute="get_payment_line_amount_real_onchange")
 
     @api.depends('enable_other_account', 'payment_line_ids', 'amount',
-                 'payment_line_ids.account_id', 'payment_line_ids.partner_id', 'payment_line_ids.debit',
-                 'payment_line_ids.credit')
+                 'payment_line_ids.account_id', 'payment_line_ids.partner_id',
+                 'payment_line_ids.debit', 'payment_line_ids.credit')
     def get_payment_line_amount_real_onchange(self):
         DEC = 2
         for record in self:

@@ -101,6 +101,27 @@ class PurchaseOrder(models.Model):
         string='Requisiciones de Materiales',
         copy=False
     )
+    rendimiento = fields.Integer('Cant. por Dia', help='Debe Ingresar la cantidad por dia')
+    equipos = fields.Integer('Cant. Equipos', help='Debe Ingresar la cantidad de equipos')
+    personal_min_equipo = fields.Integer('Personal Min. por Equipo', help='Debe Ingresar el personal minimo por equipo')
+    duracion_estimada = fields.Integer('Duracion Estimada', help='Duracion estimada de Obra')
+    tipo_pedido = fields.Selection(
+        [("administrativo", "Administrativo"), ("presidencia", "Presidencia"), ("proyecto", "Proyecto")],
+        string="Tipo de Pedido",
+        default="proyecto",
+    )
+    fiscalizador_id = fields.Many2one(
+        comodel_name="res.users",
+        copy=False,
+        tracking=True,
+        index=True,
+    )
+    tipo_contrato = fields.Selection(
+        [("por ejecutar", "Por Ejecutar"), ("en ejecucion", "En Ejecucion"), ("ejecutado", "Ejecutado")],
+        string="Tipo de Contrato",
+        copy=False,
+        tracking=True,
+    )
 
     @api.model_create_multi
     def create(self, vals_list):

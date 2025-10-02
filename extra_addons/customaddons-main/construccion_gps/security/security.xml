@@ -78,6 +78,10 @@
             <field name="name">Otros</field>
             <field name="category_id" ref="module_category_apus"/>
         </record>
-
+        <!-- Grupo Fiscalizadores -->
+        <record id="group_apus_ficalizadores" model="res.groups">
+            <field name="name">Fiscalizadores</field>
+            <field name="category_id" ref="module_category_apus"/>
+        </record>
     </data>
 </odoo>

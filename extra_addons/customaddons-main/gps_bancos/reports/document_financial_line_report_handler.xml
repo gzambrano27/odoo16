@@ -18,7 +18,7 @@
 <field name="line_template">gps_bancos.line_template_financial_report</field>
             <field name="column_ids">
 
-                <record id="document_financial_line_quota_c_full" model="account.report.column">
+            <record id="document_financial_line_quota_c_full" model="account.report.column">
                 <field name="name">Cuota</field>
                 <field name="expression_label">quota</field>
                 <field name="figure_type">integer</field>

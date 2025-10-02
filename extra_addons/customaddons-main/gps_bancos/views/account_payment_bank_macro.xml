@@ -153,7 +153,13 @@
 
                     <button name="generate_file_macro" type="object"
         string="Generar Macro" icon="fa-file"
-        attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','in',('done','cancelled' ))]}"
+        attrs="{'invisible':['|','|',('tipo_partner_pago','=','exterior'),('default_mode_payment','!=','bank'),('state','in',('done','cancelled' ))]}"
+                            groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
+        />
+
+                    <button name="generate_file_macro_ext" type="object"
+        string="Generar Macro" icon="fa-file-text-o"
+        attrs="{'invisible':['|','|',('tipo_partner_pago','=','local'),('default_mode_payment','!=','bank'),('state','in',('done','cancelled' ))]}"
                             groups="gps_bancos.group_pagar_sol_pagos,gps_bancos.group_admin_sol_pagos"
         />
 
@@ -296,7 +302,7 @@
                         <b>Este diario</b>  generará un archivo de carga al banco
                     </div>
 
-                        <field name="mode_macro" widget="radio" attrs="{'readonly':[('enable_value_payments','!=',True)]}"/>
+                        <field name="mode_macro" invisible="1" widget="radio" attrs="{'readonly':[('enable_value_payments','!=',True)]}"/>
                        <field name="comments"  attrs="{'readonly':[('state','!=','draft')]}"/>
                       </group>
                     <group>
@@ -319,6 +325,7 @@
 
                 <field name="ref" attrs="{'invisible':['|',('default_mode_payment','!=','bank'),('state','!=','done')]}" placeholder="REFERENCIA..."/>
                         <field name="type_module"  force_save="1" invisible="1" />
+                        <field name="tipo_partner_pago" readonly="1" />
                     </group>
                 </group>
                 <newline/>
@@ -384,7 +391,7 @@
 
                             </group>
                             <newline/>
-                            <field name="summary_ids" readonly="1" force_save="1">
+                            <field name="summary_ids" attrs="{'invisible':[('tipo_partner_pago','!=','local')] }" force_save="1" readonly="1">
                                 <tree string="Resumen" decoration-it="not ref" create="false" delete="false" edit="false">
                             <field name="name" optional="hide"/>
                              <field name="partner_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
@@ -495,6 +502,133 @@
 
                         </form>
                             </field>
+
+                            <newline/>
+
+
+                               <field name="summary_ids" attrs="{'readonly':[('state','in',('done','cancelled'))],'invisible':[('tipo_partner_pago','=','local')] }" force_save="1" >
+                                <tree string="Resumen" editable="bottom" decoration-it="not ref" create="false" delete="false" edit="true">
+                            <field name="name" force_save="1"    readonly="1" optional="hide"/>
+                             <field name="partner_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="bank_account_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                  <field name="bank_id"  optional="hide" force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                           <field name="bank_acc_number" optional="hide" force_save="1"    readonly="1"/>
+           <field name="bank_tipo_cuenta" optional="hide" force_save="1"    readonly="1"/>
+                           <field name="bank_intermediary_id"
+                                  options="{'no_create':True,'no_edit':True,'no_open':True}"
+                           />
+
+
+               <field name="tercero" optional="hide" force_save="1"    readonly="1"/>
+              <field name="identificacion_tercero" optional="hide" force_save="1"    readonly="1"
+              attrs="{'invisible':[('tercero','!=',True)]}"
+              />
+                                      <field name="nombre_tercero" optional="hide" force_save="1"    readonly="1"
+                                      attrs="{'invisible':[('tercero','!=',True)]}"
+
+                                      />
+                                      <field name="l10n_latam_identification_tercero_id" options="{'no_create':True,'no_edit':True,'no_open':True}"
+                                             attrs="{'invisible':[('tercero','!=',True)]}"
+                                             optional="hide" force_save="1"    readonly="1"/>
+
+  <field name="amount" sum="total" force_save="1"    readonly="1"/>
+<field name="line_ids" force_save="1"  invisible="1" />
+                                    <field name="ref" optional="hide"/>
+                                    <field name="comments" />
+
+                                     <field name="is_intercompany" optional="hide"/>
+                                     <field name="accredited_other_company" optional="hide"/>
+                                     <field name="intercompany_payment_ref" optional="hide"/>
+
+
+<button name="%(action_account_payment_request_workflow_wizard)d"
+                        help="Reversar"
+                        type="action"
+        icon="fa-rotate-left" attrs="{'invisible':['|',('reversed','=',True),('parent.state','!=','done')]}"
+                         />
+
+                                    <button help="Enviar" type="object" name="send_mail"
+                                            icon="fa-envelope-o"
+                                          confirm="Al proceder, se enviará una notificación por correo electrónico al proveedor a la dirección de correo registrada, informándoles sobre el pago correspondiente.¿Estás seguro?"
+                                            attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"/>
+   <field name="reversed" optional="hide" />
+             <field name="reversed_motive_id" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                <field name="reversed_comments" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+                     <field name="reversed_date" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+      <field name="reversed_ref" optional="hide" attrs="{'invisible':[('reversed','!=',True)]}" />
+
+<button name="%(gps_bancos.action_report_detalle_pago)d"
+        type="action"
+        attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"
+        help="Imprimir" icon="fa-print"
+        context="{'active_ids': [active_id]}"/>
+
+
+                        </tree>
+                                      <form string="Resumen">
+                                          <header>
+                                              <button name="%(gps_bancos.action_report_detalle_pago)d"
+        type="action"
+        attrs="{'invisible':['|','|',('parent.type_module','=','payslip'),('reversed','=',True),('parent.state','!=','done')]}"
+        string="Imprimir" icon="fa-print"
+        context="{'active_ids': [active_id]}"/>
+                                          </header>
+                                          <group>
+                                          <group>
+                            <field name="name" string="# ID"/>
+                             <field name="partner_id"  force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                             <field name="bank_account_id" force_save="1"    readonly="1"  domain="[('partner_id','=',partner_id)]" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                                          </group>
+                                              <group>
+                  <field name="bank_id"  optional="hide" force_save="1"    readonly="1" options="{'no_create':True,'no_edit':True,'no_open':True}"  />
+                           <field name="bank_acc_number" optional="hide" force_save="1"    readonly="1"/>
+           <field name="bank_tipo_cuenta" optional="hide" force_save="1"    readonly="1"/>
+
+                                                             <field name="tercero" optional="hide" force_save="1"    readonly="1"/>
+              <field name="identificacion_tercero" optional="hide" force_save="1"    readonly="1"
+              attrs="{'invisible':[('tercero','!=',True)]}"
+              />
+                                      <field name="nombre_tercero" optional="hide" force_save="1"    readonly="1"
+                                      attrs="{'invisible':[('tercero','!=',True)]}"
+
+                                      />
+                                      <field name="l10n_latam_identification_tercero_id"
+                                             attrs="{'invisible':[('tercero','!=',True)]}"
+                                             optional="hide" force_save="1"    readonly="1"/>
+
+                                                         <field name="amount" sum="total" force_save="1"    readonly="1"/>
+                                       <field name="ref" readonly="1"/>
+
+                                                                <field name="reversed" readonly="1" />
+             <field name="reversed_motive_id" attrs="{'invisible':[('reversed','!=',True)]}" options="{'no_create':True,'no_edit':True,'no_open':True}" />
+                <field name="reversed_comments" attrs="{'invisible':[('reversed','!=',True)]}" />
+                     <field name="reversed_date" attrs="{'invisible':[('reversed','!=',True)]}" />
+      <field name="reversed_ref" attrs="{'invisible':[('reversed','!=',True)]}" />
+<field name="type_module" invisible="1"/>
+
+                                                    <field name="bank_intermediary_id"
+                                  options="{'no_create':True,'no_edit':True,'no_open':True}"
+                           />
+
+                                          </group>
+                                           </group>
+                                          <newline/>
+                 <notebook>
+                     <page string="Solicitudes">
+                           <field name="line_ids" readonly="1" force_save="1" colspan="4"
+                                          context="{'form_view_ref':'gps_bancos.account_payment_bank_macro_line_view_form','tree_view_ref':'gps_bancos.account_payment_bank_macro_line_view_tree'}"
+                                               />
+                 <newline/>
+                     </page>
+                     <page string="Liquidación" attrs="{'readonly':[('type_module','!=','financial')]}">
+                               <field name="detalle_pago_html" colspan="4" nolabel="1"/>
+                     </page>
+                 </notebook>
+
+                        </form>
+                            </field>
+
+
                         </page>
                            <page name="pge_history" string="Historial" attrs="{'invisible':[('id','&lt;=',0)]}">
                             <group>
@@ -535,11 +669,11 @@ attrs="{'invisible':[('attachment_id','=',False)]}"
 
     <record id="account_payment_bank_macro_view_action"
             model="ir.actions.act_window">
-        <field name="name">Pagos a Proveedores</field>
+        <field name="name">Pagos a Proveedores Locales</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment.bank.macro</field>
         <field name="view_mode">tree,form,calendar</field>
-        <field name="domain">[('type_module','=','financial')]</field>
+        <field name="domain">[('type_module','=','financial'),('tipo_partner_pago','=','local')]</field>
         <field name="context">{'search_default_is_draft':1,'search_default_is_generated':1,'search_default_is_confirmed':1,'hide_parent':False}</field>
         <field name="view_id"
                ref="account_payment_bank_macro_view_tree"/>
@@ -577,6 +711,52 @@ attrs="{'invisible':[('attachment_id','=',False)]}"
                ref="account_payment_bank_macro_view_action"/>
     </record>
  
+ <!--  -->
+
+    <record id="account_payment_bank_macro_ext_view_action"
+            model="ir.actions.act_window">
+        <field name="name">Pagos a Proveedores del Exterior</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment.bank.macro</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="domain">[('type_module','=','financial'),('tipo_partner_pago','=','exterior')]</field>
+        <field name="context">{'search_default_is_draft':1,'search_default_is_generated':1,'search_default_is_confirmed':1,'hide_parent':False}</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="search_view_id"
+               ref="account_payment_bank_macro_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_ext_view_tree_action">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_tree"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_ext_view_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_ext_view_form_action">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_form"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_ext_view_action"/>
+    </record>
+
+<record model="ir.actions.act_window.view"
+            id="account_payment_bank_macro_ext_view_calendar_action">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">calendar</field>
+        <field name="view_id"
+               ref="account_payment_bank_macro_view_calendar"/>
+        <field name="act_window_id"
+               ref="account_payment_bank_macro_ext_view_action"/>
+    </record>
+
 <!-- -->
 
 
@@ -587,7 +767,7 @@ attrs="{'invisible':[('attachment_id','=',False)]}"
         <field name="res_model">account.payment.bank.macro</field>
         <field name="view_mode">tree,form,calendar</field>
         <field name="domain">[('type_module','=','payslip')]</field>
-        <field name="context">{'search_default_is_generated':1,'hide_parent':False}</field>
+        <field name="context">{'search_default_is_generated':1,'hiGPS_Vde_parent':False}</field>
         <field name="view_id"
                ref="account_payment_bank_macro_view_tree"/>
         <field name="search_view_id"

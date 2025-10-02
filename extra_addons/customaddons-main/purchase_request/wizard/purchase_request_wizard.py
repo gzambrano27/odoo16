@@ -47,67 +47,112 @@ class PurchaseRequestWizard(models.TransientModel):
         return True
     
     def process_file(self):
-        OBJ_PRODUCT = self.env["product.product"].sudo()
+        OBJ_PRODUCT   = self.env["product.product"].sudo()
         OBJ_ANALITICA = self.env["account.analytic.account"].sudo()
-        OBJ_LOCATION = self.env["stock.location"].sudo()
-        OBJ_LINE = self.env["purchase.request.line"].sudo()
-        ACTIVE_LINE_ID, Producto, Descripcion, CtaAnalitica, Unidad, Cantidad,Empleados,UnSoloCustodio = 0, 1, 2, 3, 4, 5,6,7
-        for brw_each in self:
+        OBJ_LINE      = self.env["purchase.request.line"].sudo()
+
+        # Índices de columnas
+        COL_ID, COL_PROD, COL_DESC, COL_CTA, COL_UND, COL_QTY, COL_EMPS, COL_SOLO = 0, 1, 2, 3, 4, 5, 6, 7
+
+        # --- helpers ---
+        def to_number(value):
+            if value is None:
+                raise ValueError("vacío")
+            if isinstance(value, (int, float)):
+                return float(value)
+            if isinstance(value, str):
+                s = value.strip().replace(' ', '')
+                if not s:
+                    raise ValueError("vacío")
+                # Normaliza 1.234,56 y 1,234.56
+                if ',' in s and '.' in s:
+                    if s.rfind(',') > s.rfind('.'):
+                        s = s.replace('.', '').replace(',', '.')
+                    else:
+                        s = s.replace(',', '')
+                else:
+                    s = s.replace(',', '.')
+                return float(s)
+            raise ValueError("tipo no soportado")
+
+        def to_bool(value):
+            return str(value or '').strip().lower() in ('si', 'sí', 'true', '1', 'yes', 'x')
+
+        HEADER_ROW = 3        # fila donde están los títulos (#ID, Producto, ...)
+        FIRST_DATA_ROW = HEADER_ROW + 1
+
+        for wiz in self:
             line_ids = []
-            ext = flObj.get_ext(brw_each.file_name)
+            ext = flObj.get_ext(wiz.file_name)
             fileName = flObj.create(ext)
-            flObj.write(fileName, flObj.decode64(brw_each.file))
-    
-            # Cargar el archivo con openpyxl
+            flObj.write(fileName, flObj.decode64(wiz.file))
+
             book = load_workbook(fileName, data_only=True)
-            sheet = book.active  # Selecciona la hoja activa
-        
-            for row_index, row in enumerate(sheet.iter_rows(min_row=4, values_only=True), start=4):  # Comienza desde la fila 4
-                line_value = row[ACTIVE_LINE_ID]
-                line_id = int(line_value) if isinstance(line_value, (int, float)) else 0
+            sheet = book.active
 
-                # Este código se mantiene igual que el original, adaptando cómo se acceden a los valores de las celdas.
-                default_code = str(row[Producto] or '').strip()
-                employee_raw = row[Empleados] or ''
-                employee_codes = [
-                    ('0' + code.strip()) if len(code.strip()) == 9 else code.strip()
-                    for code in str(employee_raw).split(',')
-                    if code.strip()
-                ]
-                employee_codes = list(set(employee_codes))  # 🔁 Elimina duplicados
+            for row_index, row in enumerate(
+                sheet.iter_rows(min_row=FIRST_DATA_ROW, values_only=True),
+                start=FIRST_DATA_ROW
+            ):
+                # Salta filas completamente vacías
+                if not row or not any(c not in (None, '') for c in row):
+                    continue
 
+                default_code = (row[COL_PROD] or '').strip()
+
+                # Salta si no hay código o si por alguna razón se coló la fila de títulos
+                if not default_code or default_code.lower() == 'producto':
+                    continue
+
+                # Lee/castea cantidad
+                try:
+                    quantity = to_number(row[COL_QTY])
+                except Exception:
+                    raise ValidationError(_("La cantidad debe ser numérica. Revisa la fila %s") % row_index)
+
+                # Empleados
+                employee_raw = row[COL_EMPS] or ''
+                employee_codes = [c.strip() for c in str(employee_raw).split(',') if c.strip()]
+                employee_codes = [('0' + c) if len(c) == 9 else c for c in employee_codes]
+                # elimina duplicados conservando orden
+                employee_codes = list(dict.fromkeys(employee_codes))
                 employee_ids = self.env['hr.employee'].sudo().search([('identification_id', 'in', employee_codes)])
                 if len(employee_codes) != len(employee_ids):
-                    raise UserError(f"Algunos empleados no encontrados en: {employee_codes}")
-                un_solo_custodio = row[UnSoloCustodio]
-                qty_value = row[Cantidad]
-                descripcion = row[Descripcion]
-                ctaanalitica = row[CtaAnalitica]
-                quantity = qty_value
-                if not isinstance(qty_value, (int, float)):
-                    raise ValidationError(_("La cantidad debe ser numérica. Revisa la fila %s") % (row_index,))
-                if not default_code:
-                    continue
-                srch_product = OBJ_PRODUCT.search([('default_code', '=', default_code)])
+                    raise UserError(_("Algunos empleados no encontrados en: %s") % employee_codes)
+
+                # Producto
+                srch_product = OBJ_PRODUCT.search([('default_code', '=', default_code)], limit=2)
                 if not srch_product:
                     raise ValidationError(_("No hay producto con código %s. Revisa la fila %s") % (default_code, row_index))
                 if len(srch_product) > 1:
-                    raise ValidationError(_("Existe más de un producto con código %s en la base de datos. Revisa la fila %s") % (default_code, row_index))    
-                srch_cta = ''
+                    raise ValidationError(_("Existe más de un producto con código %s en la base de datos. Revisa la fila %s") % (default_code, row_index))
+                product = srch_product[0]
+
+                # Cuenta analítica (opcional)
+                analytic_distribution = {}
+                ctaanalitica = (row[COL_CTA] or '').strip()
                 if ctaanalitica:
-                    srch_cta = OBJ_ANALITICA.search([('name', '=', ctaanalitica),('company_id', '=', self.company_id.id)])
-                    if not srch_cta:
-                        raise ValidationError(_("No hay cuenta analitica con nombre %s. Revisa la fila %s") % (ctaanalitica, row_index))
+                    acc = OBJ_ANALITICA.search([('name', '=', ctaanalitica), ('company_id', '=', wiz.company_id.id)], limit=1)
+                    if not acc:
+                        raise ValidationError(_("No hay cuenta analítica con nombre %s. Revisa la fila %s") % (ctaanalitica, row_index))
+                    analytic_distribution[str(acc.id)] = 100
+
+                # ID de línea (para actualizar si viene)
+                line_value = row[COL_ID]
+                line_id = int(line_value) if isinstance(line_value, (int, float)) else 0
 
                 values = {
                     "product_qty": quantity,
-                    "product_id": srch_product[0].id,
-                    "name": descripcion,
-                    'product_uom_id': srch_product[0].uom_po_id.id,
-                    'analytic_distribution': {str(srch_cta[0].id): 100},
+                    "product_id": product.id,
+                    "name": row[COL_DESC] or '',
+                    'product_uom_id': product.uom_po_id.id,
                     'employees_ids': [(6, 0, employee_ids.ids)],
-                    'un_solo_custodio': un_solo_custodio,
+                    'un_solo_custodio': to_bool(row[COL_SOLO]),
                 }
-                line_ids.append((1 if line_id > 0 else 0, line_id, values))
-            brw_each.movement_id.write({"line_ids": line_ids})
+                if analytic_distribution:
+                    values['analytic_distribution'] = analytic_distribution
+
+                line_ids.append((1, line_id, values) if line_id else (0, 0, values))
+
+            wiz.movement_id.write({"line_ids": line_ids})
         return True

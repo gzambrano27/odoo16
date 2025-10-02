@@ -11,6 +11,7 @@ class ResPartnerBankRequest(models.Model):
     acc_holder_name = fields.Char("Nombre del titular de la cuenta", tracking=True)
     acc_number = fields.Char("Número de cuenta", tracking=True)
     acc_type = fields.Selection([('iban', 'IBAN'), ('other', 'Otro')], string="Tipo", tracking=True)
+    iban_number = fields.Char("# IBAN")
     active = fields.Boolean("Activo", default=True, tracking=True)
     allow_out_payment = fields.Boolean("Enviar dinero",default=True, tracking=True)
     bank_bic = fields.Char("Código BIC/SWIFT", tracking=True)
@@ -72,6 +73,7 @@ class ResPartnerBankRequest(models.Model):
                 'partner_email',
                 'active',
                 'acc_holder_name',
+                'iban_number'
             ]
             for field in field_names:
                 if hasattr(self.partner_bank_id, field):
@@ -174,6 +176,7 @@ class ResPartnerBankRequest(models.Model):
                 'sequence': record.sequence,
                 'tercero': record.tercero,
                 'tipo_cuenta': record.tipo_cuenta,
+                'iban_number':record.iban_number
             }
 
             partner_bank_id=self.env['res.partner.bank'].create(vals)

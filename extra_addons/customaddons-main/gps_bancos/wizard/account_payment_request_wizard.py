@@ -117,16 +117,48 @@ class AccountPaymentRequestWizard(models.Model):
 
     default_mode_payment = fields.Selection(DEFAULT_MODE_PAYMENTS, string="Forma de Pago",default=_get_default_mode_payment)
 
-    @api.onchange('company_id')
+    tipo_partner_pago = fields.Selection(
+        selection=[('local', 'Local'), ('exterior', 'Exterior')],
+        string="Tipo de Pago a Proveedor", default="local", required=True
+    )
+
+    @api.onchange('company_id', 'tipo_partner_pago', 'default_mode_payment')
     def onchange_company_id(self):
-        srch=self.env["account.configuration.payment"].sudo().search([('company_id','=',self.company_id.id)])
-        conf_payment_id= srch and srch.id or False
-        self.conf_payment_id=conf_payment_id
-        self.enable_journal_ids=[(6,0,[])]
-        self.enable_bank_journal_ids=[(6,0,[])]
-        if self.conf_payment_id:
-            self.enable_journal_ids=[(6,0,self.conf_payment_id.journal_ids.ids)]
-            self.enable_bank_journal_ids=[(6,0,self.conf_payment_id.mapped('bank_conf_ids').mapped('journal_ids').ids)]
+        self.enable_journal_ids = [(6, 0, [])]
+        self.enable_bank_journal_ids = [(6, 0, [])]
+        self.conf_payment_id = False
+
+        if not self.company_id:
+            return
+
+        # Buscar configuración por compañía
+        conf_payment = self.env["account.configuration.payment"].sudo().search([
+            ('company_id', '=', self.company_id.id)
+        ], limit=1)
+
+        if conf_payment:
+            self.conf_payment_id = conf_payment.id
+
+            # Todos los diarios configurados
+            journals = conf_payment.journal_ids
+
+            # Aplicar filtro por tipo de proveedor
+            if self.tipo_partner_pago == 'local':
+                journals = journals.filtered(lambda j: j.for_local_payment)
+            elif self.tipo_partner_pago == 'exterior':
+                journals = journals.filtered(lambda j: j.for_exterior_payment)
+
+            # Aplicar filtro por forma de pago
+            if self.default_mode_payment == 'check':
+                journals = journals.filtered(lambda j: j.for_check)
+            elif self.default_mode_payment == 'bank':
+                journals = journals.filtered(lambda j: j.for_bank)
+            elif self.default_mode_payment == 'credit_card':
+                journals = journals.filtered(lambda j: j.for_tc)
+
+            # Asignar diarios habilitados
+            self.enable_journal_ids = [(6, 0, journals.ids)]
+            self.enable_bank_journal_ids = [(6, 0, conf_payment.mapped('bank_conf_ids.journal_ids').ids)]
 
     @api.onchange('company_id','journal_id','conf_payment_id','enable_journal_ids','enable_bank_journal_ids')
     def onchange_journal_id(self):
@@ -200,7 +232,8 @@ class AccountPaymentRequestWizard(models.Model):
             "max_amount_payments": brw_each.max_amount_payments,
             "mode_macro":"group",
             "type_module": "financial",
-            'default_mode_payment':brw_each.default_mode_payment
+            'default_mode_payment':brw_each.default_mode_payment,
+            "tipo_partner_pago":brw_each.tipo_partner_pago,
         }
         line_ids=[(5,)]
         if round(self.dif_max_amount_payments,DEC)<0.00:

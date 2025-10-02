@@ -32,6 +32,9 @@ class CrmLead(models.Model):
 
     def button_approve(self):
         for lead in self:
+            # Validación: no se puede revisar si el score es 0
+            if not lead.score_percent or lead.score_percent == 0:
+                raise ValidationError(_("No puedes marcar como 'Revisado' si el puntaje es 0."))
             lead.revisado = True
         # Enviar el correo
         # obj_correo = self.env['crm.correo']
@@ -119,6 +122,7 @@ class CrmLead(models.Model):
         ('3' ,'CONSTRUCCION'),
         ('4' ,'MINERIA')
     ], string='Division', default='3')
+    division_id = fields.Many2one('crm.division.proyecto','Division')
     categoria_proyecto = fields.Selection([
         ('1' ,'CONSULTORIA'),
         ('2' ,'ELECTRIFICACION'),
@@ -135,7 +139,12 @@ class CrmLead(models.Model):
         ('7' ,'GAS'),
         ('8' ,'OTROS')
         ], string='Tipo Proyecto', required=True, default='1' )
-    tipo_proyecto_id = fields.Many2one('centro.costo.tipo.proyecto','Tipo Proyecto')
+    #tipo_proyecto_id = fields.Many2one('centro.costo.tipo.proyecto','Tipo Proyecto')
+    tipo_proyecto_id = fields.Many2one(
+        'centro.costo.tipo.proyecto',
+        string="Tipo Proyecto",
+        domain="[('division_id','=',division_id)]"
+    )
     fecha_entrega = fields.Date('Fecha de Entrega de Oferta')
     codigo_presupuesto = fields.Char('Código de Presupuesto', unique = True)
     novedades_varias = fields.Char('Novedades Varias')
@@ -166,21 +175,54 @@ class CrmLead(models.Model):
         ("warning", "Amarillo"),
         ("success", "Verde"),
     ], string="Color de Rango", compute="_compute_rango_color", store=True)
+    evaluacion_cualitativa = fields.Selection(
+        [
+            ("0", "0%"),
+            ("100", "100%"),
+        ],
+        string="Evaluación Cualitativa",
+        help="Evaluación manual cualitativa que complementa el score obtenido.",
+    )
 
+    score_final = fields.Float(
+        string="Puntaje Final",
+        compute="_compute_score_final",
+        store=True,
+    )
 
     _sql_constraints = models.Model._sql_constraints + [
         ('presupuesto_uniq', 'UNIQUE(codigo_presupuesto)', 'El codigo de Presupuesto debe de ser único!'),
         ('check_probability', 'check(probability >= 0 and probability <= 100)','The probability of closing the deal should be between 0% and 100%!')
     ]
 
-    @api.depends("score_percent", "company_id")
+    def unlink(self):
+        # Solo gerencia CRM puede eliminar oportunidades
+        if not self.env.user.has_group("gps_crm.group_crm_manager_custom"):
+            raise ValidationError(_("No tienes permisos para eliminar oportunidades. Solo el grupo Gerencia CRM puede hacerlo."))
+
+        return super(CrmLead, self).unlink()
+
+    @api.depends("score_percent", "evaluacion_cualitativa")
+    def _compute_score_final(self):
+        for lead in self:
+            if lead.evaluacion_cualitativa:
+                cualitativo = float(lead.evaluacion_cualitativa)
+                if lead.score_percent:
+                    lead.score_final = (lead.score_percent + cualitativo) / 2
+                else:
+                    lead.score_final = cualitativo
+            else:
+                # Si aún no ingresan la cualitativa, dejamos el score obtenido como final
+                lead.score_final = lead.score_percent or 0.0
+
+    @api.depends("score_final", "company_id")
     def _compute_rango_color(self):
         for lead in self:
             lead.rango_color = False
-            if lead.score_percent:
+            if lead.score_final:
                 rango = self.env["rangos.crm"].search([
-                    ('margin_from', '<=', round(lead.score_percent, 2)),
-                    ('margin_to', '>=', round(lead.score_percent, 2)),
+                    ('margin_from', '<=', round(lead.score_final, 2)),
+                    ('margin_to', '>=', round(lead.score_final, 2)),
                     ('type', '=', 'lead'),
                     ('company_id', '=', lead.company_id.id),
                 ], limit=1)
@@ -233,6 +275,13 @@ class CrmLead(models.Model):
 
     @api.model
     def create(self, vals):
+        if isinstance(vals, dict):
+            vals_list = [vals]
+
+        for vals in vals_list:
+            if vals.get("type") == "opportunity":
+                raise ValidationError(_("No puedes crear una oportunidad directamente. Primero debes crear un Lead y luego convertirlo en oportunidad."))
+        
         rec = super().create(vals)
         if rec.lead_project_id and not rec.lead_project_sequence:
             next_num = rec.lead_project_id.sequence_id.next_by_id()
@@ -261,6 +310,29 @@ class CrmLead(models.Model):
                 next_num = rec.lead_project_id.sequence_id.next_by_id()
                 rec.lead_project_sequence = f"{rec.lead_project_id.code}-{next_num}"
         return res
+    
+    def _message_post_after_hook(self, message, msg_vals):
+        """
+        Se ejecuta al final de message_post. Aquí forzamos que el write_uid/write_date
+        del lead quede con el usuario que realmente publicó la nota.
+        """
+        res = super()._message_post_after_hook(message, msg_vals)
+
+        # Usuario real que publicó la nota (autor del mensaje)
+        # message.author_id es un partner; si tiene usuario vinculado lo tomamos
+        author_user = message.author_id.user_ids[:1]
+        user_id = author_user.id or self.env.uid
+        now = fields.Datetime.now()
+
+        # Forzamos la actualización directamente en BD para no cambiar otros campos
+        # y para que quede como la última escritura real (no OdooBot).
+        for lead in self:
+            self.env.cr.execute(
+                "UPDATE crm_lead SET write_uid=%s, write_date=%s WHERE id=%s",
+                (user_id, now, lead.id),
+            )
+
+        return res
 
 class CrmLeadContactos(models.Model):
     _name = "crm.lead.contactos"
@@ -281,4 +353,3 @@ class CrmLeadBitacora(models.Model):
     contacto = fields.Char("contacto")
     detalles = fields.Char("detalles")
     lead_id = fields.Many2one("crm.lead", "Proyecto de Venta")
-

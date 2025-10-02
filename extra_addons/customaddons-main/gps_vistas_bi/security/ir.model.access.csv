@@ -3,3 +3,5 @@ access_accounts_receivable_user,access.accounts.receivable.view,model_accounts_r
 access_accounts_payable_user,access.accounts.payable.view,model_accounts_payable_view,account.group_account_user,1,0,0,0
 access_res_company_view_user,access.res.company.view,model_res_company_view,account.group_account_user,1,0,0,0
 access_accounts_analytic_user,access.accounts.analytic.view,model_accounts_analytic_view,account.group_account_user,1,0,0,0
+access_purchase_order_view_user,access.purchase.order.view,model_purchase_order_view,account.group_account_user,1,0,0,0
+access_account_move_view_user,access.account.move.view,model_account_move_view,account.group_account_user,1,0,0,0

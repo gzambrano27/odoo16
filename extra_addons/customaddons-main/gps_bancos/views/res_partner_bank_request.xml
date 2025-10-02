@@ -49,6 +49,10 @@
             <field name="acc_number" widget="iban" required="1"
                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
+              <field name="iban_number" widget="iban" required="0"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
+
             <field name="tercero"
                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
@@ -112,6 +116,8 @@
            <field name="tipo_cuenta" />
         <field name="acc_holder_name" invisible="1"/>
         <field name="acc_number"/>
+             <field name="iban_number"/>
+
        <field name="tercero" />
 
 
@@ -246,6 +252,8 @@
        readonly="1" force_save="1"/>
 
 <field name="acc_number" widget="iban" required="1"
+       readonly="1" force_save="1"/>
+<field name="iban_number" widget="iban" required="0"
        readonly="1" force_save="1"/>
 
 <field name="tercero"

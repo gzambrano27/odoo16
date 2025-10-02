@@ -93,6 +93,8 @@
                             <field name="assigned_to" string='Comprador' invisible ='1'/>
                             <field name="date_planned" required='1'/>
                             <field name="request_type"/>
+                            <field name="fiscalizador_id" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}' />
+                            <field name="tipo_contrato" />
                         </group>
                         <group>
                             <field name="origin" class="oe_inline"/>

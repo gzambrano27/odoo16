@@ -326,7 +326,7 @@ class SseDocument(models.Model):
                      text-decoration:none;border-radius:4px;">Ver solicitud</a>
                 </p>
             """, "Nueva solicitud de salida de equipos")
-            rec.env['mail.mail'].create({
+            rec.env['mail.mail'].sudo().create({
                 "subject": f"SSE pendiente – {rec.name}",
                 "email_to": rec.manager_id.work_email,
                 "body_html": body,

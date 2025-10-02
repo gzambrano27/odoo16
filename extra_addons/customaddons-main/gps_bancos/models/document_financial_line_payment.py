@@ -37,6 +37,7 @@ class DocumentFinancialLinePayment(models.Model):
     ref=fields.Char(related="payment_group_id.ref",store=True,readonly=False)
 
     payment_id=fields.Many2one(related="payment_group_id.payment_id",store=True,readonly=False)
+    move_id = fields.Many2one(related="payment_group_id.move_id", store=True, readonly=False)
 
     payment_group_id=fields.Many2one('document.financial.line.payment.group',"Pago Agrupado",ondelete="cascade")
 

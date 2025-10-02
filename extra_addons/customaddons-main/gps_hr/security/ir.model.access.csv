@@ -39,3 +39,6 @@ access_hr_payslip_view_all,access_hr_payslip_view_all,model_hr_payslip_view,,1,0
 access_hr_employee_view_all,access_hr_employee_view_all,model_hr_employee_view,,1,0,0,0
 access_maintenance_acta_view_all,access_maintenance_acta_view_all,model_maintenance_acta_view,,1,0,0,0
 access_hr_employee_limited_rrhh,access_hr_employee_limited_rrhh,hr.model_hr_employee,gps_hr.group_datos_limitados_empleados_rrhh,1,1,0,0
+access_hr_biometric_wizard,access_hr_biometric_wizard,model_hr_biometric_wizard,,1,1,1,1
+access_employee_attendance_calendar,access_employee_attendance_calendar,model_employee_attendance_calendar,,1,1,1,1
+access_hr_employee_group,access_hr_employee_group,model_hr_employee_group,,1,1,1,1

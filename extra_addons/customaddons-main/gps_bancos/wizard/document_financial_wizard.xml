@@ -127,7 +127,7 @@
 			/>
 
 
-	<field name="payment_date" />
+	<field name="payment_date" required="1"/>
 							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
 
 
@@ -185,7 +185,7 @@
 						<field name="line_account_ids" attrs="{'readonly':[('register_invoices','!=',True)]}"
 							   	force_save="1">
 							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
-								<field name="account_id" force_save="1"
+								<field name="account_id" force_save="1" required="1"
 									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
 								domain="[('company_id','=',parent.company_id)]"
 
@@ -333,13 +333,34 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 							<field name="name" readonly="1" />
 							<field name="document_financial_id"  readonly="1" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"/>
 <field name="document_financial_type"  invisible="1" />
+
+                            <field name="partner_id"
+                                   readonly="1"
+                                    options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+
+                                   />
+
+                            <field name="mode_payment" widget="radio" />
+
+                            <field name="credit_note_id"
+                                   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
+
+                           attrs="{'required':[('mode_payment','!=','payment')],'invisible':[('mode_payment','=','payment')]}"
+			/>
+
+         <field name="credit_note_balance" readonly="1" force_save="1" attrs="{'invisible':['|',('credit_note_id','=',False),('mode_payment','=','payment')]}"
+				/>
+
 					<field name="journal_id" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
 			domain="[('company_id','=',company_id),('type','in',('bank',))]"
+                           attrs="{'required':[('mode_payment','=','payment')],'invisible':[('mode_payment','!=','payment')]}"
 			/>
 
 
-	<field name="payment_date" />
-							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
+	<field name="payment_date" attrs="{'required':[('mode_payment','=','payment')],'invisible':[('mode_payment','!=','payment')]}"/>
+							<field name="ref"  placeholder="REFERENCIA DOCUMENTO"
+                            attrs="{'required':[('mode_payment','=','payment')],'invisible':[('mode_payment','!=','payment')]}"
+                            />
 
 
 
@@ -358,7 +379,7 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 							<field name="payment_cobro_amount" attrs="{'invisible':[('original_cobro_amount','&lt;=',0.00)]}"/>
 														<field name="payment_cobro_interes"  attrs="{'invisible':[('original_cobro_interes','&lt;=',0.00)]}" />
 <field name="payment_total" force_save="1" readonly="1"/>
-<field name="register_invoices" string="Cambiar Cont."/>
+<field name="register_invoices" string="Cambiar Cont."  attrs="{'invisible':[('mode_payment','!=','payment')]}"/>
 
 
 						</group>
@@ -394,14 +415,16 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 					</field>
 						</page>
 
-					<page string="Cuentas">
+					<page string="Cuentas" attrs="{'invisible':[('mode_payment','!=','payment')]}">
+
+
 						<field name="line_account_ids" attrs="{'readonly':[('register_invoices','!=',True)]}"
 							   	force_save="1">
 							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
 								<field name="account_id" force_save="1"
 									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
 								domain="[('company_id','=',parent.company_id)]"
-
+attrs="{'required':[('parent.mode_payment','=','payment')]}"
 								/>
 							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
 required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
@@ -455,11 +478,34 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 							</form>
 						</field>
 					</page>
-					<page string="Configuración">
+
+
+
+
+                    <page string="Detalle Aplicado" attrs="{'invisible':[('credit_note_id','=',False)]}">
+			<field name="invoiced_line_ids" nolabel="1">
+<tree editable="bottom" edit="false" create="false" delete="false" decoration-it="not invoice_id" decoration-bf="not invoice_id">
+	  <field name="line_id" domain="[('id','in',parent.line_ids)]" force_save="1" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+          <field name="invoice_id" string="NC" domain="[('id','=',parent.credit_note_id)]" force_save="1" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+
+	 <field name="amount" readonly="1" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+
+	 <field name="amount_base" string="Valor" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+        <field name="amount_iva" string="Interés Generado" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+
+	 <field name="amount_retenido" invisible="1" />
+
+
+</tree>
+			</field>
+	</page>
+
+
+                        	<page string="Configuración">
 <group colspan="2" cols="1">
 
-						<group>
-<field name="do_account" />
+						<group  attrs="{'invisible':[('mode_payment','!=','payment')]}">
+<field name="do_account" attrs="{'invisible':[('mode_payment','!=','payment')]}"/>
 
 
 						</group>
@@ -512,7 +558,9 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 						</group>
 </group>
 					</page>
-					</notebook>
+
+
+                    </notebook>
 
 					<newline/>
 					<footer>
@@ -575,42 +623,31 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 
 
 <notebook>
-	<page string="Cuotas">
-			<field name="financial_line_ids"
-                domain="[('document_id','=',document_financial_id)]"
-                widget="one2many_list"
-				force_save="1"
-				   readonly="context.get('readonly_line',0)==1"
-                context="{'default_document_id': document_financial_id,'tree_view_ref':'gps_bancos.document_financial_line_view_in_tree','form_view_ref':'gps_bancos.document_financial_line_view_in_form'}" />
+
+
+    	<page string="Cuotas">
+			<field name="financial_line_ids" domain="[('document_id','=',document_financial_id)]" widget="one2many_list" force_save="1" readonly="context.get('readonly_line',0)==1" context="{'default_document_id': document_financial_id,'tree_view_ref':'gps_bancos.document_financial_line_view_in_tree','form_view_ref':'gps_bancos.document_financial_line_view_in_form'}"/>
 
 	</page>
 
 	<page string="Facturas">
-			<field name="invoice_ids"
-                domain="[('partner_id','=',partner_id),('state','=','posted'),('move_type','in',('out_invoice','out_receipt')),('id','not in',apply_invoice_ids)]"
-                 context="{'default_partner_id': partner_id,'tree_view_ref':'account.view_out_invoice_tree'}" />
+			<field name="invoice_ids" domain="[('partner_id','=',partner_id),('state','=','posted'),('move_type','in',('out_invoice','out_receipt')),('id','not in',apply_invoice_ids)]" context="{'default_partner_id': partner_id,'tree_view_ref':'account.view_out_invoice_tree'}"/>
 		<newline/>
-		<field name="apply_invoice_ids" invisible="1" />
+		<field name="apply_invoice_ids" invisible="1"/>
 	</page>
 
 	<page string="Detalle Aplicado">
 			<field name="invoiced_line_ids" nolabel="1">
-<tree editable="bottom" decoration-it="not invoice_id" decoration-bf="not invoice_id" create="false" edit="true" delete="false">
-	  <field name="line_id" readonly="1" force_save="1"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
-          <field name="invoice_id" readonly="1" force_save="1"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+<tree editable="bottom" decoration-it="not invoice_id" decoration-bf="not invoice_id">
+	  <field name="line_id" domain="[('id','in',parent.financial_line_ids)]" force_save="1" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+          <field name="invoice_id" domain="[('id','in',parent.invoice_ids)]" force_save="1" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
 
-	 <field name="amount" readonly="1" force_save="1" sum="total"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+	 <field name="amount" readonly="1" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
 
-	 <field name="amount_base" readonly="1" force_save="1" sum="total"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
-        <field name="amount_iva" readonly="1" force_save="1" sum="total"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+	 <field name="amount_base" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+        <field name="amount_iva" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
 
-	 <field name="amount_retenido" readonly="1" force_save="1" sum="total"
-			 options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}" />
+	 <field name="amount_retenido" force_save="1" sum="total" options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
 
 
 
@@ -686,7 +723,7 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 			/>
 
 
-	<field name="payment_date" />
+	<field name="payment_date" required="1"/>
 							<field name="ref" required="1" placeholder="REFERENCIA DOCUMENTO" />
 
 
@@ -711,9 +748,9 @@ required="0" placeholder="SI ESTA VACIO ,TOMA EL CONTACTO POR DEFECTO"
 					<page string="Cuentas">
 						<field name="line_account_ids"  force_save="1">
 							<tree string="Detalle" editable="bottom" create="true" delete="true" edit="true">
-								<field name="account_id" force_save="1"
+								<field name="account_id" force_save="1" required="1"
 									   options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"
-									   required="1"
+
 									   domain="[('company_id','=',parent.company_id)]"
 								/>
 							<field name="partner_id" force_save="1" options="{'no_quick_create': True,'no_create': True,'no_create_edit': True,'no_open':True}"

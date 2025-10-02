@@ -95,6 +95,20 @@ class HrEmployee(models.Model):
         help="Adjunto del certificado bancario"
     )
 
+    resource_calendar_id = fields.Many2one(
+        'resource.calendar',
+        string='Horario de Trabajo',
+        default=lambda self: self._default_resource_calendar()
+    )
+
+    @api.model
+    def _default_resource_calendar(self):
+        return self.env['resource.calendar'].search([
+            ('default', '=', True),
+            ('active', '=', True),
+            ('company_id', '=', False)
+        ], limit=1)
+
     def create_update_request(self):
         created_requests = self.env['hr.employee.update.request']
 
@@ -636,4 +650,5 @@ class HrEmployee(models.Model):
                 subtype_id=note_subtype.id,
             )
 
+    control_marcaciones = fields.Boolean("Control Marcaciones", default=True)
 

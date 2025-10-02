@@ -22,6 +22,8 @@
 
         "wizard/zk_machine_wizard.xml",
 
+        "views/employee_attendance_raw.xml",
+        "views/zk_machine.xml",
         "views/zk_machine.xml",
     ],
     'demo': [

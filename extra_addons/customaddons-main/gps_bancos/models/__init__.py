@@ -77,3 +77,11 @@ from .hr_employee import *
 from .account_payment_request_lines import *
 
 from .res_users import *
+
+from .account_journal import *
+
+from .res_country import *
+
+from .work_acceptance import *
+
+from .stock_picking import  *

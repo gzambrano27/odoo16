@@ -65,6 +65,7 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
+                        <button name="%(action_importation_report_xlsx)d" string="Exportar Excel" type="action" class="btn-primary"/>
                         <button name="confirmed_importation" type="object"
                                 string="Confirmar"
                                 class="oe_highlight"

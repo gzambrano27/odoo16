@@ -199,7 +199,72 @@ class PurchaseRequest(models.Model):
         default={},
         help="Distribucion analitica que se aplicara a todas las lineas",
     )
+    rendimiento = fields.Integer('Cant. por Dia', help='Debe Ingresar la cantidad por dia')
+    equipos = fields.Integer('Cant. Equipos', help='Debe Ingresar la cantidad de equipos')
+    personal_min_equipo = fields.Integer('Personal Min. por Equipo', help='Debe Ingresar el personal minimo por equipo')
+    duracion_estimada = fields.Integer('Duracion Estimada', help='Duracion estimada de Obra')
+    tipo_pedido = fields.Selection(
+        [("administrativo", "Administrativo"), ("presidencia", "Presidencia"), ("proyecto", "Proyecto")],
+        string="Tipo de Pedido",
+        default="proyecto",
+        compute="_compute_tipo_pedido",
+        store=True,
+    )
+    fiscalizador_id = fields.Many2one(
+        comodel_name="res.users",
+        copy=False,
+        tracking=True,
+        index=True,
+        domain=lambda self: [
+            ("groups_id", "in", self.env.ref("purchase_request.group_purchase_request__ficalizador").id)
+        ],
+        #default=lambda self: self._default_fiscalizador(),
+    )
+    tipo_contrato = fields.Selection(
+        [("por ejecutar", "Por Ejecutar"), ("en ejecucion", "En Ejecucion"), ("ejecutado", "Ejecutado")],
+        string="Tipo de Contrato",
+        copy=False,
+        tracking=True,
+    )
+
+    @api.model
+    def _default_fiscalizador(self):
+        """Asigna el usuario actual si pertenece al grupo de fiscalizadores"""
+        user = self.env.user
+        if user.has_group("purchase_request.group_purchase_request__ficalizador"):
+            return user.id
+        return False
     
+    # @api.constrains("fiscalizador_id", "request_type")
+    # def _check_fiscalizador_required(self):
+    #     for rec in self:
+    #         # Si la requisición es de tipo servicio o mixto
+    #         if rec.request_type in ("service", "mixed") and not rec.fiscalizador_id:
+    #             raise UserError(_("Debe seleccionar un Fiscalizador para requisiciones de tipo Servicio o Producto y Servicio."))
+            
+    # @api.constrains("tipo_contrato", "request_type")
+    # def _check_tipo_contrato_required(self):
+    #     for rec in self:
+    #         # Si la requisición es de tipo servicio o mixto
+    #         if rec.request_type in ("service", "mixed") and not rec.tipo_contrato:
+    #             raise UserError(_("Debe seleccionar un Tipo de Contrato para requisiciones de tipo Servicio o Producto y Servicio."))
+
+    @api.constrains("fiscalizador_id", "tipo_contrato", "request_type", "tipo_pedido", "date_start", "state")
+    def _check_fiscalizador_tipo_contrato_proyecto(self):
+        for rec in self:
+            # Aplica solo a requisiciones de tipo "proyecto"
+            if rec.tipo_pedido != "proyecto":
+                continue
+
+            # Condición: nuevas (>= hoy) o en borrador
+            if (rec.date_start and rec.date_start >= date.today()) or rec.state == "draft":
+                # Requisiciones de tipo servicio o mixto
+                if rec.request_type in ("service", "mixed"):
+                    if not rec.fiscalizador_id:
+                        raise UserError(_("Debe seleccionar un Fiscalizador para requisiciones de tipo Proyecto (Servicio o Producto y Servicio)."))
+                    if not rec.tipo_contrato:
+                        raise UserError(_("Debe seleccionar un Tipo de Contrato para requisiciones de tipo Proyecto (Servicio o Producto y Servicio)."))
+                    
     @api.onchange("analytic_distribution")
     def _onchange_analytic_distribution(self):
         for rec in self:
@@ -212,6 +277,26 @@ class PurchaseRequest(models.Model):
         for rec in self:
             if not rec.analytic_distribution and rec.state=='draft':#and (rec.date_start >= date(2025, 8, 7) or rec.state=='draft'):
                 raise UserError(_('Debe llenar la distribución analítica en la cabecera de la requisición.'))
+
+    @api.depends("requested_by")
+    def _compute_tipo_pedido(self):
+        """ Asigna tipo_pedido según grupo del solicitante """
+        for rec in self:
+            tipo = "proyecto"  # valor por defecto
+
+            if rec.requested_by:
+                user = rec.requested_by
+
+                # grupos: ajusta los XML-ID reales de tus grupos
+                group_admin = self.env.ref("account_payment_purchase.group_purchase_admin", raise_if_not_found=False)
+                group_presidencia = self.env.ref("account_payment_purchase.group_purchase_presidencia", raise_if_not_found=False)
+
+                if group_admin and group_admin in user.groups_id:
+                    tipo = "administrativo"
+                elif group_presidencia and group_presidencia in user.groups_id:
+                    tipo = "presidencia"
+
+            rec.tipo_pedido = tipo
 
     @api.depends("line_ids.product_id.detailed_type")
     def _compute_request_type(self):
@@ -411,6 +496,11 @@ class PurchaseRequest(models.Model):
         return self.write({"state": "to_approve"})
 
     def button_approved(self):
+        group_gerencia = self.env.ref("account_payment_purchase.group_purchase_user_administrativo", raise_if_not_found=False)
+        for rec in self:
+            if rec.tipo_pedido in ("administrativo", "presidencia"):
+                if not (group_gerencia and group_gerencia in self.env.user.groups_id):
+                    raise UserError(_("Solo los usuarios del grupo Gerencia de Requisiciones departamentales pueden aprobar requisiciones de tipo Administrativo o Presidencia."))
         return self.write({"state": "approved"})
 
     def button_rejected(self):

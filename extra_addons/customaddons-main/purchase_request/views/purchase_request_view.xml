@@ -151,6 +151,10 @@
                             <field name="assigned_to" string='Comprador' invisible ='1'/>
                             <field name="date_planned" required='1'/>
                             <field name="request_type"/>
+                            <field name="rendimiento" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="equipos" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="fiscalizador_id" options='{"always_reload": True, "no_quick_create": True, "no_create_edit": True}'/>
+                            <field name="tipo_contrato"/>
                         </group>
                         <group>
                             <field
@@ -164,6 +168,15 @@
                             />
                             <field
                                 name="group_id"
+                                attrs="{'readonly': [('is_editable','=', False)]}"
+                            />
+                            
+                            <field
+                                name="personal_min_equipo"
+                                attrs="{'readonly': [('is_editable','=', False)]}"
+                            />
+                            <field
+                                name="duracion_estimada"
                                 attrs="{'readonly': [('is_editable','=', False)]}"
                             />
                             <field
@@ -193,6 +206,7 @@
                                 widget="selection"
                                 attrs="{'readonly': [('is_editable','=', False)]}"
                             />
+                            <field name="tipo_pedido" groups="base.group_no_one"/>
                         </group>
                     </group>
                     <notebook>
