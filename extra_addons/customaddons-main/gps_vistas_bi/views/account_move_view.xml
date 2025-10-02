@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista tipo tree -->
+    <record id="view_account_move_view_tree" model="ir.ui.view">
+        <field name="name">accounts.move.view.tree</field>
+        <field name="model">account.move.view</field>
+        <field name="arch" type="xml">
+            <tree string="Movimientos de cuentas" create="false" edit="false" delete="false">
+                <field name="company_id"/>
+                <field name="fecha_asiento"/>
+                <field name="fecha_factura"/>
+                <field name="date_approved"/>
+                <field name="partner_name"/>
+                <field name="company_name"/>
+                <field name="journal_name"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="referencia_pago"/>
+                <field name="debit"/>
+                <field name="credit"/>
+                <field name="amount_residual"/>
+                
+                <field name="product_id"/>
+                <field name="producto_dscr"/>
+                <field name="rfi"/>
+                <field name="descripcion_linea"/>
+                <field name="payment_term_id"/>
+                <field name="tipo_documento_codigo"/>
+                <field name="account_analytic_id"/>
+                <field name="account_id"/>
+                <field name="account_name"/>
+                <field name="account_type"/>
+                <field name="quantity"/>
+                <field name="uom_name"/>
+                <field name="price_unit"/>
+                <field name="tax_base_amount"/>
+                <field name="price_subtotal"/>
+                <field name="narration"/>
+                
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_account_move" model="ir.actions.act_window">
+        <field name="name">Movimiento de Cuentas</field>
+        <field name="res_model">account.move.view</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+
+</odoo>

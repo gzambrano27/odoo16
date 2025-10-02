@@ -1,0 +1,14 @@
+<odoo>
+    <!-- Categoría personalizada -->
+    <record id="module_category_sql_dinamico" model="ir.module.category">
+        <field name="name">SQL Dinámico</field>
+        <field name="description">Permisos relacionados con las vistas SQL dinámicas</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Grupo SQL Analista -->
+    <record id="group_sql_analista" model="res.groups">
+        <field name="name">SQL Analista</field>
+        <field name="category_id" ref="dynamic_sql_view.module_category_sql_dinamico"/>
+    </record>
+</odoo>

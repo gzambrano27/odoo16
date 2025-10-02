@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+<record id="view_payment_request_recalc_wizard" model="ir.ui.view">
+    <field name="name">payment.request.recalc.wizard.form</field>
+    <field name="model">payment.request.recalc.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Generar Solicitudes de Pago">
+            <sheet>
+                <group>
+                      <group>
+
+                    <field name="purchase_id"  options="{'no_create':True,'no_edit':True,'no_open':True}" readonly="1"/>
+                    <field name="partner_id" options="{'no_create':True,'no_edit':True,'no_open':True}"  readonly="1"/>
+
+                      </group>
+                      <group>
+                           <field name="amount_total"/>
+                      </group>
+                </group>
+                <notebook>
+                    <page string="Solicitudes de Pago">
+    <field name="payment_request_ids" widget="many2many_list"
+    context="{'hide_parent':True,'tree_view_ref':'gps_bancos.account_payment_request_view_tree','form_view_ref':'gps_bancos.account_payment_request_view_form'}"
+    >
+        <tree string="Solicitudes">
+    <field name="id" string="# ID" />
+            <field name="name" />
+            <field name="percentage" />
+            <field name="quota" />
+<field name="date" />
+<field name="date_maturity" />
+<field name="amount" sum="total"/>
+            <field name="paid" optional="hide" sum="total"/>
+            <field name="pending" optional="hide" sum="total"/>
+        </tree>
+    </field>
+</page>
+
+                    <page string="Recepciones">
+                        <field name="picking_ids"
+                        context="{'hide_parent':True,'tree_view_ref':'stock.vpicktree'}"
+                        >
+                            <tree string="Recepciones">
+                                   <field name="name" />
+                                   <field name="location_id" options="{'no_create': True}" string="From" groups="stock.group_stock_multi_locations" optional="show"/>
+                    <field name="location_dest_id" options="{'no_create': True}" string="To" groups="stock.group_stock_multi_locations" optional="show"/>
+                    <field name="partner_id" optional="hide"/>
+                                   <field name="force_date"  />
+   <field name="date_done" optional="hide"/>
+                                   <field name="state" optional="show" widget="badge" decoration-danger="state=='cancel'" decoration-info="state== 'assigned'" decoration-muted="state == 'draft'" decoration-success="state == 'done'" decoration-warning="state not in ('draft','cancel','done','assigned')"/>
+
+                            </tree>
+                        </field>
+                        <newline/>
+                        <field name="work_acceptance_ids"
+                        context="{'hide_parent':True,'tree_view_ref':'purchase_work_acceptance.view_work_acceptance_tree'}"
+                        >
+                               <tree decoration-muted="state=='cancel'">
+                                    <field name="id" string="# ID" optional="hide"/>
+                <field name="name_rs" string="Rec."/>
+                <field name="name" string="Referencia"/>
+                <field name="date_due"/>
+                <field name="date_receive"/>
+                <field name="date_accept"/>
+                <field name="partner_id"/>
+                <field name="responsible_id" optional="hide"/>
+                <field name="invoice_ref" optional="show"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company" options="{'no_create': True}"/>
+                <field name="currency_id" optional="hide" groups="base.group_multi_currency" options="{'no_create': True}"/>
+                <field name="purchase_id" optional="hide"/>
+                <field name="state"/>
+            </tree>
+
+
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <footer>
+                <button name="action_generate_requests" string="Generar Solicitudes" type="object" class="btn-primary"/>
+                <button string="Cancelar" special="cancel" class="btn-secondary"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+
+<record id="action_payment_request_recalc_wizard" model="ir.actions.act_window">
+    <field name="name">Recalcular Solicitudes de Pago</field>
+    <field name="res_model">payment.request.recalc.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+
+
+
+
+</odoo>

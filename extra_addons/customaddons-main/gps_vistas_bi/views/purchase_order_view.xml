@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista tipo tree -->
+    <record id="view_purchase_order_view_tree" model="ir.ui.view">
+        <field name="name">purchase.order.view.tree</field>
+        <field name="model">purchase.order.view</field>
+        <field name="arch" type="xml">
+            <tree string="Ordenes de Compra" create="false" edit="false" delete="false">
+                <field name="company_id"/>
+                <field name="partner_id"/>
+                
+                <field name="fecha_aprobacion"/>
+
+                <field name="partner_id"/>
+                <field name="partner_name"/>
+
+                <field name="product_id"/>
+                <field name="producto_dscr"/>
+                <field name="codigo_producto"/>
+
+                <field name="descripcion_linea"/>
+                <field name="tipo_costo"/>
+                <field name="precio_subtotal"/>
+                <field name="precio_unitario"/>
+                <field name="estado"/>
+                <field name="fecha_orden"/>
+
+                
+                <field name="rubro"/>
+                <field name="product_qty"/>
+                <field name="descuento"/>
+                <field name="descuento_presupuesto"/>
+                <field name="cuenta_analitica"/>
+                <field name="val_cuenta_analitica"/>
+                <field name="nombre_cuenta_analitica"/>
+                <field name="fecha_anticipo_pago"/>
+                <field name="payment_term_id"/>
+                <field name="nombre_payment_term"/>
+                <field name="es_importacion"/>
+                <field name="es_admin"/>
+                <field name="es_presidencia"/>
+
+
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_purchase_order_view" model="ir.actions.act_window">
+        <field name="name">Vistas de Ordenes de Compra</field>
+        <field name="res_model">purchase.order.view</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+
+</odoo>

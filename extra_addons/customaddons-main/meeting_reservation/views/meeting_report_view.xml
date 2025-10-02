@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_meeting_report_tree" model="ir.ui.view">
+        <field name="name">meeting.meeting.report.tree</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Asunto"/>
+                <field name="organizer_id" string="Organizador"/>
+                <field name="organizer_department_id" string="Departamento"/>
+                <field name="start_datetime" string="Fecha y Hora de Inicio"/>
+                <field name="end_datetime" string="Fecha y Hora de Salida"/>
+                <field name="state" string="Estado"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_meeting_cancelled_tree" model="ir.ui.view">
+        <field name="name">meeting.meeting.cancelled.tree</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state=='reserved'" decoration-muted="state=='draft'"
+                       decoration-danger="state=='cancelled'">
+                <field name="name" string="Reunión"/>
+                <field name="organizer_id" string="Organizador"/>
+                <field name="organizer_department_id" string="Departamento"/>
+                <field name="cancel_reason" string="Motivo de Cancelación"/>
+                <field name="room_id"/>
+                <field name="start_datetime"  string="Fecha y Hora de Inicio"/>
+                <field name="end_datetime"  string="Fecha y Hora de Salida"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_meeting_report_search" model="ir.ui.view">
+        <field name="name">meeting.meeting.report.search</field>
+        <field name="model">meeting.meeting</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="organizer_id"/>
+                <field name="room_id"/>
+                <separator/>
+                <filter name="today" string="Hoy" domain="[('start_datetime', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('start_datetime', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="upcoming" string="Próximas" domain="[('start_datetime', '&gt;', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_room" string="Sala" context="{'group_by':'room_id'}"/>
+                    <filter name="group_by_organizer" string="Organizador" context="{'group_by':'organizer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_room_usage" model="ir.actions.act_window">
+        <field name="name">Uso de Salas</field>
+        <field name="res_model">meeting.meeting</field>
+        <field name="view_mode">graph,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'graph'}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_meeting_report_tree')})]"/>
+        <field name="search_view_id" ref="view_meeting_report_search"/>
+        <field name="domain">[('state', '=', 'reserved')]</field>
+        <field name="context">{'search_default_group_by_room':1, 'search_default_today': 1}</field>
+    </record>
+
+    <record id="action_report_time_by_room" model="ir.actions.act_window">
+        <field name="name">Reservas de Reuniones</field>
+        <field name="res_model">meeting.meeting</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_meeting_report_tree')}),
+            (0, 0, {'view_mode': 'graph'})]"/>
+        <field name="search_view_id" ref="view_meeting_report_search"/>
+        <field name="domain">[('state', '=', 'reserved')]</field>
+        <field name="context">{'search_default_group_by_organizer': 1, 'search_default_today': 1}</field>
+    </record>
+
+    <record id="action_cancelled_meetings" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Anulación</field>
+        <field name="res_model">meeting.meeting</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_meeting_cancelled_tree')}),
+            (0, 0, {'view_mode': 'graph'})]"/>
+        <field name="search_view_id" ref="view_meeting_report_search"/>
+        <field name="domain">[('state', '=', 'cancelled')]</field>
+        <field name="context">{'search_default_group_by_organizer': 1, 'search_default_today': 1}</field>
+    </record>
+    </odoo>

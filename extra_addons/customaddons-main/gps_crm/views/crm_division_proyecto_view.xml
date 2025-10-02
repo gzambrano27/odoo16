@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- Views for clase  de importacion Tree View -->
+
+        <record model="ir.ui.view" id="view_crm_division_proyecto_tree">
+            <field name="name">crm.division.proyecto.tree</field>
+            <field name="model">crm.division.proyecto</field>
+            <field name="arch" type="xml">
+                <tree string="Division">
+                    <field name="codigo" string="Codigo"/>
+                    <field name="name" string="Descripcion"/>
+                    <field name="state" string="Estado"/>
+                </tree>
+            </field>
+        </record> 
+        
+        <record model="ir.ui.view" id="view_crm_division_proyecto_form">
+            <field name="name">crm.division.proyecto.form</field>
+            <field name="model">crm.division.proyecto</field>
+            <field name="arch" type="xml">
+                <form string="Division">
+                    <separator string="Division" />
+                        <group>
+                            <group>
+                            <field name="codigo" string="Codigo"/>
+                            <field name="state" string="Estado"  style="width: 20%%"/>
+                            </group>
+                            <group>
+                                <field name="name" string="Descripcion"/>
+                            </group>
+                        </group>
+                </form>
+            </field>
+        </record>   
+        
+        <record id="action_division_proyecto_form" model="ir.actions.act_window">
+                <field name="name">Division Proyecto</field>
+                <field name="res_model">crm.division.proyecto</field>
+                <field name="view_mode">tree,form</field>
+                <field name="context">{'import_enabled': True}</field>
+        </record>
+    
+        <menuitem id="menu_division_proyecto"
+                            parent="crm.crm_menu_config"
+                            name="Division de Proyectos"
+                            sequence="50"
+                            groups="gps_crm.group_crm_manager_custom,gps_crm.group_crm_admin_custom"
+                            action="action_division_proyecto_form"/>
+
+    </data>
+</odoo>

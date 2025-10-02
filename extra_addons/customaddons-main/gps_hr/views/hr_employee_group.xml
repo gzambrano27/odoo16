@@ -1,0 +1,54 @@
+<odoo>
+  <!-- Vista tree editable -->
+  <record id="view_hr_employee_group_tree" model="ir.ui.view">
+    <field name="name">hr.employee.group.tree</field>
+    <field name="model">hr.employee.group</field>
+    <field name="arch" type="xml">
+      <tree string="Grupos de Empleados" editable="bottom" create="true" edit="true" delete="true">
+        <field name="name" required="1"/>
+        <field name="active"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- (Opcional) Vista form mínima -->
+  <record id="view_hr_employee_group_form" model="ir.ui.view">
+    <field name="name">hr.employee.group.form</field>
+    <field name="model">hr.employee.group</field>
+    <field name="arch" type="xml">
+      <form string="Grupo de Empleados">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="active"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Vista search -->
+  <record id="view_hr_employee_group_search" model="ir.ui.view">
+    <field name="name">hr.employee.group.search</field>
+    <field name="model">hr.employee.group</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Grupos">
+        <field name="name"/>
+        <filter string="Activos" name="active_true" domain="[('active','=',True)]"/>
+        <filter string="Inactivos" name="active_false" domain="[('active','=',False)]"/>
+      </search>
+    </field>
+  </record>
+
+  <!-- Acción -->
+  <record id="action_hr_employee_group" model="ir.actions.act_window">
+    <field name="name">Grupos de Empleados</field>
+    <field name="res_model">hr.employee.group</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{}</field>
+    <field name="help" type="html">
+      <p>Crea y gestiona grupos de empleados.</p>
+    </field>
+  </record>
+
+</odoo>

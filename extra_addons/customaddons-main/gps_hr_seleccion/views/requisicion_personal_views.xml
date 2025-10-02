@@ -1,0 +1,86 @@
+<odoo>
+  <record id="view_requisicion_personal_form" model="ir.ui.view">
+    <field name="name">requisicion.personal.form</field>
+    <field name="model">requisicion.personal</field>
+    <field name="arch" type="xml">
+      <form string="Requisición de Personal">
+        <header>
+          <button name="action_enviar_revision" string="Enviar a Revisión" type="object" states="draft"
+                  groups="gps_hr_seleccion.group_requisicion_personal_usuario,gps_hr_seleccion.group_requisicion_personal_admin"/>
+          <button name="action_aprobar_jefe" string="Aprobación Jefe" type="object" states="en_revision"
+                  groups="gps_hr_seleccion.group_requisicion_personal_jefe,gps_hr_seleccion.group_requisicion_personal_admin"/>
+          <button name="action_aprobar_gerente" string="Aprobación Gerente" type="object" states="aprobacion_gerente"
+                  groups="gps_hr_seleccion.group_requisicion_personal_gerente,gps_hr_seleccion.group_requisicion_personal_admin"/>
+          <button name="action_rechazar" string="Rechazar" type="object" states="en_revision,aprobacion_gerente"
+                  groups="gps_hr_seleccion.group_requisicion_personal_jefe,gps_hr_seleccion.group_requisicion_personal_gerente,gps_hr_seleccion.group_requisicion_personal_admin"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,en_revision,aprobacion_gerente,aprobado,rechazado"/>
+        </header>
+        <sheet>
+          <group>
+            <field name="name" readonly="1"/>
+            <field name="fecha_solicitud"/>
+            <field name="solicitante_id" readonly="1"/>
+            <field name="departamento_id"/>
+            <field name="puesto"/>
+            <field name="cantidad"/>
+          </group>
+          <group>
+            <field name="motivo"/>
+          </group>
+        </sheet>
+        <div class="oe_chatter">
+            <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
+            <field name="activity_ids"/>
+            <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_requisicion_personal_tree" model="ir.ui.view">
+    <field name="name">requisicion.personal.tree</field>
+    <field name="model">requisicion.personal</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="fecha_solicitud"/>
+        <field name="solicitante_id"/>
+        <field name="departamento_id"/>
+        <field name="puesto"/>
+        <field name="cantidad"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_requisicion_personal_search" model="ir.ui.view">
+    <field name="name">requisicion.personal.search</field>
+    <field name="model">requisicion.personal</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Requisiciones">
+        <field name="name"/>
+        <field name="departamento_id"/>
+        <field name="puesto"/>
+        <filter string="Borrador" name="f_draft" domain="[('state','=','draft')]"/>
+        <filter string="En Revisión" name="f_revision" domain="[('state','=','en_revision')]"/>
+        <filter string="Gerencia" name="f_gerencia" domain="[('state','=','aprobacion_gerente')]"/>
+        <filter string="Aprobado" name="f_aprobado" domain="[('state','=','aprobado')]"/>
+        <filter string="Rechazado" name="f_rechazado" domain="[('state','=','rechazado')]"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="Departamento" string="Departamento" domain="[]" context="{'group_by':'departamento_id'}"/>
+          <filter name="Estado" string="Estado" domain="[]" context="{'group_by':'state'}"/>
+          <filter name="Solicitante" string="Solicitante" domain="[]" context="{'group_by':'solicitante_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_requisicion_personal" model="ir.actions.act_window">
+    <field name="name">Requisiciones</field>
+    <field name="res_model">requisicion.personal</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <menuitem id="menu_requisicion_personal_root" name="Requisición de Personal" sequence="10" groups="gps_hr_seleccion.group_requisicion_personal_visor,gps_hr_seleccion.group_requisicion_personal_usuario,gps_hr_seleccion.group_requisicion_personal_jefe,gps_hr_seleccion.group_requisicion_personal_gerente,gps_hr_seleccion.group_requisicion_personal_admin"/>
+  <menuitem id="menu_requisicion_personal" name="Solicitudes" parent="menu_requisicion_personal_root" action="action_requisicion_personal"/>
+</odoo>

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dynamic_sql_view_analista,dynamic.sql.view analista,model_dynamic_sql_view,dynamic_sql_view.group_sql_analista,1,1,1,0

@@ -1,0 +1,53 @@
+<odoo>
+    <record id="view_dynamic_sql_form" model="ir.ui.view">
+        <field name="name">dynamic.sql.view.form</field>
+        <field name="model">dynamic.sql.view</field>
+        <field name="arch" type="xml">
+            <form string="Crear Vista SQL">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sql_query"/>
+                        <field name="state" readonly="1"/>
+                        <field name="created_by" readonly="1"/>
+                        <field name="created_at" readonly="1"/>
+                        <field name="last_updated" readonly="1"/>
+                    </group>
+                    <!-- <footer> -->
+                        <button string="Crear/Actualizar Vista"
+                                type="object"
+                                name="action_create_view"
+                              
+                                class="btn-primary"/>
+                        <button string="Cerrar" special="cancel"/>
+                    <!-- </footer> -->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dynamic_sql_tree" model="ir.ui.view">
+        <field name="name">dynamic.sql.view.tree</field>
+        <field name="model">dynamic.sql.view</field>
+        <field name="arch" type="xml">
+            <tree string="Vistas SQL">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="created_by"/>
+                <field name="created_at"/>
+                <field name="last_updated"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_dynamic_sql_view" model="ir.actions.act_window">
+        <field name="name">Vistas SQL</field>
+        <field name="res_model">dynamic.sql.view</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_dynamic_sql_root" name="SQL Dinámico" groups="dynamic_sql_view.group_sql_analista"/>
+    <menuitem id="menu_dynamic_sql_view" name="Vistas SQL"
+              parent="menu_dynamic_sql_root"
+              action="action_dynamic_sql_view" groups="dynamic_sql_view.group_sql_analista"/>
+</odoo>

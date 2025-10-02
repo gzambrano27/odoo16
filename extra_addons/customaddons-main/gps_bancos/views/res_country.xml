@@ -1,0 +1,14 @@
+<odoo>
+    <record id="view_country_form_inherit_use_iban" model="ir.ui.view">
+        <field name="name">res.country.form.requiere.iban</field>
+        <field name="model">res.country</field>
+        <field name="inherit_id" ref="base.view_country_form"/>
+        <field name="arch" type="xml">
+            <!-- Ubicamos el campo después del campo phone_code -->
+            <xpath expr="//field[@name='zip_required']" position="after">
+                <field name="use_iban"/>
+                <field name="name_dscr_bank" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

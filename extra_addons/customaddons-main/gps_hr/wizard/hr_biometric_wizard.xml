@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_hr_biometric_wizard_form" model="ir.ui.view">
+        <field name="name">hr.biometric.wizard.form</field>
+        <field name="model">hr.biometric.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importar Marcaciones">
+                <group>
+                    <field name="biometric_id" readonly="1" force_save="1"
+                    options="{'no_open':True,'no_create':True,'no_quick_create':True}"
+                    />
+                    <field name="file_data" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                </group>
+                <group>
+                    <field name="result_preview" widget="text"/>
+                </group>
+                <footer>
+                    <button string="Procesar" type="object" name="action_process" class="btn-primary"/>
+                    <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_hr_biometric_wizard"
+                name="Importar Marcaciones"
+                res_model="hr.biometric.wizard"
+                view_mode="form"
+                target="new"
+                view_id="view_hr_biometric_wizard_form"
+                binding_model="zk.machine"
+                binding_type="action"/>
+</odoo>

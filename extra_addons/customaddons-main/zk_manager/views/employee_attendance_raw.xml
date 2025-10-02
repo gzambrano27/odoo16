@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+<record id="view_employee_attendance_raw_search" model="ir.ui.view">
+    <field name="name">employee.attendance.raw.search</field>
+    <field name="model">employee.attendance.raw</field>
+    <field name="arch" type="xml">
+        <search string="Marcaciones" >
+            <field name="date_time"/>
+            <field name="employee_id"/>
+            <field name="raw_user_id"/>
+            <field name="biometric_id"/>
+        </search>
+    </field>
+</record>
+
+
+
+<record id="view_employee_attendance_raw_tree" model="ir.ui.view">
+    <field name="name">employee.attendance.raw.tree</field>
+    <field name="model">employee.attendance.raw</field>
+    <field name="arch" type="xml">
+        <tree string="Marcaciones"  create="false" edit="false" delete="false">
+            <field name="date_time"/>
+            <field name="employee_id"/>
+            <field name="raw_user_id"/>
+            <field name="biometric_id"/>
+            <field name="imported" invisible="1"/>
+        </tree>
+    </field>
+</record>
+
+<record id="action_employee_attendance_raw" model="ir.actions.act_window">
+    <field name="name">Marcaciones</field>
+    <field name="res_model">employee.attendance.raw</field>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_employee_attendance_raw_tree"/>
+    <field name="help" type="html">
+        <p>Esta vista muestra las marcaciones importadas desde dispositivos biométricos.</p>
+    </field>
+</record>
+
+
+        <record id="action_employee_attendance_my_raw" model="ir.actions.act_window">
+    <field name="name">Marcaciones</field>
+    <field name="res_model">employee.attendance.raw</field>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_employee_attendance_raw_tree"/>
+    <field name="help" type="html">
+        <p>Esta vista muestra las marcaciones importadas desde dispositivos biométricos.</p>
+    </field>
+            <field name="context">{'only_user':True}</field>
+</record>
+
+<menuitem id="menu_employee_attendance_raw" name="Asistencias"
+          action="action_employee_attendance_raw"
+          parent="hr_zk_attendance.zk_machine_menu"
+              sequence="2" groups="hr_attendance.group_hr_attendance_user"/>
+
+
+    </data>
+
+
+</odoo>

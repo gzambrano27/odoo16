@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Vista heredada de centro.costo.tipo.proyecto -->
+  <record id="view_centro_costo_tipoproyecto_form_inherit_crm" model="ir.ui.view">
+    <field name="name">centro.costo.tipoproyecto.form.inherit.crm</field>
+    <field name="model">centro.costo.tipo.proyecto</field>
+    <field name="inherit_id" ref="account_payment_purchase.view_centro_costo_tipoproyecto_form"/>
+    <field name="arch" type="xml">
+      <!-- Insertamos el campo division_id debajo de 'name' -->
+      <field name="name" position="after">
+        <field name="division_id" options="{'no_create':True,'no_edit':True,'no_open':True}"/>
+      </field>
+    </field>
+  </record>
+  <record id="action_tipoproyecto_crm_form" model="ir.actions.act_window">
+        <field name="name">Tipo Proyecto</field>
+        <field name="res_model">centro.costo.tipo.proyecto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'import_enabled': True}</field>
+   </record>
+   
+   <!-- Menu: ahora en CRM Configuración -->
+   <menuitem id="menu_action_tipoproyecto_crm"
+             action="action_tipoproyecto_crm_form"
+             parent="crm.crm_menu_config"
+             sequence="51"/>
+</odoo>

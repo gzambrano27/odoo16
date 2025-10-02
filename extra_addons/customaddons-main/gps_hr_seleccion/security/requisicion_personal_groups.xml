@@ -1,0 +1,37 @@
+<odoo>
+  <data noupdate="1">
+    <record id="module_category_requisicion_personal" model="ir.module.category">
+      <field name="name">Requisición de Personal</field>
+      <field name="sequence">20</field>
+    </record>
+
+    <record id="group_requisicion_personal_visor" model="res.groups">
+      <field name="name">RP - Visor</field>
+      <field name="category_id" ref="gps_hr_seleccion.module_category_requisicion_personal"/>
+    </record>
+
+    <record id="group_requisicion_personal_usuario" model="res.groups">
+      <field name="name">RP - Usuario</field>
+      <field name="category_id" ref="gps_hr_seleccion.module_category_requisicion_personal"/>
+      <field name="implied_ids" eval="[(4, ref('gps_hr_seleccion.group_requisicion_personal_visor'))]"/>
+    </record>
+
+    <record id="group_requisicion_personal_jefe" model="res.groups">
+      <field name="name">RP - Jefe</field>
+      <field name="category_id" ref="gps_hr_seleccion.module_category_requisicion_personal"/>
+      <field name="implied_ids" eval="[(4, ref('gps_hr_seleccion.group_requisicion_personal_usuario'))]"/>
+    </record>
+
+    <record id="group_requisicion_personal_gerente" model="res.groups">
+      <field name="name">RP - Gerente</field>
+      <field name="category_id" ref="gps_hr_seleccion.module_category_requisicion_personal"/>
+      <field name="implied_ids" eval="[(4, ref('gps_hr_seleccion.group_requisicion_personal_jefe'))]"/>
+    </record>
+
+    <record id="group_requisicion_personal_admin" model="res.groups">
+      <field name="name">RP - Administrador</field>
+      <field name="category_id" ref="gps_hr_seleccion.module_category_requisicion_personal"/>
+      <field name="implied_ids" eval="[(4, ref('gps_hr_seleccion.group_requisicion_personal_gerente'))]"/>
+    </record>
+  </data>
+</odoo>
