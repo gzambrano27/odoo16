@@ -1,60 +1,60 @@
-from odoo import fields, models,api
+from odoo import fields, models, api
 
 
 class EmployeeAttendanceCalendar(models.Model):
-    _name = "employee.attendance.calendar"
-    _description = "Asistencia de empleados por calendario"
-    _auto = False   # importante: no crea tabla, usa la vista
+	_name = "employee.attendance.calendar"
+	_description = "Asistencia de empleados por calendario"
+	_auto = False  # importante: no crea tabla, usa la vista
 
-    id = fields.Integer(string="ID", readonly=True)
-    empleado_id = fields.Many2one("hr.employee", string="Empleado", readonly=True)
-    empleado_nombre = fields.Char(string="Nombre Empleado", readonly=True)
-    fecha = fields.Date(string="Fecha", readonly=True)
+	id = fields.Integer(string="ID", readonly=True)
+	empleado_id = fields.Many2one("hr.employee", string="Empleado", readonly=True)
+	empleado_nombre = fields.Char(string="Nombre Empleado", readonly=True)
+	fecha = fields.Date(string="Fecha", readonly=True)
 
-    day_id = fields.Many2one("calendar.day", string="Día", readonly=True)
-    calendario_id = fields.Many2one("resource.calendar", string="Calendario", readonly=True)
-    dia_semana = fields.Integer(string="Día Semana", readonly=True)
+	day_id = fields.Many2one("calendar.day", string="Día", readonly=True)
+	calendario_id = fields.Many2one("resource.calendar", string="Calendario", readonly=True)
+	dia_semana = fields.Integer(string="Día Semana", readonly=True)
 
-    entrada_real = fields.Datetime(string="Entrada", readonly=True)
-    salida_real = fields.Datetime(string="Salida", readonly=True)
+	entrada_real = fields.Datetime(string="Entrada", readonly=True)
+	salida_real = fields.Datetime(string="Salida", readonly=True)
 
-    entrada_hora = fields.Float(string="Hora Entrada", readonly=True)
-    salida_hora = fields.Float(string="Hora Salida", readonly=True)
+	entrada_hora = fields.Float(string="Hora Entrada", readonly=True)
+	salida_hora = fields.Float(string="Hora Salida", readonly=True)
 
-    inicio = fields.Float(string="Inicio Jornada", readonly=True)
-    # fin_medio = fields.Float(string="Fin Medio Día", readonly=True)
-    # inicio_medio = fields.Float(string="Inicio Medio Día", readonly=True)
-    fin = fields.Float(string="Fin Jornada", readonly=True)
+	inicio = fields.Float(string="Inicio Jornada", readonly=True)
+	# fin_medio = fields.Float(string="Fin Medio Día", readonly=True)
+	# inicio_medio = fields.Float(string="Inicio Medio Día", readonly=True)
+	fin = fields.Float(string="Fin Jornada", readonly=True)
 
-    estado_marcacion = fields.Selection([
-        ('completo', 'Completo'),
-        ('incompleto', 'Incompleto'),
-    ], string="Estado Marcación", readonly=True)
+	estado_marcacion = fields.Selection([
+		('completo', 'Completo'),
+		('incompleto', 'Incompleto'),
+	], string="Estado Marcación", readonly=True)
 
-    dif_min_entrada = fields.Integer(string="Dif. Min Ent.", readonly=True)
-    estado_entrada = fields.Selection([
-        ('sin_horario', 'Sin Horario'),
-        ('temprano', 'Temprano'),
-        ('puntual', 'Puntual'),
-        ('atraso', 'Atraso'),
-    ], string="Estado Entrada", readonly=True)
+	dif_min_entrada = fields.Integer(string="Dif. Min Ent.", readonly=True)
+	estado_entrada = fields.Selection([
+		('sin_horario', 'Sin Horario'),
+		('temprano', 'Temprano'),
+		('puntual', 'Puntual'),
+		('atraso', 'Atraso'),
+	], string="Estado Entrada", readonly=True)
 
-    dif_min_salida = fields.Integer(string="Dif. Min Sal.", readonly=True)
-    estado_salida = fields.Selection([
-        ('sin_horario', 'Sin Horario'),
-        ('anticipada', 'Anticipada'),
-        ('puntual', 'Puntual'),
-        ('tardia', 'Tardía'),
-    ], string="Estado Salida", readonly=True)
+	dif_min_salida = fields.Integer(string="Dif. Min Sal.", readonly=True)
+	estado_salida = fields.Selection([
+		('sin_horario', 'Sin Horario'),
+		('anticipada', 'Anticipada'),
+		('puntual', 'Puntual'),
+		('tardia', 'Tardía'),
+	], string="Estado Salida", readonly=True)
 
-    minutos_descontar=fields.Integer("Min. Descontar",default=0)
-    minutos_extras = fields.Integer("Min. Extras", default=0)
+	minutos_descontar = fields.Integer("Min. Descontar", default=0)
+	minutos_extras = fields.Integer("Min. Extras", default=0)
 
-    feriado_id=fields.Many2one('calendar.holiday','Feriado')
+	feriado_id = fields.Many2one('calendar.holiday', 'Feriado')
 
-    def init(self):
-        """Inicializa la vista en PostgreSQL"""
-        self.env.cr.execute(""" 
+	def init(self):
+		"""Inicializa la vista en PostgreSQL"""
+		self.env.cr.execute(""" 
             
 CREATE OR REPLACE VIEW employee_attendance_calendar AS
 
@@ -374,28 +374,39 @@ from consolidado
 
         """)
 
-    @api.model
-    def _where_calc(self, domain, active_test=True):
-        # Si no se proporciona un dominio, inicializamos como vacío
-        domain = domain or []
+	def _get_all_subordinates(self, employee):
+		""" Devuelve todos los subordinados recursivos de un empleado """
+		all_subordinates = self.env["hr.employee"]
+		to_process = employee.child_ids
+		while to_process:
+			all_subordinates |= to_process
+			to_process = to_process.mapped("child_ids")
+		return all_subordinates
 
-        # Si el contexto tiene "only_user", no modificamos el dominio
-        if not self._context.get("only_user", False):
-            return super(EmployeeAttendanceCalendar, self)._where_calc(domain, active_test)
+	@api.model
+	def _where_calc(self, domain, active_test=True):
+		domain = domain or []
 
-        # Obtener el usuario actual
-        user = self.env["res.users"].sudo().browse(self._uid)
+		# Si no viene "only_user" en contexto, usar comportamiento normal
+		if not self._context.get("only_user", False):
+			return super(EmployeeAttendanceCalendar, self)._where_calc(domain, active_test)
 
-        # Comprobar si el usuario tiene permisos de grupo 'group_empleados_usuarios'
-        if user.has_group("gps_hr.group_empleados_usuarios"):
-            # Buscar el empleado relacionado con el usuario
-            employee = self.env["hr.employee"].sudo().search([('user_id', '=', user.id)], limit=1)
+		# Usuario actual
+		user = self.env["res.users"].sudo().browse(self._uid)
 
-            # Si encontramos un empleado, modificamos el dominio para filtrar por su ID
-            if employee:
-                domain.append(("empleado_id", "in", tuple(employee.ids + [-1, -1])))
-            else:
-                domain.append(("empleado_id", "=", -1))
-        # Llamar a la función original con el dominio modificado
-        return super(EmployeeAttendanceCalendar, self)._where_calc(domain, active_test)
+		# Si es empleado "normal"
+		if user.has_group("gps_hr.group_empleados_usuarios"):
+			employee = self.env["hr.employee"].sudo().search([("user_id", "=", user.id)], limit=1)
 
+			if employee:
+				# ✅ incluir al empleado + todos los subordinados recursivos
+				subordinates = self._get_all_subordinates(employee)
+				employees_ids = employee.ids + subordinates.ids
+				if not employees_ids:
+					employees_ids = [-1]
+
+				domain.append(("empleado_id", "in", employees_ids))
+			else:
+				domain.append(("empleado_id", "=", -1))
+
+		return super(EmployeeAttendanceCalendar, self)._where_calc(domain, active_test)

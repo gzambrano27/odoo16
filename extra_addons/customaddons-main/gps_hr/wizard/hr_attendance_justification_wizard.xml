@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista del Wizard -->
+    <record id="view_hr_attendance_justification_wizard_form" model="ir.ui.view">
+        <field name="name">hr.attendance.justification.wizard.form</field>
+        <field name="model">hr.attendance.justification.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Justificar Asistencia">
+                <group>
+                    <field name="tipo"/>
+                    <field name="motivo_id"/>
+                    <field name="comentario"/>
+                </group>
+                <footer>
+                    <button string="Confirmar" type="object" name="action_confirmar" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción servidor que abre el wizard -->
+    <record id="action_server_open_attendance_justification_wizard" model="ir.actions.server">
+        <field name="name">Justificar Asistencia</field>
+        <field name="model_id" ref="model_employee_attendance_calendar"/>
+        <field name="state">code</field>
+        <field name="binding_model_id" ref="model_employee_attendance_calendar"/>
+        <field name="binding_view_types">list</field>
+        <field name="code"><![CDATA[
+if len(records) != 1:
+    raise UserError("Debes seleccionar exactamente una línea de asistencia para justificar.")
+
+action = {
+    "type": "ir.actions.act_window",
+    "res_model": "hr.attendance.justification.wizard",
+    "view_mode": "form",
+    "target": "new",
+    "context": {"active_id": records[0].id, "active_ids": [records[0].id]},
+}
+        ]]></field>
+    </record>
+</odoo>

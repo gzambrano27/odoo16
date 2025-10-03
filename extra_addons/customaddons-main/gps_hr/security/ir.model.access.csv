@@ -42,3 +42,6 @@ access_hr_employee_limited_rrhh,access_hr_employee_limited_rrhh,hr.model_hr_empl
 access_hr_biometric_wizard,access_hr_biometric_wizard,model_hr_biometric_wizard,,1,1,1,1
 access_employee_attendance_calendar,access_employee_attendance_calendar,model_employee_attendance_calendar,,1,1,1,1
 access_hr_employee_group,access_hr_employee_group,model_hr_employee_group,,1,1,1,1
+access_hr_attendance_justification_reason,access.hr.attendance.justification.reason,model_hr_attendance_justification_reason,base.group_user,1,1,1,1
+access_hr_attendance_justification,access.hr.attendance.justification,model_hr_attendance_justification,base.group_user,1,1,1,1
+access_hr_attendance_justification_wizard,access.hr.attendance.justification.wizard,model_hr_attendance_justification_wizard,base.group_user,1,0,1,0

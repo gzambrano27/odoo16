@@ -1,35 +1,48 @@
 # -*- coding: utf-8 -*-
 # -*- encoding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import api,fields, models,_
+from odoo import api, fields, models, _
 from odoo.tools.safe_eval import safe_eval
-from odoo.exceptions import ValidationError,UserError
+from odoo.exceptions import ValidationError, UserError
 
 
 class EmployeeAttendanceRaw(models.Model):
-    _inherit = 'employee.attendance.raw'
+	_inherit = 'employee.attendance.raw'
 
-    @api.model
-    def _where_calc(self, domain, active_test=True):
-        # Si no se proporciona un dominio, inicializamos como vacío
-        domain = domain or []
+	def _get_all_subordinates(self, employee):
+		""" Devuelve todos los subordinados recursivos de un empleado """
+		all_subordinates = self.env["hr.employee"]
+		to_process = employee.child_ids
+		while to_process:
+			all_subordinates |= to_process
+			to_process = to_process.mapped("child_ids")
+		return all_subordinates
 
-        # Si el contexto tiene "only_user", no modificamos el dominio
-        if not self._context.get("only_user", False):
-            return super(EmployeeAttendanceRaw, self)._where_calc(domain, active_test)
+	@api.model
+	def _where_calc(self, domain, active_test=True):
+		# Si no se proporciona un dominio, inicializamos como vacío
+		domain = domain or []
 
-        # Obtener el usuario actual
-        user = self.env["res.users"].sudo().browse(self._uid)
+		# Si el contexto tiene "only_user", no modificamos el dominio
+		if not self._context.get("only_user", False):
+			return super(EmployeeAttendanceRaw, self)._where_calc(domain, active_test)
 
-        # Comprobar si el usuario tiene permisos de grupo 'group_empleados_usuarios'
-        if user.has_group("gps_hr.group_empleados_usuarios"):
-            # Buscar el empleado relacionado con el usuario
-            employee = self.env["hr.employee"].sudo().search([('user_id', '=', user.id)], limit=1)
+		# Usuario actual
+		user = self.env["res.users"].sudo().browse(self._uid)
 
-            # Si encontramos un empleado, modificamos el dominio para filtrar por su ID
-            if employee:
-                domain.append(("employee_id", "in", tuple(employee.ids + [-1, -1])))
-            else:
-                domain.append(("employee_id", "=", -1))
-        # Llamar a la función original con el dominio modificado
-        return super(EmployeeAttendanceRaw, self)._where_calc(domain, active_test)
+		# Verificar si pertenece al grupo de empleados
+		if user.has_group("gps_hr.group_empleados_usuarios"):
+			employee = self.env["hr.employee"].sudo().search([('user_id', '=', user.id)], limit=1)
+
+			if employee:
+				# ✅ incluir al empleado y todos sus subordinados (recursivo)
+				subordinates = self._get_all_subordinates(employee)
+				employees_ids = employee.ids + subordinates.ids
+				if not employees_ids:
+					employees_ids = [-1]  # evita dominio vacío
+				domain.append(("employee_id", "in", employees_ids))
+			else:
+				domain.append(("employee_id", "=", -1))
+
+		# Llamar a la función original con el dominio modificado
+		return super(EmployeeAttendanceRaw, self)._where_calc(domain, active_test)

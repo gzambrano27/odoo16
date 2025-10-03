@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ====================== -->
+    <!-- Acción para Solicitudes -->
+    <!-- ====================== -->
+    <record id="action_hr_attendance_justification" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Justificación</field>
+        <field name="res_model">hr.attendance.justification</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_hr_attendance_justification_tree"/>
+    </record>
+
+    <!-- ====================== -->
+    <!-- Menú Justificaciones dentro de Procesos de Gestión de Empleados -->
+    <!-- ====================== -->
+    <menuitem id="menu_hr_attendance_justification"
+              name="Solicitudes de Justificación"
+              parent="gps_hr.hr_employee_gestion_menu_process"
+              action="gps_hr.action_hr_attendance_justification"
+              sequence="50"/>
+
+    <!-- ====================== -->
+    <!-- Sección Motivos en Nómina -->
+    <!-- ====================== -->
+    <menuitem id="menu_hr_attendance_justification_config_root"
+              name="Motivos de Justificación"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+              sequence="120"/>
+
+    <record id="action_hr_attendance_justification_reason" model="ir.actions.act_window">
+        <field name="name">Motivos de Justificación</field>
+        <field name="res_model">hr.attendance.justification.reason</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_hr_attendance_justification_reason_tree"/>
+    </record>
+
+    <menuitem id="menu_hr_attendance_justification_reason"
+              name="Motivos"
+              parent="menu_hr_attendance_justification_config_root"
+              action="gps_hr.action_hr_attendance_justification_reason"
+              sequence="1"/>
+</odoo>

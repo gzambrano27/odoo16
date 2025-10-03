@@ -72,3 +72,6 @@ from . import employee_attendance_calendar
 from . import employee_attendance_raw
 
 from . import hr_employee_group
+
+from . import hr_attendance_justification
+from . import hr_attendance_justification_reason
