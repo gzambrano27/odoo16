@@ -60,7 +60,7 @@
                                 <div>
 									<p class="m-0 p-0"><strong>PROYECTO:</strong> <span t-field="doc.proyecto"/></p>
                                     <p class="m-0 p-0"><strong>CLIENTE:</strong> <span t-field="doc.partner_id"/></p>
-                                    <p class="m-0 p-0"><strong>REVISIÓN No.:</strong> A</p>
+                                    <p class="m-0 p-0"><strong>REVISIÓN No.:</strong> <span t-esc="doc.referencia_analitica.split('-')[-1] if doc.referencia_analitica and doc.referencia_analitica.split('-')[-1].isalpha() else 'A'"/></p>
                                     <p class="m-0 p-0"><strong>FECHA:</strong> <span t-field="doc.date_order" t-options='{"widget":"date"}'/></p>
                                 </div>
                             </div>
