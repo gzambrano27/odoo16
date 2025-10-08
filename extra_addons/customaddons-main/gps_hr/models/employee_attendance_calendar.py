@@ -1,4 +1,8 @@
-from odoo import fields, models, api
+# -*- coding: utf-8 -*-
+from odoo import fields, models, api, _
+from odoo.exceptions import ValidationError
+from datetime import datetime, time
+import pytz
 
 
 class EmployeeAttendanceCalendar(models.Model):
@@ -410,3 +414,96 @@ from consolidado
 				domain.append(("empleado_id", "=", -1))
 
 		return super(EmployeeAttendanceCalendar, self)._where_calc(domain, active_test)
+
+	def action_rrhh_justificar(self):
+		"""Abre el wizard para justificación directa de RRHH (uno o varios registros)"""
+		if not self:
+			raise ValidationError(_("Debes seleccionar al menos un registro para justificar."))
+
+		# Usuario actual
+		user_employee = self.env["hr.employee"].sudo().search([("user_id", "=", self.env.user.id)], limit=1)
+		if not user_employee:
+			raise ValidationError(_("Tu usuario no está vinculado a ningún empleado."))
+
+		# Validar que pertenezca a RRHH (departamento 166)
+		rrhh_depto = self.env["hr.department"].sudo().browse(166)
+		if not rrhh_depto or user_employee.department_id.id != rrhh_depto.id:
+			depto_nombre = rrhh_depto.complete_name or rrhh_depto.name or "RRHH"
+			raise ValidationError(
+				_("Solo personal del departamento '%s' puede justificar directamente.") % depto_nombre)
+
+		# Contexto con los IDs seleccionados
+		ctx = dict(self.env.context or {})
+		ctx.update({
+			"active_model": "employee.attendance.calendar",
+			"active_ids": self.ids,
+			"default_tipo": False,
+		})
+
+		# Retornar acción del wizard
+		return {
+			"type": "ir.actions.act_window",
+			"name": _("Justificación Directa RRHH"),
+			"res_model": "employee.attendance.calendar.rrhh.wizard",
+			"view_mode": "form",
+			"target": "new",
+			"context": ctx,
+		}
+
+	def _get_jornada_laboral(self, empleado, fecha, tipo):
+		"""
+		Obtiene la hora de entrada o salida según el calendario laboral del empleado.
+		Las horas en resource_calendar_attendance están en hora Ecuador (UTC-5),
+		por lo que se convierten a UTC (hora del servidor).
+		"""
+		contrato = empleado.contract_id
+		if not contrato or not contrato.resource_calendar_id:
+			raise ValidationError(_("El empleado no tiene configurado un calendario de trabajo."))
+
+		calendario = contrato.resource_calendar_id
+		dia_semana = str(fecha.weekday())  # lunes=0, domingo=6
+
+		# Buscar todas las asistencias del día
+		asistencias = self.env["resource.calendar.attendance"].search([
+			("calendar_id", "=", calendario.id),
+			("dayofweek", "=", dia_semana),
+		])
+
+		if not asistencias:
+			raise ValidationError(_("No se encontró una jornada laboral configurada para este día."))
+
+		# 🔹 Para entrada: tomar el inicio de la mañana
+		if tipo == "entrada":
+			asistencia_morning = asistencias.filtered(lambda r: r.day_period == "morning")
+			if not asistencia_morning:
+				raise ValidationError(_(f"No se encontró horario de mañana para el día {fecha}."))
+			hora_float = asistencia_morning[0].hour_from
+
+		# 🔹 Para salida: tomar el fin de la tarde
+		else:
+			asistencia_afternoon = asistencias.filtered(lambda r: r.day_period == "afternoon")
+			if not asistencia_afternoon:
+				raise ValidationError(_(f"No se encontró horario de tarde para el día {fecha}."))
+			hora_float = asistencia_afternoon[0].hour_to
+
+		# Convertir float a objeto time (hora Ecuador)
+		hora_int = int(hora_float)
+		minutos = int((hora_float - hora_int) * 60)
+		hora_local = time(hora_int, minutos)
+
+		# Convertir hora Ecuador → UTC (hora del servidor)
+		tz_ecuador = pytz.timezone("America/Guayaquil")
+		fecha_local = tz_ecuador.localize(datetime.combine(fecha, hora_local))
+		fecha_utc = fecha_local.astimezone(pytz.UTC)
+
+		# Retornar hora UTC (no naive)
+		return fecha_utc.time()
+
+	def _convertir_a_utc(self, fecha, hora_local):
+		"""
+		Combina fecha + hora (ya ajustada a UTC) y devuelve datetime naive (UTC puro).
+		"""
+		tz_utc = pytz.UTC
+		fecha_utc = tz_utc.localize(datetime.combine(fecha, hora_local))
+		return fecha_utc.replace(tzinfo=None)
+

@@ -24,6 +24,7 @@ class HrAttendanceJustificationWizard(models.TransientModel):
 		    "tipo": self.tipo,
 		    "motivo_id": self.motivo_id.id,
 		    "comentario": self.comentario,
+		    "estado": "enviado",
 	    })
 	    return {"type": "ir.actions.act_window_close"}
 

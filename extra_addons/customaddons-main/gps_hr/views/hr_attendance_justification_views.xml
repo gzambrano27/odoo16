@@ -24,7 +24,6 @@
                         <field name="activo"/>
                     </group>
                 </sheet>
-                <!-- ✅ Chatter agregado -->
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="activity_ids" widget="mail_activity"/>
@@ -34,7 +33,32 @@
         </field>
     </record>
 
-    <!-- Solicitudes -->
+    <!-- Acción Servidor: Aprobar Seleccionados -->
+    <record id="action_server_batch_aprobar_justification" model="ir.actions.server">
+        <field name="name">Aprobar Seleccionados</field>
+        <field name="model_id" ref="model_hr_attendance_justification"/>
+        <field name="binding_model_id" ref="model_hr_attendance_justification"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            records.action_batch_aprobar()
+        </field>
+    </record>
+
+    <!-- Acción Servidor: Rechazar Seleccionados -->
+    <record id="action_server_batch_rechazar_justification" model="ir.actions.server">
+        <field name="name">Rechazar Seleccionados</field>
+        <field name="model_id" ref="model_hr_attendance_justification"/>
+        <field name="binding_model_id" ref="model_hr_attendance_justification"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            records.action_batch_rechazar()
+        </field>
+    </record>
+
+
+    <!-- Solicitudes (Tree) -->
     <record id="view_hr_attendance_justification_tree" model="ir.ui.view">
         <field name="name">hr.attendance.justification.tree</field>
         <field name="model">hr.attendance.justification</field>
@@ -42,35 +66,66 @@
             <tree string="Solicitudes de Justificación" create="false"
                   decoration-success="estado=='aprobado'"
                   decoration-danger="estado=='rechazado'"
-                  decoration-info="estado=='enviado'">
+                  decoration-info="estado in ('enviado','enviado_rrhh')">
                 <field name="name"/>
                 <field name="empleado_id"/>
                 <field name="tipo"/>
                 <field name="motivo_id"/>
                 <field name="comentario"/>
-                <field name="estado"/>
+                <!-- ✅ Estado con widget badge -->
+                <field name="estado" widget="badge" decoration-success="estado=='aprobado'"
+                       decoration-danger="estado=='rechazado'"
+                       decoration-info="estado in ('enviado','enviado_rrhh')"
+                       decoration-warning="estado=='borrador'"/>
+
+                <!-- ✅ Botón Aprobar (solo RRHH) -->
+                <button name="action_aprobar" type="object" icon="fa-check"
+                        string="Aprobar"
+                        attrs="{'invisible':[('estado','!=','enviado_rrhh')]}"/>
+
+                <!-- ✅ Botón Rechazar (solo RRHH) -->
+                <button name="action_rechazar" type="object" icon="fa-times"
+                        string="Rechazar"
+                        attrs="{'invisible':[('estado','!=','enviado_rrhh')]}"/>
             </tree>
         </field>
     </record>
 
+    <!-- Solicitudes (Form) -->
     <record id="view_hr_attendance_justification_form" model="ir.ui.view">
         <field name="name">hr.attendance.justification.form</field>
         <field name="model">hr.attendance.justification</field>
         <field name="arch" type="xml">
             <form string="Solicitud de Justificación" edit="true" create="false">
                 <header>
+                    <!-- Enviar (Empleado) -->
                     <button name="action_enviar" type="object" string="Enviar"
                             attrs="{'invisible':[('estado','!=','borrador')]}"/>
-                    <button name="action_aprobar" type="object" string="Aprobar"
-                            attrs="{'invisible':[('estado','!=','enviado')]}"/>
-                    <button name="action_rechazar" type="object" string="Rechazar"
-                            attrs="{'invisible':[('estado','!=','enviado')]}"/>
-                    <button name="action_draft" type="object" string="Regresar a Borrador"
+
+                    <!-- Enviar a RRHH (Jefe directo o superior) -->
+                    <button name="action_enviar_rrhh" type="object" string="Enviar a RRHH"
                             attrs="{'invisible':[('estado','!=','enviado')]}"
-                            class="btn-secondary"/>
+                            class="btn-primary"/>
+
+                    <!-- Aprobar (RRHH) -->
+                    <button name="action_aprobar" type="object" string="Aprobar"
+                            attrs="{'invisible':[('estado','!=','enviado_rrhh')]}"
+                            class="btn-primary"/>
+
+                    <!-- Rechazar (RRHH) -->
+                    <button name="action_rechazar" type="object" string="Rechazar"
+                            attrs="{'invisible':[('estado','!=','enviado_rrhh')]}"
+                            class="btn-primary"/>
+
+                    <!-- Regresar a borrador (Jefe directo o RRHH) -->
+                    <button name="action_draft" type="object" string="Regresar a Borrador"
+                            attrs="{'invisible':[('estado','not in',('enviado','enviado_rrhh'))]}"
+                            class="btn-primary"/>
+
                     <field name="estado" widget="statusbar"
-                           statusbar_visible="borrador,enviado,aprobado,rechazado"/>
+                           statusbar_visible="borrador,enviado,enviado_rrhh,aprobado,rechazado"/>
                 </header>
+
                 <sheet>
                     <group>
                         <field name="empleado_id"/>
@@ -81,6 +136,7 @@
                         <field name="jefe_directo_id" readonly="1"/>
                     </group>
                 </sheet>
+
                 <!-- ✅ Chatter agregado -->
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -88,6 +144,31 @@
                     <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_hr_attendance_justification_search" model="ir.ui.view">
+        <field name="name">hr.attendance.justification.search</field>
+        <field name="model">hr.attendance.justification</field>
+        <field name="arch" type="xml">
+            <search string="Solicitudes de Justificación">
+                <field name="empleado_id"/>
+                <field name="tipo"/>
+                <field name="motivo_id"/>
+                <field name="estado"/>
+
+                <filter string="Mis Subordinados Directos"
+                        name="filtro_subordinados_directos"
+                        domain="[('empleado_id.parent_id.user_id','=',uid)]"/>
+
+                <group expand="0" string="Agrupar por...">
+                    <filter string="Empleado" name="group_empleado" context="{'group_by':'empleado_id'}"/>
+                    <filter string="Tipo (Entrada/Salida)" name="group_tipo" context="{'group_by':'tipo'}"/>
+                    <filter string="Motivo" name="group_motivo" context="{'group_by':'motivo_id'}"/>
+                    <filter string="Estado" name="group_estado" context="{'group_by':'estado'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -110,37 +191,26 @@
         </field>
     </record>
 
-    <!-- search view nuevo -->
-    <record id="gps_hr_employee_attendance_raw_search" model="ir.ui.view">
-        <field name="name">gps.hr.employee.attendance.raw.search</field>
-        <field name="model">employee.attendance.raw</field>
-        <field name="arch" type="xml">
-            <search string="Marcaciones">
-                <field name="date_time"/>
-                <field name="employee_id"/>
-                <field name="raw_user_id"/>
-                <field name="biometric_id"/>
-
-                <!-- Filtros -->
-                <filter string="Manual" name="filter_manual" domain="[('biometric_id','=',False)]"/>
-                <filter string="Automático" name="filter_automatico" domain="[('biometric_id','!=',False)]"/>
-
-                <!-- Agrupar por -->
-                <group expand="0" string="Agrupar por...">
-                    <filter string="Empleado" name="group_employee" context="{'group_by':'employee_id'}"/>
-                    <filter string="Fecha" name="group_fecha" context="{'group_by':'date_time'}"/>
-                </group>
-            </search>
+    <!-- Acciones -->
+    <record id="action_hr_attendance_justification" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Justificación</field>
+        <field name="res_model">hr.attendance.justification</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_hr_attendance_justification_search"/>
+        <field name="context">{'only_user':True}</field>
+        <field name="help" type="html">
+            <p>Vista de todas las solicitudes de justificación.</p>
         </field>
     </record>
 
-    <!-- ACTUALIZAR acción existente en lugar de recrear -->
-    <record id="zk_manager.action_employee_attendance_raw" model="ir.actions.act_window">
-        <field name="search_view_id" ref="gps_hr_employee_attendance_raw_search"/>
+    <record id="action_hr_attendance_justification_my" model="ir.actions.act_window">
+        <field name="name">Mis Solicitudes de Justificación</field>
+        <field name="res_model">hr.attendance.justification</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_hr_attendance_justification_search"/>
+        <field name="context">{'only_user':True}</field>
+        <field name="help" type="html">
+            <p>Vista de mis solicitudes y las de mis subordinados directos e indirectos.</p>
+        </field>
     </record>
-
-    <record id="zk_manager.action_employee_attendance_my_raw" model="ir.actions.act_window">
-        <field name="search_view_id" ref="gps_hr_employee_attendance_raw_search"/>
-    </record>
-
 </odoo>

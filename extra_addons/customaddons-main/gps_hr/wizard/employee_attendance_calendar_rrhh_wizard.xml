@@ -1,0 +1,17 @@
+<odoo>
+	<record id="view_employee_attendance_calendar_rrhh_wizard_form" model="ir.ui.view">
+		<field name="name">employee.attendance.calendar.rrhh.wizard.form</field>
+		<field name="model">employee.attendance.calendar.rrhh.wizard</field>
+		<field name="arch" type="xml">
+			<form string="Justificación Directa RRHH">
+				<group>
+					<field name="tipo" widget="radio"/>
+				</group>
+				<footer>
+					<button string="Confirmar" type="object" name="action_confirmar" class="btn-primary"/>
+					<button string="Cancelar" class="btn-secondary" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+</odoo>

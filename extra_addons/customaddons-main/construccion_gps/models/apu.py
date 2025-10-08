@@ -46,7 +46,6 @@ try:
 except ImportError:
 	raise UserError(_("El módulo openpyxl es requerido para importar archivos Excel."))
 
-
 class APUCategoria(models.Model):
 	_name = 'apu.categoria'
 	_description = 'Categoría de APU'
@@ -66,7 +65,6 @@ class APUCategoria(models.Model):
 			result.append((record.id, rec_name))
 		return result
 
-
 class APUSubcategoria(models.Model):
 	_name = 'apu.subcategoria'
 	_description = 'Subcategoría de APU'
@@ -85,7 +83,6 @@ class APUSubcategoria(models.Model):
 			rec_name = "%s - %s" % (record.codigo or '', record.name or '')
 			result.append((record.id, rec_name))
 		return result
-
 
 class ProductoTemplate(models.Model):
 	_inherit = 'product.template'
@@ -160,7 +157,6 @@ class ProductTemplateAPU(models.Model):
 	precio_total = fields.Float(string='Precio Total', digits=(16, 4), default=0.0, )
 	costo_total = fields.Float(string='Costo Total', digits=(16, 4), default=0.0, )
 
-
 class ProductTemplateActividad(models.Model):
 	_name = 'product.template.actividad'
 	_description = 'Actividad personalizada para Product Template'
@@ -175,7 +171,6 @@ class ProductTemplateActividad(models.Model):
 	costo_hora_actividad = fields.Float(string='Costo Hora', digits=(16, 4), default=0.0, )
 	rendimiento = fields.Float('Hora unidad', default=1.0, digits=(16, 4), required=True)
 	costo_final_actividad = fields.Float('Costo Final', digits=(16, 4))
-
 
 class ApuApu(models.Model):
 	""" Defines bills of material for a product or a product template """
@@ -1987,7 +1982,6 @@ class ApuApuLine(models.Model):
 				**datos,
 			})
 
-
 class ApuApuLineTareas(models.Model):
 	""" Define las tareas correspondientes a las APUS """
 	_name = 'apu.apu.line.tareas'
@@ -2159,7 +2153,6 @@ class ApuApuLineTareas(models.Model):
 				**datos,
 			})
 
-
 class MrpByProduct(models.Model):
 	_name = 'apu.apu.byproduct'
 	_description = 'Byproduct'
@@ -2207,7 +2200,6 @@ class MrpByProduct(models.Model):
 		if product._name == 'product.template':
 			return False
 		return not product._match_all_variant_values(self.bom_product_template_attribute_value_ids)
-
 
 class SaleOrder(models.Model):
 	_inherit = 'sale.order'
@@ -3262,7 +3254,6 @@ class SaleOrder(models.Model):
 		# Log en chatter sin notificar a nadie
 		self.message_post(body=body, subject=subject, subtype_xmlid='mail.mt_note')
 
-
 	def action_view_material_requisitions(self):
 		action = self.env.ref('construccion_gps.action_view_material_requisitions').read()[0]
 		action['domain'] = [('sale_order_id', '=', self.id), ('request_type', '=', 'service')]
@@ -3543,6 +3534,166 @@ class SaleOrder(models.Model):
 
 		return super().action_cancel()
 
+	def action_export_resumen_presupuestos(self):
+		if not self:
+			raise UserError(_("No se seleccionó ningún presupuesto."))
+
+		import io, base64, xlsxwriter
+		from collections import defaultdict
+
+		grupos = defaultdict(list)
+		for order in self:
+			tipo = order.tipo_presupuesto_id or order.env['tipo.presupuesto']
+			grupos[tipo].append(order)
+
+		output = io.BytesIO()
+		workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+
+		# === FORMATOS ===
+		header_fmt = workbook.add_format({
+			'bold': True, 'bg_color': '#305496', 'font_color': 'white',
+			'border': 1, 'align': 'center', 'valign': 'vcenter'
+		})
+		title_fmt = workbook.add_format({
+			'bold': True, 'bg_color': '#D9E1F2', 'border': 1,
+			'align': 'center', 'valign': 'vcenter'
+		})
+		text_fmt = workbook.add_format({'border': 1, 'align': 'left', 'valign': 'vcenter'})
+		center_fmt = workbook.add_format({'border': 1, 'align': 'center', 'valign': 'vcenter'})
+		money_fmt = workbook.add_format({'num_format': '$#,##0.00', 'border': 1, 'align': 'right', 'valign': 'vcenter'})
+		total_fmt = workbook.add_format({
+			'bold': True, 'bg_color': '#F2F2F2', 'border': 1,
+			'align': 'right', 'valign': 'vcenter', 'num_format': '$#,##0.00'
+		})
+		total_label_fmt = workbook.add_format({
+			'bold': True, 'bg_color': '#F2F2F2', 'border': 1,
+			'align': 'left', 'valign': 'vcenter'
+		})
+
+		# === CREAR HOJAS ===
+		for tipo, orders in grupos.items():
+			sheet_name = (tipo.codigo or "Sin tipo de presupuesto")[:31]
+			ws = workbook.add_worksheet(sheet_name)
+
+			headers = [
+				"Descripción (Subcategoría)", "Sí/No",
+				"Costo Mano de Obra", "Precio Mano de Obra",
+				"Costo Materiales", "Precio Materiales",
+				"Indirectos", "Precio Total"
+			]
+			ws.set_row(0, 25)
+			for col, h in enumerate(headers):
+				ws.write(0, col, h, header_fmt)
+
+			current_row = 1
+			col_widths = [len(h) for h in headers]  # para autoajustar ancho
+
+			for order in orders:
+				# === TÍTULO DE PROYECTO ===
+				title_text = f"PROYECTO: {order.no_proyecto or ''} - {order.proyecto or ''}"
+				ws.merge_range(current_row, 0, current_row, len(headers) - 1, title_text, title_fmt)
+				current_row += 1
+
+				# === AGRUPAR DATOS POR SUBCATEGORÍA ===
+				datos_por_subcat = defaultdict(lambda: {
+					'costo_mo': 0.0, 'precio_mo': 0.0,
+					'costo_mat': 0.0, 'precio_mat': 0.0,
+					'indirectos': 0.0
+				})
+
+				for line in order.order_line:
+					apu = line.apu_id
+					if not apu:
+						continue
+					subcat = apu.subcategoria_id or order.env['apu.subcategoria']
+					subcat_name = subcat.name or "Sin Subcategoría"
+
+					datos_por_subcat[subcat_name]['indirectos'] += apu.indirectos_porcentaje or 0.0
+
+					for apu_line in apu.line_ids:
+						qty_total = (line.product_uom_qty or 0.0) * (apu_line.product_qty or 0.0)
+						if apu_line.tipo_componente == 'manoobra':
+							datos_por_subcat[subcat_name]['costo_mo'] += qty_total * (apu_line.cost or 0.0)
+							datos_por_subcat[subcat_name]['precio_mo'] += qty_total * (apu_line.precio_unit or 0.0)
+						elif apu_line.tipo_componente == 'material':
+							datos_por_subcat[subcat_name]['costo_mat'] += qty_total * (apu_line.cost or 0.0)
+							datos_por_subcat[subcat_name]['precio_mat'] += qty_total * (apu_line.precio_unit or 0.0)
+
+				# === LLENAR FILAS ===
+				total_costo_mo = total_precio_mo = total_costo_mat = total_precio_mat = total_indirectos = 0.0
+				start_row = current_row
+
+				for subcat_name, vals in datos_por_subcat.items():
+					precio_total = vals['precio_mo'] + vals['precio_mat']
+					row_idx = current_row + 1  # fila en Excel (1-based)
+
+					ws.write(current_row, 0, subcat_name, text_fmt)
+					ws.write(current_row, 1, "Sí", center_fmt)
+
+					# ✅ Validación (solo "Sí" o "No")
+					ws.data_validation(current_row, 1, current_row, 1, {
+						'validate': 'list',
+						'source': ['Sí', 'No'],
+						'input_message': 'Selecciona "Sí" o "No"',
+						'error_message': 'Solo se permite "Sí" o "No"',
+						'show_error_message': True,
+						'error_type': 'stop'
+					})
+
+					ws.write_number(current_row, 2, vals['costo_mo'], money_fmt)
+					ws.write_number(current_row, 3, vals['precio_mo'], money_fmt)
+					ws.write_number(current_row, 4, vals['costo_mat'], money_fmt)
+					ws.write_number(current_row, 5, vals['precio_mat'], money_fmt)
+					ws.write_number(current_row, 6, vals['indirectos'], money_fmt)
+
+					# Fórmula condicional (solo calcula si B="Sí")
+					formula = f'=IF(B{row_idx}="Sí",D{row_idx}+F{row_idx},0)'
+					ws.write_formula(current_row, 7, formula, money_fmt)
+
+					total_costo_mo += vals['costo_mo']
+					total_precio_mo += vals['precio_mo']
+					total_costo_mat += vals['costo_mat']
+					total_precio_mat += vals['precio_mat']
+					total_indirectos += vals['indirectos']
+
+					# Actualizar anchos
+					col_widths[0] = max(col_widths[0], len(subcat_name))
+					current_row += 1
+
+				# === TOTAL DEL PROYECTO ===
+				ws.write(current_row, 0, "TOTAL PROYECTO", total_label_fmt)
+				ws.write(current_row, 1, "", total_label_fmt)
+				ws.write_number(current_row, 2, total_costo_mo, total_fmt)
+				ws.write_number(current_row, 3, total_precio_mo, total_fmt)
+				ws.write_number(current_row, 4, total_costo_mat, total_fmt)
+				ws.write_number(current_row, 5, total_precio_mat, total_fmt)
+				ws.write_number(current_row, 6, total_indirectos, total_fmt)
+				ws.write_formula(current_row, 7,
+				                 f"=SUM(H{start_row + 1}:H{current_row})", total_fmt)
+
+				current_row += 2  # Espacio entre proyectos
+
+			# === Ajustar ancho automático de columnas ===
+			for i, width in enumerate(col_widths):
+				ws.set_column(i, i, width + 2)
+
+		workbook.close()
+		output.seek(0)
+		file_data = output.read()
+
+		attachment = self.env['ir.attachment'].create({
+			'name': 'Resumen_Presupuestos.xlsx',
+			'datas': base64.b64encode(file_data),
+			'type': 'binary',
+			'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		})
+		url = f"/web/content/{attachment.id}?download=true"
+		return {
+			'type': 'ir.actions.act_url',
+			'url': url,
+			'target': 'new',
+		}
+
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
@@ -3659,7 +3810,6 @@ class SaleOrderLine(models.Model):
 			if apu and apu.total_apu_precio > 0:
 				self.price_unit = apu.total_apu_precio
 
-
 class MaterialPurchaseRequisition(models.Model):
 	_inherit = 'material.purchase.requisition'
 
@@ -3674,7 +3824,6 @@ class MaterialPurchaseRequisition(models.Model):
 				raise UserError(
 					_("No puedes enviar a aprobación una requisición que no está vinculada a un presupuesto."))
 			return super(MaterialPurchaseRequisition, self).requisition_confirm()
-
 
 class MaterialPurchaseRequisitionLine(models.Model):
 	_inherit = 'material.purchase.requisition.line'
@@ -3782,7 +3931,6 @@ class MaterialPurchaseRequisitionLine(models.Model):
 									float_round(restante, 2),
 								))
 
-
 class PurchaseRequest(models.Model):
 	_inherit = 'purchase.request'
 
@@ -3834,7 +3982,6 @@ class PurchaseRequest(models.Model):
 						"No se puede aprobar la requisición."
 					)
 		return super(PurchaseRequest, self).button_to_approve()
-
 
 class PurchaseRequestLine(models.Model):
 	_inherit = 'purchase.request.line'

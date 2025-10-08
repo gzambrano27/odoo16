@@ -2,245 +2,229 @@
 <odoo>
 
 
+    <menuitem name="Egresos" id="talent_human.menu_discount_employees"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+              sequence="68"/>
 
-     <menuitem name="Egresos" id="talent_human.menu_discount_employees"
-               parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-               sequence="68" />
-
- <menuitem name="Lotes de Egresos" id="hr_employee_movement_view_out_menu"
+    <menuitem name="Lotes de Egresos" id="hr_employee_movement_view_out_menu"
               action="hr_employee_movement_view_out_action" parent="talent_human.menu_discount_employees"
-              sequence="1" />
-              
+              sequence="1"/>
+
 
     <menuitem name="Egresos" id="hr_employee_movement_line_out_view_menu"
               action="hr_employee_movement_line_out_view_action" parent="talent_human.menu_discount_employees"
-              sequence="2" />
+              sequence="2"/>
 
 
-   <menuitem name="Préstamos y Anticipos" id="hr_employee_movement_discount_menu"
+    <menuitem name="Préstamos y Anticipos" id="hr_employee_movement_discount_menu"
               action="hr_employee_movement_view_discount_action" parent="talent_human.menu_discount_employees"
-              sequence="3" />
-              
-              <menuitem name="Cuotas de Préstamos y Anticipos" id="hr_employee_movement_line_discount_menu"
+              sequence="3"/>
+
+    <menuitem name="Cuotas de Préstamos y Anticipos" id="hr_employee_movement_line_discount_menu"
               action="hr_employee_movement_line_discount_view_action" parent="talent_human.menu_discount_employees"
-              sequence="4" />
+              sequence="4"/>
 
-              
 
-     <menuitem name="Ingresos" id="hr_employee_movement_view_in_parent_menu"
-               parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-              sequence="69" />
+    <menuitem name="Ingresos" id="hr_employee_movement_view_in_parent_menu"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+              sequence="69"/>
 
-              
-                <menuitem name="Lotes de Ingresos" id="hr_employee_movement_view_in_menu"
+
+    <menuitem name="Lotes de Ingresos" id="hr_employee_movement_view_in_menu"
               action="hr_employee_movement_view_in_action" parent="hr_employee_movement_view_in_parent_menu"
-              sequence="1" />
+              sequence="1"/>
 
     <menuitem name="Ingresos" id="hr_employee_movement_line_in_menu"
               action="hr_employee_movement_line_in_view_action" parent="hr_employee_movement_view_in_parent_menu"
-              sequence="2" />
+              sequence="2"/>
 
 
-      <menuitem name="Horas Extras &amp; Ausencias " id="hr_in_out_access_menu"
-                    parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-              sequence="67" />
+    <menuitem name="Horas Extras &amp; Ausencias " id="hr_in_out_access_menu"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+              sequence="67"/>
 
 
-      <menuitem id="zk_manager.menu_employee_attendance_raw" name="Marcaciones"
-          action="zk_manager.action_employee_attendance_raw"
-          parent="hr_in_out_access_menu"
+    <menuitem id="zk_manager.menu_employee_attendance_raw" name="Marcaciones"
+              action="zk_manager.action_employee_attendance_raw"
+              parent="hr_in_out_access_menu"
               sequence="99999" groups="hr_attendance.group_hr_attendance_user"/>
 
-<menuitem id="menu_employee_attendance_calendar"
+    <menuitem id="menu_employee_attendance_calendar"
               name="Asistencias"
               parent="hr_in_out_access_menu"
               action="action_employee_attendance_calendar"
               sequence="10"/>
 
-
-     <menuitem
-        id="hr_zk_attendance.zk_machine_sub_menu"
-        action="hr_zk_attendance.zk_machine_action"
-        name="Biométrico"
-        parent="hr_in_out_access_menu" sequence="90"
-        groups="hr_attendance.group_hr_attendance_user"
-    />
-
-
-
-
-<menuitem
-        id="resource.menu_resource_calendar_view"
-        action="resource.action_resource_calendar_form"
-        groups="hr_attendance.group_hr_attendance_user"
-        name="Horario"
-        parent="hr_in_out_access_menu" sequence="91"
-    />
-
-
-
-
-  <menuitem name="Procesos" id="hr_other_process_menu"
-              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-              sequence="70" />
-
-     <menuitem id="menu_hr_employee_historic_lines_view" name="Históricos de Rubros de Nómina" parent="hr_payroll.menu_hr_payroll_payslips"
-action="hr_employee_historic_lines_view_action" sequence="-999999"
-/>
-
-
-
-
-
-
-  <menuitem name="Pagos de Provisiones" id="hr_employee_movement_view_provision_menu"
-              action="hr_employee_movement_view_provision_action" parent="hr_other_process_menu"
-              sequence="1" />
-
- <menuitem name="Liquidación de Haberes" id="hr_employee_finiquito_view_menu"
-              action="hr_employee_finiquito_view_action" parent="hr_other_process_menu"
-              sequence="2" />
-
-    <menuitem name="Vacaciones" id="hr_employee_vacation_menu" parent="hr_other_process_menu"
-              sequence="9" />
-
-
+    <menuitem id="menu_employee_attendance_justification"
+              name="Solicitudes de Justificación"
+              parent="hr_in_out_access_menu"
+              action="action_hr_attendance_justification"
+              sequence="11"/>
 
 
     <menuitem
-			action="hr_vacation_period_wizard_view_action"
-			id="hr_vacation_period_wizard_view_menu"
-			name="Generar Vacaciones por Periodo del Empleado"
-			parent="hr_employee_vacation_menu" sequence="2"/>
+            id="hr_zk_attendance.zk_machine_sub_menu"
+            action="hr_zk_attendance.zk_machine_action"
+            name="Biométrico"
+            parent="hr_in_out_access_menu" sequence="90"
+            groups="hr_attendance.group_hr_attendance_user"
+    />
 
-		<menuitem
-			action="hr_vacation_period_view_action"
-			id="hr_vacation_period_view_menu"
-			name="Vacaciones por Periodo del Empleado"
-			parent="hr_employee_vacation_menu" sequence="3"
-			/>
 
-        <menuitem id="menu_hr_vacation_period_line"
-          name="Vacaciones por Pagar"
-          parent="hr_employee_vacation_menu"
-          action="action_hr_vacation_period_line"
-          sequence="10"/>
+    <menuitem
+            id="resource.menu_resource_calendar_view"
+            action="resource.action_resource_calendar_form"
+            groups="hr_attendance.group_hr_attendance_user"
+            name="Horario"
+            parent="hr_in_out_access_menu" sequence="91"
+    />
 
-       <menuitem name="Liquidación de Vacaciones" id="hr_employee_liquidation_act_menu"
+
+    <menuitem name="Procesos" id="hr_other_process_menu"
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+              sequence="70"/>
+
+    <menuitem id="menu_hr_employee_historic_lines_view" name="Históricos de Rubros de Nómina"
+              parent="hr_payroll.menu_hr_payroll_payslips"
+              action="hr_employee_historic_lines_view_action" sequence="-999999"
+    />
+
+
+    <menuitem name="Pagos de Provisiones" id="hr_employee_movement_view_provision_menu"
+              action="hr_employee_movement_view_provision_action" parent="hr_other_process_menu"
+              sequence="1"/>
+
+    <menuitem name="Liquidación de Haberes" id="hr_employee_finiquito_view_menu"
+              action="hr_employee_finiquito_view_action" parent="hr_other_process_menu"
+              sequence="2"/>
+
+    <menuitem name="Vacaciones" id="hr_employee_vacation_menu" parent="hr_other_process_menu"
+              sequence="9"/>
+
+
+    <menuitem
+            action="hr_vacation_period_wizard_view_action"
+            id="hr_vacation_period_wizard_view_menu"
+            name="Generar Vacaciones por Periodo del Empleado"
+            parent="hr_employee_vacation_menu" sequence="2"/>
+
+    <menuitem
+            action="hr_vacation_period_view_action"
+            id="hr_vacation_period_view_menu"
+            name="Vacaciones por Periodo del Empleado"
+            parent="hr_employee_vacation_menu" sequence="3"
+    />
+
+    <menuitem id="menu_hr_vacation_period_line"
+              name="Vacaciones por Pagar"
+              parent="hr_employee_vacation_menu"
+              action="action_hr_vacation_period_line"
+              sequence="10"/>
+
+    <menuitem name="Liquidación de Vacaciones" id="hr_employee_liquidation_act_menu"
               action="hr_employee_liquidation_view_action" parent="hr_employee_vacation_menu"
-              sequence="99" />
+              sequence="99"/>
 
 
-
-
-
-
-     <menuitem name="Pagos" id="hr_process_bank_menu"
+    <menuitem name="Pagos" id="hr_process_bank_menu"
               parent="hr_other_process_menu"
-              sequence="999" />
+              sequence="999"/>
 
 
-     <menuitem name="Pagos de Nómina" id="hr_employee_payment_view_act_menu"
+    <menuitem name="Pagos de Nómina" id="hr_employee_payment_view_act_menu"
               action="hr_employee_payment_view_action" parent="hr_process_bank_menu"
-              sequence="999" />
+              sequence="999"/>
 
 
     <menuitem name="Código de macros de banco" id="res_bank_code_view_menu"
               action="res_bank_code_view_action" parent="hr_process_bank_menu"
-              sequence="1000" />
+              sequence="1000"/>
 
 
-
-      <menuitem name="Reporte de Movimientos" id="hr_employee_payslip_reports_movements_wizard_menu"
+    <menuitem name="Reporte de Movimientos" id="hr_employee_payslip_reports_movements_wizard_menu"
               action="hr_employee_payslip_reports_movements_wizard_action" parent="hr_payroll.menu_hr_payroll_report"
-              sequence="998" />
+              sequence="998"/>
 
-     <menuitem name="Reporte de Roles" id="hr_employee_payslip_reports_wizard_menu"
+    <menuitem name="Reporte de Roles" id="hr_employee_payslip_reports_wizard_menu"
               action="hr_employee_payslip_reports_wizard_action" parent="hr_payroll.menu_hr_payroll_report"
-              sequence="999" />
-
-
+              sequence="999"/>
 
 
     <menuitem id="menu_hr_mail_message_payslip" name="Envio de Roles" parent="hr_payroll.menu_hr_payroll_payslips"
-action="action_hr_mail_message_payslip" sequence="999998"
-/>
-
+              action="action_hr_mail_message_payslip" sequence="999998"
+    />
 
 
     <menuitem id="hr_salary_rule_account_view_menu" name="Cuentas Contables por Reglas"
               parent="hr_payroll.menu_hr_salary_configuration"
-action="hr_salary_rule_account_view_action" sequence="999999"
-/>
+              action="hr_salary_rule_account_view_action" sequence="999999"
+    />
 
 
-  <!-- Menú (en Configuración de RR. HH.) -->
-  <menuitem id="menu_hr_employee_group_root"
-            name="Grupos de Empleados"
+    <!-- Menú (en Configuración de RR. HH.) -->
+    <menuitem id="menu_hr_employee_group_root"
+              name="Grupos de Empleados"
               parent="hr.menu_config_employee"
-            action="action_hr_employee_group"
-            sequence="45"/>
+              action="action_hr_employee_group"
+              sequence="45"/>
 
 
     <menuitem
-        id="hr_payroll.menu_hr_payroll_report"
-        name="Informes"
-        parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-        sequence="72"
-        groups="hr_payroll.group_hr_payroll_manager"/>
+            id="hr_payroll.menu_hr_payroll_report"
+            name="Informes"
+            parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+            sequence="72"
+            groups="hr_payroll.group_hr_payroll_manager"/>
 
 
     <menuitem
-        id="hr_deductible_expenses_period_payslip_menu"
-        name="Tabla de Rangos Impuesto a la Renta"
-        parent="talent_human.menu_sectorial_configuration"
-        sequence="99999"
-        action="action_hr_deductible_expenses_period_payslip"
-        groups="hr_payroll.group_hr_payroll_manager"/>
+            id="hr_deductible_expenses_period_payslip_menu"
+            name="Tabla de Rangos Impuesto a la Renta"
+            parent="talent_human.menu_sectorial_configuration"
+            sequence="99999"
+            action="action_hr_deductible_expenses_period_payslip"
+            groups="hr_payroll.group_hr_payroll_manager"/>
 
 
-   <!-- <menuitem
-        id="hr_payroll.menu_hr_payroll_dashboard_root"
-        name="Dashboard"
-        parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
-        action="hr_payroll.hr_payroll_dashboard_open"
-        sequence="40"
-        groups="hr_payroll.group_hr_payroll_manager"/>-->
+    <!-- <menuitem
+         id="hr_payroll.menu_hr_payroll_dashboard_root"
+         name="Dashboard"
+         parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root"
+         action="hr_payroll.hr_payroll_dashboard_open"
+         sequence="40"
+         groups="hr_payroll.group_hr_payroll_manager"/>-->
 
 
     <menuitem name="Otros" id="otros_menu_conf"
-            parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="120"/>
-
-
+              parent="hr_work_entry_contract_enterprise.menu_hr_payroll_configuration" sequence="120"/>
 
 
     <menuitem
-        id="hr_employee_update_request_wizard_menu"
-        action="hr_employee_update_request_wizard_action"
-        parent="hr.menu_hr_employee_payroll"
-        name="Generar Actualizacion de Empleados"
-        sequence="39"/>
+            id="hr_employee_update_request_wizard_menu"
+            action="hr_employee_update_request_wizard_action"
+            parent="hr.menu_hr_employee_payroll"
+            name="Generar Actualizacion de Empleados"
+            sequence="39"/>
 
     <menuitem
-        id="hr_employee_proyeccion_wizard_menu"
-        action="hr_employee_proyeccion_wizard_action"
-        parent="hr.menu_hr_employee_payroll"
-        name="Generar Proyeccion a Empleados"
-        sequence="40"/>
+            id="hr_employee_proyeccion_wizard_menu"
+            action="hr_employee_proyeccion_wizard_action"
+            parent="hr.menu_hr_employee_payroll"
+            name="Generar Proyeccion a Empleados"
+            sequence="40"/>
 
-  <menuitem id="menu_hr_employee_update_request_all" name="Solicitud de Actualización de Datos"
-                sequence="41" parent="hr.menu_hr_employee_payroll"
-groups="gps_hr.group_empleados_usuarios"
-                action="action_hr_employee_update_request" />
+    <menuitem id="menu_hr_employee_update_request_all" name="Solicitud de Actualización de Datos"
+              sequence="41" parent="hr.menu_hr_employee_payroll"
+              groups="gps_hr.group_empleados_usuarios"
+              action="action_hr_employee_update_request"/>
 
 
-
-<menuitem
-        id="hr_payroll.menu_hr_payslip_entry_type_view"
-        action="hr_payroll.action_view_hr_payslip_input_type"
-        parent="otros_menu_conf"
-        name="Other Input Types"
-        sequence="40"/>
+    <menuitem
+            id="hr_payroll.menu_hr_payslip_entry_type_view"
+            action="hr_payroll.action_view_hr_payslip_input_type"
+            parent="otros_menu_conf"
+            name="Other Input Types"
+            sequence="40"/>
 
     <menuitem
             id="hr_contract_types.hr_menu_contract_type"
@@ -254,62 +238,61 @@ groups="gps_hr.group_empleados_usuarios"
             action="hr_employee_report_wizard_cargas_familiares_action"
             parent="hr.hr_menu_hr_reports"
             sequence="1"
-            groups="base.group_no_one" />
+            groups="base.group_no_one"/>
 
-<menuitem
+    <menuitem
             id="hr_employee_report_wizard_cumpleanios_menu"
             action="hr_employee_report_wizard_cumpleanios_action"
             parent="hr.hr_menu_hr_reports"
             sequence="10"
-            groups="base.group_no_one" />
+            groups="base.group_no_one"/>
 
     <!-- -->
 
     <menuitem id="hr_employee_gestion_menu_root"
-		name="Gestión de Empleados" sequence="54"
-groups="gps_hr.group_empleados_usuarios"
+              name="Gestión de Empleados" sequence="54"
+              groups="gps_hr.group_empleados_usuarios,"
 
-                web_icon="gps_hr,static/description/icon_employee.png"
+              web_icon="gps_hr,static/description/icon_employee.png"
 
-/>
+    />
 
-     <menuitem id="hr_employee_gestion_menu_info"
-		name="Información Personal" sequence="1"
-               parent="hr_employee_gestion_menu_root"
-groups="gps_hr.group_empleados_usuarios"
-/>
+    <menuitem id="hr_employee_gestion_menu_info"
+              name="Información Personal" sequence="1"
+              parent="hr_employee_gestion_menu_root"
+              groups="gps_hr.group_empleados_usuarios"
+    />
 
 
+    <menuitem id="menu_hr_employee_view_tree_only" name="Datos del Empleado"
+              sequence="-999989" parent="hr_employee_gestion_menu_info"
+              groups="gps_hr.group_empleados_usuarios"
+              action="action_hr_employee_view_tree_only"/>
 
- <menuitem id="menu_hr_employee_view_tree_only" name="Datos del Empleado"
-                sequence="-999989" parent="hr_employee_gestion_menu_info"
-groups="gps_hr.group_empleados_usuarios"
-                action="action_hr_employee_view_tree_only" />
-
-      <menuitem id="menu_hr_employee_update_request_empl" name="Solicitud de Actualización de Datos"
-                sequence="-9999" parent="hr_employee_gestion_menu_info"
-groups="gps_hr.group_empleados_usuarios"
-                action="action_hr_employee_update_request_empl" />
+    <menuitem id="menu_hr_employee_update_request_empl" name="Solicitud de Actualización de Datos"
+              sequence="-9999" parent="hr_employee_gestion_menu_info"
+              groups="gps_hr.group_empleados_usuarios"
+              action="action_hr_employee_update_request_empl"/>
 
 
     <menuitem id="view_hr_deductible_expenses_contract_period_template_menu"
-		name="Proyección de gastos" sequence="0" parent="hr_employee_gestion_menu_info"
-groups="gps_hr.group_empleados_usuarios"
+              name="Proyección de gastos" sequence="0" parent="hr_employee_gestion_menu_info"
+              groups="gps_hr.group_empleados_usuarios"
               action="action_view_hr_deductible_expenses_contract_period_template"
-/>
+    />
 
     <menuitem id="menu_th_family_burden_view_readonly"
-		name="Cargas Familiares" sequence="1" parent="hr_employee_gestion_menu_info"
-groups="gps_hr.group_empleados_usuarios"
+              name="Cargas Familiares" sequence="1" parent="hr_employee_gestion_menu_info"
+              groups="gps_hr.group_empleados_usuarios"
               action="th_family_burden_view_readonly_action"
-/>
+    />
 
 
-         <menuitem id="hr_employee_gestion_menu_process"
-		name="Procesos" sequence="2"
-               parent="hr_employee_gestion_menu_root"
-groups="gps_hr.group_empleados_usuarios"
-/>
+    <menuitem id="hr_employee_gestion_menu_process"
+              name="Procesos" sequence="2"
+              parent="hr_employee_gestion_menu_root"
+              groups="gps_hr.group_empleados_usuarios"
+    />
 
 
     <!-- <menuitem id="acta_user_menu_process"
@@ -320,60 +303,55 @@ groups="gps_hr.group_empleados_usuarios"
 />-->
 
     <menuitem id="hr_sse_menu_documents"
-              name="Documentos SSE"  sequence="-999999"
+              name="Documentos SSE" sequence="-999999"
               parent="hr_employee_gestion_menu_process"
               groups="gps_hr.group_empleados_usuarios"
 
               action="sde_document.sse_action_documents"/>
 
 
-      <!-- Entrada en el menú (opcional, si se quiere mostrar en el menú de Mantenimiento) -->
+    <!-- Entrada en el menú (opcional, si se quiere mostrar en el menú de Mantenimiento) -->
     <menuitem id="menu_maintenance_acta_view_menu"
               name="Equipos Asignados"
-             sequence="0" parent="hr_employee_gestion_menu_process"
-groups="gps_hr.group_empleados_usuarios"
-              action="action_maintenance_acta_view" />
+              sequence="0" parent="hr_employee_gestion_menu_process"
+              groups="gps_hr.group_empleados_usuarios"
+              action="action_maintenance_acta_view"/>
 
 
-
- <menuitem id="menu_employee_attendance_my_raw"
-		name="Marcaciones" sequence="-999999999" parent="hr_employee_gestion_menu_process"
-groups="gps_hr.group_empleados_usuarios"
+    <menuitem id="menu_employee_attendance_my_raw"
+              name="Marcaciones" sequence="-999999999" parent="hr_employee_gestion_menu_process"
+              groups="gps_hr.group_empleados_usuarios"
               action="zk_manager.action_employee_attendance_my_raw"
-/>
+    />
 
- <menuitem id="menu_employee_attendance_calendar_my"
-		name="Asistencias &amp; Faltas" sequence="-999999998" parent="hr_employee_gestion_menu_process"
-groups="gps_hr.group_empleados_usuarios"
+    <menuitem id="menu_employee_attendance_calendar_my"
+              name="Asistencias &amp; Faltas" sequence="-999999998" parent="hr_employee_gestion_menu_process"
+              groups="gps_hr.group_empleados_usuarios"
               action="action_employee_attendance_calendar_my"
-/>
+    />
 
 
-
-     <menuitem id="menu_hr_payslip_view_tree_only"
-		name="Roles" sequence="1" parent="hr_employee_gestion_menu_process"
-groups="gps_hr.group_empleados_usuarios"
+    <menuitem id="menu_hr_payslip_view_tree_only"
+              name="Roles" sequence="1" parent="hr_employee_gestion_menu_process"
+              groups="gps_hr.group_empleados_usuarios"
               action="action_hr_payslip_view_tree_only"
-/>
-
-
-
+    />
 
 
     <menuitem id="menu_hr_payslip_caja_chica"
-                name="Registro Caja Chica"
-                parent="hr_employee_gestion_menu_process"
-                sequence="9998"
-                action="account_payment_purchase.action_registro_caja_chica"
-                groups="gps_hr.group_empleados_usuarios"/>
+              name="Registro Caja Chica"
+              parent="hr_employee_gestion_menu_process"
+              sequence="9998"
+              action="account_payment_purchase.action_registro_caja_chica"
+              groups="gps_hr.group_empleados_usuarios"/>
 
 
-   <menuitem id="menu_hr_payslip_reembolsos"
-                name="Registro Reembolsos"
-                parent="hr_employee_gestion_menu_process"
-                sequence="9999"
-                action="account_payment_purchase.action_registro_reembolso"
-                groups="gps_hr.group_empleados_usuarios"/>
+    <menuitem id="menu_hr_payslip_reembolsos"
+              name="Registro Reembolsos"
+              parent="hr_employee_gestion_menu_process"
+              sequence="9999"
+              action="account_payment_purchase.action_registro_reembolso"
+              groups="gps_hr.group_empleados_usuarios"/>
 
 
 </odoo>

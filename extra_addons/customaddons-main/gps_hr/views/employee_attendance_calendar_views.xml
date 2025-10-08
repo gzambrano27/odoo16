@@ -1,4 +1,14 @@
 <odoo>
+    <record id="action_server_rrhh_justificar_asistencia" model="ir.actions.server">
+        <field name="name">Justificar Asistencia RRHH</field>
+        <field name="model_id" ref="model_employee_attendance_calendar"/>
+        <field name="binding_model_id" ref="model_employee_attendance_calendar"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = env['employee.attendance.calendar'].browse(context.get('active_ids', [])).action_rrhh_justificar()</field>
+    </record>
+
+
     <!-- Vista Tree -->
     <record id="view_employee_attendance_calendar_tree" model="ir.ui.view">
         <field name="name">employee.attendance.calendar.tree</field>
@@ -58,6 +68,11 @@
                         domain="[('estado_marcacion','=','incompleto')]"/>
                 <filter string="Faltas" name="filtro_faltas"
                         domain="[('estado_entrada','=',False),('estado_salida','=',False)]"/>
+
+                <!-- 🔹 Solo subordinados directos (no recursivos) -->
+                <filter string="Mis Subordinados Directos"
+                        name="filtro_subordinados_directos"
+                        domain="[('empleado_id.parent_id.user_id','=',uid)]"/>
 
                 <!-- Agrupaciones -->
                 <group expand="0" string="Agrupar por...">

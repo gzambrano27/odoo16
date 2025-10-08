@@ -39,6 +39,7 @@
 		'wizard/hr_payslip_payment_wizard.xml',
 		'wizard/hr_employee_update_request_wizard.xml',
 		'wizard/hr_attendance_justification_wizard.xml',
+		'wizard/employee_attendance_calendar_rrhh_wizard.xml',
 
 		"reports/hr_payslip.xml",
 		"reports/ir_actions_report_xml.xml",
